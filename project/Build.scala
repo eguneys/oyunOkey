@@ -17,7 +17,7 @@ object ApplicationBuild extends Build {
     )
   ) dependsOn api aggregate api
 
-  lazy val modules = Seq(common, user, setup, lobby, socket)
+  lazy val modules = Seq(common, user, setup, lobby, socket, hub)
 
   lazy val moduleRefs = modules map projectToRef
   lazy val moduleCPDeps = moduleRefs map { new sbt.ClasspathDependency(_, None) }
@@ -31,7 +31,11 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api, play.test)
   )
 
-  lazy val setup = project("setup", Seq(common, user)).settings(
+  lazy val hub = project("hub", Seq(common)).settings(
+    libraryDependencies ++= provided(play.api, play.test)
+  )
+
+  lazy val setup = project("setup", Seq(common, user, lobby, hub)).settings(
     libraryDependencies ++= provided(play.api, play.test)
   )
 

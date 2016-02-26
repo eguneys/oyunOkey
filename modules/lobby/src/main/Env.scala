@@ -10,12 +10,17 @@ final class Env(
   system: ActorSystem) {
   private val settings = new {
     val SocketName = config getString "socket.name"
+    val ActorName = config getString "actor.name"
   }
   import settings._
 
   private val socket = system.actorOf(Props(new Socket(
     history = history
   )), name = SocketName)
+
+  val lobby = system.actorOf(Props(new Lobby(
+    socket = socket)), name = ActorName)
+
 
   lazy val socketHandler = new SocketHandler(
     socket = socket)

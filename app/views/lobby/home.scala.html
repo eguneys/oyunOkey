@@ -1,10 +1,11 @@
-@()(implicit ctx: Context)
+@(data: play.api.libs.json.JsObject)(implicit ctx: Context)
 
 @moreJs = {
   @jsAt(s"compiled/oyunkeyf.lobby.js")
   @embedJs {
     oyunkeyf = oyunkeyf || {};
     oyunkeyf.lobby = {
+      data: @Html(J.stringify(data))
     };
   }
 }

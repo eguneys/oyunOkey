@@ -1,0 +1,9 @@
+#!/bin/sh
+
+mkdir -p public/compiled
+
+for app in lobby; do
+  cd ui/$app
+  npm install --no-optional && gulp dev
+  cd -
+done

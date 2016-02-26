@@ -5,7 +5,8 @@ import play.twirl.api.Html
 
 object Environment 
     extends oyun.BooleanSteroids
-    with AssetHelper {
+    with AssetHelper
+    with JsonHelper {
   implicit val OyunHtmlMonoid = scalaz.Monoid.instance[Html](
     (a, b) => Html(a.body + b.body),
     Html(""))

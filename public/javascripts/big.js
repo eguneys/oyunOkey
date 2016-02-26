@@ -13,10 +13,12 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
 
 oyunkeyf.StrongSocket.sri = Math.random().toString(36).substring(2);
 oyunkeyf.StrongSocket.defaults = {
+  events: {},
   params: {
     sri: oyunkeyf.StrongSocket.sri
   },
   options: {
+    debug: true,
     name: "unnamed",
     pingMaxLag: 8000, // time to wait for pong before resetting the connection
     pingDelay: 1500,
@@ -55,11 +57,29 @@ oyunkeyf.StrongSocket.prototype = {
       self.ws.onmessage = function(e) {
         var m = JSON.parse(e.data);
         if (m.t === 'n') self.pong();
+
+        if (m.t === 'b') {
+        } else self.handle(m);
       };
     } catch(e) {
       self.onError(e);
     }
     self.scheduleConnect(self.options.pingMaxLag);
+  },
+  send: function(t, d, o, again) {
+    var self = this;
+    var data = d || {},
+        options = o || {};
+    var message = JSON.stringify({
+      t: t,
+      d: data
+    });
+    self.debug('send ' + message);
+    try {
+      self.ws.send(message);
+    } catch (e) {
+      self.debug('send failed');
+    }
   },
   scheduleConnect: function(delay) {
     var self = this;
@@ -100,11 +120,37 @@ oyunkeyf.StrongSocket.prototype = {
       v: this.version
     });
   },
+  handle: function(m) {
+    var self = this;
+    if (m.v) {
+      if (m.v <= self.version) {
+        self.debug('already has event ' + m.v);
+        return;
+      }
+      if (m.v > self.version + 1) {
+        self.debug("event gap detected from " + self.version + " to " + m.v);
+        return;
+      }
+      self.version = m.v;
+    }
+
+    switch (m.t || false) {
+    case false:
+      break;
+    case 'resync':
+      oyunkeyf.reload();
+      break;
+    default:
+      if (self.settings.receive) self.settings.receive(m.t, m.d);
+      var h = self.settings.events[m.t];
+      if (h) h(m.d || null);
+    }
+  },
   now: function() {
     return new Date().getTime();
   },
   debug: function(msg, always) {
-    if (always) {
+    if (always || this.options.debug) {
       console.debug("[" + this.options.name + " " + this.settings.params.sri + "]", msg);
     }
   },
@@ -151,11 +197,48 @@ oyunkeyf.StrongSocket.prototype = {
     var lobby;
     oyunkeyf.socket = new oyunkeyf.StrongSocket(
       '/lobby/socket/v1',
-      1, {
+      cfg.data.version, {
         options: {
           name: 'lobby'
         }
       }
     );
+    cfg.socketSend = oyunkeyf.socket.send.bind(oyunkeyf.socket);
+    lobby = OyunkeyfLobby(element, cfg);
+
+    var $startButtons = $('#start_buttons');
+
+    function prepareForm() {
+      var $form = $('.oyunkeyf_overboard');
+      var $formTag = $form.find('form');
+      var ajaxSubmit = function() {
+        $.ajax({
+          url: $formTag.attr('action').replace(/uid-placeholder/, oyunkeyf.StrongSocket.sri),
+          data: $formTag.serialize(),
+          type: 'post'
+        });
+        $form.find('a.close').click();
+        return false;
+      };
+      $formTag.find('button').click(function() {
+        return ajaxSubmit();
+      });
+    }
+
+    $startButtons.find('a').click(function() {
+      $('.oyunkeyf_overboard').remove();
+      $.ajax({
+        url: $(this).attr('href'),
+        success: function(html) {
+          $('.oyunkeyf_overboard').remove();
+          $('#hooks_wrap').prepend(html);
+          prepareForm();
+        },
+        error: function() {
+          location.reload();
+        }
+      });
+      return false;
+    });
   }
 })();
