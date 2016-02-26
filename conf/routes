@@ -1,3 +1,10 @@
 # Lobby
+GET     /                               controllers.Lobby.home
+GET     /lobby/socket/v:apiVersion      controllers.Lobby.socket(apiVersion: Int)
 
-GET     /       controllers.Lobby.home
+# Setup
+GET     /setup/hook             controllers.Setup.hookForm
+POST    /setup/hook/:uid        controllers.Setup.hook(uid: String)
+
+# Assets
+GET     /assets/*file           controllers.Assets.at(path="/public", file)

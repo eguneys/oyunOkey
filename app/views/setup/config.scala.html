@@ -1,0 +1,11 @@
+@(form: Form[_], typ: String, title: Html, route: Call, fields: Html, error: Option[Html] = None)(implicit ctx: Context)
+
+<div class="oyunkeyf_overboard game_config game_config_@typ">
+  <h2>@title</h2>
+  @helper.form(action = route) {
+    @fields
+    <button type="submit" class="button">
+    icon
+    </button>
+  }
+</div>

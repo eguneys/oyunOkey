@@ -1,6 +1,6 @@
 package oyun.api
 
-import oyun.user.{ UserContext, BodyUserContext }
+import oyun.user.{ UserContext, HeaderUserContext, BodyUserContext }
 
 case class PageData()
 
@@ -12,7 +12,7 @@ object PageData {
 }
 
 
-sealed trait Context {
+sealed trait Context extends oyun.user.UserContextWrapper {
 }
 
 sealed abstract class BaseContext(
@@ -22,9 +22,17 @@ sealed abstract class BaseContext(
 final class BodyContext[A](
   val bodyContext: BodyUserContext[A],
   data: PageData) extends BaseContext(bodyContext, data) {
+  def body = bodyContext.body
 }
 
+final class HeaderContext(
+  headerContext: HeaderUserContext,
+  data: PageData) extends BaseContext(headerContext, data)
+
 object Context {
+  def apply(userContext: HeaderUserContext, pageData: PageData): HeaderContext =
+    new HeaderContext(userContext, pageData)
+
   def apply[A](userContext: BodyUserContext[A], pageData: PageData): BodyContext[A] =
     new BodyContext(userContext, pageData)
 }

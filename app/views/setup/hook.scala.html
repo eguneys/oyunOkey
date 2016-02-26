@@ -1,0 +1,8 @@
+@(form: Form[_])(implicit ctx: Context)
+
+@import oyun.setup.HookConfig
+
+@fields = {
+}
+
+@setup.config(form, "hook", Html("transcreateagame"), routes.Setup.hook("uid-placeholder"), fields)

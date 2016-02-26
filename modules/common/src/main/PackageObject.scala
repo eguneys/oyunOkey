@@ -2,6 +2,8 @@ package oyun
 
 import scala.concurrent.Future
 
+import ornicar.scalalib
+
 trait PackageObject extends Steroids with WithFuture {
 }
 
@@ -16,5 +18,21 @@ trait WithFuture {
 }
 
 trait WithPlay { self: PackageObject =>
+  import scalalib.Zero
+
   implicit def execontext = play.api.libs.concurrent.Execution.defaultContext
+
+  implicit def LilaFuZero[A: Zero]: Zero[Fu[A]] =
+    Zero.instance(fuccess(zero[A]))
+
+  object makeTimeout {
+    import akka.util.Timeout
+    import scala.concurrent.duration._
+
+    implicit val short = seconds(1)
+    implicit val large = seconds(5)
+
+    def apply(duration: FiniteDuration) = Timeout(duration)
+    def seconds(s: Int): Timeout = Timeout(s.seconds)
+  }
 }
