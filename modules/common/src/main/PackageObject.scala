@@ -5,6 +5,10 @@ import scala.concurrent.Future
 import ornicar.scalalib
 
 trait PackageObject extends Steroids with WithFuture {
+  lazy val logger = play.api.Logger("oyun")
+  def loginfo(s: String) { logger info s }
+  def logwarn(s: String) { logger warn s }
+  def logerr(s: String) { logger error s }
 }
 
 trait WithFuture {
@@ -27,6 +31,11 @@ trait WithPlay { self: PackageObject =>
 
 
   implicit final class OyunPimpedFuture[A](fua: Fu[A]) {
+
+    def void: Funit = fua map (_ => Unit)
+
+    def inject[B](b: => B): Fu[B] = fua map (_ => b)
+
     def effectFold(fail: Exception => Unit, succ: A => Unit) {
       fua onComplete {
         case scala.util.Failure(e: Exception) => fail(e)

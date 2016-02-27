@@ -6,5 +6,9 @@ GET     /lobby/socket/v:apiVersion      controllers.Lobby.socket(apiVersion: Int
 GET     /setup/hook             controllers.Setup.hookForm
 POST    /setup/hook/:uid        controllers.Setup.hook(uid: String)
 
+# Round
+
+GET     /$fullId<\w{12}>        controllers.Round.player(fullId: String)
+
 # Assets
 GET     /assets/*file           controllers.Assets.at(path="/public", file)

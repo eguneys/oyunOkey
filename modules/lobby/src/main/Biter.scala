@@ -1,7 +1,7 @@
 package oyun.lobby
 
 import actorApi.{ JoinHook, LobbyUser }
-import oyun.game.{ Game, Player }
+import oyun.game.{ GameRepo, Game, Player }
 import okey.{ Side, EastSide, WestSide }
 
 private[lobby] object Biter {
@@ -15,7 +15,9 @@ private[lobby] object Biter {
   private def join(hook: Hook, uid: String, lobbyUserOption: Option[LobbyUser]): Fu[JoinHook] = {
     val side = okey.WestSide
     val game = makeGame(hook, side)
-    fuccess(JoinHook(uid, hook, game, side))
+    (GameRepo insertDenormalized game) inject {
+      JoinHook(uid, hook, game, side)
+    }
   }
 
   private def makeGame(hook: Hook, side: Side) = Game.make(

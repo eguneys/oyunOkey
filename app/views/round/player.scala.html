@@ -1,0 +1,21 @@
+@(pov: Pov, data: play.api.libs.json.JsObject)(implicit ctx: Context)
+
+@import pov._
+
+@title = @{ s"trans.play.str() in $gameId" }
+
+@moreJs = {
+}
+
+
+@round.layout(
+  title = title,
+  moreJs = moreJs) {
+    <div class="round cg-512">
+      <div class="underboard">
+        <div class="center">
+          <div class="crosstable_placeholder"></div>
+        </div>
+      </div>
+    </div>
+}

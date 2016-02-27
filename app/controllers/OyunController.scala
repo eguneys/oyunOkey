@@ -44,6 +44,13 @@ private[controllers] trait OyunController
 
   protected def OpenBody[A](p: BodyParser[A])(f: BodyContext[_] => Fu[Result]): Action[A] = Action.async(p)(req => reqToCtx(req) flatMap f)
 
+  protected def OptionFuResult[A](fua: Fu[Option[A]])(op: A => Fu[Result])(implicit ctx: Context) =
+    fua flatMap { _.fold(notFound(ctx))(a => op(a)) }
+
+  def notFound(implicit ctx: Context): Fu[Result] = {
+    Main notFound ctx.req
+  }
+
   protected def reqToCtx(req: RequestHeader): Fu[HeaderContext] =
   {
     val ctx = UserContext(req, None)
