@@ -198,6 +198,9 @@ oyunkeyf.StrongSocket.prototype = {
     oyunkeyf.socket = new oyunkeyf.StrongSocket(
       '/lobby/socket/v1',
       cfg.data.version, {
+        receive: function(t, d) {
+          lobby.socketReceive(t, d);
+        },
         options: {
           name: 'lobby'
         }

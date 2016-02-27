@@ -22,8 +22,19 @@ trait WithPlay { self: PackageObject =>
 
   implicit def execontext = play.api.libs.concurrent.Execution.defaultContext
 
-  implicit def LilaFuZero[A: Zero]: Zero[Fu[A]] =
+  implicit def OyunFuZero[A: Zero]: Zero[Fu[A]] =
     Zero.instance(fuccess(zero[A]))
+
+
+  implicit final class OyunPimpedFuture[A](fua: Fu[A]) {
+    def effectFold(fail: Exception => Unit, succ: A => Unit) {
+      fua onComplete {
+        case scala.util.Failure(e: Exception) => fail(e)
+        case scala.util.Failure(e) => throw e
+        case scala.util.Success(e) => succ(e)
+      }
+    }
+  }
 
   object makeTimeout {
     import akka.util.Timeout

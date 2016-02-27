@@ -39,11 +39,11 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api, play.test)
   )
 
-  lazy val lobby = project("lobby", Seq(common, user, socket)).settings(
+  lazy val lobby = project("lobby", Seq(common, user, socket, hub)).settings(
     libraryDependencies ++= provided(play.api, play.test)
   )
 
-  lazy val socket = project("socket", Seq(common)).settings(
+  lazy val socket = project("socket", Seq(common, hub)).settings(
     libraryDependencies ++= provided(play.api, play.test)
   )
 

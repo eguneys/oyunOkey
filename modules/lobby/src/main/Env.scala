@@ -3,14 +3,17 @@ package oyun.lobby
 import akka.actor._
 import com.typesafe.config.Config
 
+import oyun.common.PimpedConfig._
 import oyun.socket.History
 
 final class Env(
   config: Config,
-  system: ActorSystem) {
+  system: ActorSystem,
+  scheduler: oyun.common.Scheduler) {
   private val settings = new {
     val SocketName = config getString "socket.name"
     val ActorName = config getString "actor.name"
+    val BroomPeriod = config duration "broom_period"
   }
   import settings._
 
@@ -26,12 +29,23 @@ final class Env(
     socket = socket)
 
   lazy val history = new History()
+
+  {
+    import scala.concurrent.duration._
+
+    scheduler.once(10 seconds) {
+      scheduler.message(BroomPeriod) {
+        lobby -> oyun.socket.actorApi.Broom
+      }
+    }
+  }
 }
 
 
 object Env {
   lazy val current = new Env(
     config = oyun.common.PlayApp loadConfig "lobby",
-    system = oyun.common.PlayApp.system
+    system = oyun.common.PlayApp.system,
+    scheduler = oyun.common.PlayApp.scheduler
   )
 }

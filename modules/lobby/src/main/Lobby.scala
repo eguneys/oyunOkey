@@ -4,6 +4,10 @@ import akka.actor._
 import akka.pattern.{ ask, pipe }
 
 import actorApi._
+import oyun.hub.actorApi.{ GetUids, SocketUids }
+import oyun.socket.actorApi.Broom
+import makeTimeout.short
+import org.joda.time.DateTime
 
 private[lobby] final class Lobby(
   socket: ActorRef) extends Actor {
@@ -24,6 +28,23 @@ private[lobby] final class Lobby(
     case SaveHook(msg) =>
       HookRepo save msg.hook
       socket ! msg
+    case Broom =>
+      (socket ? GetUids mapTo manifest[SocketUids]).effectFold(
+        err => play.api.Logger("lobby").warn(s"broom cannot get uids from socket: $err"),
+        socketUids => {
+          val createdBefore = DateTime.now minusSeconds 5
+          val hooks = {
+            (HookRepo notInUids socketUids.uids).filter {
+              _.createdAt isBefore createdBefore
+            }
+          }.toSet
+
+          if (hooks.nonEmpty) {
+            self ! RemoveHooks(hooks)
+          }
+        })
+
+    case RemoveHooks(hooks) => hooks foreach remove
   }
 
   private def findCompatible(hook: Hook): Fu[Option[Hook]] =

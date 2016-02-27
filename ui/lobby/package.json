@@ -5,6 +5,7 @@
   "main": "src/main.js",
   "dependencies": {
     "mithril": "^0.2.0",
+    "okeyground": "^1.0.4"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.1.1",

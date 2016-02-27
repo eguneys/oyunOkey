@@ -14,7 +14,7 @@ var onError = function(error) {
   gutil.log(gutil.colors.red(error.message));
 };
 
-var standalone = 'OkeykeyfLobby';
+var standalone = 'OyunkeyfLobby';
 
 gulp.task('lint', function() {
   return gulp.src('./src/main.js')
@@ -25,7 +25,10 @@ gulp.task('lint', function() {
 gulp.task('dev', function() {
   return browserify('./src/main.js', {
     standalone: standalone
-  }).bundle()
+  }).transform('babelify',
+               { presets: ["es2015"],
+                 plugins: ['add-module-exports'] })
+    .bundle()
     .on('error', onError)
     .pipe(source('oyunkeyf.lobby.js'))
     .pipe(streamify(uglify()))

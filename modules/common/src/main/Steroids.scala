@@ -20,6 +20,8 @@ trait BooleanSteroids {
    * so ?? works on Zero and not Monoid
    */
   implicit final class OyunPimpedBoolean(self: Boolean) {
+    def !(f: => Unit) = if (self) f
+
     def fold[A](t: => A, f: => A): A = if (self) t else f
   }
 }

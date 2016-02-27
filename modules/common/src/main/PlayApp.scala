@@ -14,4 +14,8 @@ object PlayApp {
   def system = withApp{ implicit app =>
     play.api.libs.concurrent.Akka.system
   }
+
+  def scheduler = new Scheduler(system.scheduler,
+    enabled = true,
+    debug = loadConfig getBoolean "app.scheduler.debug")
 }

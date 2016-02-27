@@ -31,6 +31,7 @@ private[lobby] object Member {
 private[lobby] case class Connected(enumerator: JsEnumerator, member: Member)
 private[lobby] case class SaveHook(msg: AddHook)
 private[lobby] case class RemoveHook(hookId: String)
+private[lobby] case class RemoveHooks(hooks: Set[Hook])
 private[lobby] case class BiteHook(hookId: String, uid: String, user: Option[LobbyUser])
 private[lobby] case class Join(uid: String, user: Option[User])
 

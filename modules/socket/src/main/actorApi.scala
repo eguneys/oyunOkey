@@ -7,5 +7,6 @@ case class Connected[M <: SocketMember](
 
 case class Ping(uid: String)
 case class PingVersion(uid: String, version: Int)
+case object Broom
 
 case class Quit(uid: String)

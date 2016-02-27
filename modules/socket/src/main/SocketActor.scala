@@ -3,6 +3,7 @@ package oyun.socket
 import akka.actor._
 
 import actorApi._
+import oyun.hub.actorApi.{ GetUids, SocketUids }
 
 abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
 
@@ -15,6 +16,8 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
   def receiveGeneric: Receive = {
     case Ping(uid) => ping(uid)
     case Quit(uid) => quit(uid)
+
+    case GetUids => sender ! SocketUids(members.keySet.toSet)
   }
 
   def receive = receiveSpecific orElse receiveGeneric

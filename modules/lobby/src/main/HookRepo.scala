@@ -15,6 +15,8 @@ object HookRepo {
 
   def byUid(uid: String) = hooks find (_.uid == uid)
 
+  def notInUids(uids: Set[String]): List[Hook] = list.filterNot(h => uids(h.uid))
+
   def save(hook: Hook) {
     hooks = hooks.filterNot(_.id == hook.id) :+ hook
   }

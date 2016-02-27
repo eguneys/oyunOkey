@@ -1,6 +1,7 @@
 package oyun.lobby
 
 import play.api.libs.json._
+import org.joda.time.DateTime
 import ornicar.scalalib.Random
 
 import actorApi.LobbyUser
@@ -10,7 +11,8 @@ case class Hook(
   id: String,
   uid: String, // owner socket uid
   sid: Option[String], // owner cookie (used to prevent multiple hooks)
-  user: Option[LobbyUser]) {
+  user: Option[LobbyUser],
+  createdAt: DateTime) {
   def render: JsObject = Json.obj(
     "id" -> id,
     "uid" -> uid,
@@ -29,5 +31,6 @@ object Hook {
       id = Random nextStringUppercase idSize,
       uid = uid,
       sid = sid,
-      user = user map { LobbyUser.make })
+      user = user map { LobbyUser.make },
+    createdAt = DateTime.now)
 }
