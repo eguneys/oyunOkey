@@ -1,6 +1,7 @@
 package oyun.socket
 
 import akka.actor._
+import play.api.libs.json._
 
 import actorApi._
 import oyun.hub.actorApi.{ GetUids, SocketUids }
@@ -21,6 +22,10 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
   }
 
   def receive = receiveSpecific orElse receiveGeneric
+
+  def notifyMember[A: Writes](t: String, data: A)(member: M) {
+    member push makeMessage(t, data)
+  }
 
   def ping(uid: String) {
     withMember(uid)(_ push pong)

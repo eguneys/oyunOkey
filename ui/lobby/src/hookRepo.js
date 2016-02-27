@@ -20,5 +20,10 @@ module.exports = {
     ctrl.vm.stepHooks.forEach((h) => {
       if (h.id === id) h.disabled = true;
     });
+  },
+  find: function(ctrl, id) {
+    return ctrl.data.hooks.filter(function(h) {
+      return h.id === id;
+    })[0];
   }
 };

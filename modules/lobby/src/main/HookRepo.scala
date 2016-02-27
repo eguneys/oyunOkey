@@ -13,6 +13,8 @@ object HookRepo {
     hooks.toList
   }
 
+  def byId(id: String) = hooks find (_.id == id)
+
   def byUid(uid: String) = hooks find (_.uid == uid)
 
   def notInUids(uids: Set[String]): List[Hook] = list.filterNot(h => uids(h.uid))

@@ -28,6 +28,19 @@ private[lobby] final class Lobby(
     case SaveHook(msg) =>
       HookRepo save msg.hook
       socket ! msg
+    case CancelHook(uid) =>
+      HookRepo byUid uid foreach remove
+
+    case BiteHook(hookId, uid, user) => {
+      HookRepo byId hookId foreach { hook =>
+        HookRepo byUid uid foreach remove
+        Biter(hook, uid, user) pipeTo self
+      }
+    }
+
+    case msg:JoinHook =>
+      socket ! msg
+
     case Broom =>
       (socket ? GetUids mapTo manifest[SocketUids]).effectFold(
         err => play.api.Logger("lobby").warn(s"broom cannot get uids from socket: $err"),

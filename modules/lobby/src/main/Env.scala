@@ -26,6 +26,7 @@ final class Env(
 
 
   lazy val socketHandler = new SocketHandler(
+    lobby = lobby,
     socket = socket)
 
   lazy val history = new History()

@@ -1,0 +1,3 @@
+[submodule "modules/okey"]
+	path = modules/okey
+	url = git@bitbucket.org:eguneys/scalaokey.git

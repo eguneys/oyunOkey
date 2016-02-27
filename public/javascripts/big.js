@@ -189,6 +189,18 @@ oyunkeyf.StrongSocket.prototype = {
 };
 
 ;(function() {
+
+  $.redirect = function(obj) {
+    var url;
+    if (typeof obj == "string") url = obj;
+    else {
+      url = obj.url;
+    }
+    var href = 'http://' + location.hostname + ':' + location.port + '/' + url.replace(/^\//, '');
+    $.redirect.inProgress = href;
+    location.href = href;
+  };
+
   $(function() {
     if (oyunkeyf.lobby) startLobby(document.getElementById('hooks_wrap'), oyunkeyf.lobby);
   });
@@ -200,6 +212,11 @@ oyunkeyf.StrongSocket.prototype = {
       cfg.data.version, {
         receive: function(t, d) {
           lobby.socketReceive(t, d);
+        },
+        events: {
+          redirect: function(e) {
+            $.redirect(e);
+          }
         },
         options: {
           name: 'lobby'

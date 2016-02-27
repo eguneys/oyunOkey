@@ -4,8 +4,12 @@ import { tds } from '../util';
 
 function renderHook(ctrl, hook) {
   return m('tr', {
+    key: hook.id,
+    title: hook.disabled ? '' : (
+      (hook.action === 'join') ? 'trans(joinTheGame)':'trans(cancel)'
+    ),
     'data-id': hook.id,
-    class: 'hook'
+    class: 'hook ' + hook.action + (hook.disabled ? ' disabled': '')
   }, tds([
     m('span', {
       class: 'is'
@@ -28,6 +32,16 @@ module.exports = {
         ])
        ),
       m('tbody', {
+        class: ctrl.vm.stepping ? 'stepping' : '',
+        onclick: function(e) {
+          var el = e.target;
+          do {
+            el = el.parentNode;
+            if (el.nodeName === 'TR') {
+              return ctrl.clickHook(el.getAttribute('data-id'));
+            }
+          } while (el.nodeName !== 'TABLE');
+        }
       }, renderedHooks)
     ]);
   }
