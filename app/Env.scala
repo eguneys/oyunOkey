@@ -19,4 +19,5 @@ object Env {
   def api = oyun.api.Env.current
   def setup = oyun.setup.Env.current
   def lobby = oyun.lobby.Env.current
+  def round = oyun.round.Env.current
 }

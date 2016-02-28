@@ -9,6 +9,7 @@ POST    /setup/hook/:uid        controllers.Setup.hook(uid: String)
 # Round
 
 GET     /$fullId<\w{12}>        controllers.Round.player(fullId: String)
+GET     /$fullId<\w{12}>/socket controllers.Round.websocketPlayer(fullId: String)
 
 # Assets
 GET     /assets/*file           controllers.Assets.at(path="/public", file)

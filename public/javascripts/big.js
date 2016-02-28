@@ -205,6 +205,24 @@ oyunkeyf.StrongSocket.prototype = {
     if (oyunkeyf.lobby) startLobby(document.getElementById('hooks_wrap'), oyunkeyf.lobby);
   });
 
+  oyunkeyf.startRound = function(element, cfg) {
+    var data = cfg.data;
+    var round;
+    oyunkeyf.socket = new oyunkeyf.StrongSocket(
+      data.url.socket,
+      data.player.version, {
+        options: {
+          name: 'round'
+        },
+        receive: function(t, d) {
+          round.socketReceive(t, d);
+        }
+      });
+    cfg.element = element.querySelector('.round');
+    cfg.socketSend = oyunkeyf.socket.send.bind(oyunkeyf.socket);
+    round = OyunkeyfRound(cfg);
+  };
+
   function startLobby(element, cfg) {
     var lobby;
     oyunkeyf.socket = new oyunkeyf.StrongSocket(

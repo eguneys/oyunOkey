@@ -9,6 +9,7 @@ import oyun.round.{ JsonView }
 private[api] final class RoundApi(
   jsonView: JsonView) {
 
-  def player(pov: Pov)(implicit ctx: Context): Fu[JsObject] = fufail("klasdjf")
+  def player(pov: Pov)(implicit ctx: Context): Fu[JsObject] =
+    jsonView.playerJson(pov, ctx.me)
 
 }

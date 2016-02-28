@@ -20,6 +20,9 @@ private[controllers] trait OyunController
     def fuccess = scala.concurrent.Future successful result
   }
 
+  protected def SocketEither[A: FrameFormatter](f: Context => Fu[Either[Result, (Iteratee[A, _], Enumerator[A])]]) =
+    WebSocket.tryAccept[A] { req => reqToCtx(req) flatMap f }
+
   protected def SocketOption[A: FrameFormatter](f: Context => Fu[Option[(Iteratee[A, _], Enumerator[A])]]) =
     WebSocket.tryAccept[A] { req =>
       reqToCtx(req) flatMap f map {

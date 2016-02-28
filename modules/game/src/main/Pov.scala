@@ -4,7 +4,13 @@ import okey.Side
 
 case class Pov(game: Game, side: Side) {
 
+  def player = game player side
+
+  def playerId = player map (_.id) getOrElse ""
+
   def gameId = game.id
+
+  def fullId = game fullIdOf side getOrElse ""
 }
 
 object Pov {

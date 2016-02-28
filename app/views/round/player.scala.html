@@ -5,6 +5,14 @@
 @title = @{ s"trans.play.str() in $gameId" }
 
 @moreJs = {
+  @jsAt(s"compiled/oyunkeyf.round.js")
+  @embedJs {
+    $(function() {
+      oyunkeyf.startRound(document.getElementById('oyunkeyf'), {
+        data: @Html(J.stringify(data))
+      });
+    });
+  }
 }
 
 
