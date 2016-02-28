@@ -1,0 +1,51 @@
+body,
+ul,
+ol,
+li,
+h1,
+h2,
+form,
+legend,
+input,
+textarea,
+p,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  font: 12px 'Noto Sans', 'Lucidia Grande', 'Lucidia Sans Unicode', Geneva, Verdana, Sans-Serif;
+  color: #707070;
+  background: #eee;
+  background-image: linear-gradient(to bottom, #d7d7d7 0%, #eeeeee 116px);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+body.no-select {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+body > div.content {
+  margin: 35px auto 30px auto;
+}
+
+#top {
+  position: relative;
+  height: 24px;
+  margin: 0 auto;
+  padding-top: 5px;
+  box-sizing: border-box;
+  z-index: 5001;
+}
+
+#oyunkeyf {
+  margin-left: 150px;
+}

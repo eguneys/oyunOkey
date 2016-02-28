@@ -1,0 +1,130 @@
+.og-512 .og-table-wrap {
+  width: 608px;
+  height: 456px;
+  position: relative;
+}
+
+.og-board {
+  background: brown;
+}
+
+.og-table-wrap {
+  background: #006622
+}
+
+/* okeyground */
+
+.og-table-wrap {
+  width: 100%;
+  height: 100%; }
+
+.og-table {
+  height: 100%;
+  width: 100%;
+  position: relative; }
+
+.og-top {
+  position: relative;
+  width: 100%;
+  height: 76.75439%; }
+
+.og-top .drag-over {
+  position: absolute;
+  height: 14.28571%;
+  width: 6.25%; }
+  .og-top .drag-over.ddown {
+    right: 0%;
+    bottom: 0%; }
+  .og-top .drag-over.mgosterge {
+    bottom: 0%;
+    left: 81.25%; }
+
+.og-top > piece {
+  height: 14.28571%;
+  width: 6.25%; }
+
+.og-top piece.mgosterge {
+  bottom: 0%;
+  left: 81.25%; }
+
+.og-top piece.mmiddleCount {
+  cursor: pointer;
+  bottom: 0%;
+  left: 75%; }
+  .og-top piece.mmiddleCount:not(.dragging)::before {
+    position: absolute;
+    top: calc(50% - 7px);
+    left: calc(50% - 3px);
+    font-size: 11px;
+    font-weight: bold;
+    opacity: 0.7;
+    content: attr(data-middle-count); }
+
+.og-top piece.dup {
+  top: 0%;
+  left: 0%; }
+
+.og-top piece.dleft {
+  cursor: pointer;
+  bottom: 0%;
+  left: 0%; }
+
+.og-top piece.ddown {
+  right: 0%;
+  bottom: 0%; }
+
+.og-top piece.dright {
+  top: 0%;
+  right: 0%; }
+
+.og-opens {
+  position: absolute;
+  width: 75%;
+  height: 68.57143%;
+  border: 1px solid;
+  margin: auto;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0; }
+
+.og-opens piece.mini {
+  height: 12.5%;
+  width: 5%; }
+
+.og-opens .drag-over {
+  position: absolute;
+  height: 12.5%;
+  width: 5%; }
+
+.og-board {
+  cursor: pointer;
+  -webkit-user-select: none;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 21.92982%; }
+
+.og-board .drag-over {
+  position: absolute;
+  height: 50%;
+  width: 6.25%; }
+
+piece {
+  position: absolute;
+  background-size: cover; }
+
+.og-board piece {
+  height: 50%;
+  width: 6.25%; }
+
+piece.selected:not(.dragging) {
+  z-index: 2;
+  box-shadow: 0 0 0 2px rgba(0, 85, 80, 0.5); }
+
+piece.dragging {
+  z-index: 9;
+  cursor: move; }
+
+.drag-over {
+  box-shadow: inset 0 0 10px 2px rgba(216, 85, 0, 0.9); }

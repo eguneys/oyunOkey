@@ -1,0 +1,78 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'base64'
+include FileUtils
+
+oyun_dir = pwd()
+source_dir = oyun_dir + '/public/piece-src/'
+dest_dir = oyun_dir + '/public/stylesheets/piece/'
+
+themes = [
+  ['standard', 'png']
+]
+
+types = {
+  'png' => 'png;base64,'
+}
+
+numbers = [
+  ['1', 'one'],
+  ['2', 'two'],
+  ['3', 'three'],
+  ['4', 'four'],
+  ['5', 'five'],
+  ['6', 'six'],
+  ['7', 'seven'],
+  ['8', 'eight'],
+  ['9', 'nine'],
+  ['10', 'ten'],
+  ['11', 'eleven'],
+  ['12', 'twelve'],
+  ['13', 'thirteen']
+]
+
+colors = ['red', 'black', 'green', 'blue']
+
+extras = ['empty', 'fake']
+
+themes.map { |theme|
+  name = theme[0]
+  ext = theme[1]
+
+  classes = colors.map { |color|
+    numbers.map { |numberMap|
+      number = numberMap[0]
+      numberName = numberMap[1]
+
+      piece = (color == 'black' ? 'l' : color[0]) + number
+      file = source_dir + name + '/' + piece + '.' + ext
+
+      cssClass = color + '.' + numberName
+      [file, cssClass]
+    }
+  }.flatten(1)
+
+  extraClasses = extras.map { |extra|
+    piece = extra[0]
+    file = source_dir + name + '/' + piece + '.' + ext
+
+    cssClass = extra
+
+    [file, cssClass]
+  }
+
+  cssLines = (classes + extraClasses).map { |fileAndCss|
+    file = fileAndCss[0]
+    cssClass = fileAndCss[1]
+
+    File.open(file, 'r') do|image_file|
+      image = image_file.read
+      base64 = Base64.strict_encode64(image)
+      'piece.' + cssClass + ' { ' +
+        "background-image: url('data:image/" + types[ext] + base64 +"'); }"
+    end
+  }
+  
+  File.open(dest_dir + name + '.css', 'w') { |f| f.puts cssLines.join("\n") }
+}

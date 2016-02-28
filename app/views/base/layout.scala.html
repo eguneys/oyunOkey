@@ -7,6 +7,10 @@
   <head>
     <meta charset="utf-8">
     <title>@fullTitle.getOrElse{@title * oyunkeyf.com}</title>
+    @cssTag("common.css")
+    @cssTag("table.css")
+    @moreCss
+    <link id="piece-sprite" href="@staticUrl(s"stylesheets/piece/standard.css?v=$assetVersion")" type="text/css" rel="stylesheet"/>
   </head>
   <body class="preload base">
     <div id="top">
