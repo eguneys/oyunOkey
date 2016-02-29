@@ -188,6 +188,31 @@ oyunkeyf.StrongSocket.prototype = {
   }
 };
 
+function withStorage(f) {
+  try {
+    return !!window.localStorage ? f(window.localStorage) : null;
+  } catch(e) {}
+}
+
+oyunkeyf.storage = {
+  get: function(k) {
+    return withStorage(function(s) {
+      return s.getItem(k);
+    });
+  },
+  remove: function(k) {
+    withStorage(function(s) {
+      s.removeItem(k);
+    });
+  },
+  set: function(k, v) {
+    withStorage(function(s) {
+      s.removeItem(k);
+      s.setItem(k, v);
+    });
+  }
+};
+
 ;(function() {
 
   $.redirect = function(obj) {

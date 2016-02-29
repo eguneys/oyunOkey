@@ -32,6 +32,9 @@ object BSON {
       map get k flatMap reader.asInstanceOf[BSONReader[BSONValue, A]].readOpt
 
     def str(k: String) = get[String](k)
+    def int(k: String) = get[Int](k)
+    def bytes(k: String) = get[ByteArray](k)
+    def bytesO(k: String) = getO[ByteArray](k)
   }
 
   final class Writer {

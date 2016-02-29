@@ -2,7 +2,7 @@ package oyun.lobby
 
 import actorApi.{ JoinHook, LobbyUser }
 import oyun.game.{ GameRepo, Game, Player }
-import okey.{ Side, EastSide, WestSide }
+import okey.{ Game => OkeyGame, Table, Player => OkeyPlayer, Side, EastSide, WestSide }
 
 private[lobby] object Biter {
 
@@ -21,6 +21,9 @@ private[lobby] object Biter {
   }
 
   private def makeGame(hook: Hook, side: Side) = Game.make(
+    game = OkeyGame(
+      table = Table init okey.variant.Variant.default,
+      player = OkeyPlayer(EastSide)),
     players = Player.twoSides(EastSide, side)
   )
 
