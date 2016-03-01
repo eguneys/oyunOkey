@@ -7,14 +7,36 @@ import okey.{ Sides }
 
 object BSONHandlers {
 
+  private[game] implicit val sidesPiecesBSONHandler = new BSON[Sides[ByteArray]] {
+
+    import Game.BSONFields._
+
+    def reads(r: BSON.Reader) = {
+      val bBytes = Sides("e", "w", "n", "s") map { s =>
+        r bytes (s)
+      }
+      bBytes
+    }
+
+    def writes(w: BSON.Writer, o: Sides[ByteArray]) = BSONDocument(
+      "e" -> o.eastSide,
+      "w" -> o.westSide,
+      "n" -> o.northSide,
+      "s" -> o.southSide
+    )
+  }
+
   private[game] implicit val binaryOpensBSONHandler = new BSON[BinaryOpens] {
 
     import Game.BSONFields._
 
     def reads(r: BSON.Reader) = {
-      val bOpenStates = Sides("e", "w", "n", "s") map { s =>
-        r bytesO (binaryOpenStates + s)
+
+      val bOpenStates = r.get[Sides[ByteArray]](binaryOpenStates) map {
+        case s if s.isEmpty => None
+        case s => Some(s)
       }
+
       BinaryOpens(
         binarySeries = r bytes binarySeries,
         binaryPairs = r bytes binaryPairs,
@@ -22,8 +44,14 @@ object BSONHandlers {
       )
     }
 
-    def writes(w: BSON.Writer, o: BinaryOpens) = BSONDocument(
-    )
+    def writes(w: BSON.Writer, o: BinaryOpens) = {
+      val bos = o.binaryOpenStates map (s => ~s)
+      BSONDocument(
+        binarySeries -> o.binarySeries,
+        binaryPairs -> o.binaryPairs,
+        binaryOpenStates -> bos
+      )
+    }
   }
 
   implicit val gameBSONHandler = new BSON[Game] {
@@ -43,13 +71,9 @@ object BSONHandlers {
         case (side, Some(id)) => Some(Player(id, side))
       }
 
-      val bPieces = Sides("e", "w", "n", "s") map { s =>
-        r bytes (binaryPieces + s)
-      }
+      val bPieces = r.get[Sides[ByteArray]](binaryPieces)
 
-      val bDiscards = Sides("e", "w", "n", "s") map { s =>
-        r bytes (binaryDiscards + s)
-      }
+      val bDiscards = r.get[Sides[ByteArray]](binaryDiscards)
 
       val bOpens = r.get[BinaryOpens](binaryOpens) some
 
@@ -68,7 +92,14 @@ object BSONHandlers {
 
     def writes(w: BSON.Writer, o: Game) = BSONDocument(
       id -> o.id,
-      playerIds -> o.players.map(op => ~(op map(_.id))).toList
+      playerIds -> o.players.map(op => ~(op map(_.id))).toList,
+      binaryPieces -> o.binaryPieces,
+      binaryDiscards -> o.binaryDiscards,
+      binaryMiddles -> o.binaryMiddles,
+      binarySign -> o.binarySign,
+      binaryOpens -> o.binaryOpens,
+      binaryPlayer -> o.binaryPlayer,
+      turns -> o.turns
     )
   }
 }

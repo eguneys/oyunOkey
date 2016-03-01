@@ -3,6 +3,9 @@ package oyun.db
 import reactivemongo.bson._
 
 case class ByteArray(value: Array[Byte]) {
+
+  def isEmpty = value.isEmpty
+
   def showBytes: String = value map { b =>
     "%08d" format { b & 0xff }.toBinaryString.toInt
   } mkString ","
@@ -10,6 +13,12 @@ case class ByteArray(value: Array[Byte]) {
 
 
 object ByteArray {
+
+  import ornicar.scalalib.Zero
+
+  implicit def ByteArrayZero: Zero[ByteArray] =
+    Zero.instance(ByteArray(Array.empty))
+
   implicit object ByteArrayBSONHandler extends BSONHandler[BSONBinary, ByteArray] {
     def read(bin: BSONBinary) = ByteArray(bin.byteArray)
 

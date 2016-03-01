@@ -11,7 +11,7 @@ case class Game(
   binaryPieces: Sides[ByteArray],
   binaryDiscards: Sides[ByteArray],
   binaryMiddles: ByteArray,
-  binarySign: Byte,
+  binarySign: Int,
   binaryOpens: Option[BinaryOpens],
   binaryPlayer: ByteArray,
   turns: Int,

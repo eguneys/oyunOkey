@@ -1,11 +1,11 @@
 import okeyground from 'okeyground';
 
-function makeFen(boardFen, tableFen) {
-  return [boardFen, tableFen].join('/');
+function makeFen(fen) {
+  return fen;
 };
 
 function makeConfig(data) {
-  var fen = makeFen('r1r2r3', 'r2r3/r8l8/r1r1 r2r2/20l1');
+  var fen = makeFen(data.game.fen);
   return {
     fen: fen
   };
