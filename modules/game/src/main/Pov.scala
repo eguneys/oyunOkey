@@ -11,6 +11,10 @@ case class Pov(game: Game, side: Side) {
   def gameId = game.id
 
   def fullId = game fullIdOf side getOrElse ""
+
+  def opponentLeft = game player side.previous
+  def opponentRight = game player side.next
+  def opponentUp = game player side.next.next
 }
 
 object Pov {

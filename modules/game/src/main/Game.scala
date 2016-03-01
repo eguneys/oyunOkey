@@ -12,7 +12,7 @@ case class Game(
   binaryDiscards: Sides[ByteArray],
   binaryMiddles: ByteArray,
   binarySign: Int,
-  binaryOpens: Option[BinaryOpens],
+   binaryOpens: Option[BinaryOpens],
   binaryPlayer: ByteArray,
   turns: Int,
   variant: Variant = Variant.default) {
@@ -23,6 +23,8 @@ case class Game(
 
   def player(playerId: String): Option[Player] =
     playerList find (_.id == playerId)
+
+  def turnSide = Side(turns)
 
   def fullIdOf(side: Side): Option[String] = players(side) map (player => s"$id${player.id}")
 

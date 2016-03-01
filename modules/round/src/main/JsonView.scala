@@ -3,7 +3,7 @@ package oyun.round
 import play.api.libs.json._
 import oyun.common.PimpedJson._
 
-import oyun.game.{ Pov, Game }
+import oyun.game.{ Pov, Game, Player }
 import oyun.user.{ User }
 
 import actorApi.SocketStatus
@@ -22,10 +22,12 @@ final class JsonView(
         Json.obj(
           "game" -> povJson(pov),
           "player" -> Json.obj(
-            // "id" -> playerId,
-            // "side" -> player.side,
+            "side" -> side.name,
             "version" -> socket.version
           ),
+          "opponentLeft" -> (opponentLeft map opponentJson),
+          "opponentRight" -> (opponentRight map opponentJson),
+          "opponentUp" -> (opponentUp map opponentJson),
           "url" -> Json.obj(
             "socket" -> s"/$fullId/socket",
             "round" -> s"/$fullId"
@@ -33,8 +35,13 @@ final class JsonView(
         ).noNull
     }
 
+  private def opponentJson(opponent: Player) = Json.obj(
+    "side" -> opponent.side.name
+  )
+
   private def povJson(pov: Pov) = Json.obj(
     "id" -> pov.game.id,
-    "fen" -> (Forsyth >> (pov.game.toOkey, pov.side))
+    "fen" -> (Forsyth >> (pov.game.toOkey, pov.side)),
+    "player" -> pov.game.turnSide.name
   )
 }
