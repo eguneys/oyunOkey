@@ -13,12 +13,13 @@ object ApplicationBuild extends Build {
       scalaz, scalalib, RM, PRM),
     TwirlKeys.templateImports ++= Seq(
       "oyun.game.{ Game, Player, Pov }",
+      "oyun.masa.Masa",
       "oyun.api.Context",
       "oyun.app.templating.Environment._"
     )
   ) dependsOn api aggregate api
 
-  lazy val modules = Seq(common, db, user, game, setup, lobby, socket, hub, okey, round)
+  lazy val modules = Seq(common, db, user, game, setup, lobby, socket, hub, okey, round, masa)
 
   lazy val moduleRefs = modules map projectToRef
   lazy val moduleCPDeps = moduleRefs map { new sbt.ClasspathDependency(_, None) }
@@ -36,7 +37,7 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api, play.test, RM, PRM)
   )
 
-  lazy val hub = project("hub", Seq(common)).settings(
+  lazy val hub = project("hub", Seq(common, okey)).settings(
     libraryDependencies ++= provided(play.api, play.test)
   )
 
@@ -44,10 +45,13 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api, play.test, RM, PRM)
   )
 
-  lazy val setup = project("setup", Seq(common, user, lobby, hub)).settings(
+  lazy val setup = project("setup", Seq(common, user, lobby, masa, hub)).settings(
     libraryDependencies ++= provided(play.api, play.test)
   )
 
+  lazy val masa = project("masa", Seq(common, user, game, db, socket, hub)).settings(
+    libraryDependencies ++= provided(play.api, play.test, RM, PRM)
+  )
 
   lazy val round = project("round", Seq(common, user, game, okey, socket, hub)).settings(
     libraryDependencies ++= provided(play.api, play.test)

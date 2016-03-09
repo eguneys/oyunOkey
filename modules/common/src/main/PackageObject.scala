@@ -3,12 +3,20 @@ package oyun
 import scala.concurrent.Future
 
 import ornicar.scalalib
+import scalaz.{ Monad, Monoid, OptionT, ~> }
 
 trait PackageObject extends Steroids with WithFuture {
   lazy val logger = play.api.Logger("oyun")
   def loginfo(s: String) { logger info s }
   def logwarn(s: String) { logger warn s }
   def logerr(s: String) { logger error s }
+
+  implicit final def runOptionT[F[+_], A](ot: OptionT[F, A]): F[Option[A]] = ot.run
+
+  // from scalaz. We don't want to import all OptionTFunctions, because of the clash with `some`
+  def optionT[M[_]] = new (({ type λ[α] = M[Option[α]] })#λ ~>({ type λ[α] = OptionT[M, α] })#λ) {
+    def apply[A](a: M[Option[A]]) = new OptionT[M, A](a)
+  }
 }
 
 trait WithFuture {
@@ -26,9 +34,20 @@ trait WithPlay { self: PackageObject =>
 
   implicit def execontext = play.api.libs.concurrent.Execution.defaultContext
 
+
+  implicit def OyunFutureMonad = new Monad[Fu] {
+    override def map[A, B](fa: Fu[A])(f: A => B) = fa map f
+    def point[A](a: => A) = fuccess(a)
+    def bind[A, B](fa: Fu[A])(f: A => Fu[B]) = fa flatMap f
+  }
+
   implicit def OyunFuZero[A: Zero]: Zero[Fu[A]] =
     Zero.instance(fuccess(zero[A]))
 
+  implicit final class OyunTraversableFuture[A, M[X] <: TraversableOnce[X]](t: M[Fu[A]]) {
+    def sequenceFu(implicit cbf: scala.collection.generic.CanBuildFrom[M[Fu[A]], A, M[A]]) =
+      Future sequence t
+  }
 
   implicit final class OyunPimpedFuture[A](fua: Fu[A]) {
 
@@ -42,6 +61,11 @@ trait WithPlay { self: PackageObject =>
         case scala.util.Failure(e) => throw e
         case scala.util.Success(e) => succ(e)
       }
+    }
+
+    def awaitSeconds(seconds: Int): A = {
+      import scala.concurrent.duration._
+      scala.concurrent.Await.result(fua, seconds.seconds)
     }
   }
 

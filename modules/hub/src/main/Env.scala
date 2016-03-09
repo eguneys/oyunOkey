@@ -8,6 +8,9 @@ final class Env(config: Config, system: ActorSystem) {
     val lobby = select("actor.lobby")
   }
 
+  object socket {
+  }
+
   private def select(name: String) =
     system actorSelection ("/user/" + config.getString(name))
 }

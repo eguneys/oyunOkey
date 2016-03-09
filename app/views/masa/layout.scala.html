@@ -1,0 +1,12 @@
+@(title: String, moreJs: Html = Html(""))(body: Html)(implicit ctx: Context)
+
+@moreCss = {
+  @cssTag("masa.css")
+}
+
+@base.layout(
+title = title,
+moreCss = moreCss,
+moreJs = moreJs) {
+  @body
+}

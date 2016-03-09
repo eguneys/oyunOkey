@@ -4,6 +4,7 @@ import akka.actor._
 import akka.pattern.{ ask, pipe }
 
 import actorApi._
+import oyun.hub.actorApi.map.{ Tell }
 import oyun.hub.actorApi.{ GetUids, SocketUids }
 import oyun.socket.actorApi.Broom
 import makeTimeout.short
@@ -31,12 +32,7 @@ private[lobby] final class Lobby(
     case CancelHook(uid) =>
       HookRepo byUid uid foreach remove
 
-    case BiteHook(hookId, uid, user) => {
-      HookRepo byId hookId foreach { hook =>
-        HookRepo byUid uid foreach remove
-        Biter(hook, uid, user) pipeTo self
-      }
-    }
+    case BiteHook(hookId, uid, user) =>
 
     case msg:JoinHook =>
       socket ! msg
@@ -68,4 +64,8 @@ private[lobby] final class Lobby(
     socket ! RemoveHook(hook.id)
   }
 
+  private def update(hook: Hook) = {
+    HookRepo update hook
+    socket ! UpdateHook(hook)
+  }
 }

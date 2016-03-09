@@ -1,0 +1,17 @@
+@(m: Masa, data: play.api.libs.json.JsObject)(implicit ctx: Context)
+
+@moreJs = {
+  @jsAt(s"compiled/oyunkeyf.masa.js")
+  @embedJs {
+    oyunkeyf = oyunkeyf || {};
+    oyunkeyf.masa = {
+      data: @Html(play.api.libs.json.Json.stringify(data))
+    };
+  }
+}
+
+@masa.layout(
+  title = s"${m.fullName} #${m.id}",
+  moreJs = moreJs) {
+    <div id="masa"></div>
+}

@@ -32,5 +32,5 @@ object Hook {
       uid = uid,
       sid = sid,
       user = user map { LobbyUser.make },
-    createdAt = DateTime.now)
+      createdAt = DateTime.now)
 }

@@ -6,6 +6,7 @@ import ornicar.scalalib.Zero
 trait Steroids
     extends scalalib.Validation
     with scalalib.Common
+    with scalalib.OrnicarMonoid.Instances
     with scalalib.Zero.Syntax
     with scalalib.Zero.Instances
     with scalalib.OrnicarOption
@@ -24,9 +25,14 @@ trait BooleanSteroids {
    * so ?? works on Zero and not Monoid
    */
   implicit final class OyunPimpedBoolean(self: Boolean) {
+
+    def ??[A](a: => A)(implicit z: Zero[A]): A = if (self) a else Zero[A].zero
+
     def !(f: => Unit) = if (self) f
 
     def fold[A](t: => A, f: => A): A = if (self) t else f
+
+    def option[A](a: => A): Option[A] = if (self) Some(a) else None
   }
 }
 

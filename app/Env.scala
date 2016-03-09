@@ -20,4 +20,5 @@ object Env {
   def setup = oyun.setup.Env.current
   def lobby = oyun.lobby.Env.current
   def round = oyun.round.Env.current
+  def masa = oyun.masa.Env.current
 }

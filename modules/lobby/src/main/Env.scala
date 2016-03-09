@@ -9,6 +9,7 @@ import oyun.socket.History
 final class Env(
   config: Config,
   system: ActorSystem,
+  hub: oyun.hub.Env,
   scheduler: oyun.common.Scheduler) {
   private val settings = new {
     val SocketName = config getString "socket.name"
@@ -47,6 +48,7 @@ object Env {
   lazy val current = new Env(
     config = oyun.common.PlayApp loadConfig "lobby",
     system = oyun.common.PlayApp.system,
+    hub = oyun.hub.Env.current,
     scheduler = oyun.common.PlayApp.scheduler
   )
 }

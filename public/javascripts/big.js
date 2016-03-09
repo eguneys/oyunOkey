@@ -228,6 +228,7 @@ oyunkeyf.storage = {
 
   $(function() {
     if (oyunkeyf.lobby) startLobby(document.getElementById('hooks_wrap'), oyunkeyf.lobby);
+    else if (oyunkeyf.masa) startMasa(document.getElementById('masa'), oyunkeyf.masa);
   });
 
   oyunkeyf.startRound = function(element, cfg) {
@@ -274,18 +275,24 @@ oyunkeyf.storage = {
     function prepareForm() {
       var $form = $('.oyunkeyf_overboard');
       var $formTag = $form.find('form');
-      var ajaxSubmit = function() {
-        $.ajax({
-          url: $formTag.attr('action').replace(/uid-placeholder/, oyunkeyf.StrongSocket.sri),
-          data: $formTag.serialize(),
-          type: 'post'
+      if (false) {
+        var ajaxSubmit = function() {
+          $.ajax({
+            url: $formTag.attr('action').replace(/uid-placeholder/, oyunkeyf.StrongSocket.sri),
+            data: $formTag.serialize(),
+            type: 'post'
+          });
+          $form.find('a.close').click();
+          return false;
+        };
+        $formTag.find('button').click(function() {
+          return ajaxSubmit();
         });
-        $form.find('a.close').click();
-        return false;
-      };
-      $formTag.find('button').click(function() {
-        return ajaxSubmit();
-      });
+      } else {
+        $form.find('form').one('submit', function() {
+          $(this).find('.submits').find('button').hide().end().append('spin');
+        });
+      }
     }
 
     $startButtons.find('a').click(function() {
@@ -303,5 +310,25 @@ oyunkeyf.storage = {
       });
       return false;
     });
+  }
+
+  function startMasa(element, cfg) {
+    $('body').data('masa-id', cfg.data.id);
+    var masa;
+    oyunkeyf.socket = new oyunkeyf.StrongSocket(
+      '/masa/' + cfg.data.id + '/socket/v1', cfg.data.socketVersion, {
+        receive: function(t, d) {
+          console.log(t, d);
+          //masa.socketReceive(t, d);
+        },
+        events: {
+        },
+        options: {
+          name: "masa"
+        }
+      });
+    cfg.socketSend = oyunkeyf.socket.send.bind(oyunkeyf.socket);
+
+    //masa = OyunkeyfMasa(element, cfg);
   }
 })();

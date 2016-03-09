@@ -3,9 +3,9 @@ package oyun.lobby
 import akka.pattern.ask
 import play.api.libs.json._
 import play.api.libs.iteratee._
+import oyun.common.PimpedJson._
 
 import actorApi._
-import oyun.common.PimpedJson._
 import oyun.socket.actorApi.{ Connected => _, _ }
 import oyun.socket.{ SocketActor, History, Historical }
 
@@ -27,18 +27,17 @@ private[lobby] final class Socket(
 
     case RemoveHook(hookId) => notifyVersion("hrm", hookId)
 
-    case JoinHook(uid, hook, game, side) =>
-      withMember(hook.uid)(notifyPlayerStart(game, okey.EastSide))
-      withMember(uid)(notifyPlayerStart(game, side))
+    case UpdateHook(hook) => notifyVersion("hup", hook.render)
+
+    case JoinHook(uid, challengeId, side) =>
+      withMember(uid)(notifyPlayerJoin(challengeId, side))
   }
 
-  private def notifyPlayerStart(game: oyun.game.Game, side: okey.Side) = { member: Member =>
-    game fullIdOf side foreach { fullId =>
-      notifyMember("redirect", Json.obj(
-        "id" -> (fullId),
-        "url" -> playerUrl(fullId)
-      ).noNull)(member)
-    }
+  private def notifyPlayerJoin(challengeId: String, side: okey.Side) = { member: Member =>
+    notifyMember("redirect", Json.obj(
+      "id" -> challengeId,
+      "url" -> playerUrl(challengeId, side)
+    ).noNull)(member)
   }
-  private def playerUrl(fullId: String) = s"/$fullId"
+  private def playerUrl(challId: String, side: okey.Side) = s"/$challId/$side.name"
 }

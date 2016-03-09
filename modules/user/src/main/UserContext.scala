@@ -7,6 +7,8 @@ sealed trait UserContext {
   val req: RequestHeader
 
   val me: Option[User]
+
+  def userId = me map (_.id)
 }
 
 sealed abstract class BaseUserContext(val req: RequestHeader, val me: Option[User]) extends UserContext {

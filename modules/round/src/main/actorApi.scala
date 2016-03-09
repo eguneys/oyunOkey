@@ -1,7 +1,7 @@
 package oyun.round
 package actorApi
 
-import okey.Side
+import okey.{ Side, Sides }
 
 import oyun.socket.SocketMember
 import oyun.user.User
@@ -9,6 +9,9 @@ import oyun.user.User
 sealed trait Member extends SocketMember {
   val side: Side
   val playerIdOption: Option[String]
+
+  def owner = playerIdOption.isDefined
+  def watcher = !owner
 }
 
 object Member {
@@ -47,4 +50,10 @@ case class Join(
 case class Connected(enumerator: JsEnumerator, member: Member)
 
 case object GetSocketStatus
-case class SocketStatus(version: Int)
+case class SocketStatus(
+  version: Int,
+  sidesOnGame: Sides[Boolean],
+  sidesIsGone: Sides[Boolean]) {
+  def onGame(side: Side) = sidesOnGame(side)
+  def isGone(side: Side) = sidesIsGone(side)
+}

@@ -26,4 +26,8 @@ object HookRepo {
   def remove(hook: Hook) {
     hooks = hooks filterNot (_.id == hook.id)
   }
+
+  def update(hook: Hook) {
+    save(hook)
+  }
 }

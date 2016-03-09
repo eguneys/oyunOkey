@@ -60,22 +60,18 @@ object BSONHandlers {
 
     def reads(r: BSON.Reader): Game = {
       val nbTurns = r int turns
-      val pids = r.get[List[String]](playerIds)
-      val (eastId, westId, northId, southId) = (pids.headOption.filter(_.nonEmpty),
-        pids.lift(1).filter(_.nonEmpty),
-        pids.lift(2).filter(_.nonEmpty),
-        pids.lift(3).filter(_.nonEmpty))
+
+      val List(eastId, westId, northId, southId) = r str playerIds grouped 4 toList
 
       val players = Sides(eastId, westId, northId, southId) sideMap {
-        case (_, None) => None
-        case (side, Some(id)) => Some(Player(id, side))
+        case (side, id) => Player(id, side)
       }
 
       val bPieces = r.get[Sides[ByteArray]](binaryPieces)
 
       val bDiscards = r.get[Sides[ByteArray]](binaryDiscards)
 
-      val bOpens = r.get[BinaryOpens](binaryOpens) some
+      val bOpens = r.getO[BinaryOpens](binaryOpens)
 
       Game(
         id = r str id,
@@ -92,7 +88,7 @@ object BSONHandlers {
 
     def writes(w: BSON.Writer, o: Game) = BSONDocument(
       id -> o.id,
-      playerIds -> o.players.map(op => ~(op map(_.id))).toList,
+      playerIds -> (o.players.map(_.id) mkString),
       binaryPieces -> o.binaryPieces,
       binaryDiscards -> o.binaryDiscards,
       binaryMiddles -> o.binaryMiddles,

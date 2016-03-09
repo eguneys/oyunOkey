@@ -8,6 +8,8 @@ object GameRepo {
 
   type ID = String
 
+  def game(gameId: ID): Fu[Option[Game]] = $find byId gameId
+
   def pov(playerRef: PlayerRef): Fu[Option[Pov]] =
     $find byId playerRef.gameId map { gameOption =>
       gameOption flatMap { game =>

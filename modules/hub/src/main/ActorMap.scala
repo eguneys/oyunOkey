@@ -13,6 +13,8 @@ trait ActorMap extends Actor {
 
   def actorMapReceive: Receive = {
     case Get(id) => sender ! getOrMake(id)
+    case Tell(id, msg) => getOrMake(id) forward msg
+    case Ask(id, msg) => getOrMake(id) forward msg
   }
 
   private def getOrMake(id: String) = actors get id getOrElse {

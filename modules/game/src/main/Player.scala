@@ -13,7 +13,10 @@ object Player {
     id = IdGenerator.player,
     side = side)
 
-  def twoSides(side1: Side, side2: Side) =
-    Sides[Option[Player]].withSide(side1, Some(make(side1)))
-      .withSide(side2, Some(make(side2)))
+  def east = make(Side.EastSide)
+  def west = make(Side.WestSide)
+  def north = make(Side.NorthSide)
+  def south = make(Side.SouthSide)
+
+  def allSides = Sides(east, west, north, south)
 }

@@ -6,11 +6,11 @@ case class Pov(game: Game, side: Side) {
 
   def player = game player side
 
-  def playerId = player map (_.id) getOrElse ""
+  def playerId = player.id
 
   def gameId = game.id
 
-  def fullId = game fullIdOf side getOrElse ""
+  def fullId = game fullIdOf side
 
   def opponentLeft = game player side.previous
   def opponentRight = game player side.next

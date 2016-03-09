@@ -35,7 +35,6 @@ body.no-select {
 
 body > div.content {
   margin: 35px auto 30px auto;
-  margin-left: calc(50% - 620px);
 }
 
 #top {

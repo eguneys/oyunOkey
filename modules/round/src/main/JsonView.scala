@@ -25,9 +25,9 @@ final class JsonView(
             "side" -> side.name,
             "version" -> socket.version
           ),
-          "opponentLeft" -> (opponentLeft map opponentJson),
-          "opponentRight" -> (opponentRight map opponentJson),
-          "opponentUp" -> (opponentUp map opponentJson),
+          "opponentLeft" -> opponentJson(socket, opponentLeft),
+          "opponentRight" -> opponentJson(socket, opponentRight),
+          "opponentUp" -> opponentJson(socket, opponentUp),
           "url" -> Json.obj(
             "socket" -> s"/$fullId/socket",
             "round" -> s"/$fullId"
@@ -35,8 +35,10 @@ final class JsonView(
         ).noNull
     }
 
-  private def opponentJson(opponent: Player) = Json.obj(
-    "side" -> opponent.side.name
+  private def opponentJson(socket: SocketStatus, opponent: Player) = Json.obj(
+    "side" -> opponent.side.name,
+    "onGame" -> socket.onGame(opponent.side),
+    "isGone" -> socket.isGone(opponent.side)
   )
 
   private def povJson(pov: Pov) = Json.obj(

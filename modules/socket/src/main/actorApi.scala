@@ -10,3 +10,5 @@ case class PingVersion(uid: String, version: Int)
 case object Broom
 
 case class Quit(uid: String)
+
+case object GetVersion
