@@ -9,7 +9,14 @@ object MasaRepo {
 
   private def selectId(id: String) = BSONDocument("_id" -> id)
 
+  private val enterableSelect = BSONDocument(
+    "status" -> BSONDocument("$in" -> List(Status.Created.id))
+  )
+
   def byId(id: String): Fu[Option[Masa]] = coll.find(selectId(id)).one[Masa]
+
+  def enterableById(id: String): Fu[Option[Masa]] =
+    coll.find(selectId(id)).one[Masa]
 
   def insert(masa: Masa) = coll.insert(masa)
 

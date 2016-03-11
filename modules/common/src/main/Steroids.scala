@@ -42,6 +42,8 @@ trait OptionSteroids {
 
   implicit final class OyunPimpedOption[A](self: Option[A]) { 
 
+    def |(a: => A): A = self getOrElse a
+
     def unary_~(implicit z: Zero[A]): A = self getOrElse z.zero
 
     def err(message: => String): A = self.getOrElse(sys.error(message))

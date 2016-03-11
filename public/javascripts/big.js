@@ -318,8 +318,7 @@ oyunkeyf.storage = {
     oyunkeyf.socket = new oyunkeyf.StrongSocket(
       '/masa/' + cfg.data.id + '/socket/v1', cfg.data.socketVersion, {
         receive: function(t, d) {
-          console.log(t, d);
-          //masa.socketReceive(t, d);
+          masa.socketReceive(t, d);
         },
         events: {
         },
@@ -329,6 +328,6 @@ oyunkeyf.storage = {
       });
     cfg.socketSend = oyunkeyf.socket.send.bind(oyunkeyf.socket);
 
-    //masa = OyunkeyfMasa(element, cfg);
+    masa = OyunkeyfMasa(element, cfg);
   }
 })();

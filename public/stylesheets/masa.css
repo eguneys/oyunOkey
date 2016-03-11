@@ -1,0 +1,43 @@
+#masa .header {
+  display: flex;
+  align-items: center;
+  height: 70px;
+}
+
+#masa .header .img {
+  margin: 0 15px;
+}
+
+#masa .header h1 {
+  flex: 9 1 auto;
+  padding: 0;
+}
+
+#masa button.right {
+  margin-left: 5px;
+}
+
+#masa div.masa_show {
+  width: 525px;
+  min-height: 480px;
+}
+
+#masa .seats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#masa .seats .seat {
+  margin: 5px;
+}
+
+#masa .seats .middle {
+  display: flex;
+  align-items: center;
+}
+
+#masa .table {
+  height: 100px;
+  width: 100px;
+}

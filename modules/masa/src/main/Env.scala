@@ -17,6 +17,8 @@ final class Env(
 
   private val settings = new {
     val CollectionMasa = config getString "collection.masa"
+    val CollectionPairing = config getString "collection.pairing"
+    val CollectionPlayer = config getString "collection.player"
     val SocketName = config getString "socket.name"
   }
   import settings._
@@ -41,6 +43,8 @@ final class Env(
     socketHub ? Ask(masaId, GetVersion) mapTo manifest[Int]
 
   private[masa] lazy val masaColl = db(CollectionMasa)
+  private[masa] lazy val pairingColl = db(CollectionPairing)
+  private[masa] lazy val playerColl = db(CollectionPlayer)
 }
 
 

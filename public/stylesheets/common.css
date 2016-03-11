@@ -15,6 +15,14 @@ td {
   padding: 0;
 }
 
+input,
+textarea,
+button {
+  font-family: inherit;
+  font-size: inheirt;
+  font-height: inherit;
+}
+
 html {
   min-height: 100%;
 }
@@ -48,4 +56,63 @@ body > div.content {
 
 #oyunkeyf {
   margin-left: 150px;
+}
+
+div.content_box {
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 20px 24px 24px 24px;
+  text-align: left;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+div.content_box h1 {
+  font-size: 1.8em;
+  font-weight: normal;
+  display: inline;
+}
+
+div.content_box.no_padding {
+  padding: 0;
+}
+
+/* soft inactive gradient */
+.button {
+  background: rgb(245, 245, 245);
+  background: linear-gradient(to bottom, rgba(245, 245, 245, 1) 0%, rgba(240, 240, 240, 1) 100%);
+  text-shadow: 0 1px 0 #FFF;
+  color: #848484;
+}
+
+.button {
+  font-weight: bold;
+}
+
+.button {
+  padding: 6px 11px;
+  white-space: nowrap;
+  text-decoration: none!important;
+}
+.button {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e2e2e2;
+}
+.button {
+  border-radius: 2px;
+}
+.button:active {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12) inset;
+}
+
+.button:hover {
+  border-color: #e2e2e2;
+  background: rgb(248, 248, 248);
+  background: linear-gradient(to bottom, rgba(248, 248, 248, 1) 0%, rgba(243, 243, 243, 1) 100%);
+}
+
+.button:focus {outline: 0;}
+
+.glowed {
+  box-shadow: 0 0 5px 1px #e89000, 0 0 10px 1px #d85000;
 }

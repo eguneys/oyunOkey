@@ -1,10 +1,12 @@
 package controllers
 
+import play.api.mvc.{ Result, Cookie }
 import play.api.libs.json._
 
 import oyun.api.Context
 import oyun.app._
-import oyun.masa.{ MasaRepo }
+import oyun.common.{ OyunCookie }
+import oyun.masa.{ MasaRepo, PlayerRef, AnonCookie }
 import views._
 
 object Masa extends OyunController {
@@ -32,13 +34,28 @@ object Masa extends OyunController {
 
   def create = OpenBody { implicit ctx =>
     implicit val req = ctx.body
+    val playerRef = PlayerRef()
     Env.setup.forms.masa(ctx).bindFromRequest.fold(
       err => BadRequest(html.masa.form(err)).fuccess,
-      setup => env.api.createMasa(setup.masa()) map { masa =>
-        Redirect(routes.Masa.show(masa.id))
+      setup => {
+        env.api.createMasa(setup.masa(), playerRef) map { masa =>
+          Redirect(routes.Masa.show(masa.id))
+        } flatMap withMasaAnonCookie(ctx.isAnon, playerRef.id)
       }
     )
   }
+
+  private def withMasaAnonCookie(cond: Boolean, id: String)(res: Result)(implicit ctx: Context): Fu[Result] =
+    cond ?? {
+      implicit val req = ctx.req
+      fuccess(OyunCookie.cookie(
+        AnonCookie.name,
+        id,
+        maxAge = AnonCookie.maxAge.some,
+        httpOnly = false.some) some)
+    } map { cookieOption =>
+      cookieOption.fold(res) { res.withCookies(_) } ~ { println }
+    }
 
   def websocket(id: String, apiVersion: Int) = SocketOption[JsValue] { implicit ctx =>
     get("sri") ?? { uid =>

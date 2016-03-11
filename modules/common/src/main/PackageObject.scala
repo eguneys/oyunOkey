@@ -51,6 +51,10 @@ trait WithPlay { self: PackageObject =>
 
   implicit final class OyunPimpedFuture[A](fua: Fu[A]) {
 
+    def >>-(sideEffect: => Unit): Fu[A] = fua andThen {
+      case _ => sideEffect
+    }
+
     def void: Funit = fua map (_ => Unit)
 
     def inject[B](b: => B): Fu[B] = fua map (_ => b)

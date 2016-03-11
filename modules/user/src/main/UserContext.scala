@@ -8,6 +8,10 @@ sealed trait UserContext {
 
   val me: Option[User]
 
+  def isAuth = me.isDefined
+
+  def isAnon = !isAuth
+  
   def userId = me map (_.id)
 }
 
