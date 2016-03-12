@@ -1,27 +1,29 @@
 import m from 'mithril';
 import header from './header';
 import button from './button';
+import { standing } from './arena';
 
 function table(ctrl) {
   return m('div.table');
 }
 
-function seat(ctrl) {
+function seat(ctrl, side) {
+  var player = ctrl.data.actives[side];
   return m('div.seat', [
-    button.joinWithdraw(ctrl)
+    player ? player.id : button.join(ctrl, side)
   ]);
 }
 
-function seats(ctrl) {
+function seats(ctrl, actives) {
   return m('div.seats_wrap',
            m('div.seats', [
-             seat(ctrl),
+             seat(ctrl, 'north'),
              m('div.middle', [
-               seat(ctrl),
+               seat(ctrl, 'east'),
                table(ctrl),
-               seat(ctrl)
+               seat(ctrl, 'west'),
              ]),
-               seat(ctrl)
+             seat(ctrl, 'south')
            ])
           );
 };
@@ -30,6 +32,7 @@ module.exports = {
   main: function(ctrl) {
     return [
       header(ctrl),
+      standing(ctrl),
       seats(ctrl)
     ];
   }

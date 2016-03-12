@@ -1,7 +1,8 @@
 import m from 'mithril';
+import { util } from 'okeyground';
 
 function orJoinSpinner(ctrl, f) {
-  return ctrl.vm.joinSpinner ? m.trust('oyunkeyf.spinnerHtml') : f();
+  return ctrl.vm.joinSpinner ? m.trust(oyunkeyf.spinnerHtml) : f();
 }
 
 function withdraw(ctrl) {
@@ -13,11 +14,11 @@ function withdraw(ctrl) {
   });
 }
 
-function join(ctrl) {
+function join(ctrl, side) {
   return orJoinSpinner(ctrl, function() {
     return m('button.button.right.text.glowed', {
       'data-icon': 'G',
-      onclick: ctrl.join
+      onclick: util.partial(ctrl.join, side)
     }, 'trans join');
   });
 }
@@ -26,8 +27,6 @@ module.exports = {
   withdraw: withdraw,
   join: join,
   joinWithdraw: function(ctrl) {
-    return join(ctrl);
-    return (!ctrl.userId) ? null : (
-      ctrl.data.me && !ctrl.data.me.withdraw ? withdraw(ctrl) : join(ctrl));
+    return ctrl.data.me && ctrl.data.me.active ? withdraw(ctrl) : join(ctrl);
   }
 };

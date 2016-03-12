@@ -17,6 +17,26 @@
   margin-left: 5px;
 }
 
+#masa thead .spinner {
+  width: 30px;
+  height: 30px;
+  float: right;
+}
+
+#masa div.standing_wrap {
+  overflow: hidden;
+}
+
+#masa table.standing {
+  width: 525px;
+  border-bottom: none;
+}
+
+#masa button.right {
+  float: right;
+  margin-left: 5px;
+}
+
 #masa div.masa_show {
   width: 525px;
   min-height: 480px;

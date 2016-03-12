@@ -37,7 +37,7 @@ final class Env(
 
   lazy val jsonView = new JsonView()
 
-  lazy val api = new MasaApi()
+  lazy val api = new MasaApi(socketHub = socketHub)
 
   def version(masaId: String): Fu[Int] =
     socketHub ? Ask(masaId, GetVersion) mapTo manifest[Int]

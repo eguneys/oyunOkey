@@ -20,4 +20,7 @@ private[masa] object Member {
 private[masa] case class Join(
   uid: String, 
   user: Option[User])
+private[masa] case object Reload
 private[masa] case class Connected(enumerator: JsEnumerator, member: Member)
+
+private[masa] case object NotifyReload

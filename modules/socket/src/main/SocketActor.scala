@@ -23,6 +23,14 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
 
   def receive = receiveSpecific orElse receiveGeneric
 
+  def notifyAll(t: String) {
+    notifyAll(makeMessage(t))
+  }
+
+  def notifyAll(msg: JsObject) {
+    members.values.foreach(_ push  msg)
+  }
+
   def notifyMember[A: Writes](t: String, data: A)(member: M) {
     member push makeMessage(t, data)
   }

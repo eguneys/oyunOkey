@@ -17,6 +17,12 @@ trait PackageObject extends Steroids with WithFuture {
   def optionT[M[_]] = new (({ type λ[α] = M[Option[α]] })#λ ~>({ type λ[α] = OptionT[M, α] })#λ) {
     def apply[A](a: M[Option[A]]) = new OptionT[M, A](a)
   }
+
+  def parseIntOption(str: String): Option[Int] = try {
+    Some(java.lang.Integer.parseInt(str))
+  } catch {
+    case e: NumberFormatException => None
+  }
 }
 
 trait WithFuture {

@@ -1,8 +1,9 @@
 package controllers
 
 import play.api.libs.iteratee.{ Iteratee, Enumerator }
-import play.api.libs.json.{ Json, JsValue }
+import play.api.libs.json.{ Json, JsValue, JsObject, JsArray, Writes }
 import play.api.mvc._
+import play.api.http._
 import play.api.mvc.WebSocket.FrameFormatter
 import play.twirl.api.Html
 
@@ -12,6 +13,7 @@ import oyun.user.{ UserContext }
 
 private[controllers] trait OyunController
     extends Controller
+    with ContentTypes
     with RequestGetter {
 
   protected implicit def OyunHtmlToResult(content: Html): Result = Ok(content)
@@ -47,12 +49,26 @@ private[controllers] trait OyunController
 
   protected def OpenBody[A](p: BodyParser[A])(f: BodyContext[_] => Fu[Result]): Action[A] = Action.async(p)(req => reqToCtx(req) flatMap f)
 
+  protected def OptionResult[A](fua: Fu[Option[A]])(op: A => Result)(implicit ctx: Context) =
+    OptionFuResult(fua) { a => fuccess(op(a)) }
+
   protected def OptionFuResult[A](fua: Fu[Option[A]])(op: A => Fu[Result])(implicit ctx: Context) =
     fua flatMap { _.fold(notFound(ctx))(a => op(a)) }
+
+  protected def OptionFuOk[A, B: Writeable: ContentTypeOf](fua: Fu[Option[A]])(op: A => Fu[B])(implicit ctx: Context) =
+    fua flatMap { _.fold(notFound(ctx))(a => op(a) map { Ok(_) }) }
 
   def notFound(implicit ctx: Context): Fu[Result] = {
     Main notFound ctx.req
   }
+
+  def jsonError[A: Writes](err: A): JsObject = Json.obj("error" -> err)
+
+  protected def negotiate(html: => Fu[Result], api: Int => Fu[Result])(implicit ctx: Context): Fu[Result] =
+    (oyun.api.Mobile.Api.requestVersion(ctx.req) match {
+      case Some(1) => api(1) map (_ as JSON)
+      case _ => html
+    }) map (_.withHeaders("Vary" -> "Accept"))
 
   protected def reqToCtx(req: RequestHeader): Fu[HeaderContext] =
   {

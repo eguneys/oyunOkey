@@ -36,15 +36,22 @@ object BSONHandlers {
     )
   }
 
+  private implicit val statusBSONHandler = new BSONHandler[BSONInteger, Status] {
+    def read(bsonInt: BSONInteger): Status = Status(bsonInt.value) err s"No such status: ${bsonInt.value}"
+    def write(x: Status) = BSONInteger(x.id)
+  }
+
   implicit val masaHandler = new BSON[Masa] {
     def reads(r: BSON.Reader) = {
       Masa(
-        id = r str "_id"
+        id = r str "_id",
+        status = r.get[Status]("status")
       )
     }
 
     def writes(w: BSON.Writer, o: Masa) = BSONDocument(
-      "_id" -> o.id
+      "_id" -> o.id,
+      "status" -> o.status
     )
   }
 

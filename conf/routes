@@ -17,6 +17,9 @@ GET     /masa/new                       controllers.Masa.form
 POST    /masa/new                       controllers.Masa.create
 GET     /masa/$id<\w{8}>                controllers.Masa.show(id: String)
 GET     /masa/$id<\w{8}>/socket/v:apiVersion controllers.Masa.websocket(id: String, apiVersion: Int)
+POST     /masa/$id<\w{8}>/join          controllers.Masa.join(id: String)
+POST     /masa/$id<\w{8}>/withdraw     controllers.Masa.withdraw(id: String)
+
 
 # Assets
 GET     /assets/*file           controllers.Assets.at(path="/public", file)

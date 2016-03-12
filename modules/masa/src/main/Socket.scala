@@ -4,6 +4,7 @@ import akka.actor._
 import akka.pattern.pipe
 import play.api.libs.json._
 import play.api.libs.iteratee._
+import scala.concurrent.duration._
 
 import actorApi._
 import oyun.socket.actorApi.{ Connected => _, _ }
@@ -12,10 +13,16 @@ import oyun.socket.{ SocketActor, History, Historical }
 private[oyun] final class Socket(
   masaId: String,
   val history: History) extends SocketActor[Member] with Historical[Member] {
+
+
+  private var delayedReloadNotification = false
+
   def receiveSpecific = {
     case PingVersion(uid, v) => {
       ping(uid)
     }
+
+    case Reload => notifyReload
 
     case GetVersion => sender ! history.version
 
@@ -24,5 +31,19 @@ private[oyun] final class Socket(
       val member = Member(channel, user)
       addMember(uid, member)
       sender ! Connected(enumerator, member)
+
+
+    case NotifyReload =>
+      delayedReloadNotification = false
+      notifyAll("reload")
+  }
+
+  def notifyReload {
+    if (!delayedReloadNotification) {
+      delayedReloadNotification = true
+      // keep the delay low for immediate response to join/withdraw
+      // but still debounce to avoid masa start message rush
+      context.system.scheduler.scheduleOnce(300 millis, self, NotifyReload)
+    }
   }
 }
