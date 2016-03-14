@@ -29,7 +29,7 @@ object ApplicationBuild extends Build {
       play.api)
   ) aggregate (moduleRefs: _*)
 
-  lazy val user = project("user", Seq(common)).settings(
+  lazy val user = project("user", Seq(common, memo)).settings(
     libraryDependencies ++= provided(play.api, play.test)
   )
 
@@ -49,7 +49,7 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api, play.test)
   )
 
-  lazy val masa = project("masa", Seq(common, user, game, db, socket, hub)).settings(
+  lazy val masa = project("masa", Seq(common, user, game, db, socket, hub, memo)).settings(
     libraryDependencies ++= provided(play.api, play.test, RM, PRM)
   )
 
@@ -58,6 +58,10 @@ object ApplicationBuild extends Build {
   )
 
   lazy val lobby = project("lobby", Seq(common, user, game, okey, socket, hub)).settings(
+    libraryDependencies ++= provided(play.api, play.test)
+  )
+
+  lazy val memo = project("memo").settings(
     libraryDependencies ++= provided(play.api, play.test)
   )
 

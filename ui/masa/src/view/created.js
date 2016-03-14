@@ -32,8 +32,8 @@ module.exports = {
   main: function(ctrl) {
     return [
       header(ctrl),
-      standing(ctrl),
-      seats(ctrl)
+      seats(ctrl),
+      standing(ctrl)
     ];
   }
 };

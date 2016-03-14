@@ -5,7 +5,7 @@ import play.api.libs.json._
 
 import oyun.api.Context
 import oyun.app._
-import oyun.common.{ OyunCookie }
+import oyun.common.{ HTTPRequest, OyunCookie }
 import oyun.masa.{ MasaRepo, PlayerRef, AnonCookie }
 import views._
 
@@ -66,7 +66,8 @@ object Masa extends OyunController with TheftPrevention {
     OptionFuResult(repo byId id) { masa =>
       OptionResult(playerForReq(masa.id)) { player =>
         env.api.withdraw(masa.id, player.id)
-        Redirect(routes.Masa.show(masa.id))
+        if (HTTPRequest.isXhr(ctx.req)) Ok(Json.obj("ok" -> true)) as JSON
+        else Redirect(routes.Masa.show(masa.id))
       }
     }
   }

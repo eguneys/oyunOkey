@@ -18,6 +18,18 @@ private[masa] final class MasaApi(
     MasaRepo.insert(masa) >>- join(masa.id, player) inject masa
   }
 
+  def makePairings(oldMasa: Masa, players: List[String]) {
+    Sequencing(oldMasa.id)(MasaRepo.startedById) { masa =>
+      masa.createPairings(masa, players).flatMap {
+        case None => funit
+        case Some(pairing) => {
+          println(pairing)
+          PairingRepo.insert(pairing)
+        }
+      }
+    }
+  }
+
 
   def join(masaId: String, player: PlayerRef, side: Option[String] = None) {
     Sequencing(masaId)(MasaRepo.enterableById) { masa =>
@@ -30,6 +42,14 @@ private[masa] final class MasaApi(
   def withdraw(masaId: String, playerId: String) {
     Sequencing(masaId)(MasaRepo.enterableById) { masa =>
       PlayerRepo.withdraw(masa.id, playerId) >>- socketReload(masa.id)
+    }
+  }
+
+
+  def start(oldMasa: Masa) {
+    Sequencing(oldMasa.id)(MasaRepo.createdById) { masa =>
+      MasaRepo.setStatus(masa.id, Status.Started) >>-
+      sendTo(masa.id, Reload)
     }
   }
 

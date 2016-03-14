@@ -2,7 +2,7 @@ package oyun.masa
 
 import okey.Side
 
-private[masa] case class Player(
+case class Player(
   _id: String,
   masaId: String,
   userId: Option[String] = None,
@@ -17,7 +17,10 @@ private[masa] case class Player(
   def ref = PlayerRef(id = id, userId = userId)
 }
 
-private[masa] object Player {
+object Player {
+
+  case class Active(player: Player)
+
   private[masa] def make(masaId: String) = new Player(
     _id = oyun.game.IdGenerator.game,
     masaId = masaId

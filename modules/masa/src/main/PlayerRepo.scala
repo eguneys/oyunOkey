@@ -1,6 +1,7 @@
 package oyun.masa
 
 import reactivemongo.bson._
+import reactivemongo.core.commands._
 
 import okey.Side
 
@@ -29,6 +30,9 @@ object PlayerRepo {
   def activeSide(masaId: String, side: Side): Fu[Option[Player]] =
     coll.find(selectMasa(masaId) ++ selectActiveSide(side)).one[Player]
 
+  def countActive(masaId: String): Fu[Int] =
+    coll.count(Some(selectMasa(masaId) ++ selectActive))
+
   def join(masaId: String, player: Player, oside: Option[Side]) =
     freeSides(masaId) flatMap { l =>
       l.find(s => (oside | s) == s) match {
@@ -45,6 +49,9 @@ object PlayerRepo {
   def withdraw(masaId: String, playerId: String) = coll.update(
     selectMasaPlayer(masaId, playerId),
     BSONDocument("$set" -> BSONDocument("a" -> false))).void
+
+  def activePlayerIds(masaId: String): Fu[List[String]] =
+    activePlayers(masaId) map { _ map (_.id) }
 
   def activePlayers(masaId: String): Fu[List[Player]] =
     coll.find(selectMasa(masaId) ++ selectActive).cursor[Player]().collect[List]()

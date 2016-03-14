@@ -78,6 +78,7 @@ object BSONHandlers {
       Pairing(
         id = r str "_id",
         masaId = r str "mid",
+        status = okey.Status(r int "s") err "masa pairing status",
         playerIds = r.get[Sides[String]]("pids")
       )
     }
@@ -85,6 +86,7 @@ object BSONHandlers {
     def writes(w: BSON.Writer, o: Pairing) = BSONDocument(
       "_id" -> o.id,
       "mid" -> o.masaId,
+      "s" -> o.status.id,
       "pids" -> o.playerIds
     )
   }

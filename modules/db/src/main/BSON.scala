@@ -1,5 +1,6 @@
 package oyun.db
 
+import org.joda.time.DateTime
 import reactivemongo.bson._
 
 abstract class BSON[T]
@@ -17,6 +18,11 @@ abstract class BSON[T]
 }
 
 object BSON {
+
+  implicit object BSONJodaDateTimeHandler extends BSONHandler[BSONDateTime, DateTime] {
+    def read(x: BSONDateTime) = new DateTime(x.value)
+    def write(x: DateTime) = BSONDateTime(x.getMillis)
+  }
 
   final class Reader(val doc: BSONDocument) {
     val map = {
@@ -54,4 +60,14 @@ object BSON {
   def debugDoc(doc: BSONDocument): String = (doc.elements.toList map {
     case (k, v) => s"$k: ${debug(v)}"
   }).mkString("{", ", ", "}")
+
+
+  def asStrings(vs: List[BSONValue]): List[String] = {
+    val b = new scala.collection.mutable.ListBuffer[String]
+    vs foreach {
+      case BSONString(s) => b += s
+      case _ =>
+    }
+    b.toList
+  }
 }

@@ -23,4 +23,8 @@ private[masa] case class Join(
 private[masa] case object Reload
 private[masa] case class Connected(enumerator: JsEnumerator, member: Member)
 
+// organizer
+private[masa] case object AllCreatedMasas
+private[masa] case object StartedMasas
+
 private[masa] case object NotifyReload

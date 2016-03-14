@@ -7,6 +7,8 @@ final class Env(
   config: Config,
   system: ActorSystem) {
 
+  lazy val bus = oyun.common.Bus(system)
+
   lazy val preloader = new mashup.Preload(
     lobbyApi = Env.api.lobbyApi)
 }

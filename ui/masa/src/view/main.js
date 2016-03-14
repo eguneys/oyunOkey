@@ -2,10 +2,12 @@ import m from 'mithril';
 import { util } from 'okeyground';
 
 import created from './created';
+import started from './started';
 
 module.exports = function(ctrl) {
   var handler;
-  handler = created;
+  if (ctrl.data.isStarted) handler = started;
+  else handler = created;
 
   return [
     m('div', {

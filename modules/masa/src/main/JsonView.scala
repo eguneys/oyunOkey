@@ -18,6 +18,7 @@ final class JsonView() {
   } yield Json.obj(
     "id" -> masa.id,
     "fullName" -> masa.fullName,
+    "isStarted" -> masa.isStarted,
     "actives" -> data.actives,
     "pairings" -> data.pairings,
     "me" -> myInfo.map(myInfoJson),

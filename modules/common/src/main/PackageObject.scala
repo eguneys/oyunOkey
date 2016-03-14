@@ -73,10 +73,16 @@ trait WithPlay { self: PackageObject =>
       }
     }
 
+    def addEffect(effect: A => Unit) = fua ~ (_ foreach effect)
+
     def awaitSeconds(seconds: Int): A = {
       import scala.concurrent.duration._
       scala.concurrent.Await.result(fua, seconds.seconds)
     }
+  }
+
+  implicit final class OyunPimpedActorSystem(self: akka.actor.ActorSystem) {
+    def oyunBus = oyun.common.Bus(self)
   }
 
   object makeTimeout {

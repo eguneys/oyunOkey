@@ -13,6 +13,36 @@
   padding: 0;
 }
 
+#masa a.pov {
+  display: block;
+  margin: 0 25px 1em 25px;
+  text-align: center;
+  font-size: 1.5em;
+  position: relative;
+  border-radius: 100px;
+  transition: box-shadow 1.5s;
+}
+
+#masa a.pov span {
+  display: block;
+  font-weight: bold;
+}
+
+#masa a.pov::before,
+#masa a.pov::after {
+  content: 'U';
+  font-size: 32px;
+  position: absolute;
+  top: 16px;
+}
+
+#masa a.pov::before {
+  left: 15px;
+}
+#masa a.pov::after {
+  right: 15px;
+}
+
 #masa button.right {
   margin-left: 5px;
 }

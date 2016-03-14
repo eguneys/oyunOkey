@@ -1,5 +1,7 @@
+import m from 'mithril';
 import socket from './socket';
 import xhr from './xhr';
+import { myCurrentGameId } from './masa';
 
 module.exports = function(env) {
   this.data = env.data;
@@ -12,8 +14,16 @@ module.exports = function(env) {
   };
 
   this.reload = (data) => {
+    //if (this.data.isStarted !== data.isStarted) m.redraw.strategy('all');
     this.data = data;
     this.vm.joinSpinner = false;
+    redirectToMyGame();
+  };
+
+  var redirectToMyGame = () => {
+    var gameId = myCurrentGameId(this);
+    if(gameId)
+      location.href = '/' + gameId;
   };
 
   this.join = (side) => {
@@ -25,4 +35,6 @@ module.exports = function(env) {
     xhr.withdraw(this);
     this.vm.joinSpinner = true;
   };
+
+  redirectToMyGame();
 };

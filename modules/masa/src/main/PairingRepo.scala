@@ -1,8 +1,10 @@
 package oyun.masa
 
+import org.joda.time.DateTime
 import reactivemongo.bson._
 
 import BSONHandlers._
+import oyun.db.BSON._
 
 import okey.Side
 
@@ -12,15 +14,21 @@ object PairingRepo {
 
   private def selectId(id: String) = BSONDocument("_id" -> id)
   def selectMasa(masaId: String) = BSONDocument("mid" -> masaId)
+
+  private val selectPlaying = BSONDocument("s" -> BSONDocument("$lt" -> okey.Status.Over.id))
+
   private val recentSort = BSONDocument("d" -> -1)
 
   def recentByMasa(masaId: String, nb: Int): Fu[Pairings] =
     coll.find(selectMasa(masaId)).sort(recentSort).cursor[Pairing]().collect[List](nb)
 
 
-  def join(id: String, playerId: String, side: Side) = coll.update(
-    selectId(id),
-    BSONDocument("$set" -> BSONDocument(
-      s"pids.${side.letter}" ->  playerId
-    ))).void
+  def insert(pairing: Pairing) = coll.insert {
+    pairingHandler.write(pairing) ++ BSONDocument("d" -> DateTime.now)
+  }.void
+
+  def playingPlayerIds(masa: Masa): Fu[Set[String]] =
+    coll.find(selectMasa(masa.id) ++ selectPlaying).one[Pairing] map {
+      _ map { _.playerIds.toSet } getOrElse Set.empty
+    }
 }
