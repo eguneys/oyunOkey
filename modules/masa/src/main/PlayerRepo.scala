@@ -21,6 +21,9 @@ object PlayerRepo {
     "s" -> side.letter.toString,
     "a" -> true)
 
+
+  def byId(id: String): Fu[Option[Player]] = coll.find(selectId(id)).one[Player]
+
   def find(masaId: String, playerId: String): Fu[Option[Player]] =
     coll.find(selectMasaPlayer(masaId, playerId)).one[Player]
 

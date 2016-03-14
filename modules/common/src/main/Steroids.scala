@@ -13,8 +13,11 @@ trait Steroids
 
     with scalaz.std.StringInstances
 
+    with scalaz.std.OptionInstances
     with scalaz.std.OptionFunctions
     with scalaz.syntax.std.ToOptionIdOps
+
+    with scalaz.syntax.ToIdOps
 
     with BooleanSteroids
     with OptionSteroids

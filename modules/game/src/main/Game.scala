@@ -15,14 +15,17 @@ case class Game(
   binaryOpens: Option[BinaryOpens],
   binaryPlayer: ByteArray,
   turns: Int,
-  variant: Variant = Variant.default) {
+  variant: Variant = Variant.default,
+  metadata: Metadata) {
 
   val playerList = players.toList
 
   def player(side: Side): Player = players(side)
 
   def player(playerId: String): Option[Player] =
-    playerList find (_.id == playerId)
+    players find (_.id == playerId)
+
+  def playerByPlayerId(playerId: String): Option[Player] = players find (_.playerId == Some(playerId))
 
   def turnSide = Side(turns)
 
@@ -64,6 +67,16 @@ case class Game(
       player = player
     )
   }
+
+  def updatePlayers[A](as: Sides[Player => Player]) = copy(
+    players = (as zip players) map { case (f, p) => f(p) }
+  )
+
+  def withMasaId(id: String) = this.copy(
+    metadata = metadata.copy(masaId = id.some)
+  )
+
+  def withId(newId: String) = this.copy(id = newId)
 }
 
 
@@ -102,7 +115,10 @@ object Game {
       binarySign = binarySign,
       binaryOpens = binaryOpens,
       binaryPlayer = binaryPlayer,
-      turns = game.turns
+      turns = game.turns,
+      metadata = Metadata(
+        masaId = none
+      )
     )
   }
 
@@ -111,6 +127,9 @@ object Game {
   object BSONFields {
     val id = "_id"
     val playerIds = "is"
+    val playerUids = "uis"
+    val playerPids = "pis"
+    val sidesPlayer = "sip"
     val binaryPieces = "ps"
     val binaryDiscards = "ds"
     val binaryMiddles = "ms"
@@ -121,6 +140,7 @@ object Game {
     val binaryOpenStates = "oo"
     val binaryPlayer = "pl"
     val turns = "t"
+    val masaId = "mid"
   }
 }
 

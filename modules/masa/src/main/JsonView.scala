@@ -17,6 +17,7 @@ final class JsonView() {
     myInfo <- me ?? { PlayerRepo.playerInfo(masa.id, _) }
   } yield Json.obj(
     "id" -> masa.id,
+    "playerId" -> me,
     "fullName" -> masa.fullName,
     "isStarted" -> masa.isStarted,
     "actives" -> data.actives,
@@ -41,10 +42,11 @@ final class JsonView() {
 
   private def playerJson(player: Player) = (player.side.name -> Json.obj("id" -> player.id))
 
-  private def pairingUserJson(playerId: String) = playerId
+  private def pairingUserJson(playerId: String) = JsString(playerId)
 
   private def pairingJson(p: Pairing) = Json.obj(
     "id" -> p.gameId,
-    "u" -> Json.arr(p.playerIds.map(oi => pairingUserJson(oi)))
+    "u" -> JsArray(p.playerIds.toList map (pairingUserJson)),
+    "s" -> 0
   )
 }

@@ -45,7 +45,9 @@ final class Env(
 
   lazy val jsonView = new JsonView()
 
-  lazy val api = new MasaApi(socketHub = socketHub)
+  lazy val api = new MasaApi(
+    socketHub = socketHub,
+    autoPairing = autoPairing)
 
   private val organizer = system.actorOf(Props(new Organizer(
     api = api,
@@ -55,6 +57,9 @@ final class Env(
 
   def version(masaId: String): Fu[Int] =
     socketHub ? Ask(masaId, GetVersion) mapTo manifest[Int]
+
+  private lazy val autoPairing = new AutoPairing(
+  )
 
   {
     import scala.concurrent.duration._

@@ -9,6 +9,7 @@ import oyun.hub.actorApi.map.{ Tell }
 import okey.Side
 
 private[masa] final class MasaApi(
+  autoPairing: AutoPairing,
   socketHub: ActorRef
 ) {
 
@@ -23,9 +24,11 @@ private[masa] final class MasaApi(
       masa.createPairings(masa, players).flatMap {
         case None => funit
         case Some(pairing) => {
-          println(pairing)
-          PairingRepo.insert(pairing)
-        }
+          PairingRepo.insert(pairing) >>
+            autoPairing(masa, pairing) addEffect { game =>
+              // sendTo(masa.id, StartGame(game))
+            }
+        } >> funit
       }
     }
   }
@@ -33,7 +36,7 @@ private[masa] final class MasaApi(
 
   def join(masaId: String, player: PlayerRef, side: Option[String] = None) {
     Sequencing(masaId)(MasaRepo.enterableById) { masa =>
-      PlayerRepo.join(masa.id, player.toPlayer(masa.id), side map Side.apply) >>- {
+      PlayerRepo.join(masa.id, player.toPlayer(masa.id), side flatMap Side.apply) >>- {
         socketReload(masa.id)
       }
     }

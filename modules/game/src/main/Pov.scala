@@ -8,9 +8,11 @@ case class Pov(game: Game, side: Side) {
 
   def playerId = player.id
 
+  def fullId = game fullIdOf side
+
   def gameId = game.id
 
-  def fullId = game fullIdOf side
+  def withSide(s: Side) = copy(side = s)
 
   def opponentLeft = game player side.previous
   def opponentRight = game player side.next

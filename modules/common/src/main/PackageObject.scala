@@ -61,6 +61,8 @@ trait WithPlay { self: PackageObject =>
       case _ => sideEffect
     }
 
+    def >>[B](fub: => Fu[B]): Fu[B] = fua flatMap (_ => fub)
+
     def void: Funit = fua map (_ => Unit)
 
     def inject[B](b: => B): Fu[B] = fua map (_ => b)
