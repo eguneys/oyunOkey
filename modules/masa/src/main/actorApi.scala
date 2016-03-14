@@ -2,6 +2,7 @@ package oyun.masa
 package actorApi
 
 import oyun.socket.SocketMember
+import oyun.game.Game
 import oyun.user.User
 
 private[masa] case class Member(
@@ -21,6 +22,7 @@ private[masa] case class Join(
   uid: String, 
   user: Option[User])
 private[masa] case object Reload
+private[masa] case class StartGame(game: Game)
 private[masa] case class Connected(enumerator: JsEnumerator, member: Member)
 
 // organizer

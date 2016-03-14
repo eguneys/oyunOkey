@@ -26,7 +26,7 @@ private[masa] final class MasaApi(
         case Some(pairing) => {
           PairingRepo.insert(pairing) >>
             autoPairing(masa, pairing) addEffect { game =>
-              // sendTo(masa.id, StartGame(game))
+              sendTo(masa.id, StartGame(game))
             }
         } >> funit
       }

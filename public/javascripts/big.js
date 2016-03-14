@@ -228,6 +228,22 @@ oyunkeyf.spinnerHtml = '<div class="spinner"><svg viewBox="0 0 40 40"><circle cx
     location.href = href;
   };
 
+  oyunkeyf.socket = null;
+  $.extend(true, oyunkeyf.StrongSocket.defaults, {
+    events: {
+      redirect: function(o) {
+        setTimeout(function() {
+          oyunkeyf.hasToReload = true;
+          $.redirect(o);
+        }, 300);
+      }
+    },
+    params: {},
+    options: {
+      name: "site"
+    }
+  });
+
   $(function() {
     if (oyunkeyf.lobby) startLobby(document.getElementById('hooks_wrap'), oyunkeyf.lobby);
     else if (oyunkeyf.masa) startMasa(document.getElementById('masa'), oyunkeyf.masa);

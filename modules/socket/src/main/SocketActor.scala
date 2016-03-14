@@ -23,6 +23,10 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
 
   def receive = receiveSpecific orElse receiveGeneric
 
+  def notifyAll[A: Writes](t: String, data: A) {
+    notifyAll(makeMessage(t, data))
+  }
+
   def notifyAll(t: String) {
     notifyAll(makeMessage(t))
   }

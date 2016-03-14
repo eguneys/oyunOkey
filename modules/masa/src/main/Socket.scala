@@ -18,11 +18,14 @@ private[oyun] final class Socket(
   private var delayedReloadNotification = false
 
   def receiveSpecific = {
+    case StartGame(game) =>
+      notifyAll("redirect", game.id)
+
+    case Reload => notifyReload
+
     case PingVersion(uid, v) => {
       ping(uid)
     }
-
-    case Reload => notifyReload
 
     case GetVersion => sender ! history.version
 
