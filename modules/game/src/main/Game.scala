@@ -1,7 +1,7 @@
 package oyun.game
 
 import okey.variant.Variant
-import okey.{ Game => OkeyGame, Player => OkeyPlayer, Table, Board, Sides, Side, Opener }
+import okey.{ Game => OkeyGame, Player => OkeyPlayer, Table, Board, Sides, Side, Opener, Status, Move }
 
 import oyun.db.ByteArray
 
@@ -14,6 +14,7 @@ case class Game(
   binarySign: Int,
   binaryOpens: Option[BinaryOpens],
   binaryPlayer: ByteArray,
+  status: Status,
   turns: Int,
   variant: Variant = Variant.default,
   metadata: Metadata) {
@@ -27,7 +28,12 @@ case class Game(
 
   def playerByPlayerId(playerId: String): Option[Player] = players find (_.playerId == Some(playerId))
 
+  def player: Player = player(turnSide)
+
   def turnSide = Side(turns)
+
+  def turnOf(p: Player): Boolean = p == player
+  def turnOf(s: Side): Boolean = s == turnSide
 
   def fullIdOf(side: Side): String = s"$id${player(side).id}"
 
@@ -64,13 +70,45 @@ case class Game(
         opener = opener,
         sign = sign,
         variant = variant),
-      player = player
+      player = player,
+      turns = turns
     )
+  }
+
+  def update(
+    game: OkeyGame,
+    move: Move): Progress = {
+    val situation = game.situation
+
+    val updated = copy(
+      binaryPieces = game.table.boards map (board => BinaryFormat.piece.write(board.pieceList)),
+      binaryPlayer = BinaryFormat.player write game.player,
+      turns = game.turns
+    )
+
+    val state = Event.State(
+      side = situation.player.side,
+      turns = game.turns,
+      status = (status != updated.status) option updated.status
+    )
+
+    val events = Event.Move(Side.EastSide, move, situation, state) ::
+    Event.Move(Side.WestSide, move, situation, state) ::
+    Event.Move(Side.NorthSide, move, situation, state) ::
+    Event.Move(Side.SouthSide, move, situation, state) :: Nil
+
+    Progress(this, updated, events)
   }
 
   def updatePlayers[A](as: Sides[Player => Player]) = copy(
     players = (as zip players) map { case (f, p) => f(p) }
   )
+
+  def playable = status < Status.Aborted
+
+  def playableBy(p: Player): Boolean = playable && turnOf(p)
+
+  def playableBy(s: Side): Boolean = playableBy(player(s))
 
   def withMasaId(id: String) = this.copy(
     metadata = metadata.copy(masaId = id.some)
@@ -115,6 +153,7 @@ object Game {
       binarySign = binarySign,
       binaryOpens = binaryOpens,
       binaryPlayer = binaryPlayer,
+      status = Status.Created,
       turns = game.turns,
       metadata = Metadata(
         masaId = none
@@ -139,7 +178,10 @@ object Game {
     val binaryPairs = "op"
     val binaryOpenStates = "oo"
     val binaryPlayer = "pl"
+    val status = "s"
     val turns = "t"
+    val createdAt = "ca"
+    val updatedAt = "ua"
     val masaId = "mid"
   }
 }

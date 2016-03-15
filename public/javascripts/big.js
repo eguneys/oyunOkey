@@ -59,6 +59,9 @@ oyunkeyf.StrongSocket.prototype = {
         if (m.t === 'n') self.pong();
 
         if (m.t === 'b') {
+          m.d.forEach(function(mm) {
+            self.handle(mm);
+          });
         } else self.handle(m);
       };
     } catch(e) {

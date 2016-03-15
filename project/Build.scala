@@ -54,7 +54,7 @@ object ApplicationBuild extends Build {
   )
 
   lazy val round = project("round", Seq(common, user, game, okey, socket, hub)).settings(
-    libraryDependencies ++= provided(play.api, play.test)
+    libraryDependencies ++= provided(play.api, play.test, RM, PRM)
   )
 
   lazy val lobby = project("lobby", Seq(common, user, game, okey, socket, hub)).settings(

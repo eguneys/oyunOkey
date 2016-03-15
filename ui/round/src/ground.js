@@ -7,12 +7,21 @@ function makeFen(fen) {
 function makeConfig(data) {
   var fen = makeFen(data.game.fen);
   return {
-    fen: fen
+    fen: fen,
+    movable: {
+      free: false
+    }
   };
 }
 
-function make(data) {
+function make(data, userMove, onMove) {
   var config = makeConfig(data);
+  config.movable.events = {
+    after: userMove
+  };
+  config.events = {
+    move: onMove
+  };
   return new okeyground.controller(config);
 }
 

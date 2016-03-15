@@ -245,7 +245,8 @@ object BinaryFormat {
       val middle = player.drawMiddle.fold(1, 0)
       val left = player.drawLeft.isDefined.fold(0, 1)
 
-      val oleft = player.drawLeft.fold(0xff) { p =>
+      // assume piece don't use two bytes left
+      val oleft = player.drawLeft.fold(0x3f) { p =>
         piece.write(p)
       }
 

@@ -1,12 +1,10 @@
 {
-  "name": "round",
+  "name": "game",
   "version": "1.0.0",
-  "description": "oyunkeyf.org round",
-  "main": "src/main.js",
+  "description": "oyunkeyf.org game",
+  "main": "./build/oyunkeyf.game.min.js",
   "dependencies": {
-    "game": "file:///home/ubuntu/fp/scala/oyun/ui/game",
-    "mithril": "^0.2.0",
-    "okeyground": "file:///home/ubuntu/gamedev/okeyground"
+    "mithril": "^0.2.0"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.1.1",

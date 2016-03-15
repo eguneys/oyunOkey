@@ -75,11 +75,21 @@ trait WithPlay { self: PackageObject =>
       }
     }
 
+    def addFailureEffect(effect: Exception => Unit) = fua ~ (_ onFailure {
+      case e: Exception => effect(e)
+    })
+
     def addEffect(effect: A => Unit) = fua ~ (_ foreach effect)
 
     def awaitSeconds(seconds: Int): A = {
       import scala.concurrent.duration._
       scala.concurrent.Await.result(fua, seconds.seconds)
+    }
+  }
+
+  implicit final class OyunPimpedFutureOption[A](fua: Fu[Option[A]]) {
+    def flatten(msg: => String): Fu[A] = fua flatMap {
+      _.fold[Fu[A]](fufail(msg))(fuccess(_))
     }
   }
 

@@ -11,4 +11,6 @@ case object Broom
 
 case class Quit(uid: String)
 
+case class Resync(uid: String)
+
 case object GetVersion

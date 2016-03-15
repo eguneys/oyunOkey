@@ -46,6 +46,7 @@ object BSON {
   }
 
   final class Writer {
+    def int(i: Int): BSONInteger = BSONInteger(i)
   }
 
   val writer = new Writer

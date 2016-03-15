@@ -18,6 +18,7 @@ trait Steroids
     with scalaz.syntax.std.ToOptionIdOps
 
     with scalaz.syntax.ToIdOps
+    with scalaz.syntax.ToShowOps
 
     with BooleanSteroids
     with OptionSteroids

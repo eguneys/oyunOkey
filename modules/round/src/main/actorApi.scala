@@ -1,10 +1,16 @@
 package oyun.round
 package actorApi
 
+import scala.concurrent.Promise
+
 import okey.{ Side, Sides }
+import okey.format.Uci
 
 import oyun.socket.SocketMember
+import oyun.game.{ Event }
 import oyun.user.User
+
+case class EventList(events: List[Event])
 
 sealed trait Member extends SocketMember {
   val side: Side
@@ -56,4 +62,11 @@ case class SocketStatus(
   sidesIsGone: Sides[Boolean]) {
   def onGame(side: Side) = sidesOnGame(side)
   def isGone(side: Side) = sidesIsGone(side)
+}
+
+package round {
+  case class HumanPlay(
+    playerId: String,
+    uci: Uci,
+    promise: Option[Promise[Unit]] = None)
 }

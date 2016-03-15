@@ -3,9 +3,14 @@ package oyun.game
 import oyun.db.{ BSON, ByteArray }
 import reactivemongo.bson._
 
-import okey.{ Sides, Side }
+import okey.{ Sides, Side, Status }
 
 object BSONHandlers {
+
+  implicit val StatusBSONHandler = new BSONHandler[BSONInteger, Status] {
+    def read(bsonInt: BSONInteger): Status = Status(bsonInt.value) err s"No such status: ${bsonInt.value}"
+    def write(x: Status) = BSONInteger(x.id)
+  }
 
   implicit def sidesOptionBSONHandler[T](implicit reader: BSONReader[_ <: BSONValue, T], writer: BSONWriter[T, _ <: BSONValue])  = new BSON[Sides[Option[T]]] {
     def reads(r: BSON.Reader) = {
@@ -107,6 +112,9 @@ object BSONHandlers {
 
       val bOpens = r.getO[BinaryOpens](binaryOpens)
 
+
+      val bpp = r bytes binaryPlayer
+
       Game(
         id = r str id,
         players = players,
@@ -116,6 +124,7 @@ object BSONHandlers {
         binarySign = r int binarySign toByte,
         binaryOpens = bOpens,
         binaryPlayer = r bytes binaryPlayer,
+        status = r.get[Status](status),
         turns = nbTurns,
         metadata = Metadata(
           masaId = r strO masaId
@@ -134,6 +143,7 @@ object BSONHandlers {
       binarySign -> o.binarySign,
       binaryOpens -> o.binaryOpens,
       binaryPlayer -> o.binaryPlayer,
+      status -> o.status,
       turns -> o.turns,
       masaId -> o.metadata.masaId
     )

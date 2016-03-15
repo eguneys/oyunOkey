@@ -1,7 +1,12 @@
 module.exports = function(send, ctrl) {
   this.send = send;
 
-  var handlers = {};
+  var handlers = {
+    move: function(o) {
+      o.isMove = true;
+      ctrl.apiMove(o);
+    }
+  };
 
   this.receive = (type, data) => {
     if (handlers[type]) {

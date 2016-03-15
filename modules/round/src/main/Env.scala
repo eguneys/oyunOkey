@@ -14,10 +14,21 @@ final class Env(
 
   private val settings = new {
     val SocketName = config getString "socket.name"
+    val ActorMapName = config getString "actor.map.name"
   }
   import settings._
 
   lazy val eventHistory = History() _
+
+  val roundMap = system.actorOf(Props(new oyun.hub.ActorMap {
+    def mkActor(id: String) = new Round(
+      gameId = id,
+      player = player,
+      socketHub
+    )
+
+    def receive: Receive = actorMapReceive
+  }), name = ActorMapName)
 
   private val socketHub = {
     val actor = system.actorOf(
@@ -31,7 +42,14 @@ final class Env(
     actor
   }
 
-  lazy val socketHandler = new SocketHandler(socketHub = socketHub)
+  lazy val socketHandler = new SocketHandler(
+    roundMap = roundMap,
+    socketHub = socketHub
+  )
+
+  private lazy val player: Player = new Player(
+    
+  )
 
   private def getSocketStatus(gameId: String): Fu[SocketStatus] =
     socketHub ? Ask(gameId, GetSocketStatus) mapTo manifest[SocketStatus]

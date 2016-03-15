@@ -19,6 +19,7 @@ class BinaryPlayerTest extends Specification {
     "write" should {
       "empty piece" in {
         write(OkeyPlayer(EastSide, None, true)) must_== "11111111" :: Nil
+        write(OkeyPlayer(EastSide, None, false)) must_== "01111111" :: Nil
       }
       "some piece" in {
         write(OkeyPlayer(EastSide, Some(R1), false)) must_== "00000001" :: Nil
@@ -30,6 +31,7 @@ class BinaryPlayerTest extends Specification {
     "read" should {
       "empty piece" in {
         read("11111111" :: Nil) must_==  (None, true)
+        read("01111111" :: Nil) must_==  (None, false)
       }
       "some piece" in {
         read("00000001" :: Nil) must_== (Some(R1), false)

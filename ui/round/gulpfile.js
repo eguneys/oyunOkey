@@ -1,17 +1,19 @@
 var source = require('vinyl-source-stream');
 var gulp = require('gulp');
 var tap = require('gulp-tap');
-var gutil = require('gulp-util');
+//var gutil = require('gulp-util');
 var jshint = require('gulp-jshint');
 var watchify = require('watchify');
 var browserify = require('browserify');
 var uglify = require('gulp-uglify');
 var streamify = require('gulp-streamify');
 
+var log = console.log;
+
 var sources = ['./src/main.js'];
 var destination = '../../public/compiled';
 var onError = function(error) {
-  gutil.log(gutil.colors.red(error.message));
+  log(error.message);
 };
 
 var standalone = 'OyunkeyfRound';
@@ -44,7 +46,7 @@ gulp.task('watch', function() {
                { presets: ["es2015"],
                  plugins: ['add-module-exports'] })
     .on('update', rebundle)
-    .on('log', gutil.log);
+    .on('log', log);
 
   function rebundle() {
     return bundleStream.bundle()

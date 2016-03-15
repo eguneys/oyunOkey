@@ -1,11 +1,15 @@
 package oyun.round
 
+import scala.concurrent.Promise
+
 import akka.actor._
 import akka.pattern.{ ask }
 import play.api.libs.json.{ JsObject, Json }
 import oyun.common.PimpedJson._
 
-import actorApi._
+import okey.format.Uci
+
+import actorApi._, round._
 import oyun.hub.actorApi.map._
 import oyun.socket.actorApi.{ Connected => _, _ }
 import oyun.socket.Handler
@@ -14,6 +18,7 @@ import oyun.game.{ Game, Pov, GameRepo }
 import makeTimeout.short
 
 private[round] final class SocketHandler(
+  roundMap: ActorRef,
   socketHub: ActorRef
 ) {
 
@@ -22,7 +27,26 @@ private[round] final class SocketHandler(
     socket: ActorRef,
     uid: String,
     member: Member): Handler.Controller = {
-    case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }
+
+    def send(msg: Any) { roundMap ! Tell(gameId, msg) }
+
+    member.playerIdOption.fold[Handler.Controller]({
+      case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }
+    }) { playerId =>
+      {
+        case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }
+        case ("move", o) => parseMove(o) foreach {
+          case move =>
+            val promise = Promise[Unit]
+            promise.future onFailure {
+              case _: Exception => socket ! Resync(uid)
+            }
+            send(HumanPlay(
+              playerId, move, promise.some
+            ))
+        }
+      }
+    }
   }
 
   def player(
@@ -49,4 +73,11 @@ private[round] final class SocketHandler(
       }
     }
   }
+
+  private def parseMove(o: JsObject) = for {
+    d <- o obj "d"
+    key <- d str "key"
+    piece = d str "piece"
+    move <- Uci.Move.fromStrings(key, piece)
+  } yield move
 }

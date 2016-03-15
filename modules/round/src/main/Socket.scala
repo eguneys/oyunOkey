@@ -39,6 +39,21 @@ private[round] final class Socket(history: History) extends SocketActor[Member] 
       val member = Member(channel, user, side, playerId)
       addMember(uid, member)
       sender ! Connected(enumerator, member)
+
+    case eventList: EventList => notify(eventList.events)
+  }
+
+  def notify(events: Events) {
+    val vevents = history addEvents events
+    members.values foreach { m => batch(m, vevents) }
+  }
+
+  def batch(member: Member, vevents: List[VersionedEvent]) {
+    vevents match {
+      case Nil =>
+      case List(one) => member push one.jsFor(member)
+      case many => member push makeMessage("b", many map (_ jsFor member))
+    }
   }
 
   def ownerOf(side: Side): Option[Member] =
