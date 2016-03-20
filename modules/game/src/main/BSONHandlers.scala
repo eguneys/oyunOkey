@@ -66,10 +66,7 @@ object BSONHandlers {
 
     def reads(r: BSON.Reader) = {
 
-      val bOpenStates = r.get[Sides[ByteArray]](binaryOpenStates) map {
-        case s if s.isEmpty => None
-        case s => Some(s)
-      }
+      val bOpenStates = r.get[Sides[Option[ByteArray]]](binaryOpenStates)
 
       BinaryOpens(
         binarySeries = r bytes binarySeries,
@@ -79,11 +76,10 @@ object BSONHandlers {
     }
 
     def writes(w: BSON.Writer, o: BinaryOpens) = {
-      val bos = o.binaryOpenStates map (s => ~s)
       BSONDocument(
         binarySeries -> o.binarySeries,
         binaryPairs -> o.binaryPairs,
-        binaryOpenStates -> bos
+        binaryOpenStates -> o.binaryOpenStates
       )
     }
   }
@@ -111,7 +107,6 @@ object BSONHandlers {
       val bDiscards = r.get[Sides[ByteArray]](binaryDiscards)
 
       val bOpens = r.getO[BinaryOpens](binaryOpens)
-
 
       val bpp = r bytes binaryPlayer
 

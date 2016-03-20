@@ -80,8 +80,19 @@ case class Game(
     move: Move): Progress = {
     val situation = game.situation
 
+    val bOpens = game.table.opener map { opener =>
+      BinaryOpens(
+        binarySeries = BinaryFormat.opener writeSeries opener.series,
+        binaryPairs = BinaryFormat.opener writePairs opener.pairs,
+        binaryOpenStates = opener.opens.map(_ map BinaryFormat.opener.writeState)
+      )
+    }
+
     val updated = copy(
       binaryPieces = game.table.boards map (board => BinaryFormat.piece.write(board.pieceList)),
+      binaryDiscards = game.table.discards map BinaryFormat.piece.write,
+      binaryMiddles = BinaryFormat.piece write game.table.middles,
+      binaryOpens = bOpens,
       binaryPlayer = BinaryFormat.player write game.player,
       turns = game.turns
     )

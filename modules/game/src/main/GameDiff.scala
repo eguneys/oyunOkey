@@ -41,7 +41,22 @@ private[game] object GameDiff {
 
     Side.all map { side =>
       d(s"$binaryPieces.${side.letter}", _.binaryPieces(side), ByteArray.ByteArrayBSONHandler.write)
+      d(s"$binaryDiscards.${side.letter}", _.binaryDiscards(side), ByteArray.ByteArrayBSONHandler.write)
+
+      dOpt(s"$binaryOpens.$binaryOpenStates.${side.letter}", _.binaryOpens, (o: Option[BinaryOpens]) => o flatMap { opens =>
+        opens.binaryOpenStates(side) map ByteArray.ByteArrayBSONHandler.write
+      })
     }
+
+    dOpt(s"$binaryOpens.$binarySeries", _.binaryOpens, (o: Option[BinaryOpens]) => o map { opens =>
+      ByteArray.ByteArrayBSONHandler.write(opens.binarySeries)
+    })
+
+    dOpt(s"$binaryOpens.$binaryPairs", _.binaryOpens, (o: Option[BinaryOpens]) => o map { opens =>
+      ByteArray.ByteArrayBSONHandler.write(opens.binaryPairs)
+    })
+
+    d(binaryMiddles, _.binaryMiddles, ByteArray.ByteArrayBSONHandler.write)
     d(binaryPlayer, _.binaryPlayer, ByteArray.ByteArrayBSONHandler.write)
     d(turns, _.turns, w.int)
 

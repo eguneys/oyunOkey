@@ -1,6 +1,11 @@
 module.exports = function(send, ctrl) {
   this.send = send;
 
+  this.sendLoading = () => {
+    ctrl.setLoading(true);
+    this.send.apply(this, arguments);
+  };
+
   var handlers = {
     move: function(o) {
       o.isMove = true;

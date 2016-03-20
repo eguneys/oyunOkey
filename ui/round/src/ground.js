@@ -1,15 +1,19 @@
 import okeyground from 'okeyground';
+import util from './util';
 
 function makeFen(fen) {
-  return fen;
+  return util.fenStore.get(fen);
 };
 
 function makeConfig(data) {
   var fen = makeFen(data.game.fen);
   return {
     fen: fen,
+    turnSide: data.game.player,
+    povSide: data.player.side,
     movable: {
-      free: false
+      free: false,
+      dests: data.possibleMoves
     }
   };
 }

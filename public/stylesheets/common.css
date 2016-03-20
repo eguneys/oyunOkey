@@ -23,6 +23,20 @@ button {
   font-height: inherit;
 }
 
+[data-icon]:before {
+  font-size: 1.2em;
+  vertical-align: middle;
+  font-family: "oyunkeyf" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: attr(data-icon);
+}
+
 html {
   min-height: 100%;
 }
@@ -169,4 +183,77 @@ a.button {
 
 .glowed {
   box-shadow: 0 0 5px 1px #e89000, 0 0 10px 1px #d85000;
+}
+
+[data-hint] {
+  position: relative;
+  display: inline-block;
+}
+
+[data-hint]:before,
+[data-hint]:after {
+  position: absolute;
+  will-change: transform;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 900005;
+  pointer-events: none;
+  transition: 0.2s ease;
+  transition-delay: 0ms;
+}
+
+[data-hint]:hover:before,
+[data-hint]:hover:after {
+  visibility: visible;
+  opacity: 1;
+}
+
+[data-hint]:before {
+  content: '';
+  position: absolute;
+  background: transparent;
+  border: 6px solid transparent;
+  z-index: 900006;
+}
+
+[data-hint]:after {
+  content: attr(data-hint);
+  background: #404040;
+  color: #e0e0e0;
+  text-shadow: 0 -1px 0 black;
+  padding: 8px 10px;
+  line-height: 12px;
+  white-space: nowrap;
+  border-radius: 2px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: normal;
+  font-size: 12px;
+  font-weight: normal;
+  font-style: inherit;
+  font-family: 'Noto Sans';
+}
+
+.hint--bottom:before,
+.hint--bottom-left:before {
+  border-bottom-color: #404040;
+}
+
+.hint--bottom:before {
+  margin-top: -12px;
+}
+
+.hint--bottom:after {
+  margin-left: -18px;
+}
+
+.hint--bottom:before,
+.hint--bottom:after {
+  top: 100%;
+  left: 50%;
+}
+
+.hint--bottom:hover:after,
+.hint--bottom:hover:before {
+  -webkit-transform: translateY(8px);
+  transform: translateY(8px);
 }
