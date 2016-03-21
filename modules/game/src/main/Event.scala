@@ -3,7 +3,7 @@ package oyun.game
 import play.api.libs.json._
 import oyun.common.PimpedJson._
 
-import okey.{ Side, Situation, Piece, Move => OkeyMove, DrawMiddle, Discard, Status, Action }
+import okey.{ Side, Situation, Piece, Move => OkeyMove, OpenSeries, OpenPairs, DrawMiddle, Discard, Status, Action, PieceGroups }
 
 sealed trait Event {
   def typ: String
@@ -21,6 +21,7 @@ object Event {
       action = move.action,
       drawMiddle = matchDrawMiddle(side, state.side, move),
       discard = matchDiscard(move),
+      opens = matchOpens(move),
       fen = okey.format.Forsyth.exportTable(situation.table, side),
       state = state,
       possibleMoves = situation.actions
@@ -46,6 +47,12 @@ object Event {
       case Discard(p) => PieceData(p).some
       case _ => None
     }
+
+    private def matchOpens(move: OkeyMove): Option[PieceGroupData] = move.action match {
+      case OpenSeries(g) => PieceGroupData(g).some
+      case OpenPairs(g) => PieceGroupData(g).some
+      case _ => None
+    }
   }
 
   case class Move(
@@ -53,6 +60,7 @@ object Event {
     action: Action,
     drawMiddle: Option[PieceData],
     discard: Option[PieceData],
+    opens: Option[PieceGroupData],
     fen: String,
     state: State,
     possibleMoves: List[Action]) extends Event {
@@ -64,7 +72,8 @@ object Event {
       Json.obj(
         "key" -> action.key,
         "drawmiddle" -> drawMiddle.map(_.data),
-        "discard" -> discard.map(_.data)
+        "discard" -> discard.map(_.data),
+        "opens" -> opens.map(_.data)
       )
     }
   }
@@ -73,6 +82,14 @@ object Event {
     def json(moves: List[Action]) =
       if (moves.isEmpty) JsNull
       else JsArray(moves.map(move => JsString(move.key)))
+  }
+
+
+  case class PieceGroupData(groups: PieceGroups) extends Event {
+    def typ = "piecegroupdata"
+    def data = Json.obj(
+      "group" -> okey.format.Forsyth.exportGroups(groups)
+    )
   }
 
   case class PieceData(piece: Piece) extends Event {

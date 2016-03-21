@@ -153,7 +153,7 @@ object BinaryFormat {
     def writePairs(pairs: List[OpenPair]): ByteArray = ByteArray(pairs flatMap writePair toArray)
 
 
-    def readState(ba: ByteArray): OpenState = ba.value map toInt toList match {
+    def readState(saves: Option[(Board, Opener)])(ba: ByteArray): OpenState = ba.value map toInt toList match {
       case b1 :: b2 :: rest => {
         val s = (((b1 & 0x0f) << 8) | b2)
         val score = if ((b1 & 0x30) == 0) SerieScore(s) else PairScore(s)
@@ -161,33 +161,38 @@ object BinaryFormat {
         if ((b1 & 0xc0) == 0) {
           OldOpen(score)
         } else {
-          val boardLength = (rest head)
-          val board = (rest drop 1) take boardLength
+          saves match {
+            case Some((board, opener)) => NewOpen(score, board, opener)
+            case x => sys error s"BinaryFormat.readOpenState.read invalid new open state: ${x}"
 
-          val rest2 = rest drop (boardLength + 1)
-          val seriesLength = ((rest2 head) & 0x0f) + 1
-          val series = rest2 take seriesLength
-
-          val rest3 = rest2 drop seriesLength
-          val pairs = (rest3 take 3)
-          val states = (rest3 drop 3)
-
-          val opens: Sides[Option[OpenState]] = (states grouped (2) map {
-            case b1 :: b2 if (b1 == 0xff) => None
-            case x => Some(readState(ByteArray((x.map(_.toByte) toArray))))
-          } toList) match {
-            case e :: w :: n :: s :: Nil =>
-              Sides(e, w, n, s)
-            case x => sys error s"BinaryFormat.readOpenState.read invalid bytes: ${ba.showBytes}"
           }
 
-          val boardSave = Board(piece.readList(board))
-          val openerSave = Opener(
-            series = readSeries(ByteArray(series map(_.toByte) toArray)),
-            pairs = readPairs(ByteArray(pairs map(_.toByte) toArray)),
-            opens = opens)
+          // val boardLength = (rest head)
+          // val board = (rest drop 1) take boardLength
 
-          NewOpen(score = score, boardSave = boardSave, openerSave = openerSave)
+          // val rest2 = rest drop (boardLength + 1)
+          // val seriesLength = ((rest2 head) & 0x0f) + 1
+          // val series = rest2 take seriesLength
+
+          // val rest3 = rest2 drop seriesLength
+          // val pairs = (rest3 take 3)
+          // val states = (rest3 drop 3)
+
+          // val opens: Sides[Option[OpenState]] = (states grouped (2) map {
+          //   case b1 :: b2 if (b1 == 0xff) => None
+          //   case x => Some(readState(ByteArray((x.map(_.toByte) toArray))))
+          // } toList) match {
+          //   case e :: w :: n :: s :: Nil =>
+          //     Sides(e, w, n, s)
+          //   case x => sys error s"BinaryFormat.readOpenState.read invalid bytes: ${ba.showBytes}"
+          // }
+
+          // val boardSave = Board(piece.readList(board))
+          // val openerSave = Opener(
+          //   series = readSeries(ByteArray(series map(_.toByte) toArray)),
+          //   pairs = readPairs(ByteArray(pairs map(_.toByte) toArray)),
+          //   opens = opens)
+          //NewOpen(score = score, boardSave = boardSave, openerSave = openerSave)
         }
       }
       case x => sys error s"BinaryFormat.readOpenState.read invalid bytes: ${ba.showBytes}"

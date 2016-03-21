@@ -47,9 +47,22 @@ case class Game(
 
     val opener = binaryOpens map { bo =>
       import bo._
+
+      val save = bo.save map { case (savePieces, saveOpens) =>
+
+        val board = Board(BinaryFormat.piece.read(savePieces))
+
+        val series = BinaryFormat.opener.readSeries(saveOpens.binarySeries)
+        val pairs = BinaryFormat.opener.readPairs(saveOpens.binaryPairs)
+        val opens = saveOpens.binaryOpenStates map (_ map BinaryFormat.opener.readState(None))
+
+        (board, Opener(series, pairs, opens))
+      }
+
       val series = BinaryFormat.opener.readSeries(binarySeries)
       val pairs = BinaryFormat.opener.readPairs(binaryPairs)
-      val opens = binaryOpenStates map(_ map BinaryFormat.opener.readState)
+      val opens = binaryOpenStates map(_ map BinaryFormat.opener.readState(save))
+
       Opener(series, pairs, opens)
     }
 
@@ -81,10 +94,24 @@ case class Game(
     val situation = game.situation
 
     val bOpens = game.table.opener map { opener =>
+
+      val save = opener.getSave map {
+        case (board, opener) =>
+          val pieces = BinaryFormat.piece.write(board.pieceList)
+
+          val bo = BinaryOpens(
+            binarySeries = BinaryFormat.opener writeSeries opener.series,
+            binaryPairs = BinaryFormat.opener writePairs opener.pairs,
+            binaryOpenStates = opener.opens.map(_ map BinaryFormat.opener.writeState))
+
+          (pieces, bo)
+      }
+
       BinaryOpens(
         binarySeries = BinaryFormat.opener writeSeries opener.series,
         binaryPairs = BinaryFormat.opener writePairs opener.pairs,
-        binaryOpenStates = opener.opens.map(_ map BinaryFormat.opener.writeState)
+        binaryOpenStates = opener.opens.map(_ map BinaryFormat.opener.writeState),
+        save = save
       )
     }
 
@@ -185,6 +212,8 @@ object Game {
     val binaryMiddles = "ms"
     val binarySign = "sg"
     val binaryOpens = "opp"
+    val binaryOpensSave = "oppss"
+    val binaryPiecesSave = "psss"
     val binarySeries = "os"
     val binaryPairs = "op"
     val binaryOpenStates = "oo"
@@ -200,4 +229,5 @@ object Game {
 case class BinaryOpens(
   binarySeries: ByteArray,
   binaryPairs: ByteArray,
-  binaryOpenStates: Sides[Option[ByteArray]])
+  binaryOpenStates: Sides[Option[ByteArray]],
+  save: Option[(ByteArray, BinaryOpens)] = None)

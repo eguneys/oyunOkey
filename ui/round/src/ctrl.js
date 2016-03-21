@@ -47,6 +47,10 @@ module.exports = function(opts) {
     // this.sendMove(okeyground.move.leaveTaken);
   };
 
+  this.collectOpen = () => {
+    this.sendMove("co");
+  };
+
   this.openSeries = () => {
     this.okeyground.playOpenSeries();
   };
@@ -69,14 +73,15 @@ module.exports = function(opts) {
       if (o.isMove) {
         if (o.drawmiddle) {
           this.okeyground.apiDrawMiddleEnd(o.drawmiddle.piece);
+        } else if (o.discard) {
+          this.okeyground.apiMove(o.key, o.discard.piece);
+        } else if (o.opens) {
+          this.okeyground.apiMove(o.key, o.opens.group);
         } else {
-          if (o.discard) {
-            this.okeyground.apiMove(o.key, o.discard.piece);
-          } else {
-            this.okeyground.apiMove(o.key);
-          }
+          this.okeyground.apiMove(o.key);
         }
       }
+
       this.okeyground.set({
         turnSide: d.game.player,
         movable: {

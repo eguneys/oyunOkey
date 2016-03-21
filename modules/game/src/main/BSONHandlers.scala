@@ -66,12 +66,12 @@ object BSONHandlers {
 
     def reads(r: BSON.Reader) = {
 
-      val bOpenStates = r.get[Sides[Option[ByteArray]]](binaryOpenStates)
+      val bOpenStates = r.getO[Sides[Option[ByteArray]]](binaryOpenStates)
 
       BinaryOpens(
         binarySeries = r bytes binarySeries,
         binaryPairs = r bytes binaryPairs,
-        binaryOpenStates = bOpenStates
+        binaryOpenStates = bOpenStates getOrElse Sides[Option[ByteArray]]
       )
     }
 
@@ -108,6 +108,23 @@ object BSONHandlers {
 
       val bOpens = r.getO[BinaryOpens](binaryOpens)
 
+
+      val saveOpens = r.getO[BinaryOpens](binaryOpensSave)
+      val saveBoard = r bytesO binaryPiecesSave
+
+      val bOpens2 = bOpens map { opens =>
+
+        val saveP = r bytesO binaryPiecesSave
+        val saveO = r.getO[BinaryOpens](binaryOpensSave)
+
+        val save = (saveP, saveO) match {
+          case (Some(p), Some(o)) => Some(p, o)
+          case _ => None
+        }
+
+        opens.copy(save = save)
+      }
+
       val bpp = r bytes binaryPlayer
 
       Game(
@@ -117,7 +134,7 @@ object BSONHandlers {
         binaryDiscards = bDiscards,
         binaryMiddles = r bytes binaryMiddles,
         binarySign = r int binarySign toByte,
-        binaryOpens = bOpens,
+        binaryOpens = bOpens2,
         binaryPlayer = r bytes binaryPlayer,
         status = r.get[Status](status),
         turns = nbTurns,
@@ -137,6 +154,8 @@ object BSONHandlers {
       binaryMiddles -> o.binaryMiddles,
       binarySign -> o.binarySign,
       binaryOpens -> o.binaryOpens,
+      binaryPiecesSave -> o.binaryOpens.flatMap { _.save map(t => t._1) },
+      binaryOpensSave -> o.binaryOpens.flatMap { _.save map(t => t._2) },
       binaryPlayer -> o.binaryPlayer,
       status -> o.status,
       turns -> o.turns,

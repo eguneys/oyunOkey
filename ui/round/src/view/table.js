@@ -50,9 +50,7 @@ function renderTablePlay(ctrl) {
 
 
   var icons = [
-    m('button', {
-      onclick: function() { ctrl.saveBoard(); }
-    }, 'save'),
+    button.move(ctrl, ctrl.okeyground.canCollectOpen, 'C', 'collectOpen', ctrl.collectOpen),
     button.move(ctrl, ctrl.okeyground.canLeaveTaken, 'L', 'leaveTaken', ctrl.leaveTaken),
     button.move(ctrl, ctrl.okeyground.canOpenSeries, 'S', 'openSeries', ctrl.openSeries),
     button.move(ctrl, ctrl.okeyground.canOpenPairs, 'P', 'openPairs', ctrl.openPairs)

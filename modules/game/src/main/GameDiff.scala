@@ -46,6 +46,10 @@ private[game] object GameDiff {
       dOpt(s"$binaryOpens.$binaryOpenStates.${side.letter}", _.binaryOpens, (o: Option[BinaryOpens]) => o flatMap { opens =>
         opens.binaryOpenStates(side) map ByteArray.ByteArrayBSONHandler.write
       })
+
+      dOpt(s"$binaryOpensSave.$binaryOpenStates.${side.letter}", _.binaryOpens flatMap { _.save map(_._2) }, (o: Option[BinaryOpens]) => o flatMap { opens =>
+        opens.binaryOpenStates(side) map ByteArray.ByteArrayBSONHandler.write
+      })
     }
 
     dOpt(s"$binaryOpens.$binarySeries", _.binaryOpens, (o: Option[BinaryOpens]) => o map { opens =>
@@ -54,6 +58,18 @@ private[game] object GameDiff {
 
     dOpt(s"$binaryOpens.$binaryPairs", _.binaryOpens, (o: Option[BinaryOpens]) => o map { opens =>
       ByteArray.ByteArrayBSONHandler.write(opens.binaryPairs)
+    })
+
+    dOpt(s"$binaryOpensSave.$binarySeries", _.binaryOpens flatMap { _.save map(_._2) }, (o: Option[BinaryOpens]) => o map { opens =>
+      ByteArray.ByteArrayBSONHandler.write(opens.binarySeries)
+    })
+
+    dOpt(s"$binaryOpensSave.$binaryPairs", _.binaryOpens flatMap { _.save map(_._2) }, (o: Option[BinaryOpens]) => o map { opens =>
+      ByteArray.ByteArrayBSONHandler.write(opens.binaryPairs)
+    })
+
+    dOpt(s"$binaryPiecesSave", _.binaryOpens flatMap { _.save map(_._1) }, (o: Option[ByteArray]) => o map { pieces =>
+      ByteArray.ByteArrayBSONHandler.write(pieces)
     })
 
     d(binaryMiddles, _.binaryMiddles, ByteArray.ByteArrayBSONHandler.write)

@@ -111,72 +111,69 @@ class BinaryOpenerTest extends Specification {
       }
     }
 
-    "open state" should {
-      def write(all: OpenState): List[String] =
-        (BinaryFormat.opener writeState all).showBytes.split(',').toList
-      def read(bytes: List[String]): OpenState =
-        BinaryFormat.opener.readState(ByteArray.parseBytes(bytes))
+    // "open state" should {
+    //   def write(all: OpenState): List[String] =
+    //     (BinaryFormat.opener writeState all).showBytes.split(',').toList
+    //   def read(bytes: List[String]): OpenState =
+    //     BinaryFormat.opener.readState(ByteArray.parseBytes(bytes))
 
-      "old open" should {
-        "write" in {
-          "serie state" in {
-            write(OldOpen(SerieScore(10))) must_== "00000000" :: "00001010" :: Nil
-            write(OldOpen(SerieScore(0xaaa))) must_== "00001010" :: "10101010" :: Nil
+    //   "old open" should {
+    //     "write" in {
+    //       "serie state" in {
+    //         write(OldOpen(SerieScore(10))) must_== "00000000" :: "00001010" :: Nil
+    //         write(OldOpen(SerieScore(0xaaa))) must_== "00001010" :: "10101010" :: Nil
 
-          }
-          "pair sate" in {
-            write(OldOpen(PairScore(256))) must_== "00010001" :: "00000000" :: Nil
-          }
-        }
+    //       }
+    //       "pair sate" in {
+    //         write(OldOpen(PairScore(256))) must_== "00010001" :: "00000000" :: Nil
+    //       }
+    //     }
 
-        "read" in {
-          "serie state" in {
-            read("00000000" :: "00001010" :: Nil) must_== OldOpen(SerieScore(10))
-            read("00001010" :: "10101010" :: Nil) must_== OldOpen(SerieScore(0xaaa))
-          }
-          "pair sate" in {
-            read("00010001" :: "00000000" :: Nil) must_== OldOpen(PairScore(256))
-          }
-        }
-      }
+    //     "read" in {
+    //       "serie state" in {
+    //         read("00000000" :: "00001010" :: Nil) must_== OldOpen(SerieScore(10))
+    //         read("00001010" :: "10101010" :: Nil) must_== OldOpen(SerieScore(0xaaa))
+    //       }
+    //       "pair sate" in {
+    //         read("00010001" :: "00000000" :: Nil) must_== OldOpen(PairScore(256))
+    //       }
+    //     }
+    //   }
 
-      "new open" should {
-        val boardSave = Board(List(R1, R2))
-        val openerSave = Opener(
-          series = List(OpenSerie(EastSide, Piece.<>(10))),
-          pairs = List(OpenPair(EastSide, R1.w)),
-          opens = Sides(Some(OldOpen(SerieScore(11))),
-            None,
-            None,
-            None))
-        val binaryBoardSave = "00000010" :: "00000001" :: "00000010" :: Nil
-        val binarySeriesSave = "00000100" :: "00001010" :: "00011010" :: "00101010" :: "00111010" ::Nil
-        val binaryPairsSave = "00000000" :: "00000001" :: "00000001" :: Nil
-        val binaryOpensSave = "00000000" :: "00001011" :: List.fill(6)("11111111")
+    //   "new open" should {
+    //     val boardSave = Board(List(R1, R2))
+    //     val openerSave = Opener(
+    //       series = List(OpenSerie(EastSide, Piece.<>(10))),
+    //       pairs = List(OpenPair(EastSide, R1.w)),
+    //       opens = Sides(Some(OldOpen(SerieScore(11))),
+    //         None,
+    //         None,
+    //         None))
+    //     val binaryBoardSave = "00000010" :: "00000001" :: "00000010" :: Nil
+    //     val binarySeriesSave = "00000100" :: "00001010" :: "00011010" :: "00101010" :: "00111010" ::Nil
+    //     val binaryPairsSave = "00000000" :: "00000001" :: "00000001" :: Nil
+    //     val binaryOpensSave = "00000000" :: "00001011" :: List.fill(6)("11111111")
 
-        val binaryOpenerSave = binaryBoardSave ::: binarySeriesSave ::: binaryPairsSave ::: binaryOpensSave
+    //     val binaryOpenerSave = binaryBoardSave ::: binarySeriesSave ::: binaryPairsSave ::: binaryOpensSave
 
 
-        "write" in {
-          "serie state" in {
-            write(NewOpen(
-              score = SerieScore(10),
-              boardSave = boardSave,
-              openerSave = openerSave)) must_== "01000000" :: "00001010" :: Nil ::: binaryOpenerSave
-          }
-          "pair state" in {
-            write(NewOpen(
-              score = PairScore(10),
-              boardSave = boardSave,
-              openerSave = openerSave)) must_== "01010000" :: "00001010" :: Nil ::: binaryOpenerSave
-          }
-        }
-        "read" in {
-          read("01000000" :: "00001010" :: Nil ::: binaryOpenerSave) must_== NewOpen(score = SerieScore(10),
-            boardSave = boardSave,
-            openerSave = openerSave)
-        }
-      }
-    }
+    //     "write" in {
+    //       "serie state" in {
+    //         write(NewOpen(
+    //           score = SerieScore(10),
+    //           boardSave = boardSave,
+    //           openerSave = openerSave)) must_== "01000000" :: "00001010" :: Nil ::: binaryOpenerSave
+    //       }
+    //       "pair state" in {
+    //         write(NewOpen(
+    //           score = PairScore(10),
+    //           boardSave = boardSave,
+    //           openerSave = openerSave)) must_== "01010000" :: "00001010" :: Nil ::: binaryOpenerSave
+    //       }
+    //     }
+    //     "read" in {
+    //       read("01000000" :: "00001010" :: Nil ::: binaryOpenerSave) must_== NewOpen(score = SerieScore(10))
+    //     }
+    //  }
   }
 }
