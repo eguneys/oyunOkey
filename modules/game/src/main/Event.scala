@@ -85,6 +85,11 @@ object Event {
   }
 
 
+  case class End() extends Event {
+    def typ = "end"
+    def data = Json.toJson("winner")
+  }
+
   case class PieceGroupData(groups: PieceGroups) extends Event {
     def typ = "piecegroupdata"
     def data = Json.obj(

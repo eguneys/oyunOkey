@@ -10,11 +10,7 @@ package object round extends PackageObject with WithPlay with WithSocket {
 }
 
 package round {
-  private [round] class ClientErrorException(e: String) extends Exception(e)
 
-  private[round] object ClientErrorException {
-
-    def future (e: String) = fufail(new ClientErrorException(e))
-
-  }
+  private [round] sealed trait BenignError extends oyun.common.OyunException
+  private [round] case class ClientError(message: String) extends BenignError
 }

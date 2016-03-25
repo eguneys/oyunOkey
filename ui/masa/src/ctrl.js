@@ -24,7 +24,7 @@ module.exports = function(env) {
 
   var redirectToMyGame = () => {
     var gameId = myCurrentGameId(this);
-    if(gameId)
+    if(gameId && oyunkeyf.storage.get('last-game') !== gameId)
       location.href = '/' + gameId;
   };
 

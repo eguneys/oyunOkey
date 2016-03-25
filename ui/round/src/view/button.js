@@ -27,5 +27,14 @@ module.exports = {
     }, m('span', {
       'data-icon': icon
     }));
+  },
+  followUp: function(ctrl) {
+    var d = ctrl.data;
+
+    return m('div.follow_up', [
+      d.masa ? m('a.button', {
+        href: '/masa/' + d.masa.id
+      }, 'trans viewMasa lkasd') : null
+    ]);
   }
 };

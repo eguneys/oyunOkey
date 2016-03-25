@@ -5,6 +5,8 @@ import akka.pattern.ask
 
 import actorApi._
 import oyun.hub.actorApi.map.{ Tell }
+import oyun.game.{ Game }
+
 
 import okey.Side
 
@@ -48,6 +50,11 @@ private[masa] final class MasaApi(
     }
   }
 
+  def masa(game: Game): Fu[Option[Masa]] = ~{
+    for {
+      masaId <- game.masaId
+    } yield MasaRepo byId masaId
+  }
 
   def start(oldMasa: Masa) {
     Sequencing(oldMasa.id)(MasaRepo.createdById) { masa =>

@@ -5,7 +5,8 @@ import com.typesafe.config.Config
 final class Env(
   config: Config,
   lobbyEnv: oyun.lobby.Env,
-  roundJsonView: oyun.round.JsonView) {
+  roundJsonView: oyun.round.JsonView,
+  getMasa: oyun.game.Game => Fu[Option[oyun.masa.Masa]]) {
   object Net {
     //val Domain = config getString "net.domain"
     val AssetDomain = config getString "net.asset.domain"
@@ -16,7 +17,8 @@ final class Env(
   }
 
   val roundApi = new RoundApi(
-    jsonView = roundJsonView
+    jsonView = roundJsonView,
+    getMasa = getMasa
   )
 
   val lobbyApi = new LobbyApi(
@@ -28,5 +30,6 @@ object Env {
   lazy val current = new Env(
     config = oyun.common.PlayApp.loadConfig,
     lobbyEnv = oyun.lobby.Env.current,
-    roundJsonView = oyun.round.Env.current.jsonView)
+    roundJsonView = oyun.round.Env.current.jsonView,
+    getMasa = oyun.masa.Env.current.masa)
 }

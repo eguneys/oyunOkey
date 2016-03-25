@@ -15,7 +15,7 @@ object PairingRepo {
   private def selectId(id: String) = BSONDocument("_id" -> id)
   def selectMasa(masaId: String) = BSONDocument("mid" -> masaId)
 
-  private val selectPlaying = BSONDocument("s" -> BSONDocument("$lt" -> okey.Status.Over.id))
+  private val selectPlaying = BSONDocument("s" -> BSONDocument("$lt" -> okey.Status.End.id))
 
   private val recentSort = BSONDocument("d" -> -1)
 

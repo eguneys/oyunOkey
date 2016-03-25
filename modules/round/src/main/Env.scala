@@ -47,8 +47,11 @@ final class Env(
     socketHub = socketHub
   )
 
+  private lazy val finisher = new Finisher(
+    bus = system.oyunBus)
+
   private lazy val player: Player = new Player(
-    
+    finisher = finisher
   )
 
   private def getSocketStatus(gameId: String): Fu[SocketStatus] =

@@ -4,7 +4,7 @@ var ids = {
   created: 10,
   started: 20,
   aborted: 25,
-  over: 30
+  end: 30
 };
 
 function started(data) {
@@ -12,7 +12,7 @@ function started(data) {
 }
 
 function finished(data) {
-  return data.game.status.id >= ids.over;
+  return data.game.status.id >= ids.end;
 }
 
 function aborted(data) {

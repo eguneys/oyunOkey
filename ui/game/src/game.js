@@ -28,5 +28,6 @@ module.exports = {
   isPlayerPlaying: isPlayerPlaying,
   isPlayerTurn: isPlayerTurn,
   getPlayer: getPlayer,
-  sideByPly: sideByPly
+  sideByPly: sideByPly,
+  playable: playable
 };

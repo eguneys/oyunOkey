@@ -28,12 +28,12 @@ private[round] final class Round(
     }
   }
 
-  private def publish[A](op: Fu[Events]) = op addEffect { events =>
+  private def publish[A](op: Fu[Events]) = op.addEffect { events =>
     if (events.nonEmpty) socketHub ! Tell(gameId, EventList(events))
-  } addFailureEffect {
-    case e: ClientErrorException => println("cerror", e)
-    case e =>
-      println(e)
-      e.printStackTrace
-  } void
+  }.void recover errorHandler("publish")
+
+  private def errorHandler(name: String): PartialFunction[Throwable, Unit] = {
+    case e: ClientError => println("mon round error", e)
+    case e: Exception => logger.warn(s"$name: ${e.getMessage}")
+  }
 }

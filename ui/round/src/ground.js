@@ -1,4 +1,5 @@
 import okeyground from 'okeyground';
+import { game } from 'game';
 import util from './util';
 
 function makeFen(fen) {
@@ -13,7 +14,8 @@ function makeConfig(data) {
     povSide: data.player.side,
     movable: {
       free: false,
-      dests: data.possibleMoves
+      board: game.isPlayerPlaying(data),
+      dests: game.isPlayerPlaying(data) ? data.possibleMoves : []
     }
   };
 }
@@ -29,6 +31,16 @@ function make(data, userMove, onMove) {
   return new okeyground.controller(config);
 }
 
+function reload(ground, data) {
+  ground.set(makeConfig(data));
+}
+
+function end(ground) {
+  ground.stop();
+}
+
 module.exports = {
-  make: make
+  make: make,
+  reload: reload,
+  end: end
 };

@@ -1,5 +1,7 @@
 package oyun.game
 
+import org.joda.time.DateTime
+
 import okey.variant.Variant
 import okey.{ Game => OkeyGame, Player => OkeyPlayer, Table, Board, Sides, Side, Opener, Status, Move }
 
@@ -17,6 +19,7 @@ case class Game(
   status: Status,
   turns: Int,
   variant: Variant = Variant.default,
+  updatedAt: Option[DateTime] = None,
   metadata: Metadata) {
 
   val playerList = players.toList
@@ -37,6 +40,7 @@ case class Game(
 
   def fullIdOf(side: Side): String = s"$id${player(side).id}"
 
+  def masaId = metadata.masaId
 
   lazy val toOkey: OkeyGame = {
     val pieces = binaryPieces map BinaryFormat.piece.read
@@ -121,7 +125,8 @@ case class Game(
       binaryMiddles = BinaryFormat.piece write game.table.middles,
       binaryOpens = bOpens,
       binaryPlayer = BinaryFormat.player write game.player,
-      turns = game.turns
+      turns = game.turns,
+      status = situation.status | status
     )
 
     val state = Event.State(
@@ -142,11 +147,29 @@ case class Game(
     players = (as zip players) map { case (f, p) => f(p) }
   )
 
+
+  def start = started.fold(this, copy(
+    status = Status.Started,
+    updatedAt = DateTime.now.some
+  ))
+
+  def finish(status: Status) = Progress(
+    this,
+    copy(
+      status = status
+    ),
+    List(Event.End())
+  )
+
+  def started = status >= Status.Started
+
   def playable = status < Status.Aborted
 
   def playableBy(p: Player): Boolean = playable && turnOf(p)
 
   def playableBy(s: Side): Boolean = playableBy(player(s))
+
+  def finished = status >= Status.End
 
   def withMasaId(id: String) = this.copy(
     metadata = metadata.copy(masaId = id.some)
@@ -223,6 +246,7 @@ object Game {
     val createdAt = "ca"
     val updatedAt = "ua"
     val masaId = "mid"
+    val checkAt = "ck"
   }
 }
 

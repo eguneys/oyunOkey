@@ -111,7 +111,7 @@ function boardDiff2(oldFen, newFen) {
 
   var spaces = result.match(/\s/g).length + piecesLength;
 
-  while (spaces-- > 34) {
+  while (spaces-- > 32) {
     //result = result.replace(/\s/, "");
     result = result.replace(/\s([^\s]*)$/, "$1");
   }

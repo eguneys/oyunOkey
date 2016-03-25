@@ -26,7 +26,7 @@ object ApplicationBuild extends Build {
 
   lazy val api = project("api", moduleCPDeps)
     .settings(libraryDependencies ++= provided(
-      play.api)
+      play.api, RM)
   ) aggregate (moduleRefs: _*)
 
   lazy val user = project("user", Seq(common, memo)).settings(

@@ -1,7 +1,10 @@
 import m from 'mithril';
 import okeyground from 'okeyground';
 import socket from './socket';
+import round from './round';
 import ground from './ground';
+import title from './title';
+import init from './init';
 import util from './util';
 import { game } from 'game';
 
@@ -15,6 +18,8 @@ module.exports = function(opts) {
   };
 
   this.socket = new socket(opts.socketSend, this);
+
+  this.setTitle = partial(title.set, this);
 
   var onUserMove = (key, piece, group) => {
     this.sendMove(key, piece, group);
@@ -68,7 +73,7 @@ module.exports = function(opts) {
     d.game.player = game.sideByPly(o.ply);
 
     d.possibleMoves = d.player.side === d.game.player ? o.dests : [];
-
+    this.setTitle();
     if (true) {
       if (o.isMove) {
         if (o.drawmiddle) {
@@ -93,8 +98,19 @@ module.exports = function(opts) {
     m.endComputation();
   };
 
+  this.reload = (cfg) => {
+    m.startComputation();
+    var merged = round.merge(this.data, cfg);
+    this.data = merged.data;
+    this.setTitle();
+    // move on
+    m.endComputation();
+  };
+
   this.saveBoard = () => {
     var boardFen = this.okeyground.getFen();
     util.fenStore.set(boardFen);
   };
+
+  init.yolo(this);
 };

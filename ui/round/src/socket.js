@@ -1,3 +1,6 @@
+import xhr from './xhr';
+import ground from './ground';
+
 module.exports = function(send, ctrl) {
   this.send = send;
 
@@ -10,6 +13,11 @@ module.exports = function(send, ctrl) {
     move: function(o) {
       o.isMove = true;
       ctrl.apiMove(o);
+    },
+    end: function(scores) {
+      ground.end(ctrl.okeyground);
+      // ctrl.set loading?
+      xhr.reload(ctrl).then(ctrl.reload);
     }
   };
 

@@ -75,6 +75,7 @@ private[game] object GameDiff {
     d(binaryMiddles, _.binaryMiddles, ByteArray.ByteArrayBSONHandler.write)
     d(binaryPlayer, _.binaryPlayer, ByteArray.ByteArrayBSONHandler.write)
     d(turns, _.turns, w.int)
+    d(status, _.status.id, w.int)
 
     (addUa(setBuilder.toList), unsetBuilder.toList)
 

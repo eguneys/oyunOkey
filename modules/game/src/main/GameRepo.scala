@@ -1,6 +1,6 @@
 package oyun.game
 
-import okey.{ Side }
+import okey.{ Side, Status }
 
 import play.modules.reactivemongo.json.ImplicitBSONHandlers.JsObjectWriter
 import reactivemongo.bson._
@@ -12,6 +12,9 @@ object GameRepo {
   import tube.gameTube
 
   type ID = String
+
+  //import BSONHandlers._
+  import Game.{ BSONFields => F }
 
   def game(gameId: ID): Fu[Option[Game]] = $find byId gameId
 
@@ -42,6 +45,25 @@ object GameRepo {
 
   private def nonEmptyMod(mod: String, doc: BSONDocument) =
     if (doc.isEmpty) BSONDocument() else BSONDocument(mod -> doc)
+
+
+  def finish(
+    id: ID,
+    status: Status) = {
+    val partialUnsets = BSONDocument(
+    )
+
+    val unsets = 
+      if (status >= Status.End) partialUnsets ++ BSONDocument(F.checkAt -> true)
+      else partialUnsets
+
+    $update(
+      $select(id),
+      nonEmptyMod("$set", BSONDocument(
+
+      )) ++ BSONDocument("$unset" -> unsets)
+    )
+  }
 
   def insertDenormalized(g: Game): Funit = {
     val bson = (gameTube.handler write g)

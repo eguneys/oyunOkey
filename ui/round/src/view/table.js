@@ -1,6 +1,7 @@
 import m from 'mithril';
 import okeyground from 'okeyground';
 import renderUser from './user';
+import { game } from 'game';
 import button from './button';
 
 function compact(x) {
@@ -37,11 +38,30 @@ function renderClock(ctrl, side, position) {
   ]: null;
 }
 
+function isSpinning(ctrl) {
+  return ctrl.vm.loading || ctrl.vm.redirecting;
+}
+
+function spinning(ctrl) {
+  if (isSpinning(ctrl)) return m.trust(oyunkeyf.spinnerHtml);
+}
+
+function renderTableEnd(ctrl) {
+  var d = ctrl.data;
+  var buttons = compact(spinning(ctrl) || [
+    button.followUp(ctrl)
+  ]);
+  return [
+    m('div.control.icons', []),
+    renderSeat(ctrl, d.player, 'bottom'),
+    buttons ? m('div.control.buttons', buttons) : null,
+  ];
+}
+
 function renderTablePlay(ctrl) {
   var d = ctrl.data;
 
-  var buttons = compact([
-  ]);
+  var buttons = compact();
 
   // debug
   // m('button', {
@@ -56,13 +76,13 @@ function renderTablePlay(ctrl) {
     button.move(ctrl, ctrl.okeyground.canOpenPairs, 'P', 'openPairs', ctrl.openPairs)
   ];
 
-  return m('div.table_play', [
+  return [
     (
       m('div.control.icons', icons)
     ),
     renderSeat(ctrl, d.player, 'bottom'),
     m('div.control.buttons', buttons)
-  ]);
+  ];
 }
 
 function renderPlayer(ctrl, player) {
@@ -104,7 +124,9 @@ module.exports = function(ctrl) {
         visualTable(ctrl),
         renderSeat(ctrl, d.opponentRight)
       ]),
-      renderTablePlay(ctrl)
+      m('div.table_play',
+        game.playable(ctrl.data) ? renderTablePlay(ctrl) : renderTableEnd(ctrl)
+       )
     ])
   ];
 };

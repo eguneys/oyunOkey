@@ -49,6 +49,8 @@ final class Env(
     socketHub = socketHub,
     autoPairing = autoPairing)
 
+  val masa = api masa _
+
   private val organizer = system.actorOf(Props(new Organizer(
     api = api,
     isOnline = isPlayerOnline,

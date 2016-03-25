@@ -46,6 +46,10 @@ div.table_play {
   display: flex;
   flex-flow: row;
   margin-top: 5px;
+
+  align-items: baseline;
+  border: 1px solid #ccc;
+  padding: 10px;
 }
 
 div.control {
@@ -71,6 +75,23 @@ div.control.icons .button.move {
 div.control.icons .button.move.enabled {
   visibility: visible;
   opacity: 1;
+}
+
+.oyunkeyf_ground .follow_up {
+  margin: 0 7px ;
+}
+
+.oyunkeyf_ground .follow_up .button {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border-bottom-width: 0;
+  border-radius: 0;
+  padding: 14px 0;
+}
+
+.oyunkeyf_ground .follow_up.button:first-child {
+  border-radius: 3px 3px 0 0;
 }
 
 .og-512 .og-table-wrap {

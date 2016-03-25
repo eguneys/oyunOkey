@@ -268,6 +268,10 @@ oyunkeyf.spinnerHtml = '<div class="spinner"><svg viewBox="0 0 40 40"><circle cx
     cfg.element = element.querySelector('.round');
     cfg.socketSend = oyunkeyf.socket.send.bind(oyunkeyf.socket);
     round = OyunkeyfRound(cfg);
+
+    if (!data.player.spectator && data.game.status.id < 25) {
+      oyunkeyf.storage.set('last-game', data.game.id);
+    }
   };
 
   function startLobby(element, cfg) {
