@@ -10,11 +10,11 @@ module.exports = {
 
     if (game.isPlayerPlaying(d)) {
       window.addEventListener('beforeunload', function(e) {
-        if (game.playableBy(ctrl.data)) {
+        if (game.playable(ctrl.data)) {
           ctrl.socket.send('bye');
           var msg = 'trans There is a game in progress!';
           (e || window.event).returnValue = msg;
-          return msg;
+          // return msg;
         }
       });
     }

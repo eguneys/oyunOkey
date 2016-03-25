@@ -64,6 +64,14 @@ private[masa] final class MasaApi(
   }
 
 
+  def finishGame(game: Game) {
+    game.masaId foreach { masaId =>
+      Sequencing(masaId)(MasaRepo.startedById) { masa =>
+        PairingRepo.finish(game)
+      }
+    }
+  }
+
   private def sequence(masaId: String)(work: => Funit) {
     //sequencers ! Tell(masaId, Sequencer work work)
     (() => work)()

@@ -26,9 +26,14 @@ object Round extends OyunController with TheftPrevention {
   }
 
   private def renderPlayer(pov: Pov)(implicit ctx: Context): Fu[Result] = {
-    Env.api.roundApi.player(pov) map { data =>
-      Ok(html.round.player(pov, data))
-    }
+    negotiate(
+      html = Env.api.roundApi.player(pov) map { data =>
+        Ok(html.round.player(pov, data))
+      },
+      api = apiVersion => {
+        Env.api.roundApi.player(pov).map { Ok(_) }
+      }
+    )
   }
 
   def player(fullId: String) = Open { implicit ctx =>

@@ -27,6 +27,12 @@ object PairingRepo {
     pairingHandler.write(pairing) ++ BSONDocument("d" -> DateTime.now)
   }.void
 
+  def finish(g: oyun.game.Game) = coll.update(
+    selectId(g.id),
+    BSONDocument("$set" -> BSONDocument(
+      "s" -> g.status.id,
+      "t" -> g.turns))).void
+
   def playingPlayerIds(masa: Masa): Fu[Set[String]] =
     coll.find(selectMasa(masa.id) ++ selectPlaying).one[Pairing] map {
       _ map { _.playerIds.toSet } getOrElse Set.empty

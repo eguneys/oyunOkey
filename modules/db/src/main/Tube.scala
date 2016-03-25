@@ -14,7 +14,7 @@ case class BsTube[Doc](handler: BSONHandler[BSONDocument, Doc]) extends Tube[Doc
   def read(bson: BSONDocument): Option[Doc] = handler readTry bson match {
     case Success(doc) => Some(doc)
     case Failure(err) =>
-      logerr(s"[tube] Cannot read ${oyun.db.BSON.debug(bson)}\n$err\n${err.printStackTrace}")
+      logger.error(s"[tube] Cannot read ${oyun.db.BSON.debug(bson)}\n$err\n${err.printStackTrace}")
       None
   }
 

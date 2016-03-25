@@ -61,7 +61,7 @@ final class Env(
 }
 
 object Env {
-  lazy val current = new Env(
+  lazy val current = "round" boot new Env(
     config = oyun.common.PlayApp loadConfig "round",
     system = oyun.common.PlayApp.system)
 }

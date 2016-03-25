@@ -6,16 +6,15 @@ import ornicar.scalalib
 import scalaz.{ Monad, Monoid, OptionT, ~> }
 
 trait PackageObject extends Steroids with WithFuture {
-  lazy val logger = play.api.Logger("oyun")
-  def loginfo(s: String) { logger info s }
-  def logwarn(s: String) { logger warn s }
-  def logerr(s: String) { logger error s }
-
   implicit final def runOptionT[F[+_], A](ot: OptionT[F, A]): F[Option[A]] = ot.run
 
   // from scalaz. We don't want to import all OptionTFunctions, because of the clash with `some`
   def optionT[M[_]] = new (({ type λ[α] = M[Option[α]] })#λ ~>({ type λ[α] = OptionT[M, α] })#λ) {
     def apply[A](a: M[Option[A]]) = new OptionT[M, A](a)
+  }
+
+  implicit final class OyunPimpedString(s: String) {
+    def boot[A](v: => A): A = { oyun.log.boot.info(s); v }
   }
 
   def parseIntOption(str: String): Option[Int] = try {

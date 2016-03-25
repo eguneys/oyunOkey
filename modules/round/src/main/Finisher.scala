@@ -24,7 +24,6 @@ private[round] final class Finisher(
         id = g.id,
         status = prog.game.status) >> {
         val finish = FinishGame(g)
-
         GameRepo game g.id foreach { newGame =>
           bus.publish(finish.copy(game = newGame | g), 'finishGame)
         }

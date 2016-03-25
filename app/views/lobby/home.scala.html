@@ -12,13 +12,13 @@
 
 @base.layout(
   title = "",
-  fullTitle = Some("oyunkeyf.org * " + "trans.freeOnlineOkey.str()"),
+  fullTitle = Some("oyunkeyf.org * " + trans.freeOnlineOkey.str()),
   moreJs = moreJs
 ) {
   <div class="lobby_and_ground">
     <div id="hooks_wrap"></div>
     <div id="start_buttons" class="oyun_ground">
-      <a class="fat button config_masa" href="@routes.Masa.form" onclick="return false">trans.createAGame()</a>
+      <a class="fat button config_masa" href="@routes.Masa.form" onclick="return false">@trans.createAGame()</a>
     </div>
   </div>
 }

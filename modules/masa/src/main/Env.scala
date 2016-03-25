@@ -25,6 +25,7 @@ final class Env(
     val CollectionPlayer = config getString "collection.player"
     val SocketName = config getString "socket.name"
     val OrganizerName = config getString "organizer.name"
+    val ApiActorName = config getString "api_actor.name"
   }
   import settings._
 
@@ -38,6 +39,7 @@ final class Env(
     )
   }), name = SocketName)
 
+  system.actorOf(Props(new ApiActor(api = api)), name = ApiActorName)
 
   lazy val socketHandler = new SocketHandler(
     hub = hub,
