@@ -112,5 +112,7 @@ module.exports = function(opts) {
     util.fenStore.set(boardFen);
   };
 
+  this.trans = oyunkeyf.trans(opts.i18n);
+
   init.yolo(this);
 };

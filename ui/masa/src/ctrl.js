@@ -39,4 +39,6 @@ module.exports = function(env) {
   };
 
   redirectToMyGame();
+
+  this.trans = oyunkeyf.trans(env.i18n);
 };

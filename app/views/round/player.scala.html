@@ -9,7 +9,8 @@
   @embedJs {
     $(function() {
       oyunkeyf.startRound(document.getElementById('oyunkeyf'), {
-        data: @Html(J.stringify(data))
+        data: @Html(J.stringify(data)),
+        i18n: @jsI18n()
       });
     });
   }

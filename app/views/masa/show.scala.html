@@ -5,7 +5,8 @@
   @embedJs {
     oyunkeyf = oyunkeyf || {};
     oyunkeyf.masa = {
-      data: @Html(play.api.libs.json.Json.stringify(data))
+      data: @Html(play.api.libs.json.Json.stringify(data)),
+      i18n: @jsI18n()
     };
   }
 }

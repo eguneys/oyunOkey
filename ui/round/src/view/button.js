@@ -34,7 +34,7 @@ module.exports = {
     return m('div.follow_up', [
       d.masa ? m('a.button', {
         href: '/masa/' + d.masa.id
-      }, 'trans viewMasa lkasd') : null
+      }, ctrl.trans('viewMasa')) : null
     ]);
   }
 };

@@ -10,7 +10,7 @@ function withdraw(ctrl) {
     return m('button.button.right.text', {
       'data-icon': 'b',
       onclick: ctrl.withdraw
-    }, 'trans withdraw');
+    }, ctrl.trans('withdraw'));
   });
 }
 
@@ -19,7 +19,7 @@ function join(ctrl, side) {
     return m('button.button.right.text.glowed', {
       'data-icon': 'G',
       onclick: util.partial(ctrl.join, side)
-    }, 'trans join');
+    }, ctrl.trans('join'));
   });
 }
 
