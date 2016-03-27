@@ -3,7 +3,7 @@ package oyun.game
 import oyun.db.{ BSON, ByteArray }
 import reactivemongo.bson._
 
-import okey.{ Sides, Side, Status }
+import okey.{ Sides, Side, Status, EndScoreSheet }
 
 object BSONHandlers {
 
@@ -84,6 +84,36 @@ object BSONHandlers {
     }
   }
 
+  private[game] implicit val scoresBSONHandler = new BSON[EndScoreSheet] {
+    import BSON.MapValue.MapHandler
+
+    def reads(r: BSON.Reader) = {
+      val handSum = r int "h"
+      val scoreDocs = r get[Map[String, BSONInteger]]("s")
+
+      val scores = scoreDocs map {
+        case (k, v) => {
+          val flag = okey.Flag(k) err "No such flag: ${k}"
+          flag -> okey.FlagScore(v.value)
+        }
+      }
+
+      EndScoreSheet(handSum, scores)
+    }
+
+    def writes(w: BSON.Writer, o: EndScoreSheet): BSONDocument = {
+      val scores = o.scores map {
+        case (k, v) => {
+          k.id.toString -> BSONInteger(v.map(_.id) | 0)
+        }
+      }
+      BSONDocument(
+        "h" -> o.handSum,
+        "s" -> scores
+      )
+    }
+  }
+
   implicit val gameBSONHandler = new BSON[Game] {
 
     import Game.BSONFields._
@@ -91,6 +121,7 @@ object BSONHandlers {
 
     def reads(r: BSON.Reader): Game = {
       val nbTurns = r int turns
+      val oEndScores = r getO[Sides[EndScoreSheet]](endScores)
 
       val List(eastId, westId, northId, southId) = r str playerIds grouped 4 toList
 
@@ -99,7 +130,7 @@ object BSONHandlers {
       val builder = r.get[Sides[Player.Builder]](sidesPlayer)
 
       val players = Sides(eastId, westId, northId, southId) sideMap {
-        case (side, id) => builder(side)(side)(id)(sidesPid(side))
+        case (side, id) => builder(side)(side)(id)(sidesPid(side))(oEndScores.map(_(side)))
       }
 
       val bPieces = r.get[Sides[ByteArray]](binaryPieces)
@@ -136,6 +167,7 @@ object BSONHandlers {
         binarySign = r int binarySign toByte,
         binaryOpens = bOpens2,
         binaryPlayer = r bytes binaryPlayer,
+        opensLastMove = r.get[OpensLastMove](opensLastMove)(OpensLastMove.opensLastMoveBSONHandler),
         status = r.get[Status](status),
         turns = nbTurns,
         metadata = Metadata(
@@ -148,7 +180,7 @@ object BSONHandlers {
       id -> o.id,
       playerIds -> (o.players.map(_.id) mkString),
       playerPids -> o.players.mapt(_.playerId),
-      sidesPlayer -> o.players.mapt(p => playerBSONHandler write ((_: Side) => (_: Player.Id) => (_: Player.PlayerId) => p)),
+      sidesPlayer -> o.players.mapt(p => playerBSONHandler write ((_: Side) => (_: Player.Id) => (_: Player.PlayerId) => (_: Player.EndScore) => p)),
       binaryPieces -> o.binaryPieces,
       binaryDiscards -> o.binaryDiscards,
       binaryMiddles -> o.binaryMiddles,
@@ -157,6 +189,7 @@ object BSONHandlers {
       binaryPiecesSave -> o.binaryOpens.flatMap { _.save map(t => t._1) },
       binaryOpensSave -> o.binaryOpens.flatMap { _.save map(t => t._2) },
       binaryPlayer -> o.binaryPlayer,
+      opensLastMove -> OpensLastMove.opensLastMoveBSONHandler.write(o.opensLastMove),
       status -> o.status,
       turns -> o.turns,
       masaId -> o.metadata.masaId

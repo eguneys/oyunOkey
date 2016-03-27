@@ -19,6 +19,61 @@ abstract class BSON[T]
 
 object BSON {
 
+  object MapDocument {
+    implicit def MapReader[V](implicit vr: BSONDocumentReader[V]): BSONDocumentReader[Map[String, V]] = new BSONDocumentReader[Map[String, V]] {
+      def read(bson: BSONDocument): Map[String, V] = {
+        // mutable optimized implementation
+        val b = collection.immutable.Map.newBuilder[String, V]
+        for (tuple <- bson.elements)
+          // assume that all values in the document are BSONDocuments
+          b += (tuple._1 -> vr.read(tuple._2.asInstanceOf[BSONDocument]))
+        b.result
+      }
+    }
+
+    implicit def MapWriter[V](implicit vw: BSONDocumentWriter[V]): BSONDocumentWriter[Map[String, V]] = new BSONDocumentWriter[Map[String, V]] {
+      def write(map: Map[String, V]): BSONDocument = BSONDocument {
+        map.toStream.map { tuple =>
+          tuple._1 -> vw.write(tuple._2)
+        }
+      }
+    }
+
+    implicit def MapHandler[V](implicit vr: BSONDocumentReader[V], vw: BSONDocumentWriter[V]): BSONHandler[BSONDocument, Map[String, V]] = new BSONHandler[BSONDocument, Map[String, V]] {
+      private val reader = MapReader[V]
+      private val writer = MapWriter[V]
+      def read(bson: BSONDocument): Map[String, V] = reader read bson
+      def write(map: Map[String, V]): BSONDocument = writer write map
+    }
+  }
+
+  object MapValue {
+    implicit def MapReader[V](implicit vr: BSONReader[_ <: BSONValue, V]): BSONDocumentReader[Map[String, V]] = new BSONDocumentReader[Map[String, V]] {
+      def read(bson: BSONDocument): Map[String, V] = {
+        val valueReader = vr.asInstanceOf[BSONReader[BSONValue, V]]
+        // mutable optimized implementation
+        val b = collection.immutable.Map.newBuilder[String, V]
+        for (tuple <- bson.elements) b += (tuple._1 -> valueReader.read(tuple._2))
+        b.result
+      }
+    }
+
+    implicit def MapWriter[V](implicit vw: BSONWriter[V, _ <: BSONValue]): BSONDocumentWriter[Map[String, V]] = new BSONDocumentWriter[Map[String, V]] {
+      def write(map: Map[String, V]): BSONDocument = BSONDocument {
+        map.toStream.map { tuple =>
+          tuple._1 -> vw.write(tuple._2)
+        }
+      }
+    }
+
+    implicit def MapHandler[V](implicit vr: BSONReader[_ <: BSONValue, V], vw: BSONWriter[V, _ <: BSONValue]): BSONHandler[BSONDocument, Map[String, V]] = new BSONHandler[BSONDocument, Map[String, V]] {
+      private val reader = MapReader[V]
+      private val writer = MapWriter[V]
+      def read(bson: BSONDocument): Map[String, V] = reader read bson
+      def write(map: Map[String, V]): BSONDocument = writer write map
+    }
+  }
+
   implicit object BSONJodaDateTimeHandler extends BSONHandler[BSONDateTime, DateTime] {
     def read(x: BSONDateTime) = new DateTime(x.value)
     def write(x: DateTime) = BSONDateTime(x.getMillis)

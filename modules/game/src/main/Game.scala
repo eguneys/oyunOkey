@@ -3,7 +3,8 @@ package oyun.game
 import org.joda.time.DateTime
 
 import okey.variant.Variant
-import okey.{ Game => OkeyGame, Player => OkeyPlayer, Table, Board, Sides, Side, Opener, Status, Move }
+import okey.{ Game => OkeyGame, Player => OkeyPlayer, History => OkeyHistory, Table, Board, Sides, Side, Opener, Status, Move, EndScoreSheet, Opens }
+import okey.format.Uci
 
 import oyun.db.ByteArray
 
@@ -16,6 +17,7 @@ case class Game(
   binarySign: Int,
   binaryOpens: Option[BinaryOpens],
   binaryPlayer: ByteArray,
+  opensLastMove: OpensLastMove,
   status: Status,
   turns: Int,
   variant: Variant = Variant.default,
@@ -76,6 +78,7 @@ case class Game(
 
     val player = OkeyPlayer(
       side = Side(turns),
+      history = toOkeyHistory,
       drawLeft = playerDrawLeft,
       drawMiddle = playerDrawMiddle)
 
@@ -92,10 +95,14 @@ case class Game(
     )
   }
 
+  lazy val toOkeyHistory = OkeyHistory(
+    lastMoves = opensLastMove.lastMoves,
+    openStates = opensLastMove.opens)
+
   def update(
     game: OkeyGame,
     move: Move): Progress = {
-    val situation = game.situation
+    val (history, situation) = (game.player.history, game.situation)
 
     val bOpens = game.table.opener map { opener =>
 
@@ -125,6 +132,9 @@ case class Game(
       binaryMiddles = BinaryFormat.piece write game.table.middles,
       binaryOpens = bOpens,
       binaryPlayer = BinaryFormat.player write game.player,
+      opensLastMove = OpensLastMove(
+        opens = history.openStates,
+        lastMoves = history.lastMoves),
       turns = game.turns,
       status = situation.status | status
     )
@@ -153,12 +163,13 @@ case class Game(
     updatedAt = DateTime.now.some
   ))
 
-  def finish(status: Status) = Progress(
+  def finish(status: Status, result: Option[Sides[EndScoreSheet]]) = Progress(
     this,
     copy(
-      status = status
+      status = status,
+      players = players sideMap ((side, p) => p finish (result map(_.apply(side))))
     ),
-    List(Event.End())
+    List(Event.End(result))
   )
 
   def started = status >= Status.Started
@@ -170,6 +181,9 @@ case class Game(
   def playableBy(s: Side): Boolean = playableBy(player(s))
 
   def finished = status >= Status.End
+
+
+  def endScores: Option[Sides[EndScoreSheet]] = players.map(_.endScore).toList.sequence.map (Sides.fromIterable)
 
   def withMasaId(id: String) = this.copy(
     metadata = metadata.copy(masaId = id.some)
@@ -214,6 +228,7 @@ object Game {
       binarySign = binarySign,
       binaryOpens = binaryOpens,
       binaryPlayer = binaryPlayer,
+      opensLastMove = OpensLastMove.init,
       status = Status.Created,
       turns = game.turns,
       metadata = Metadata(
@@ -241,8 +256,10 @@ object Game {
     val binaryPairs = "op"
     val binaryOpenStates = "oo"
     val binaryPlayer = "pl"
+    val opensLastMove = "ol"
     val status = "s"
     val turns = "t"
+    val endScores = "es"
     val createdAt = "ca"
     val updatedAt = "ua"
     val masaId = "mid"
@@ -255,3 +272,40 @@ case class BinaryOpens(
   binaryPairs: ByteArray,
   binaryOpenStates: Sides[Option[ByteArray]],
   save: Option[(ByteArray, BinaryOpens)] = None)
+
+case class OpensLastMove(
+  lastMoves: List[Uci],
+  opens: Sides[Option[Opens]])
+
+object OpensLastMove {
+  def init = OpensLastMove(lastMoves = Nil, opens = Sides[Option[Opens]])
+
+  import reactivemongo.bson._
+  import oyun.db.BSON
+  import BSONHandlers.sidesOptionBSONHandler
+
+  private[game] implicit val opensBSONHandler = new BSON[Opens] {
+    def reads(r: BSON.Reader) = Opens(old = r bool "o", pairs = r bool "p")
+    def writes(w: BSON.Writer, o: Opens) = BSONDocument(
+      "o" -> o.old,
+      "p" -> o.pairs)
+  }
+
+  private[game] implicit val opensLastMoveBSONHandler = new BSON[OpensLastMove] {
+    def reads(r: BSON.Reader) = {
+      val lastMoves = (r str "lm") |> {
+        case "" => Nil
+        case s => Uci.readList(s) err s"invalid last moves: $s"
+      }
+
+      val opens = r.get[Sides[Option[Opens]]]("op")
+
+      OpensLastMove(lastMoves, opens)
+    }
+
+    def writes(w: BSON.Writer, o: OpensLastMove) = BSONDocument(
+      "lm" -> Uci.writeList(o.lastMoves),
+      "op" -> o.opens
+    )
+  }
+}

@@ -3,7 +3,7 @@ package oyun.game
 import play.api.libs.json._
 import oyun.common.PimpedJson._
 
-import okey.{ Side, Situation, Piece, Move => OkeyMove, OpenSeries, OpenPairs, DrawMiddle, Discard, Status, Action, PieceGroups }
+import okey.{ Move => OkeyMove, _ }
 
 sealed trait Event {
   def typ: String
@@ -85,9 +85,9 @@ object Event {
   }
 
 
-  case class End() extends Event {
+  case class End(result: Option[Sides[EndScoreSheet]]) extends Event {
     def typ = "end"
-    def data = Json.toJson("winner")
+    def data = Json.obj("result" ->  result.map(sidesWriter(_)))
   }
 
   case class PieceGroupData(groups: PieceGroups) extends Event {
@@ -116,6 +116,15 @@ object Event {
     ).noNull
   }
 
+  private def sidesWriter(sides: Sides[okey.EndScoreSheet]) =
+    Json.obj(
+      "east" -> sides(EastSide),
+      "west" -> sides(WestSide),
+      "north" -> sides(NorthSide),
+      "south" -> sides(SouthSide)
+    )
+
+
   private implicit val sideWriter: Writes[okey.Side] = Writes { s =>
     JsString(s.name)
   }
@@ -124,5 +133,15 @@ object Event {
     Json.obj(
       "id" -> s.id,
       "name" -> s.name)
+  }
+
+  private implicit val endScoreSheetWriter: OWrites[okey.EndScoreSheet] = OWrites { s =>
+    Json.obj(
+      "hand" -> s.handSum,
+      "total" -> s.total,
+      "scores" -> JsObject(s.scores map {
+        case (k, v) => k.id.toString -> (JsNumber(v.map(_.id) | 0))
+      })
+    )
   }
 }

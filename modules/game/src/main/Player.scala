@@ -1,11 +1,16 @@
 package oyun.game
 
-import okey.{ Side, Sides }
+import okey.{ Side, Sides, EndScoreSheet }
 
 case class Player(
   id: String,
   playerId: Option[String] = None,
-  side: Side) {
+  side: Side,
+  endScore: Option[EndScoreSheet] = None) {
+
+  def finish(score: Option[EndScoreSheet]) = copy(
+    endScore = endScore
+  )
 
   def withPlayer(id: String): Player = copy(
     playerId = id.some)
@@ -38,20 +43,22 @@ object Player {
   type Id = String
   type UserId = Option[String]
   type PlayerId = Option[String]
+  type EndScore = Option[EndScoreSheet]
 
-  type Builder = Side => Id => PlayerId => Player
+  type Builder = Side => Id => PlayerId => EndScore => Player
 
   implicit val playerBSONHandler = new BSON[Builder] {
     import BSONFields._
 
-    def reads(r: BSON.Reader) = side => id => playerId => Player(
+    def reads(r: BSON.Reader) = side => id => playerId => endScore => Player(
       id = id,
       side = side,
-      playerId = playerId
+      playerId = playerId,
+      endScore = endScore
     )
 
     def writes(w: BSON.Writer, o: Builder) =
-      o(Side.EastSide)("0000")(none) |> { p =>
+      o(Side.EastSide)("0000")(none)(none) |> { p =>
         BSONDocument(
           
         )

@@ -1,6 +1,6 @@
 package oyun.game
 
-import okey.{ Side, Status }
+import okey.{ Side, Sides, Status, EndScoreSheet }
 
 import play.modules.reactivemongo.json.ImplicitBSONHandlers.JsObjectWriter
 import reactivemongo.bson._
@@ -49,7 +49,10 @@ object GameRepo {
 
   def finish(
     id: ID,
-    status: Status) = {
+    status: Status,
+    result: Option[Sides[EndScoreSheet]]) = {
+    import BSONHandlers.scoresBSONHandler
+
     val partialUnsets = BSONDocument(
     )
 
@@ -60,7 +63,7 @@ object GameRepo {
     $update(
       $select(id),
       nonEmptyMod("$set", BSONDocument(
-
+        F.endScores -> result.map (BSONHandlers.sidesBSONHandler[EndScoreSheet].write _)
       )) ++ BSONDocument("$unset" -> unsets)
     )
   }

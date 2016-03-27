@@ -19,7 +19,6 @@ object Masa extends OyunController with TheftPrevention {
   def show(id: String) = Open { implicit ctx =>
     playerForReq(id) flatMap { playerOption =>
       val playerId = playerOption map(_.id)
-
       negotiate(
         html = repo byId id flatMap {
           _.fold(masaNotFound.fuccess) { masa =>
