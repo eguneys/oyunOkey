@@ -15,6 +15,29 @@ td {
   padding: 0;
 }
 
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+em,
+strong,
+th {
+  font-style: normal;
+  font-weight: normal;
+}
+
+th {
+  text-align: left;
+}
+
+h1,
+h2,
+h3 {
+  font-size: 100%;
+  font-weight: normal;
+}
+
 input,
 textarea,
 button {
@@ -55,8 +78,22 @@ body.no-select {
   -webkit-user-select: none;
 }
 
-body > div.content {
-  margin: 35px auto 30px auto;
+a,
+a:visited,
+button,
+input {
+  color: 747474;
+}
+a,
+a:visited,
+button,
+.button {
+  cursor: pointer;
+}
+a,
+a:hover,
+a:visited {
+  text-decoration: none;
 }
 
 @keyframes spinnerRotate {
@@ -91,11 +128,21 @@ body > div.content {
   animation: spinnerDash 1.275s ease-in-out infinite, spinnerColor 5.1s linear infinite;
 }
 
+#site_header {
+  width: 200px;
+  position: relative;
+}
 
+body > div.content {
+  display: flex;
+  width: 1005px;
+  margin: 35px auto 30px auto;
+}
 
 #top {
   position: relative;
   height: 24px;
+  width: 1005px;
   margin: 0 auto;
   padding-top: 5px;
   box-sizing: border-box;
@@ -103,7 +150,24 @@ body > div.content {
 }
 
 #oyunkeyf {
-  margin-left: 150px;
+  margin-left: -190px;
+}
+
+#site_title {
+  font-size: 30px;
+  display: block;
+  margin-bottom: 3px;
+  color: #555;
+  opacity: 0.7;
+  transition: opacity 0.13s;
+}
+
+#site_title:hover {
+  opacity: 1;
+}
+
+#site_title span.extension {
+  opacity: 0.7;
 }
 
 div.content_box {
@@ -124,6 +188,11 @@ div.content_box.no_padding {
   padding: 0;
 }
 
+table.slist {
+  width: 100%;
+  border-bottom: 1px solid #d4d4d4;
+}
+
 table.slist thead {
   background: rgb(245, 245, 245);
   background: linear-gradient(to bottom, rgba(245, 245, 245, 1) 0%, rgba(240, 240, 240, 1) 100%);
@@ -135,6 +204,10 @@ table.slist thead th {
   border-top: 1px solid #d4d4d4;
   border-bottom: 1px solid #d4d4d4;
   padding: 0.4em 0.6em;
+}
+
+table.slist td {
+  padding: 0.6em;
 }
 
 .button,

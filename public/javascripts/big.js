@@ -260,6 +260,27 @@ oyunkeyf.spinnerHtml = '<div class="spinner"><svg viewBox="0 0 40 40"><circle cx
   $(function() {
     if (oyunkeyf.lobby) startLobby(document.getElementById('hooks_wrap'), oyunkeyf.lobby);
     else if (oyunkeyf.masa) startMasa(document.getElementById('masa'), oyunkeyf.masa);
+
+    // delay so round starts first (just for perceived perf)
+    setTimeout(function() {
+      // Zoom
+      var getZoom = function() {
+        return 1;
+      };
+
+      var setZoom = function(zoom) {
+        var $oyunkeyfGame = $('.oyunkeyf_game, .board_and_ground');
+        var px = function(i) {
+          return Math.round(i) + 'px';
+        };
+
+        if ($oyunkeyfGame.length) {
+          // if on a board with a game
+          $('body > .content')
+            .css("margin-left", `calc(50% - ${px(246.5 + 256 * zoom)})`);
+        }
+      };
+    }, 50);
   });
 
   oyunkeyf.startRound = function(element, cfg) {

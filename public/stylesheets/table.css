@@ -1,61 +1,182 @@
 div.table_wrap {
   display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
 }
 
-div.table_seat {
-}
-
-div.table_seat .clock {
+div.player_wrap .clock {
   position: relative;
 }
 
-div.table_seat .clock_bottom {
+div.player_wrap .clock_bottom {
   top: -4px;
 }
 
-div.table_seat .clock .bar {
+div.player_wrap .clock .bar {
   position: absolute;
-  width: 170px;
+  width: 100%;
   height: 4px;
   background: #fff077;
   color: #444;
 }
 
-div.table_seat .clock .bar span {
+div.player_wrap .clock .bar span {
   display: block;
   height: 4px;
-  width: 150px;
   background: #759900;
 }
 
-div.table_seat .player {
+div.player_wrap {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+div.player_wrap .player {
   padding: 10px;
   border: 1px solid #ccc;
-  width: 150px;
 }
+
+div.table_side {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: 200px;
+}
+
+div.table_left {
+  padding-right: 15px;
+}
+
+div.table_right {
+  padding-left: 15px;
+}
+
+div.table_side .player_wrap {
+  margin-top: 200px;
+}
+
+div.table_right .scores {
+  width: 100%;
+  border: 1px solid #ccc;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  margin-top: 5px;
+}
+
+div.table_right .scores .top {
+  border-bottom: 1px solid #ccc;
+  padding: 3px 5px;
+  font-weight: bold;
+  color: #747474;
+}
+
+.scores table.standing {
+  border-bottom: none;
+}
+
+.scores table.standing tbody tr {
+  transition: 0.13s;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+.scores table.standing tbody tr:hover {
+  background: rgba(191, 231, 255, 0.7);
+  cursor: pointer;
+}
+
+.scores table.standing tr:nth-child(even) {
+  background: #f4f4f4;
+}
+
+.scores table.standing td:first-child {
+  padding: 0.8em 0.6em;
+}
+.scores table.standing td:first-child rank {
+  display: inline-block;
+  font-weight: bold;
+  width: 20px;
+  opacity: 0.6;
+}
+
+.scores table.standing .sheet {
+  text-align: right;
+  font-family: monospace;
+  letter-spacing: 0;
+}
+
+.scores table.standing .total {
+  padding-right: 10px;
+  text-align: right;
+  font-family: monospace;
+  letter-spacing: 0;
+}
+
+.scores table.standing .sheet>* {
+  display: inline-block;
+  padding: 0 2px;
+}
+
+.scores erase,
+.scores_info erase {
+  color: #759900;
+  font-weight: bold;
+}
+
+.scores penalty,
+.scores_info penalty {
+  color: #750000;
+  font-weight: bold;
+}
+
+.scores double,
+.scores_info double {
+  color: #d59120;
+  font-weight: bold;
+}
+
+div.scores_info {
+  margin-top: 15px;
+  width: 100%;
+}
+
+div.scores_info table {
+  width: 100%;
+}
+
+div.scores_info td {
+  width: 40px;
+  padding: 2px 8px;
+  text-align: center;
+}
+
+/*// debug */
+/* #oyunkeyf { */
+/*   margin-left: -500px; */
+/* } */
 
 div.table_middle {
   display: flex;
-  flex-flow: row;
+  flex-flow: column;
   align-items: center;
 }
 
-div.table_play {
+div.table_middle .player_wrap {
+  width: 200px;
+}
+
+div.table_over {
   display: flex;
   flex-flow: row;
   margin-top: 5px;
 
   align-items: baseline;
-  border: 1px solid #ccc;
-  padding: 10px;
+  //border: 1px solid #ccc;
+  padding: 10px 0;
 }
 
 div.control {
   text-align: center;
   width: 200px;
-  margin-top: 2px;
 }
 
 div.control.icons .button {
@@ -85,7 +206,6 @@ div.control.icons .button.move.enabled {
   display: block;
   width: 100%;
   box-sizing: border-box;
-  border-bottom-width: 0;
   border-radius: 0;
   padding: 14px 0;
 }

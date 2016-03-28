@@ -15,6 +15,8 @@ module.exports = function(opts) {
   this.data = opts.data;
 
   this.vm = {
+    scoresheetInfo: {
+    }
   };
 
   this.socket = new socket(opts.socketSend, this);
@@ -105,6 +107,17 @@ module.exports = function(opts) {
     this.setTitle();
     // move on
     m.endComputation();
+  };
+
+  this.toggleScoresheet = (side, data) => {
+    if (this.vm.scoresheetInfo.side === side) {
+      side = null;
+    }
+    this.vm.scoresheetInfo = {
+      side: side,
+      data: data
+    };
+    m.redraw();
   };
 
   this.saveBoard = () => {

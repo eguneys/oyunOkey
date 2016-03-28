@@ -15,6 +15,7 @@ module.exports = function(send, ctrl) {
       ctrl.apiMove(o);
     },
     end: function(scores) {
+      ctrl.data.game.scores = scores;
       ground.end(ctrl.okeyground);
       // ctrl.set loading?
       xhr.reload(ctrl).then(ctrl.reload);
