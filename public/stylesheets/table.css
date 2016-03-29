@@ -167,11 +167,11 @@ div.table_middle .player_wrap {
 div.table_over {
   display: flex;
   flex-flow: row;
-  margin-top: 5px;
+  //margin-top: 5px;
 
   align-items: baseline;
   //border: 1px solid #ccc;
-  padding: 10px 0;
+  padding: 2px 0;
 }
 
 div.control {
@@ -212,6 +212,37 @@ div.control.icons .button.move.enabled {
 
 .oyunkeyf_ground .follow_up.button:first-child {
   border-radius: 3px 3px 0 0;
+}
+
+#chat .messages {
+  height: 100%;
+  overflow: hidden;
+  overflow-y: auto;
+  word-wrap: break-word;
+}
+
+#chat form {
+  position: relative;
+}
+
+#chat form input.oyunkeyf_say {
+  border: 0;
+  border-top: 1px solid #ccc;
+  padding: 2px 20px 2px 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#chat a.send {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  padding-top: 3px;
+  display: block;
+  height: 16px;
+  width: 16px;
+  z-index: 1;
+  opacity: 0.5;
 }
 
 .og-512 .og-table-wrap {

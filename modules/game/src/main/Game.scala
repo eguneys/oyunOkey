@@ -21,6 +21,7 @@ case class Game(
   status: Status,
   turns: Int,
   variant: Variant = Variant.default,
+  createdAt: DateTime = DateTime.now,
   updatedAt: Option[DateTime] = None,
   metadata: Metadata) {
 
@@ -174,6 +175,8 @@ case class Game(
 
   def started = status >= Status.Started
 
+  def aborted = status == Status.Aborted
+
   def playable = status < Status.Aborted
 
   def playableBy(p: Player): Boolean = playable && turnOf(p)
@@ -182,8 +185,11 @@ case class Game(
 
   def finished = status >= Status.End
 
+  def finishedOrAborted = finished || aborted
 
   def endScores: Option[Sides[EndScoreSheet]] = players.map(_.endScore).toList.sequence.map (Sides.fromIterable)
+
+  def isBeingPlayed = !finishedOrAborted
 
   def withMasaId(id: String) = this.copy(
     metadata = metadata.copy(masaId = id.some)
@@ -233,8 +239,8 @@ object Game {
       turns = game.turns,
       metadata = Metadata(
         masaId = none
-      )
-    )
+      ),
+      createdAt= DateTime.now)
   }
 
   private[game] lazy val tube = oyun.db.BsTube(BSONHandlers.gameBSONHandler)

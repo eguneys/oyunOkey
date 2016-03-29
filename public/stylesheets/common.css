@@ -42,8 +42,8 @@ input,
 textarea,
 button {
   font-family: inherit;
-  font-size: inheirt;
-  font-height: inherit;
+  font-size: inherit;
+  font-weight: inherit;
 }
 
 [data-icon]:before {
@@ -82,7 +82,7 @@ a,
 a:visited,
 button,
 input {
-  color: 747474;
+  color: #747474;
 }
 a,
 a:visited,
@@ -129,7 +129,7 @@ a:visited {
 }
 
 #site_header {
-  width: 200px;
+  min-width: 200px;
   position: relative;
 }
 
@@ -150,7 +150,8 @@ body > div.content {
 }
 
 #oyunkeyf {
-  margin-left: -190px;
+  margin-left: -200px;
+  height: 610px;
 }
 
 #site_title {
@@ -208,6 +209,73 @@ table.slist thead th {
 
 table.slist td {
   padding: 0.6em;
+}
+
+div.side_box {
+  margin-top: 12px;
+  width: 200px;
+  box-sizing: border-box;
+}
+
+div.side_box {
+  border: 1px solid #ccc;
+}
+
+div.side_box.padded {
+  padding: 7px;
+}
+
+div.side_box .game_infos {
+  padding-left: 36px;
+  position: relative;
+}
+
+div.side_box .game_infos {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+  margin-bottom: 6px;
+}
+
+div.side_box .game_infos .setup {
+  display: block;
+}
+
+div.under_side {
+  position: absolute;
+  bottom: 0px;
+}
+
+div.chat_menu {
+  margin-bottom: -12px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+div.chat_menu > a {
+  background: #f0f0f0;
+  border: 1px solid #c0c0c0;
+  height: 20px;
+  padding: 3px 8px 0 8px;
+  margin: -1px 0 -1px -5px;
+  display: inline-block;
+}
+
+div.chat_menu > a.active {
+  background-color: #eee;
+  border-bottom: 1px solid #eee;
+}
+
+div.chat_panels {
+  height: 325px;
+}
+
+div.chat_panels > * {
+  display: none;
+}
+
+div.chat_panels div.active {
+  display: block;
+  height: calc(100% - 22px);
 }
 
 .button,

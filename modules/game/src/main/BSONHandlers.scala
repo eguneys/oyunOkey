@@ -121,6 +121,8 @@ object BSONHandlers {
 
     def reads(r: BSON.Reader): Game = {
       val nbTurns = r int turns
+      val createdAtValue = r date createdAt
+
       val oEndScores = r getO[Sides[EndScoreSheet]](endScores)
 
       val List(eastId, westId, northId, southId) = r str playerIds grouped 4 toList
@@ -170,6 +172,8 @@ object BSONHandlers {
         opensLastMove = r.get[OpensLastMove](opensLastMove)(OpensLastMove.opensLastMoveBSONHandler),
         status = r.get[Status](status),
         turns = nbTurns,
+        createdAt = createdAtValue,
+        updatedAt = r dateO updatedAt,
         metadata = Metadata(
           masaId = r strO masaId
         )
@@ -192,6 +196,8 @@ object BSONHandlers {
       opensLastMove -> OpensLastMove.opensLastMoveBSONHandler.write(o.opensLastMove),
       status -> o.status,
       turns -> o.turns,
+      createdAt -> w.date(o.createdAt),
+      updatedAt -> o.updatedAt.map(w.date),
       masaId -> o.metadata.masaId
     )
   }

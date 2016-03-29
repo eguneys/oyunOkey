@@ -5,6 +5,7 @@ import okey.{ Side, Sides, EndScoreSheet }
 case class Player(
   id: String,
   playerId: Option[String] = None,
+  userId: Option[String] = None,
   side: Side,
   endScore: Option[EndScoreSheet] = None) {
 
@@ -15,7 +16,7 @@ case class Player(
   def withPlayer(id: String): Player = copy(
     playerId = id.some)
 
-  def hasUser = false
+  def hasUser = userId.isDefined
 }
 
 object Player {

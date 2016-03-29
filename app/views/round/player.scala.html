@@ -19,6 +19,8 @@
 
 @round.layout(
   title = title,
+  side = views.html.game.side(pov),
+  chat = leftabs(pov).some,
   moreJs = moreJs) {
     <div class="round og-512">
       <div class="underboard">

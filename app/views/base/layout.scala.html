@@ -26,10 +26,12 @@
           <a id="site_title" href="@routes.Lobby.home">oyunkeyf<span class="extension">.com</span></a>
         </h1>
         @side
-        @chat
-        @underchat.map { g =>
-          <div class="under_chat">@g</div>
-        }
+        <div class="under_side">
+          @chat
+          @underchat.map { g =>
+            <div class="under_chat">@g</div>
+          }
+        </div>
       </div>
       <div id="oyunkeyf">
         @body
@@ -37,7 +39,9 @@
     </div>
 
     @jQueryTag
+    @momentjsTag
     @jsTagCompiled("big.js")
     @moreJs
+    @momentLangTag
   </body>
 </html>

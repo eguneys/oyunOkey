@@ -263,6 +263,16 @@ oyunkeyf.spinnerHtml = '<div class="spinner"><svg viewBox="0 0 40 40"><circle cx
 
     // delay so round starts first (just for perceived perf)
     setTimeout(function() {
+
+      function setMoment() {
+        $("time.moment").removeClass('moment').each(function() {
+          var parsed = moment(this.getAttribute('datetime'));
+          var format = this.getAttribute('data-format');
+          this.textContent = format === 'calendar' ? parsed.calendar() : parsed.format(format);
+        });
+      }
+      setMoment();
+
       // Zoom
       var getZoom = function() {
         return 1;

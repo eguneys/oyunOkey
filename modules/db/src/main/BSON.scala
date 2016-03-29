@@ -96,12 +96,15 @@ object BSON {
     def strO(k: String) = getO[String](k)
     def int(k: String) = get[Int](k)
     def bool(k: String) = get[Boolean](k)
+    def date(k: String) = get[DateTime](k)
+    def dateO(k: String) = getO[DateTime](k)
     def bytes(k: String) = get[ByteArray](k)
     def bytesO(k: String) = getO[ByteArray](k)
   }
 
   final class Writer {
     def int(i: Int): BSONInteger = BSONInteger(i)
+    def date(d: DateTime): BSONDateTime = BSONJodaDateTimeHandler write d
   }
 
   val writer = new Writer
