@@ -3,6 +3,7 @@
   side: Option[Html] = None,
   chat: Option[Html] = None,
   underchat: Option[Html] = None,
+  underside: Boolean = false,
   moreCss: Html = Html(""),
   moreJs: Html = Html(""))(body: Html)(implicit ctx: Context)
 <!doctype html>
@@ -26,7 +27,7 @@
           <a id="site_title" href="@routes.Lobby.home">oyunkeyf<span class="extension">.com</span></a>
         </h1>
         @side
-        <div class="under_side">
+        <div class="under_side@{underside ?? " bottom"}">
           @chat
           @underchat.map { g =>
             <div class="under_chat">@g</div>

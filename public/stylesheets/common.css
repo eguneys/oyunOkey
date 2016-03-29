@@ -150,8 +150,8 @@ body > div.content {
 }
 
 #oyunkeyf {
-  margin-left: -200px;
   height: 610px;
+  margin-left: 10px;
 }
 
 #site_title {
@@ -225,6 +225,13 @@ div.side_box.padded {
   padding: 7px;
 }
 
+div.side_box .top {
+  border-bottom: 1px solid #ccc;
+  padding: 3px 5px;
+  font-weight: bold;
+  color: #999;
+}
+
 div.side_box .game_infos {
   padding-left: 36px;
   position: relative;
@@ -240,7 +247,7 @@ div.side_box .game_infos .setup {
   display: block;
 }
 
-div.under_side {
+div.under_side.bottom {
   position: absolute;
   bottom: 0px;
 }
@@ -286,13 +293,16 @@ a.button {
 }
 
 /* soft inactive gradient */
-.button {
+div.side_box div.top,
+.button,
+table.slist thead {
   background: rgb(245, 245, 245);
   background: linear-gradient(to bottom, rgba(245, 245, 245, 1) 0%, rgba(240, 240, 240, 1) 100%);
   text-shadow: 0 1px 0 #FFF;
   color: #848484;
 }
 
+#chat div.top,
 .button {
   font-weight: bold;
 }
@@ -324,6 +334,20 @@ a.button {
 
 .glowed {
   box-shadow: 0 0 5px 1px #e89000, 0 0 10px 1px #d85000;
+}
+
+
+.scroll-shadow-soft {
+  background: linear-gradient(#eee 30%, rgba(247, 247, 247, 0)), linear-gradient(rgba(247, 247, 247, 0), #eee 70%) 0 100%, radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)), radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)) 0 100%;
+}
+.scroll-shadow-hard {
+  background: linear-gradient(#fff 30%, rgba(255, 255, 255, 0)), linear-gradient(rgba(255, 255, 255, 0), #fff 70%) 0 100%, radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)), radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)) 0 100%;
+}
+.scroll-shadow-soft,
+.scroll-shadow-hard {
+  background-repeat: no-repeat;
+  background-size: 100% 20px, 100% 20px, 100% 10px, 100% 10px;
+  background-attachment: local, local, scroll, scroll;
 }
 
 [data-hint] {

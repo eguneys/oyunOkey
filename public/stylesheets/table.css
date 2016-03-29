@@ -214,6 +214,18 @@ div.control.icons .button.move.enabled {
   border-radius: 3px 3px 0 0;
 }
 
+#chat div.top {
+  position: relative;
+}
+
+#chat div.top input.toggle_chat {
+  cursor: pointer;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 1;
+}
+
 #chat .messages {
   height: 100%;
   overflow: hidden;
@@ -243,6 +255,10 @@ div.control.icons .button.move.enabled {
   width: 16px;
   z-index: 1;
   opacity: 0.5;
+}
+
+.round.og-512 {
+  margin-left: -210px;
 }
 
 .og-512 .og-table-wrap {

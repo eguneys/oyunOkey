@@ -1,11 +1,15 @@
 package oyun.app
 package templating
 
+import ornicar.scalalib
+
 import play.twirl.api.Html
 
 object Environment 
-    extends oyun.BooleanSteroids
-    with scalaz.syntax.std.ToOptionIdOps
+    extends scalaz.syntax.std.ToOptionIdOps
+    with scalaz.std.StringInstances
+    with scalalib.Zero.Instances
+    with oyun.BooleanSteroids
     with AssetHelper
     with I18nHelper
     with DateHelper

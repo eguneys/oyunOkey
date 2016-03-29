@@ -1,0 +1,16 @@
+@(m: Masa)(implicit ctx: Context)
+
+<div class="side_box padded">
+  <div class="game_infos">
+    <div class="header">
+      <span class="setup">
+        VARIANT • RATED
+      </span>
+    </div>
+  </div>
+  @trans.by("someone")
+  •
+  startAt
+  <br /> <br />
+  @trans.winner(): someone
+</div>

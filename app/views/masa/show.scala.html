@@ -13,6 +13,8 @@
 
 @masa.layout(
   title = s"${m.fullName} #${m.id}",
+  side = masa.side(m).some,
+  chat = base.chat(trans.chatRoom.str()).some,
   moreJs = moreJs) {
     <div id="masa"></div>
 }
