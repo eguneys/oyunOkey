@@ -30,6 +30,9 @@ class BinaryPieceTest extends Specification {
       "Green 13" in {
         write(List(G13)) must_== "00101101" :: Nil
       }
+      "Fake 1" in {
+        write(List(F1)) must_== "01000001" :: Nil
+      }
       "Blue 12" in {
         write(List(B12)) must_== "00111100" :: Nil
       }
@@ -47,6 +50,9 @@ class BinaryPieceTest extends Specification {
       }
       "Red 1" in {
         read("00000001" :: Nil) must_== List(R1)
+      }
+      "Fake 1" in {
+        read("01000001" :: Nil) must_== List(F1)
       }
       "Black 13 Green 12 Blue 11 Red 10" in {
         read("00011101" :: "00101100" :: "00111011" :: "00001010" :: Nil) must_== List(L13, G12, B11, R10 )

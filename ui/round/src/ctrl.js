@@ -5,10 +5,11 @@ import round from './round';
 import ground from './ground';
 import title from './title';
 import init from './init';
-import util from './util';
+import mutil from './util';
 import { game } from 'game';
 
-const { util: { partial } } = okeyground;
+const { util } = okeyground;
+const { wrapGroup, wrapPiece, wrapDrop, partial } = util;
 
 module.exports = function(opts) {
 
@@ -23,8 +24,8 @@ module.exports = function(opts) {
 
   this.setTitle = partial(title.set, this);
 
-  var onUserMove = (key, piece, group) => {
-    this.sendMove(key, piece, group);
+  var onUserMove = (key, move) => {
+    this.sendMove(key, move);
   };
 
   var onMove = (key, piece) => {
@@ -38,12 +39,9 @@ module.exports = function(opts) {
   this.okeyground = ground.make(this.data, onUserMove, onMove);
 
 
-  this.sendMove = (key, piece, group) => {
-    var move = {
-      key,
-      piece,
-      group
-    };
+  this.sendMove = (key, args = {}) => {
+    var move = args;
+    args.key = key;
 
     this.socket.send('move', move, {
       ackable: true
@@ -81,10 +79,12 @@ module.exports = function(opts) {
         if (o.drawmiddle) {
           this.okeyground.apiDrawMiddleEnd(o.drawmiddle.piece);
         } else if (o.discard) {
-          this.okeyground.apiMove(o.key, o.discard.piece);
+          this.okeyground.apiMove(o.key, wrapPiece(o.discard.piece));
         } else if (o.opens) {
-          this.okeyground.apiMove(o.key, o.opens.group);
-        } else {
+          this.okeyground.apiMove(o.key, wrapGroup(o.opens.group));
+        } else if (o.drop) {
+          this.okeyground.apiMove(o.key, wrapDrop(o.drop.piece, o.drop.pos));
+        }else {
           this.okeyground.apiMove(o.key);
         }
       }
@@ -122,7 +122,7 @@ module.exports = function(opts) {
 
   this.saveBoard = () => {
     var boardFen = this.okeyground.getFen();
-    util.fenStore.set(boardFen);
+    mutil.fenStore.set(boardFen);
   };
 
   this.trans = oyunkeyf.trans(opts.i18n);

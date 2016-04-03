@@ -6,7 +6,7 @@ final class AutoPairing {
   def apply(masa: Masa, pairing: Pairing): Fu[Game] = for {
     players <- (pairing.playerIds map getPlayer).sequenceFu
     game1 = Game.make(
-      game = okey.Game(okey.variant.Variant.default),
+      game = okey.Game(okey.variant.Variant.test),
       players = GamePlayer.allSides
     )
     game2 = game1

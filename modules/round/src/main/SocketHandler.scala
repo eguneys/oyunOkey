@@ -79,6 +79,7 @@ private[round] final class SocketHandler(
     key <- d str "key"
     piece = d str "piece"
     group = d str "group"
-    move <- Uci.Move.fromStrings(key, piece, group)
+    pos = d str "pos"
+    move <- Uci.Move.fromStrings(key, piece, group, pos)
   } yield move
 }

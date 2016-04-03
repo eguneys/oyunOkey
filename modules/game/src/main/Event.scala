@@ -22,6 +22,7 @@ object Event {
       drawMiddle = matchDrawMiddle(side, state.side, move),
       discard = matchDiscard(move),
       opens = matchOpens(move),
+      drop = matchDrop(move),
       fen = okey.format.Forsyth.exportTable(situation.table, side),
       state = state,
       possibleMoves = situation.actions
@@ -39,6 +40,7 @@ object Event {
       ).noNull
     }
 
+
     private def matchDrawMiddle(side1: Side, side2: Side, move: OkeyMove): Option[PieceData] = move.action match {
       case DrawMiddle(p) if side1 == side2 => PieceData(p).some
       case _ => None
@@ -53,6 +55,12 @@ object Event {
       case OpenPairs(g) => PieceGroupData(g).some
       case _ => None
     }
+
+    private def matchDrop(move: OkeyMove): Option[DropData] = move.action match {
+      case DropOpenSeries(piece, pos) => DropData(piece, pos).some
+      case DropOpenPairs(piece, pos) => DropData(piece, pos).some
+      case _ => None
+    }
   }
 
   case class Move(
@@ -61,6 +69,7 @@ object Event {
     drawMiddle: Option[PieceData],
     discard: Option[PieceData],
     opens: Option[PieceGroupData],
+    drop: Option[DropData],
     fen: String,
     state: State,
     possibleMoves: List[Action]) extends Event {
@@ -73,7 +82,8 @@ object Event {
         "key" -> action.key,
         "drawmiddle" -> drawMiddle.map(_.data),
         "discard" -> discard.map(_.data),
-        "opens" -> opens.map(_.data)
+        "opens" -> opens.map(_.data),
+        "drop" -> drop.map(_.data)
       )
     }
   }
@@ -101,6 +111,14 @@ object Event {
     def typ = "piecedata"
     def data = Json.obj(
       "piece" -> piece.key
+    )
+  }
+
+  case class DropData(piece: Piece, pos: OpenPos) extends Event {
+    def typ = "dropdata"
+    def data = Json.obj(
+      "piece" -> piece.key,
+      "pos" -> pos.toString
     )
   }
 

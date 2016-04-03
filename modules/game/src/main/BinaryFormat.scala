@@ -79,6 +79,7 @@ object BinaryFormat {
       case Black => 1
       case Green => 2
       case Blue => 3
+      case Fake => 4
       case _ => 0
     }
 
@@ -87,33 +88,35 @@ object BinaryFormat {
       case 1 => Black
       case 2 => Green
       case 3 => Blue
+      case 4 => Fake
       case _ => Red
     }
   }
 
   object opener {
 
-    def readSeriesHelper(ba: List[Int]): List[OpenSerie] = ba match {
-      case head :: rest => {
+    def readSeriesHelper(ba: List[Int]): List[(Side, OpenSerie)] = ba match {
+      case head :: head2 :: rest => {
         val side = intToSide((head >> 4))
+        val score = head2
         val length = (head & 0x0f)
         val pieces = piece.readList(rest take length)
 
-        OpenSerie(side, pieces) :: readSeriesHelper(rest drop length)
+        side -> OpenSerie(pieces, score) :: readSeriesHelper(rest drop length)
       }
       case _ => Nil
     }
 
-    def readSeries(ba: ByteArray): List[OpenSerie] = readSeriesHelper(ba.value map toInt toList)
+    def readSeries(ba: ByteArray): List[(Side, OpenSerie)] = readSeriesHelper(ba.value map toInt toList)
 
 
-    def readPairs(ba: ByteArray): List[OpenPair] = {
+    def readPairs(ba: ByteArray): List[(Side, OpenPair)] = {
       ba.value grouped 3 map {
         case Array(b1, b2, b3) => {
           val side = intToSide(b1)
           val pieces = piece.readList(List(b2, b3))
 
-          OpenPair(side, pieces)
+          side -> OpenPair(pieces, 1)
         }
         case x => sys error s"BinaryFormat.readPairs.read invalid bytes: ${ba.showBytes}"
       } toList
@@ -133,24 +136,25 @@ object BinaryFormat {
       case _ => SouthSide
     }
 
-    def writeSerie(serie: OpenSerie): List[Byte] = {
-      val side = sideToInt(serie.owner)
+    def writeSerie(s: (Side, OpenSerie)): List[Byte] = s match { case (owner, serie) =>
+      val side = sideToInt(owner)
+      val score = serie.score
       val length = serie.pieces.length
       val pieces = piece.write(serie.pieces).value toList
 
-      (((side << 4) | (length & 0x0f)) toByte) :: pieces
+      (((side << 4) | (length & 0x0f)) toByte) :: score.toByte :: pieces
     }
 
-    def writeSeries(series: List[OpenSerie]): ByteArray = ByteArray(series flatMap writeSerie toArray)
+    def writeSeries(series: List[(Side, OpenSerie)]): ByteArray = ByteArray(series flatMap writeSerie toArray)
 
-    def writePair(pair: OpenPair): List[Byte] = {
-      val side = sideToInt(pair.owner)
+    def writePair(p: (Side, OpenPair)): List[Byte] = p match { case (owner, pair) =>
+      val side = sideToInt(owner)
       val pieces = piece.write(pair.pieces).value toList
 
       (side toByte) :: pieces
     }
 
-    def writePairs(pairs: List[OpenPair]): ByteArray = ByteArray(pairs flatMap writePair toArray)
+    def writePairs(pairs: List[(Side, OpenPair)]): ByteArray = ByteArray(pairs flatMap writePair toArray)
 
 
     def readState(saves: Option[(Board, Opener)])(ba: ByteArray): OpenState = ba.value map toInt toList match {

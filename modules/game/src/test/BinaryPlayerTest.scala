@@ -18,13 +18,13 @@ class BinaryPlayerTest extends Specification {
 
     "write" should {
       "empty piece" in {
-        write(OkeyPlayer(EastSide, None, true)) must_== "11111111" :: Nil
-        write(OkeyPlayer(EastSide, None, false)) must_== "01111111" :: Nil
+        write(OkeyPlayer(EastSide, drawMiddle = true, drawLeft = None)) must_== "11111111" :: Nil
+        write(OkeyPlayer(EastSide, drawMiddle = false, None)) must_== "01111111" :: Nil
       }
       "some piece" in {
-        write(OkeyPlayer(EastSide, Some(R1), false)) must_== "00000001" :: Nil
-        write(OkeyPlayer(EastSide, Some(G13), false)) must_== "00101101" :: Nil
-        write(OkeyPlayer(EastSide, Some(L8), true)) must_== "10011000" :: Nil
+        write(OkeyPlayer(EastSide, drawMiddle = false, Some(R1))) must_== "00000001" :: Nil
+        write(OkeyPlayer(EastSide, drawMiddle = false, Some(G13))) must_== "00101101" :: Nil
+        write(OkeyPlayer(EastSide, drawMiddle = true, Some(L8))) must_== "10011000" :: Nil
       }
     }
 

@@ -14,31 +14,32 @@ class BinaryOpenerTest extends Specification {
 
   "binary opener" should {
     "series" should {
-      def write(all: List[OpenSerie]): List[String] =
+      def write(all: List[(Side, OpenSerie)]): List[String] =
         (BinaryFormat.opener writeSeries all).showBytes.split(',').toList
-      def read(bytes: List[String]): List[OpenSerie] =
+      def read(bytes: List[String]): List[(Side, OpenSerie)] =
         BinaryFormat.opener.readSeries(ByteArray.parseBytes(bytes))
       "write" should {
         "empty opens" in {
           write(List.empty) must_== "" :: Nil
         }
         "empty pieces" in {
-          write(List(OpenSerie(EastSide, Nil))) must_== "00000000" :: Nil
-          write(List(OpenSerie(WestSide, Nil))) must_== "00010000" :: Nil
-          write(List(OpenSerie(NorthSide, Nil))) must_== "00100000" :: Nil
-          write(List(OpenSerie(SouthSide, Nil))) must_== "00110000" :: Nil
+          write(List(EastSide -> OpenSerie(Nil, 0))) must_== "00000000" :: "00000000" :: Nil
+          write(List(WestSide -> OpenSerie(Nil, 0))) must_== "00010000" :: "00000000":: Nil
+          write(List(NorthSide -> OpenSerie(Nil, 0))) must_== "00100000" :: "00000000"::  Nil
+          write(List(SouthSide -> OpenSerie(Nil, 0))) must_== "00110000" :: "00000000":: Nil
         }
         "more pieces" in {
-          write(List(OpenSerie(EastSide, List(R1, R2)),
-            OpenSerie(EastSide, List(L1, L2, L3, L4)),
-            OpenSerie(WestSide, List(R12)),
-            OpenSerie(SouthSide, List(G3)),
-            OpenSerie(NorthSide, List(R7, R8, R1, R2, R3)))) must_==
-          "00000010" :: "00000001" :: "00000010" ::
-          "00000100" :: "00010001" :: "00010010" :: "00010011" :: "00010100" ::
-          "00010001" :: "00001100" ::
-          "00110001" :: "00100011" ::
-          "00100101" :: "00000111" :: "00001000" :: "00000001" :: "00000010" :: "00000011" :: Nil
+          write(List(
+            EastSide -> OpenSerie(List(R1, R2), 3),
+            EastSide -> OpenSerie(List(L1, L2, L3, L4), 10),
+            WestSide -> OpenSerie(List(R12), 12),
+            SouthSide -> OpenSerie(List(G3), 3),
+            NorthSide -> OpenSerie(List(R7, R8, R1, R2, R3), 21))) must_==
+          "00000010" :: "00000011" :: "00000001" :: "00000010" ::
+          "00000100" :: "00001010" :: "00010001" :: "00010010" :: "00010011" :: "00010100" ::
+          "00010001" :: "00001100" :: "00001100" ::
+          "00110001" :: "00000011" :: "00100011" ::
+          "00100101" :: "00010101" :: "00000111" :: "00001000" :: "00000001" :: "00000010" :: "00000011" :: Nil
         }
       }
 
@@ -48,51 +49,53 @@ class BinaryOpenerTest extends Specification {
         }
 
         "empty pieces" in {
-          read("00000000" :: Nil) must_== List(OpenSerie(EastSide, Nil))
+          read("00000000" :: "00000000" :: Nil) must_== List(EastSide -> OpenSerie(Nil, 0))
         }
 
         "one serie" in {
-          read("00010001" :: "00001100" :: Nil) must_== List(OpenSerie(WestSide, List(R12)))
+          read("00010001" :: "00001100" :: "00001100" :: Nil) must_== List(WestSide -> OpenSerie(List(R12), 12))
         }
 
         "more series" in {
-          read("00000010" :: "00000001" :: "00000010" ::
-            "00000100" :: "00010001" :: "00010010" :: "00010011" :: "00010100" ::
-            "00010001" :: "00001100" ::
-            "00110001" :: "00100011" ::
-            "00100101" :: "00000111" :: "00001000" :: "00000001" :: "00000010" :: "00000011" :: Nil) must_== (List(OpenSerie(EastSide, List(R1, R2)),
-            OpenSerie(EastSide, List(L1, L2, L3, L4)),
-            OpenSerie(WestSide, List(R12)),
-            OpenSerie(SouthSide, List(G3)),
-            OpenSerie(NorthSide, List(R7, R8, R1, R2, R3))))
+          read(
+            "00000010" :: "00000011" :: "00000001" :: "00000010" ::
+            "00000100" :: "00001010" :: "00010001" :: "00010010" :: "00010011" :: "00010100" ::
+            "00010001" :: "00001100" :: "00001100" ::
+            "00110001" :: "00000011" :: "00100011" ::
+            "00100101" :: "00010101" :: "00000111" :: "00001000" :: "00000001" :: "00000010" :: "00000011" :: Nil) must_== (List(
+              EastSide -> OpenSerie(List(R1, R2), 3),
+              EastSide -> OpenSerie(List(L1, L2, L3, L4), 10),
+              WestSide -> OpenSerie(List(R12), 12),
+              SouthSide -> OpenSerie(List(G3), 3),
+              NorthSide -> OpenSerie(List(R7, R8, R1, R2, R3), 21)))
         }
       }
     }
     "pairs" should {
-      def write(all: List[OpenPair]): List[String] =
+      def write(all: List[(Side, OpenPair)]): List[String] =
         (BinaryFormat.opener writePairs all).showBytes.split(',').toList
-      def read(bytes: List[String]): List[OpenPair] =
+      def read(bytes: List[String]): List[(Side, OpenPair)] =
         BinaryFormat.opener.readPairs(ByteArray.parseBytes(bytes))
 
       "write" should {
         "empty pieces" in {
-          write(List(OpenPair(EastSide, Nil))) must_== "00000000" :: Nil
-        }
+          write(List(EastSide -> OpenPair(Nil, 1))) must_== "00000000" :: Nil
+          }
         "one pair" in {
-          write(List(OpenPair(WestSide, List(R1, R1)))) must_== "00000001" :: "00000001" :: "00000001" :: Nil
+          write(List(WestSide -> OpenPair(List(R1, R1), 1))) must_== "00000001" :: "00000001" :: "00000001" :: Nil
         }
         "more pairs" in {
           write(List(
-            OpenPair(EastSide, List(L1, L1)),
-            OpenPair(WestSide, List(R12, R12)),
-            OpenPair(NorthSide, List(B10, B10)),
-            OpenPair(SouthSide, List(G8, G8)))) must_==
+            EastSide -> OpenPair(List(L1, L1), 1),
+            WestSide -> OpenPair(List(R12, R12), 1),
+            NorthSide -> OpenPair(List(B10, B10), 1),
+            SouthSide -> OpenPair(List(G8, G8), 1))) must_==
           "00000000" :: "00010001" :: "00010001" ::
           "00000001" :: "00001100" :: "00001100" ::
           "00000010" :: "00111010" :: "00111010" ::
           "00000011" :: "00101000" :: "00101000" :: Nil
         }
-      }
+        }
       "read" in {
         "empty" in {
           read(Nil) must_== Nil
@@ -103,10 +106,10 @@ class BinaryOpenerTest extends Specification {
             "00000010" :: "00111010" :: "00111010" ::
             "00000011" :: "00101000" :: "00101000" :: Nil) must_==
           (List(
-            OpenPair(EastSide, List(L1, L1)),
-            OpenPair(WestSide, List(R12, R12)),
-            OpenPair(NorthSide, List(B10, B10)),
-            OpenPair(SouthSide, List(G8, G8))))
+            EastSide -> OpenPair(List(L1, L1), 1),
+            WestSide -> OpenPair(List(R12, R12), 1),
+            NorthSide -> OpenPair(List(B10, B10), 1),
+            SouthSide -> OpenPair(List(G8, G8), 1)))
         }
       }
     }
