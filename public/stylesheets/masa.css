@@ -62,6 +62,63 @@
   border-bottom: none;
 }
 
+#masa table.standing tbody tr {
+  transition: 0.13s;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+#masa table.standing tr.me td:first-child {
+  border-left: 10px solid #d59120;
+  padding-left: 5px;
+}
+
+#masa table.standing td:first-child {
+  padding: 0.8em 0.6em;
+  padding-left: 10px;
+  white-space: nowrap;
+}
+
+#masa table.standing tbody tr:hover {
+  background: rgba(191, 231, 255, 0.7);
+  cursor: pointer;
+}
+
+#masa table.slist td:first-child rank {
+  display: inline-block;
+  font-weight: bold;
+  width: 20px;
+  opacity: 0.6;
+}
+
+#masa table.standing .sheet,
+#masa table.standing .total {
+  text-align: right;
+  font-family: monospace;
+  letter-spacing: 0;
+}
+
+#masa table.standing .sheet > *,
+#masa table.standing .total span {
+  display: inline-block;
+  padding: 0 2px;
+}
+
+#masa div.standing_wrap td.total {
+  padding-right: 20px;
+}
+
+#masa penalty {
+  color: #ac524f;
+  font-weight: bold;
+}
+
+#masa erase {
+  color: #759900;
+  font-weight: bold;
+}
+
 #masa button.right {
   float: right;
   margin-left: 5px;
@@ -69,7 +126,7 @@
 
 #masa div.masa_show {
   width: 525px;
-  min-height: 480px;
+  //min-height: 480px;
 }
 
 #masa .seats {

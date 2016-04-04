@@ -16,7 +16,8 @@ private[masa] final class MasaApi(
 ) {
 
   def createMasa(setup: MasaSetup, player: PlayerRef): Fu[Masa] = {
-    val masa = Masa.make()
+    val masa = Masa.make(
+      system = System.Arena)
 
     MasaRepo.insert(masa) >>- join(masa.id, player) inject masa
   }
@@ -67,10 +68,21 @@ private[masa] final class MasaApi(
   def finishGame(game: Game) {
     game.masaId foreach { masaId =>
       Sequencing(masaId)(MasaRepo.startedById) { masa =>
-        PairingRepo.finish(game)
+        PairingRepo.finish(game) >>
+        game.playerIds.map(updatePlayer(masa)).sequenceFu.void
       }
     }
   }
+
+  private def updatePlayer(masa: Masa)(playerId: String): Funit =
+    PlayerRepo.update(masa.id, playerId) { player =>
+      PairingRepo.finishedByPlayerChronological(masa.id, playerId) map { pairings =>
+        val sheet = masa.system.scoringSystem.sheet(masa, playerId, pairings)
+        player.copy(
+          score = sheet.total
+        ).recomputeMagicScore
+      }
+    }
 
   private def sequence(masaId: String)(work: => Funit) {
     //sequencers ! Tell(masaId, Sequencer work work)

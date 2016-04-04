@@ -12,12 +12,14 @@ module.exports = function(env) {
   this.socket = new socket(env.socketSend, this);
 
   this.vm ={
+    pages: {},
     joinSpinner: false
   };
 
   this.reload = (data) => {
     //if (this.data.isStarted !== data.isStarted) m.redraw.strategy('all');
     this.data = data;
+    this.loadPage(data.standing);
     this.vm.joinSpinner = false;
     redirectToMyGame();
   };
@@ -27,6 +29,34 @@ module.exports = function(env) {
     if(gameId && oyunkeyf.storage.get('last-game') !== gameId)
       location.href = '/' + gameId;
   };
+
+  this.loadPage = (data) => {
+    this.vm.pages[data.page] = data.players;
+  };
+  this.loadPage(this.data.standing);
+  // this.loadPage({ page: 1, players: [{
+  //   rank: 1,
+  //   score: 1000,
+  //   sheet: {
+  //     scores: [101, 404, 303, 0, -10, 101],
+  //     total : 1000
+  //   }
+  // }, {
+  //   rank: 2,
+  //   name: "lkajsdflksajlfkjsalkfd",
+  //   score: 1000,
+  //   sheet: {
+  //     scores: [-101, 404, 0, 303, 101],
+  //     total : 1000
+  //   }
+  // }, {
+  //   rank: 3,
+  //   score: 1000,
+  //   sheet: {
+  //     scores: [101, 404, 303, -200, 0, 101],
+  //     total : 1000
+  //   }
+  // }] });
 
   this.join = (side) => {
     xhr.join(this, side);

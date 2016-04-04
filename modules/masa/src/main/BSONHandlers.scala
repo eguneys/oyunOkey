@@ -18,7 +18,8 @@ object BSONHandlers {
     def reads(r: BSON.Reader) = {
       Masa(
         id = r str "_id",
-        status = r.get[Status]("status")
+        status = r.get[Status]("status"),
+        system = System.default
       )
     }
 
@@ -33,16 +34,21 @@ object BSONHandlers {
       Player(
         _id = r str "_id",
         masaId = r str "mid",
-        active = r bool "a",
-        side = Side(r str "s") err s"No such side:"
+        active = r boolD "a",
+        side = Side(r str "d") err s"No such side:",
+        score = r intD "s",
+        magicScore = r int "m"
       )
     }
 
     def writes(w: BSON.Writer, o: Player) = BSONDocument(
       "_id" -> o.id,
       "mid" -> o.masaId,
-      "a" -> o.active,
-      "s" -> o.side.letter.toString
+      "a" -> w.boolO(o.active),
+      "d" -> o.side.letter.toString,
+      "s" -> w.intO(o.score),
+      "m" -> o.magicScore
+
     )
   }
 
@@ -52,7 +58,8 @@ object BSONHandlers {
         id = r str "_id",
         masaId = r str "mid",
         status = okey.Status(r int "s") err "masa pairing status",
-        playerIds = r.get[Sides[String]]("pids")
+        playerIds = r.get[Sides[String]]("pids"),
+        scores = r.get[List[Int]]("ss")
       )
     }
 
@@ -60,7 +67,8 @@ object BSONHandlers {
       "_id" -> o.id,
       "mid" -> o.masaId,
       "s" -> o.status.id,
-      "pids" -> o.playerIds
+      "pids" -> o.playerIds,
+      "ss" -> o.scores.toList
     )
   }
 }

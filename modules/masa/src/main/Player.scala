@@ -7,14 +7,19 @@ case class Player(
   masaId: String,
   userId: Option[String] = None,
   active: Boolean = false,
-  side: Side = Side.EastSide) {
+  side: Side = Side.EastSide,
+  score: Int = 0,
+  magicScore: Int = 0) {
+
   def id = _id
 
   def hasUser = userId.isDefined
 
-  def doActiveSide(side: Side) = copy(active = true, side = side)
+  def doActiveSide(side: Side) = copy(side = side, active = true)
 
   def ref = PlayerRef(id = id, userId = userId)
+
+  def recomputeMagicScore = copy(magicScore = (score * -1))
 }
 
 object Player {
@@ -24,7 +29,7 @@ object Player {
   private[masa] def make(masaId: String) = new Player(
     _id = oyun.game.IdGenerator.game,
     masaId = masaId
-  )
+  ).recomputeMagicScore
 }
 
 case class PlayerRef(

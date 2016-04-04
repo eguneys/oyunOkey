@@ -27,6 +27,10 @@ th {
   font-weight: normal;
 }
 
+strong {
+  font-weight: bold;
+}
+
 th {
   text-align: left;
 }
@@ -209,6 +213,11 @@ table.slist thead th {
 
 table.slist td {
   padding: 0.6em;
+  font-size: 1.1em;
+}
+
+table.slist tbody tr:nth-child(even) {
+  background: #f4f4f4;
 }
 
 div.side_box {

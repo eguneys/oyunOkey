@@ -4,7 +4,8 @@ import ornicar.scalalib.Random
 
 case class Masa(
   id: String,
-  status: Status) {
+  status: Status,
+  system: System) {
 
   def isCreated = status == Status.Created
   def isStarted = status == Status.Started
@@ -31,8 +32,8 @@ case class Masa(
 
 object Masa {
 
-  def make() = Masa(
+  def make(system: System) = Masa(
     id = Random nextStringUppercase 8,
-    status = Status.Created
-  )
+    status = Status.Created,
+    system = system)
 }

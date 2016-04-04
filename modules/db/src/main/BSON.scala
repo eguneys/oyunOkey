@@ -95,7 +95,11 @@ object BSON {
     def str(k: String) = get[String](k)
     def strO(k: String) = getO[String](k)
     def int(k: String) = get[Int](k)
+    def intO(k: String) = getO[Int](k)
+    def intD(k: String) = intO(k) getOrElse 0
     def bool(k: String) = get[Boolean](k)
+    def boolO(k: String) = getO[Boolean](k)
+    def boolD(k: String) = boolO(k) getOrElse false
     def date(k: String) = get[DateTime](k)
     def dateO(k: String) = getO[DateTime](k)
     def bytes(k: String) = get[ByteArray](k)
@@ -103,7 +107,9 @@ object BSON {
   }
 
   final class Writer {
+    def boolO(b: Boolean): Option[BSONBoolean] = if (b) Some(BSONBoolean(true)) else None
     def int(i: Int): BSONInteger = BSONInteger(i)
+    def intO(i: Int): Option[BSONInteger] = if (i != 0) Some(BSONInteger(i)) else None
     def date(d: DateTime): BSONDateTime = BSONJodaDateTimeHandler write d
   }
 

@@ -191,11 +191,15 @@ case class Game(
 
   def isBeingPlayed = !finishedOrAborted
 
+  def playerIds = playerMaps(_.playerId)
+
   def withMasaId(id: String) = this.copy(
     metadata = metadata.copy(masaId = id.some)
   )
 
   def withId(newId: String) = this.copy(id = newId)
+
+  private def playerMaps[A](f: Player => Option[A]): List[A] = players flatMap { f(_) } toList
 }
 
 

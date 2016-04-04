@@ -7,9 +7,14 @@ case class Pairing(
   id: String, // game id
   masaId: String,
   status: okey.Status,
-  playerIds: Sides[String]) {
+  playerIds: Sides[String],
+  scores: Sides[Int]) {
 
   def gameId = id
+
+  def scoreOf(playerId: String): Option[Int] = (playerIds zip scores find {
+    _._1 == playerId
+  }) map (_._2)
 }
 
 private[masa] object Pairing {
@@ -17,7 +22,8 @@ private[masa] object Pairing {
     id = IdGenerator.game,
     masaId = masaId,
     status = okey.Status.Created,
-    playerIds = playerIds)
+    playerIds = playerIds,
+    scores = Sides[Int])
 
   case class Prep(masaId: String, player1: String, player2: String, player3: String, player4: String) {
     def toPairing =

@@ -4,7 +4,7 @@ import renderUser from './user';
 import { game } from 'game';
 import button from './button';
 
-const { util: { partial } } = okeyground;
+const { classSet, partial } = okeyground.util;
 
 function compact(x) {
   if (Object.prototype.toString.call(x) === '[object Array]') {
@@ -57,6 +57,9 @@ function normalizeScores(scores) {
 }
 
 function playerTr(ctrl, player) {
+  var isLong = player.scores.length > 5;
+  var mySide = ctrl.data.player.side;
+
   function utilPlayer(p, tag) {
     var fullName = p.name || 'Anonymous';
     var attrs = {
@@ -82,6 +85,11 @@ function playerTr(ctrl, player) {
 
   var scores = normalizeScores(player.scores).map(_ => _[0]);
   return m('tr', {
+    key: player.side,
+    class: classSet({
+      'me': player.side === mySide,
+      'long': isLong
+    }),
     onclick: partial(ctrl.toggleScoresheet, player.side)
   }, [
     m('td', [
@@ -137,6 +145,7 @@ function renderTableScores(ctrl) {
     m('p.top text', {
     }, ctrl.trans('scores')),
     m('table.slist.standing', [
+      m('thead', m('tr')),
       m('tbody', tableBody)
     ])
   ]);

@@ -1,6 +1,7 @@
 import m from 'mithril';
 import header from './header';
 import button from './button';
+import pagination from '../pagination';
 import { standing } from './arena';
 
 function table(ctrl) {
@@ -30,10 +31,11 @@ function seats(ctrl, actives) {
 
 module.exports = {
   main: function(ctrl) {
+    var pag = pagination.players(ctrl);
     return [
       header(ctrl),
       seats(ctrl),
-      standing(ctrl)
+      standing(ctrl, pag, 'created')
     ];
   }
 };

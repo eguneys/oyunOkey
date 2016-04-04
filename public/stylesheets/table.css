@@ -68,6 +68,10 @@ div.table_right .scores .top {
   color: #747474;
 }
 
+.scores {
+  overflow: hidden;
+}
+
 .scores table.standing {
   border-bottom: none;
 }
@@ -84,10 +88,6 @@ div.table_right .scores .top {
   cursor: pointer;
 }
 
-.scores table.standing tr:nth-child(even) {
-  background: #f4f4f4;
-}
-
 .scores table.standing td:first-child {
   padding: 0.8em 0.6em;
 }
@@ -96,6 +96,11 @@ div.table_right .scores .top {
   font-weight: bold;
   width: 20px;
   opacity: 0.6;
+}
+
+.scores tr.me td:first-child {
+  border-left: 10px solid #d59120;
+  padding-left: 5px;
 }
 
 .scores table.standing .sheet {
@@ -124,7 +129,8 @@ div.table_right .scores .top {
 
 .scores penalty,
 .scores_info penalty {
-  color: #750000;
+  //color: #750000;
+  color: #ac524f;
   font-weight: bold;
 }
 
@@ -149,7 +155,7 @@ div.scores_info td {
   text-align: center;
 }
 
-/*// debug */
+/* // debug */
 /* #oyunkeyf { */
 /*   margin-left: -500px; */
 /* } */

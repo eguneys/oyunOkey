@@ -20,12 +20,27 @@ object PlayerRepo {
   private def selectActiveSide(side: Side) = BSONDocument(
     "s" -> side.letter.toString,
     "a" -> true)
-
+  private val bestSort = BSONDocument("m" -> -1)
 
   def byId(id: String): Fu[Option[Player]] = coll.find(selectId(id)).one[Player]
 
+  def bestByMasa(masaId: String): Fu[List[Player]] =
+    coll.find(selectMasa(masaId)).sort(bestSort).cursor[Player]().collect[List]()
+
+  def bestByMasaWithRank(masaId: String): Fu[RankedPlayers] =
+    bestByMasa(masaId).map { res =>
+      res.foldRight(List.empty[RankedPlayer] -> (res.size)) {
+        case (p, (res, rank)) => (RankedPlayer(rank, p) :: res, rank - 1)
+      }._1
+    }
+
   def find(masaId: String, playerId: String): Fu[Option[Player]] =
     coll.find(selectMasaPlayer(masaId, playerId)).one[Player]
+
+  def update(masaId: String, playerId: String)(f: Player => Fu[Player]) =
+    find(masaId, playerId) flatten s"No such player: $masaId/$playerId" flatMap f flatMap { player =>
+      coll.update(selectId(player._id), player).void
+    }
 
   def findByUserId(masaId: String, userId: String): Fu[Option[Player]] =
     fuccess(None)
