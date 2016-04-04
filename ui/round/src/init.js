@@ -11,6 +11,7 @@ module.exports = {
     if (game.isPlayerPlaying(d)) {
       window.addEventListener('beforeunload', function(e) {
         if (game.playable(ctrl.data)) {
+          ctrl.saveBoard();
           ctrl.socket.send('bye');
           var msg = 'trans There is a game in progress!';
           (e || window.event).returnValue = msg;

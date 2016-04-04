@@ -5,7 +5,7 @@ function assertEqual(a1, a2) {
 }
 
 const fenS = (fen) => "|" + fen + "|";
-const regPiece = /[r|l|b|g]\d\d?/g;
+const regPiece = /[f|r|l|b|g]\d\d?/g;
 
 function boardDiffTest() {
   function test(fen1, fen2) {
@@ -25,16 +25,14 @@ function boardDiffTest() {
 }
 
 function boardDiff(oldFen, newFen) {
-  if (!oldFen) {
+  if (!oldFen || !newFen || newFen === "") {
     return newFen;
   }
-
-  var regPiece = /[r|l|b|g]\d\d?/g;
 
   var pieces = newFen.match(regPiece);
   var unusedIndexes = pieces.map((k, i) => i);
 
-  var oldPieces = oldFen.match(/[r|l|g|b]\d\d?|./g);
+  var oldPieces = oldFen.match(/[f|r|l|g|b]\d\d?|./g);
 
   var piecesLength = pieces.length;
 
@@ -56,16 +54,19 @@ function boardDiff(oldFen, newFen) {
 
   oldPieces = oldPieces.replace(/\s*$/, "  ");
 
-  var rest = unusedIndexes.map(_ => pieces[_]).join("");
+  // var rest = unusedIndexes.map(_ => pieces[_]).join("");
+  // var result = oldPieces + rest;
+  // var spaces = Math.ceil(result.match(/\s/g).length / 2);
+  // spaces += piecesLength;
+  // while (spaces-- > 34) {
+  //   //result = result.replace(/\s/, "");
+  //   //result = result.replace(/\s([^\s]*)$/, "$1");
+  // }
 
-  var result = oldPieces + rest;
+  var rest = unusedIndexes.map(_ => pieces[_]);
+  var result = oldPieces + rest.slice(0).fill('  ').join("");
 
-  var spaces = result.match(/\s/g).length + piecesLength;
-
-  while (spaces-- > 34) {
-    //result = result.replace(/\s/, "");
-    result = result.replace(/\s([^\s]*)$/, "$1");
-  }
+  rest.forEach(p => result = result.replace(/\s\s/, p));
 
   if (!assertEqual(result.match(regPiece).sort(), newFen.match(regPiece).sort())) {
     console.warn("board diff failed\n", fenS(result), "\n", fenS(oldFen), "\n", fenS(newFen));
@@ -80,8 +81,6 @@ function boardDiff2(oldFen, newFen) {
   if (!oldFen) {
     return newFen;
   }
-
-  var regPiece = /[r|l|b|g]\d\d?/g;
 
   var pieces = newFen.match(regPiece);
   var unusedIndexes = pieces.map((k, i) => i);
@@ -113,7 +112,8 @@ function boardDiff2(oldFen, newFen) {
 
   while (spaces-- > 32) {
     //result = result.replace(/\s/, "");
-    result = result.replace(/\s([^\s]*)$/, "$1");
+
+    //result = result.replace(/\s([^\s]*)$/, "$1");
   }
 
   if (!assertEqual(result.match(regPiece).sort(), newFen.match(regPiece).sort())) {
@@ -124,21 +124,29 @@ function boardDiff2(oldFen, newFen) {
   return result;
 }
 
+function persistentFen(fen, oldFen) {
+  var oldBoard = oldFen.split('/', 1)[0];
+  var board = fen.split('/', 1)[0];
+  var rest = fen.substr(board.length);
+
+  var newBoard = board;
+
+  var diff = boardDiff(oldBoard, newBoard);
+
+  fen = diff + rest;
+
+  return fen;
+}
+
 module.exports = {
+  persistentFen: persistentFen,
   fenStore: {
     get: function(fen) {
-      var board = fen.split('/', 1)[0];
-      var rest = fen.substr(board.length);
+      var oldBoard = oyunkeyf.storage.get(sk);
 
-      var oldBoard = oyunkeyf.storage.get(sk, board);
+      var oldFen = oldBoard + "/";
 
-      var newBoard = board;
-
-      var diff = boardDiff(oldBoard, newBoard);
-
-      fen = diff + rest;
-
-      return fen;
+      return persistentFen(fen, oldFen);
     },
     set: function(fen) {
       var board = fen.split('/', 1)[0];

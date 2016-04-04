@@ -84,7 +84,13 @@ module.exports = function(opts) {
           this.okeyground.apiMove(o.key, wrapGroup(o.opens.group));
         } else if (o.drop) {
           this.okeyground.apiMove(o.key, wrapDrop(o.drop.piece, o.drop.pos));
-        }else {
+        } else if (o.key === okeyground.move.collectOpen) {
+          // this.okeyground.apiMove(o.key, { fen: o.fen });
+          var oldFen = this.okeyground.getFen();
+          this.okeyground.set({
+            fen: mutil.persistentFen(o.fen, oldFen)
+          });
+        } else {
           this.okeyground.apiMove(o.key);
         }
       }
