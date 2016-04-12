@@ -3,7 +3,7 @@ import sbt._, Keys._
 object BuildSettings {
   import Dependencies._
 
-  val globalScalaVersion = "2.11.7"
+  val globalScalaVersion = "2.11.8"
 
   def buildSettings = Defaults.defaultSettings ++ Seq(
     scalaVersion := globalScalaVersion,
@@ -24,6 +24,10 @@ object BuildSettings {
         libraryDependencies := defaultDeps
       ) ++ buildSettings ++ srcMain
     )
+
+  val compilerOptions = Seq(
+    "-deprecation", "-unchecked", "-feature", "-language:_",
+    "-Ybackend:GenBCode", "-Ydelambdafy:method", "-target:jvm-1.8")
 
   val srcMain = Seq(
     scalaSource in Compile <<= (sourceDirectory in Compile)(identity),

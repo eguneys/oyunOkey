@@ -16,6 +16,7 @@ object Dependencies {
   val config = "com.typesafe" % "config" % "1.3.0"
   val RM = "org.reactivemongo" %% "reactivemongo" % "0.11.10"
   val PRM = "org.reactivemongo" %% "play2-reactivemongo" % "0.11.10"
+  val java8compat = "org.scala-lang.modules" %% "scala-java8-compat" % "0.7.0"
 
   object play {
     val version = "2.4.6"

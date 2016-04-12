@@ -2,7 +2,7 @@
 
 mkdir -p public/compiled
 
-for app in lobby; do
+for app in lobby masa round; do
   cd ui/$app
   npm install --no-optional && gulp dev
   cd -

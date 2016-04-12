@@ -6,18 +6,23 @@ object ApplicationBuild extends Build {
   import BuildSettings._
   import Dependencies._
 
-  lazy val root = Project("oyun", file(".")) enablePlugins _root_.play.sbt.PlayScala settings (
+  lazy val root = Project("oyun", file("."))
+    .enablePlugins(_root_.play.sbt.PlayScala)
+    .dependsOn(api)
+    .aggregate(api)
+    .settings(
     scalaVersion := globalScalaVersion,
-    resolvers ++= Dependencies.Resolvers.commons,
-    libraryDependencies ++= Seq(
-      scalaz, scalalib, RM, PRM),
-    TwirlKeys.templateImports ++= Seq(
-      "oyun.game.{ Game, Player, Pov }",
-      "oyun.masa.Masa",
-      "oyun.api.Context",
-      "oyun.app.templating.Environment._"
-    )
-  ) dependsOn api aggregate api
+      resolvers ++= Dependencies.Resolvers.commons,
+      scalacOptions := compilerOptions,
+      libraryDependencies ++= Seq(
+        scalaz, scalalib, config, RM, PRM, java8compat),
+      TwirlKeys.templateImports ++= Seq(
+        "oyun.game.{ Game, Player, Pov }",
+        "oyun.masa.Masa",
+        "oyun.api.Context",
+        "oyun.app.templating.Environment._"
+      )
+  )
 
   lazy val modules = Seq(common, db, user, game, setup, lobby, socket, hub, okey, round, masa, i18n)
 
