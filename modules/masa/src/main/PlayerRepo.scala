@@ -6,6 +6,7 @@ import reactivemongo.core.commands._
 import okey.Side
 
 import BSONHandlers._
+import oyun.db.dsl._
 
 object PlayerRepo {
   private lazy val coll = Env.current.playerColl
@@ -16,16 +17,16 @@ object PlayerRepo {
     "mid" -> masaId,
     "_id" -> playerId)
   private val selectActive = BSONDocument("a" -> BSONDocument("$eq" -> true))
-  private def selectSide(side: Side) = BSONDocument("s" -> side.letter.toString)
+  private def selectSide(side: Side) = BSONDocument("d" -> side.letter.toString)
   private def selectActiveSide(side: Side) = BSONDocument(
-    "s" -> side.letter.toString,
+    "d" -> side.letter.toString,
     "a" -> true)
   private val bestSort = BSONDocument("m" -> -1)
 
-  def byId(id: String): Fu[Option[Player]] = coll.find(selectId(id)).one[Player]
+  def byId(id: String): Fu[Option[Player]] = coll.uno[Player](selectId(id))
 
   def bestByMasa(masaId: String): Fu[List[Player]] =
-    coll.find(selectMasa(masaId)).sort(bestSort).cursor[Player]().collect[List]()
+    coll.find(selectMasa(masaId)).sort(bestSort).cursor[Player]().gather[List]()
 
   def bestByMasaWithRank(masaId: String): Fu[RankedPlayers] =
     bestByMasa(masaId).map { res =>
@@ -35,7 +36,7 @@ object PlayerRepo {
     }
 
   def find(masaId: String, playerId: String): Fu[Option[Player]] =
-    coll.find(selectMasaPlayer(masaId, playerId)).one[Player]
+    coll.find(selectMasaPlayer(masaId, playerId)).uno[Player]
 
   def update(masaId: String, playerId: String)(f: Player => Fu[Player]) =
     find(masaId, playerId) flatten s"No such player: $masaId/$playerId" flatMap f flatMap { player =>
@@ -46,7 +47,7 @@ object PlayerRepo {
     fuccess(None)
 
   def activeSide(masaId: String, side: Side): Fu[Option[Player]] =
-    coll.find(selectMasa(masaId) ++ selectActiveSide(side)).one[Player]
+    coll.find(selectMasa(masaId) ++ selectActiveSide(side)).uno[Player]
 
   def countActive(masaId: String): Fu[Int] =
     coll.count(Some(selectMasa(masaId) ++ selectActive))
@@ -56,8 +57,9 @@ object PlayerRepo {
       l.find(s => (oside | s) == s) match {
         case Some(side) =>
           find(masaId, player.id) flatMap {
-            case Some(p) => coll.update(selectId(p._id),
-              BSONDocument("$set" -> selectActiveSide(side)))
+            case Some(p) =>
+              coll.update(selectId(p._id),
+                BSONDocument("$set" -> selectActiveSide(side)))
             case None => coll.insert(player.doActiveSide(side))
           } void
         case None => funit
@@ -72,7 +74,7 @@ object PlayerRepo {
     activePlayers(masaId) map { _ map (_.id) }
 
   def activePlayers(masaId: String): Fu[List[Player]] =
-    coll.find(selectMasa(masaId) ++ selectActive).cursor[Player]().collect[List]()
+    coll.find(selectMasa(masaId) ++ selectActive).cursor[Player]().gather[List]()
 
   def freeSides(masaId: String): Fu[List[Side]] =
     activePlayers(masaId) map { l => Side.all filterNot (l map (_.side) toSet) }

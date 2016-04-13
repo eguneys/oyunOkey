@@ -20,9 +20,9 @@ function seats(ctrl, actives) {
            m('div.seats', [
              seat(ctrl, 'north'),
              m('div.middle', [
-               seat(ctrl, 'east'),
-               table(ctrl),
                seat(ctrl, 'west'),
+               table(ctrl),
+               seat(ctrl, 'east'),
              ]),
              seat(ctrl, 'south')
            ])

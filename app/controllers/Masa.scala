@@ -50,7 +50,7 @@ object Masa extends OyunController with TheftPrevention {
         html = repo enterableById id map {
           case None => masaNotFound
           case Some(masa) =>
-            env.api.join(masa.id, ref, side)
+            env.api.join(masa.id, ref, side = side)
             Redirect(routes.Masa.show(masa.id))
         },
         api = _ => OptionFuOk(repo enterableById id) { masa =>

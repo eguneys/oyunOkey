@@ -51,7 +51,17 @@ button {
   font-weight: inherit;
 }
 
-[data-icon]:before {
+@font-face {
+  font-family: "oyunkeyf";
+  src: url("../font50/fonts/oyunkeyf.eot");
+  src: url("../font50/fonts/oyunkeyf.woff") format("woff"), url("../font50/fonts/oyunkeyf.ttf") format("truetype"), url("../font50/fonts/oyunkeyf.svg#oyunkeyf") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.is::before,
+[data-icon]:before,
+.is-after::after {
   font-size: 1.2em;
   vertical-align: middle;
   font-family: "oyunkeyf" !important;
@@ -63,6 +73,11 @@ button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   content: attr(data-icon);
+}
+
+.is.text::before,
+.text[data-icon]::before {
+  margin-right: 5px;
 }
 
 html {

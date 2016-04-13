@@ -15,8 +15,8 @@ module.exports = {
       gameId ? m('a.is.is-after.pov.button.glowed', {
         href: '/' + gameId
       }, [
-        'trans You are playing!',
-        m('span.text[data-icon=G]', 'trans jointhegame')
+        ctrl.trans('youArePlaying'),
+        m('span.text[data-icon=G]', ctrl.trans('joinTheGame'))
       ]) : null,
       standing(ctrl, pag, 'started'),
     ];
