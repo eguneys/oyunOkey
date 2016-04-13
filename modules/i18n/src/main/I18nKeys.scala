@@ -1,4 +1,4 @@
-// Generated with bin/trans-dump at 2016-04-13 10:15:42 UTC
+// Generated with bin/trans-dump at 2016-04-13 16:27:27 UTC
 package oyun.i18n
 
 import play.twirl.api.Html
@@ -39,8 +39,9 @@ final class I18nKeys(translator: Translator) {
   val `variant` = new Key("variant")
   val `standard` = new Key("standard")
   val `roundsToPlay` = new Key("roundsToPlay")
+  val `rounds` = new Key("rounds")
 
-  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `join`, `withdraw`, `finished`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `winner`, `cancel`, `variant`, `standard`, `roundsToPlay`)
+  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `join`, `withdraw`, `finished`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `winner`, `cancel`, `variant`, `standard`, `roundsToPlay`, `rounds`)
 
   lazy val count = keys.size
 }

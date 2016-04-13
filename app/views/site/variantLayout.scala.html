@@ -1,0 +1,16 @@
+@(title: String)(body: Html)(implicit ctx: Context)
+
+@menu = {
+  <a class="text" href="@routes.Page.variant("standard")">
+    "Standard"
+  </a>
+}
+
+@moreCss = {
+  @cssTag("page.css")
+  @cssTag("variant.css")
+}
+
+@base.layout(
+  title = title,
+  moreCss = moreCss)(body)

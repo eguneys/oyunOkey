@@ -259,6 +259,16 @@ div.content_box.no_padding {
   padding: 0;
 }
 
+div.content_box.small_box {
+  width: 530px;
+}
+
+div.content_box .oyunkeyf_title {
+  font-size: 2em;
+  display: block;
+  margin-bottom: 0.5em;
+}
+
 table.slist {
   width: 100%;
   border-bottom: 1px solid #d4d4d4;
@@ -496,6 +506,11 @@ div.pagination span.current {
   border-bottom-color: #404040;
 }
 
+.hint--top:before,
+.hint--top-left:before {
+  border-top-color: #404040;
+}
+
 .hint--bottom:before {
   margin-top: -12px;
 }
@@ -514,4 +529,24 @@ div.pagination span.current {
 .hint--bottom:hover:before {
   -webkit-transform: translateY(8px);
   transform: translateY(8px);
+}
+
+.hint--top:before {
+  margin-bottom: -12px;
+}
+
+.hint--top:after {
+  margin-left: -18px;
+}
+
+.hint--top:before,
+.hint--top:after {
+  bottom: 100%;
+  left: 50%;
+}
+
+.hint--top:hover:after,
+.hint--top:hover:before {
+  -webkit-transform: translateY(-8px);
+  transform: translateY(-8px);
 }

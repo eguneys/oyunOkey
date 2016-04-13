@@ -4,13 +4,14 @@
   <div class="game_infos">
     <div class="header">
       <span class="setup">
-        VARIANT • RATED
+        @game.variantLink(m.variant, m.variant.name, cssClass = "hint--top") •
+        @m.roundString@trans.rounds().toString.head
       </span>
     </div>
   </div>
-  @trans.by("someone")
+  @trans.by(usernameOrAnon(m.createdBy.some))
   •
-  startAt
+  <span title="@showDateTime(m.createdAt)">@momentFormat(m.createdAt)</span>
   <br /> <br />
-  @trans.winner(): someone
+  @trans.winner(): Anonymous
 </div>

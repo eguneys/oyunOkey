@@ -23,6 +23,8 @@ case class Masa(
   def fullName =
     s"$name $system"
 
+  def roundString =
+    s"$rounds"
 
   def createPairings(masa: Masa, players: List[String]): Fu[Option[Pairing]] = {
     fuccess(for {
