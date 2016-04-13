@@ -247,8 +247,6 @@ object Game {
       createdAt= DateTime.now)
   }
 
-  private[game] lazy val tube = oyun.db.BsTube(BSONHandlers.gameBSONHandler)
-
   object BSONFields {
     val id = "_id"
     val playerIds = "is"

@@ -15,7 +15,7 @@ object ApplicationBuild extends Build {
       resolvers ++= Dependencies.Resolvers.commons,
       scalacOptions := compilerOptions,
       libraryDependencies ++= Seq(
-        scalaz, scalalib, config, RM, PRM, java8compat),
+        scalaz, scalalib, config, RM, java8compat),
       TwirlKeys.templateImports ++= Seq(
         "oyun.game.{ Game, Player, Pov }",
         "oyun.masa.Masa",
@@ -39,7 +39,7 @@ object ApplicationBuild extends Build {
   )
 
   lazy val game = project("game", Seq(common, db, okey)).settings(
-    libraryDependencies ++= provided(play.api, play.test, RM, PRM)
+    libraryDependencies ++= provided(play.api, play.test, RM)
   )
 
   lazy val hub = project("hub", Seq(common, okey)).settings(
@@ -47,7 +47,7 @@ object ApplicationBuild extends Build {
   )
 
   lazy val db = project("db", Seq(common)).settings(
-    libraryDependencies ++= provided(play.api, play.test, RM, PRM)
+    libraryDependencies ++= provided(play.api, play.test, RM)
   )
 
   lazy val setup = project("setup", Seq(common, user, lobby, masa, hub)).settings(
@@ -55,11 +55,11 @@ object ApplicationBuild extends Build {
   )
 
   lazy val masa = project("masa", Seq(common, user, game, db, socket, hub, memo)).settings(
-    libraryDependencies ++= provided(play.api, play.test, RM, PRM)
+    libraryDependencies ++= provided(play.api, play.test, RM)
   )
 
   lazy val round = project("round", Seq(common, user, game, okey, socket, hub)).settings(
-    libraryDependencies ++= provided(play.api, play.test, RM, PRM)
+    libraryDependencies ++= provided(play.api, play.test, RM)
   )
 
   lazy val lobby = project("lobby", Seq(common, user, game, okey, socket, hub)).settings(

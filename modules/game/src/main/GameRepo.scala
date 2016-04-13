@@ -2,31 +2,29 @@ package oyun.game
 
 import okey.{ Side, Sides, Status, EndScoreSheet }
 
-import play.modules.reactivemongo.json.ImplicitBSONHandlers.JsObjectWriter
-import reactivemongo.bson._
-
-import oyun.db.api._
+import reactivemongo.bson.{ BSONDocument }
+import oyun.db.dsl._
 
 object GameRepo {
-
-  import tube.gameTube
+  // dirty ??
+  private val coll = Env.current.gameColl
 
   type ID = String
 
-  //import BSONHandlers._
+  import BSONHandlers._
   import Game.{ BSONFields => F }
 
-  def game(gameId: ID): Fu[Option[Game]] = $find byId gameId
+  def game(gameId: ID): Fu[Option[Game]] = coll.byId[Game](gameId)
 
   def pov(playerRef: PlayerRef): Fu[Option[Pov]] =
-    $find byId playerRef.gameId map { gameOption =>
+    coll.byId[Game](playerRef.gameId) map { gameOption =>
       gameOption flatMap { game =>
         game player playerRef.playerId map { Pov(game, _) }
       }
     }
 
   def pov(gameId: ID, side: Side): Fu[Option[Pov]] =
-    $find byId gameId map2 { (game: Game) => Pov(game, game player side) }
+    game(gameId) map2 { (game: Game) => Pov(game, game player side) }
 
   def pov(gameId: ID, side: String): Fu[Option[Pov]] =
     Side(side) ?? (pov(gameId, _))
@@ -37,14 +35,14 @@ object GameRepo {
     GameDiff(progress.origin, progress.game) match {
       case (Nil, Nil) => funit
       case (sets, unsets) =>
-        gameTube.coll.update(
-        $select(progress.origin.id),
-        nonEmptyMod("$set", BSONDocument(sets)) ++ nonEmptyMod("$unset", BSONDocument(unsets))
-      ).void
+        coll.update(
+          $id(progress.origin.id),
+          nonEmptyMod("$set", $doc(sets)) ++ nonEmptyMod("$unset", $doc(unsets))
+        ).void
     }
 
   private def nonEmptyMod(mod: String, doc: BSONDocument) =
-    if (doc.isEmpty) BSONDocument() else BSONDocument(mod -> doc)
+    if (doc.isEmpty) $empty else $doc(mod -> doc)
 
 
   def finish(
@@ -53,23 +51,23 @@ object GameRepo {
     result: Option[Sides[EndScoreSheet]]) = {
     import BSONHandlers.scoresBSONHandler
 
-    val partialUnsets = BSONDocument(
+    val partialUnsets = $doc(
     )
 
     val unsets = 
-      if (status >= Status.End) partialUnsets ++ BSONDocument(F.checkAt -> true)
+      if (status >= Status.End) partialUnsets ++ $doc(F.checkAt -> true)
       else partialUnsets
 
-    $update(
-      $select(id),
-      nonEmptyMod("$set", BSONDocument(
+    coll.update(
+      $id(id),
+      nonEmptyMod("$set", $doc(
         F.endScores -> result.map (BSONHandlers.sidesBSONHandler[EndScoreSheet].write _)
-      )) ++ BSONDocument("$unset" -> unsets)
+      )) ++ $doc("$unset" -> unsets)
     )
   }
 
   def insertDenormalized(g: Game): Funit = {
-    val bson = (gameTube.handler write g)
-    $insert bson bson
+    val bson = (gameBSONHandler write g)
+    coll insert bson void
   }
 }

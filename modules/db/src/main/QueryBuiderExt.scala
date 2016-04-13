@@ -1,0 +1,29 @@
+package oyun.db
+
+import scala.collection.generic.CanBuildFrom
+
+import reactivemongo.api._
+import reactivemongo.api.collections.GenericQueryBuilder
+import reactivemongo.bson._
+
+trait QueryBuilderExt { self: dsl =>
+  final implicit class ExtendQueryBuilder[A](val b: dsl.QueryBuilder) {
+
+    // like collect, but with stopOnError defaulting to false
+    def gather[A, M[_]](upTo: Int = Int.MaxValue)(implicit cbf: CanBuildFrom[M[_], A, M[A]], reader: BSONDocumentReader[A]): Fu[M[A]] =
+      b.cursor[A]().collect[M](upTo, stopOnError = false)
+
+    def list[A: BSONDocumentReader](limit: Option[Int]): Fu[List[A]] = gather[A, List](limit | Int.MaxValue)
+
+    def list[A: BSONDocumentReader](limit: Int): Fu[List[A]] = list[A](limit.some)
+
+    // like one, but with stopOnError default to false
+    def uno[A: BSONDocumentReader]: Fu[Option[A]] = uno[A](ReadPreference.primary)
+
+    def uno[A: BSONDocumentReader](readPreference: ReadPreference): Fu[Option[A]] =
+      b.copy(options = b.options.batchSize(1))
+        .cursor[A](readPreference = readPreference)
+        .collect[Iterable](1, stopOnError = false)
+        .map(_.headOption)
+  }
+}

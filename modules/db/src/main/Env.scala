@@ -5,7 +5,7 @@ import scala.util.{ Success, Failure }
 
 import com.typesafe.config.Config
 import reactivemongo.api._
-import Types._
+import dsl._
 
 final class Env(
   config: Config,
