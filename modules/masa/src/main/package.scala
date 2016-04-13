@@ -11,4 +11,6 @@ package object masa extends PackageObject with WithPlay with WithSocket {
   private[masa]type Pairings = List[masa.Pairing]
 
   private[masa] val logger = oyun.log("masa")
+
+  private[masa] val pairingLogger = logger branch "pairing"
 }

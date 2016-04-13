@@ -32,7 +32,11 @@ function playerTr(ctrl, player) {
     })
   }, [
     m('td', [
-      rank(player),
+      player.active ? rank(player) :
+        m('rank', {
+          'data-icon': 'b',
+          'title': ctrl.trans('withdraw')
+        }),
       util.player(player, 'span')
     ]),
     ctrl.data.isStarted ?

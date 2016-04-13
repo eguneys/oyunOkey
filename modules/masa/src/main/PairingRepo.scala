@@ -28,7 +28,7 @@ object PairingRepo {
   private val chronoSort = $doc("d" -> 1)
 
   def recentByMasa(masaId: String, nb: Int): Fu[Pairings] =
-    coll.find(selectMasa(masaId)).sort(recentSort).cursor[Pairing]().collect[List](nb)
+    coll.find(selectMasa(masaId)).sort(recentSort).cursor[Pairing]().gather[List](nb)
 
 
   def count(masaId: String): Fu[Int] =
@@ -37,7 +37,7 @@ object PairingRepo {
   def finishedByPlayerChronological(masaId: String, playerId: String): Fu[Pairings] =
     coll.find(
       selectMasaPlayer(masaId, playerId) ++ selectFinished
-    ).sort(chronoSort).cursor[Pairing]().collect[List]()
+    ).sort(chronoSort).cursor[Pairing]().gather[List]()
 
   def insert(pairing: Pairing) = coll.insert {
     pairingHandler.write(pairing) ++ $doc("d" -> DateTime.now)
@@ -51,7 +51,7 @@ object PairingRepo {
       "t" -> g.turns))).void
 
   def playingPlayerIds(masa: Masa): Fu[Set[String]] =
-    coll.find(selectMasa(masa.id) ++ selectPlaying).one[Pairing] map {
+    coll.find(selectMasa(masa.id) ++ selectPlaying).uno[Pairing] map {
       _ map { _.playerIds.toSet } getOrElse Set.empty
     }
 }

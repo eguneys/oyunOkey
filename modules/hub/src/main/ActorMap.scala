@@ -24,3 +24,10 @@ trait ActorMap extends Actor {
     }
   }
 }
+
+object ActorMap {
+  def apply(make: String => Actor) = new ActorMap {
+    def mkActor(id: String) = make(id)
+    def receive = actorMapReceive
+  }
+}

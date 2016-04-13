@@ -3,14 +3,14 @@ package oyun.masa
 import akka.actor._
 import akka.pattern.ask
 import com.typesafe.config.Config
+import scala.concurrent.duration._
 
 import oyun.common.PimpedConfig._
 import oyun.hub.actorApi.map.Ask
+import oyun.hub.{ ActorMap, Sequencer }
 import oyun.socket.actorApi.GetVersion
 import oyun.socket.History
 import makeTimeout.short
-
-import oyun.memo.{ ExpireSetMemo }
 
 final class Env(
   config: Config,
@@ -24,13 +24,26 @@ final class Env(
     val CollectionPairing = config getString "collection.pairing"
     val CollectionPlayer = config getString "collection.player"
     val SocketName = config getString "socket.name"
-    val OrganizerName = config getString "organizer.name"
     val ApiActorName = config getString "api_actor.name"
+    val SequencerTimeout = config duration "sequencer.timeout"
   }
   import settings._
 
 
   private def isPlayerOnline(player: Player) = true
+
+  lazy val api = new MasaApi(
+    sequencers = sequencerMap,
+    socketHub = socketHub,
+    autoPairing = autoPairing)
+
+  val masa = api masa _
+
+  lazy val socketHandler = new SocketHandler(
+    hub = hub,
+    socketHub = socketHub)
+
+  lazy val jsonView = new JsonView()
 
   private val socketHub = system.actorOf(Props(new oyun.socket.SocketHubActor.Default[Socket] {
     def mkActor(masaId: String) = new Socket(
@@ -39,43 +52,34 @@ final class Env(
     )
   }), name = SocketName)
 
-  system.actorOf(Props(new ApiActor(api = api)), name = ApiActorName)
+  private val sequencerMap = system.actorOf(Props(ActorMap { id =>
+    new Sequencer(
+      receiveTimeout = SequencerTimeout.some,
+      executionTimeout = 5.seconds.some,
+      logger = logger)
+  }))
 
-  lazy val socketHandler = new SocketHandler(
-    hub = hub,
-    socketHub = socketHub)
+  system.oyunBus.subscribe(
+    system.actorOf(Props(new ApiActor(api = api)), name = ApiActorName),
+    'finishGame)
 
-  lazy val jsonView = new JsonView()
 
-  lazy val api = new MasaApi(
-    socketHub = socketHub,
-    autoPairing = autoPairing)
+  system.actorOf(Props(new CreatedOrganizer(
+    api = api,
+    isOnline = isPlayerOnline
+  )))
 
-  val masa = api masa _
-
-  private val organizer = system.actorOf(Props(new Organizer(
+  system.actorOf(Props(new StartedOrganizer(
     api = api,
     isOnline = isPlayerOnline,
     socketHub = socketHub
-  )), name = OrganizerName)
+  )))
 
   def version(masaId: String): Fu[Int] =
     socketHub ? Ask(masaId, GetVersion) mapTo manifest[Int]
 
   private lazy val autoPairing = new AutoPairing(
   )
-
-  {
-    import scala.concurrent.duration._
-
-    scheduler.message(2 seconds) {
-      organizer -> actorApi.AllCreatedMasas
-    }
-
-    scheduler.message(3 seconds) {
-      organizer -> actorApi.StartedMasas
-    }
-  }
 
   private[masa] lazy val masaColl = db(CollectionMasa)
   private[masa] lazy val pairingColl = db(CollectionPairing)

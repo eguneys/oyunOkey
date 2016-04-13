@@ -1,16 +1,20 @@
 package oyun.masa
 
+import scala.concurrent.Promise
+
 import akka.actor.{ ActorRef }
 import akka.pattern.ask
 
 import actorApi._
 import oyun.hub.actorApi.map.{ Tell }
+import oyun.hub.Sequencer
 import oyun.game.{ Game }
 
 
 import okey.Side
 
 private[masa] final class MasaApi(
+  sequencers: ActorRef,
   autoPairing: AutoPairing,
   socketHub: ActorRef
 ) {
@@ -23,7 +27,10 @@ private[masa] final class MasaApi(
       system = System.Arena,
       variant = variant)
     logger.info(s"Create $masa")
-    MasaRepo.insert(masa) >>- join(masa.id, player) inject masa
+
+    val promise = Promise[Unit]()
+    MasaRepo.insert(masa) >>- join(masa.id, player, promise = promise.some)
+    promise.future inject masa
   }
 
   def makePairings(oldMasa: Masa, players: List[String]) {
@@ -41,8 +48,8 @@ private[masa] final class MasaApi(
   }
 
 
-  def join(masaId: String, player: PlayerRef, side: Option[String] = None) {
-    Sequencing(masaId)(MasaRepo.enterableById) { masa =>
+  def join(masaId: String, player: PlayerRef, side: Option[String] = None, promise: Option[Promise[Unit]] = None) {
+    Sequencing(masaId, promise)(MasaRepo.enterableById) { masa =>
       PlayerRepo.join(masa.id, player.toPlayer(masa.id), side flatMap Side.apply) >> updateNbPlayers(masa.id) >>- {
         socketReload(masa.id)
       }
@@ -94,13 +101,13 @@ private[masa] final class MasaApi(
       }
     }
 
-  private def sequence(masaId: String)(work: => Funit) {
-    //sequencers ! Tell(masaId, Sequencer work work)
-    (() => work)()
+  private def sequence(masaId: String, promise: Option[Promise[Unit]])(work: => Funit) {
+    sequencers ! Tell(masaId, Sequencer work(work, promise))
+    // (() => work)()
   }
 
-  private def Sequencing(masaId: String)(fetch: String => Fu[Option[Masa]])(run: Masa => Funit) {
-    sequence(masaId) {
+  private def Sequencing(masaId: String, promise: Option[Promise[Unit]] = None)(fetch: String => Fu[Option[Masa]])(run: Masa => Funit) {
+    sequence(masaId, promise) {
       fetch(masaId) flatMap {
         case Some(m) => run(m)
         case None => fufail(s"Can't run sequence opeartion on missing masa $masaId")

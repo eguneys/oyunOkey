@@ -54,37 +54,8 @@ trait WithPlay { self: PackageObject =>
       Future sequence t
   }
 
-  implicit final class OyunPimpedFuture[A](fua: Fu[A]) {
-
-    def >>-(sideEffect: => Unit): Fu[A] = fua andThen {
-      case _ => sideEffect
-    }
-
-    def >>[B](fub: => Fu[B]): Fu[B] = fua flatMap (_ => fub)
-
-    def void: Funit = fua map (_ => Unit)
-
-    def inject[B](b: => B): Fu[B] = fua map (_ => b)
-
-    def effectFold(fail: Exception => Unit, succ: A => Unit) {
-      fua onComplete {
-        case scala.util.Failure(e: Exception) => fail(e)
-        case scala.util.Failure(e) => throw e
-        case scala.util.Success(e) => succ(e)
-      }
-    }
-
-    def addFailureEffect(effect: Exception => Unit) = fua ~ (_ onFailure {
-      case e: Exception => effect(e)
-    })
-
-    def addEffect(effect: A => Unit) = fua ~ (_ foreach effect)
-
-    def awaitSeconds(seconds: Int): A = {
-      import scala.concurrent.duration._
-      scala.concurrent.Await.result(fua, seconds.seconds)
-    }
-  }
+  implicit def OyunPimpedFuture[A](fua: Fu[A]): PimpedFuture.OyunPimpedFuture[A] =
+    new PimpedFuture.OyunPimpedFuture(fua)
 
   implicit final class OyunPimpedFutureOption[A](fua: Fu[Option[A]]) {
     def flatten(msg: => String): Fu[A] = fua flatMap {
