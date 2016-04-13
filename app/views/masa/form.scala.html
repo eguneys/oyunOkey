@@ -3,6 +3,8 @@
 @import oyun.setup.HookConfig
 
 @fields = {
+  @setup.variant(form, translatedVariantChoicesWithVariants)
+  @setup.timeMode(form, oyun.setup.MasaConfig)
 }
 
-@setup.config(form, "masa", Html("transcreatemasa"), routes.Masa.create(), fields)
+@setup.config(form, "masa", trans.createAMasa(), routes.Masa.create(), fields)

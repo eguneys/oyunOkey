@@ -299,9 +299,24 @@ oyunkeyf.StrongSocket.prototype = {
 
     var $startButtons = $('#start_buttons');
 
+    var sliderRounds = [5, 10, 15, 20, 25, 30];
+
+    function sliderRound(v) { return v < sliderRounds.length ? sliderRounds[v] : 30; }
+
+    function showRound(v) {
+      return v;
+    }
+
+    function sliderInitVal(v, f, max) {
+      for (var i = 0; i < max; i++) {
+        if (f(i) === v) return i;
+      }
+    }
+
     function prepareForm() {
       var $form = $('.oyunkeyf_overboard');
       var $formTag = $form.find('form');
+      var $roundInput = $form.find('.round_choice input');
       if (false) {
         var ajaxSubmit = function() {
           $.ajax({
@@ -317,9 +332,29 @@ oyunkeyf.StrongSocket.prototype = {
         });
       } else {
         $form.find('form').one('submit', function() {
-          $(this).find('.submits').find('button').hide().end().append('spin');
+          $(this).find('.submits').find('button').hide().end().append(oyunkeyf.spinnerHtml);
         });
       }
+
+      oyunkeyf.slider().done(function() {
+        $roundInput.each(function() {
+          var $input = $(this);
+          var $value = $input.siblings('span');
+          var isRoundSlider = $input.parent().hasClass('round_choice');
+          $input.hide().after($('<div>').slider({
+            value: sliderInitVal(parseInt($input.val()), sliderRound, 100),
+            min: 0,
+            max: sliderRounds.length - 1,
+            range: 'min',
+            step: 1,
+            slide: function(event, ui) {
+              var round = sliderRound(ui.value);
+              $value.text(showRound(round));
+              $input.attr('value', round);
+            }
+          }));
+        });
+      });
     }
 
     $startButtons.find('a').click(function() {

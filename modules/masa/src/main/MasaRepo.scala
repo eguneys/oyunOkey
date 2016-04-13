@@ -34,6 +34,16 @@ object MasaRepo {
     $doc("$set" -> $doc("status" -> status.id))
   ).void
 
+  def setNbPlayers(masaId: String, nb: Int) = coll.update(
+    $id(masaId),
+    $doc("$set" -> $doc("nbPlayers" -> nb))
+  ).void
+
+  def setNbRounds(masaId: String, nb: Int) = coll.update(
+    $id(masaId),
+    $doc("$set" -> $doc("nbRounds" -> nb))
+  ).void
+
   def insert(masa: Masa) = coll.insert(masa)
 
   def exists(id: String) = coll.count($doc("_id" -> id).some) map (0 != )

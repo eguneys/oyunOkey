@@ -2,6 +2,7 @@ package oyun.masa
 
 import reactivemongo.bson._
 
+import okey.variant.Variant
 import okey.{ Side, Sides }
 import oyun.db.BSON
 
@@ -16,16 +17,32 @@ object BSONHandlers {
 
   implicit val masaHandler = new BSON[Masa] {
     def reads(r: BSON.Reader) = {
+      val variant = Variant.default
       Masa(
         id = r str "_id",
+        name = r str "name",
         status = r.get[Status]("status"),
-        system = System.default
+        system = System.default,
+        rounds = r int "rounds",
+        variant = variant,
+        nbPlayers = r int "nbPlayers",
+        nbRounds = r int "nbRounds",
+        createdAt = r date "createdAt",
+        createdBy = r str "createdBy",
+        winnerId = r strO "winner"
       )
     }
 
     def writes(w: BSON.Writer, o: Masa) = BSONDocument(
       "_id" -> o.id,
-      "status" -> o.status
+      "name" -> o.name,
+      "status" -> o.status,
+      "rounds" -> o.rounds,
+      "nbPlayers" -> o.nbPlayers,
+      "nbRounds" -> o.nbRounds,
+      "createdAt" -> w.date(o.createdAt),
+      "createdBy" -> w.str(o.createdBy),
+      "winner" -> o.winnerId
     )
   }
 

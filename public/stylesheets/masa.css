@@ -13,6 +13,35 @@
   padding: 0;
 }
 
+#masa .header .clock {
+  display: flex;
+  margin: 0 15px;
+  text-align: right;
+  align-items: center;
+}
+
+#masa .header .clock span {
+  display: block;
+}
+
+#masa .header .shy {
+  line-height: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+#masa .header .time,
+#masa .header .round {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+#masa .header .round {
+  margin-left: 15px;
+}
+
 #masa a.pov {
   display: block;
   margin: 0 25px 1em 25px;

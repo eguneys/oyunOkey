@@ -14,6 +14,7 @@ object Environment
     with I18nHelper
     with DateHelper
     with JsonHelper
+    with SetupHelper
     with UserHelper
     with GameHelper {
   implicit val OyunHtmlMonoid = scalaz.Monoid.instance[Html](

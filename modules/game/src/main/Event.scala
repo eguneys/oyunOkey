@@ -3,7 +3,7 @@ package oyun.game
 import play.api.libs.json._
 import oyun.common.PimpedJson._
 
-import okey.{ Move => OkeyMove, _ }
+import okey.{ Move => OkeyMove, Side, Sides, Status, Situation, Action, EndScoreSheet, Piece, PieceGroups, OpenPos }
 
 sealed trait Event {
   def typ: String
@@ -42,23 +42,23 @@ object Event {
 
 
     private def matchDrawMiddle(side1: Side, side2: Side, move: OkeyMove): Option[PieceData] = move.action match {
-      case DrawMiddle(p) if side1 == side2 => PieceData(p).some
+      case okey.DrawMiddle(p) if side1 == side2 => PieceData(p).some
       case _ => None
     }
     private def matchDiscard(move: OkeyMove): Option[PieceData] = move.action match {
-      case Discard(p) => PieceData(p).some
+      case okey.Discard(p) => PieceData(p).some
       case _ => None
     }
 
     private def matchOpens(move: OkeyMove): Option[PieceGroupData] = move.action match {
-      case OpenSeries(g) => PieceGroupData(g).some
-      case OpenPairs(g) => PieceGroupData(g).some
+      case okey.OpenSeries(g) => PieceGroupData(g).some
+      case okey.OpenPairs(g) => PieceGroupData(g).some
       case _ => None
     }
 
     private def matchDrop(move: OkeyMove): Option[DropData] = move.action match {
-      case DropOpenSeries(piece, pos) => DropData(piece, pos).some
-      case DropOpenPairs(piece, pos) => DropData(piece, pos).some
+      case okey.DropOpenSeries(piece, pos) => DropData(piece, pos).some
+      case okey.DropOpenPairs(piece, pos) => DropData(piece, pos).some
       case _ => None
     }
   }
@@ -136,10 +136,10 @@ object Event {
 
   private def sidesWriter(sides: Sides[okey.EndScoreSheet]) =
     Json.obj(
-      "east" -> sides(EastSide),
-      "west" -> sides(WestSide),
-      "north" -> sides(NorthSide),
-      "south" -> sides(SouthSide)
+      "east" -> sides(Side.EastSide),
+      "west" -> sides(Side.WestSide),
+      "north" -> sides(Side.NorthSide),
+      "south" -> sides(Side.SouthSide)
     )
 
 

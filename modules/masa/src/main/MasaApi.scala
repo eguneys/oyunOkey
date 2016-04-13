@@ -16,9 +16,13 @@ private[masa] final class MasaApi(
 ) {
 
   def createMasa(setup: MasaSetup, player: PlayerRef): Fu[Masa] = {
+    val variant = okey.variant.Variant orDefault setup.variant
     val masa = Masa.make(
-      system = System.Arena)
-
+      createdByUserId = player.id,
+      rounds = setup.rounds,
+      system = System.Arena,
+      variant = variant)
+    logger.info(s"Create $masa")
     MasaRepo.insert(masa) >>- join(masa.id, player) inject masa
   }
 
@@ -27,7 +31,7 @@ private[masa] final class MasaApi(
       masa.createPairings(masa, players).flatMap {
         case None => funit
         case Some(pairing) => {
-          PairingRepo.insert(pairing) >>
+          PairingRepo.insert(pairing) >> updateNbRounds(masa.id) >>
             autoPairing(masa, pairing) addEffect { game =>
               sendTo(masa.id, StartGame(game))
             }
@@ -39,15 +43,21 @@ private[masa] final class MasaApi(
 
   def join(masaId: String, player: PlayerRef, side: Option[String] = None) {
     Sequencing(masaId)(MasaRepo.enterableById) { masa =>
-      PlayerRepo.join(masa.id, player.toPlayer(masa.id), side flatMap Side.apply) >>- {
+      PlayerRepo.join(masa.id, player.toPlayer(masa.id), side flatMap Side.apply) >> updateNbPlayers(masa.id) >>- {
         socketReload(masa.id)
       }
     }
   }
 
+  private def updateNbPlayers(masaId: String) =
+    PlayerRepo countActive masaId flatMap { MasaRepo.setNbPlayers(masaId, _) }
+
+  private def updateNbRounds(masaId: String) =
+    PairingRepo count masaId flatMap { MasaRepo.setNbRounds(masaId, _) }
+
   def withdraw(masaId: String, playerId: String) {
     Sequencing(masaId)(MasaRepo.enterableById) { masa =>
-      PlayerRepo.withdraw(masa.id, playerId) >>- socketReload(masa.id)
+      PlayerRepo.withdraw(masa.id, playerId) >> updateNbPlayers(masa.id) >>- socketReload(masa.id)
     }
   }
 

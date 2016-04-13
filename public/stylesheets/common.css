@@ -44,6 +44,7 @@ h3 {
 
 input,
 textarea,
+select,
 button {
   font-family: inherit;
   font-size: inherit;
@@ -98,6 +99,56 @@ a,
 a:hover,
 a:visited {
   text-decoration: none;
+}
+
+/* slider */
+
+.ui-slider {
+  background: #fff;
+  position: relative;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ui-slider .ui-slider-handle {
+  position: absolute;
+  z-index: 2;
+  width: 1.2em;
+  height: 1.2em;
+  cursor: default;
+  outline: 0;
+  cursor: pointer;
+}
+
+.ui-slider .ui-slider-range {
+  position: absolute;
+  z-index: 1;
+  font-size: .7em;
+  display: block;
+  border: 0;
+  background-position: 0 0;
+}
+
+.ui-slider-horizontal {
+  height: .8em;
+}
+
+.ui-slider-horizontal .ui-slider-handle {
+  top: -.3em;
+  margin-left: -.6em;
+}
+
+.ui-slider-horizontal .ui-slider-range {
+  top: 0;
+  height: 100%;
+}
+
+.ui-slider-horizontal .ui-slider-range-min {
+  left: 0;
+}
+
+.ui-slider-horizontal .ui-slider-range-max {
+  right: 0;
 }
 
 @keyframes spinnerRotate {
@@ -304,6 +355,7 @@ a.button {
 /* soft inactive gradient */
 div.side_box div.top,
 .button,
+.ui-slider-handle,
 table.slist thead {
   background: rgb(245, 245, 245);
   background: linear-gradient(to bottom, rgba(245, 245, 245, 1) 0%, rgba(240, 240, 240, 1) 100%);
@@ -321,7 +373,10 @@ table.slist thead {
   white-space: nowrap;
   text-decoration: none!important;
 }
-.button {
+
+.button,
+.ui-slider-handle,
+.ui-widget-content {
   border-style: solid;
   border-width: 1px;
   border-color: #e2e2e2;
@@ -340,6 +395,20 @@ table.slist thead {
 }
 
 .button:focus {outline: 0;}
+
+/* active gradient */
+
+.button.active,
+.button.active:hover,
+group.radio input:checked + label,
+.ui-widget-header,
+div.pagination span.current {
+  color: #fff !important;
+  text-shadow: 0 1px 0 #000 !important;
+  background: #d85000 !important;
+  border-color: #b84400 !important;
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.15) inset !important;
+}
 
 .glowed {
   box-shadow: 0 0 5px 1px #e89000, 0 0 10px 1px #d85000;

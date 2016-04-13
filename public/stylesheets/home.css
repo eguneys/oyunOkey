@@ -1,0 +1,122 @@
+div.lobby_and_ground {
+  display: flex;
+  position: relative;
+}
+
+#hooks_wrap {
+  width: 510px;
+  min-width: 510px;
+  min-height: 510px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+}
+
+#start_buttons {
+  padding-left: 15px;
+  width: 280px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  position: relative;
+}
+
+#start_buttons a {
+  margin: 1.2em 0;
+  font-size: 1.3em;
+  padding: 1em;
+  text-align: center;
+  display: block;
+  letter-spacing: -1px;
+}
+
+div.oyunkeyf_overboard {
+  position: absolute;
+  z-index: 5010;
+  width: 400px;
+  top: 50%;
+  left: 56px;
+  transform: translate(0, -50%);
+  -webkit-transform: translate(0, -50%);
+  padding: 15px 0 22px 0;
+  font-size: 14px;
+  line-height: 1.8em;
+  background: #fff;
+  box-shadow: 0 0 95px 25px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+div.oyunkeyf_overboard a.close {
+  float: right;
+  display: block;
+  cursor: pointer;
+  margin-top: -12px;
+  margin-right: 6px;
+  opacity: 0.4;
+}
+
+div.oyunkeyf_overboard h2 {
+  margin-bottom: 1em;
+  font-size: 1.4em;
+  padding: 0 2em;
+}
+
+div.game_config {
+  padding-bottom: 0;
+}
+
+div.game_config .label_select {
+  overflow: hidden;
+  text-align: left;
+}
+
+div.game_config .label_select label {
+  display: block;
+  float: left;
+  width: 144px;
+  text-align: right;
+  padding: 5px 0;
+}
+
+
+div.game_config .label_select select {
+  margin-left: 10px;
+  font-weight: bold;
+  padding: 5px 8px;
+}
+
+div.game_config .label_select.variant {
+  margin-bottom: 8px;
+}
+
+div.game_config .slider {
+  padding-top: 5px;
+  text-align: left;
+  text-indent: 15px;
+}
+
+div.game_config .slider span {
+  font-weight: bold;
+}
+
+div.game_config div.ui-slider {
+  font-size: 1.3em;
+  margin: 0 15px;
+}
+
+
+div.game_config .submits {
+  margin: 1em auto;
+  text-align: center;
+}
+
+div.game_config button {
+  display: inline-block;
+  margin: 0 5px;
+  letter-spacing: 1px;
+  font-size: 1.4em;
+  width: 75px;
+  height: 75px;
+  padding: 10px;
+}

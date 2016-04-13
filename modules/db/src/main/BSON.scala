@@ -108,6 +108,7 @@ object BSON {
 
   final class Writer {
     def boolO(b: Boolean): Option[BSONBoolean] = if (b) Some(BSONBoolean(true)) else None
+    def str(s: String): BSONString = BSONString(s)
     def int(i: Int): BSONInteger = BSONInteger(i)
     def intO(i: Int): Option[BSONInteger] = if (i != 0) Some(BSONInteger(i)) else None
     def date(d: DateTime): BSONDateTime = BSONJodaDateTimeHandler write d

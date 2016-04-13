@@ -17,7 +17,9 @@
     @moreCss
     <link id="piece-sprite" href="@staticUrl(s"stylesheets/piece/standard.css?v=$assetVersion")" type="text/css" rel="stylesheet"/>
   </head>
-  <body class="preload base">
+  <body class="preload base"
+        data-asset-url="@assetBaseUrl"
+        data-asset-version="@assetVersion">
     <div id="top">
 
     </div>
@@ -41,7 +43,9 @@
 
     @jQueryTag
     @momentjsTag
-    @jsTagCompiled("big.js")
+    @jsTag("util.js")
+    @jsTag("socket.js")
+    @jsTag("main.js")
     @moreJs
     @momentLangTag
   </body>

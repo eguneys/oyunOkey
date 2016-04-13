@@ -20,7 +20,15 @@ final class JsonView() {
     "id" -> masa.id,
     "playerId" -> me,
     "fullName" -> masa.fullName,
+    "greatPlayer" -> GreatPlayer.wikiUrl(masa.name).map { url =>
+      Json.obj("name" -> masa.name, "url" -> url)
+    },
+    "nbPlayers" -> masa.nbPlayers,
+    "nbRounds" -> masa.nbRounds,
+    "rounds" -> masa.rounds,
+    "variant" -> masa.variant.key,
     "isStarted" -> masa.isStarted,
+    "isFinished" -> masa.isFinished,
     "actives" -> data.actives,
     "pairings" -> data.pairings,
     "standing" -> stand,

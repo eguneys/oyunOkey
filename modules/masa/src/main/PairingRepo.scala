@@ -4,7 +4,7 @@ import org.joda.time.DateTime
 import reactivemongo.bson._
 
 import BSONHandlers._
-import oyun.db.BSON._
+import oyun.db.dsl._
 
 import okey.Side
 
@@ -12,24 +12,27 @@ object PairingRepo {
 
   private lazy val coll = Env.current.pairingColl
 
-  private def selectId(id: String) = BSONDocument("_id" -> id)
-  def selectMasa(masaId: String) = BSONDocument("mid" -> masaId)
-  def selectPlayer(playerId: String) = BSONDocument("$or" -> List(
-    BSONDocument("pids.e" -> playerId),
-    BSONDocument("pids.w" -> playerId),
-    BSONDocument("pids.n" -> playerId),
-    BSONDocument("pids.s" -> playerId)))
+  private def selectId(id: String) = $doc("_id" -> id)
+  def selectMasa(masaId: String) = $doc("mid" -> masaId)
+  def selectPlayer(playerId: String) = $doc("$or" -> List(
+    $doc("pids.e" -> playerId),
+    $doc("pids.w" -> playerId),
+    $doc("pids.n" -> playerId),
+    $doc("pids.s" -> playerId)))
 
   private def selectMasaPlayer(masaId: String, playerId: String) = selectMasa(masaId) ++ selectPlayer(playerId)
 
-  private val selectPlaying = BSONDocument("s" -> BSONDocument("$lt" -> okey.Status.End.id))
-  private val selectFinished = BSONDocument("s" -> BSONDocument("$gte" -> okey.Status.End.id))
-  private val recentSort = BSONDocument("d" -> -1)
-  private val chronoSort = BSONDocument("d" -> 1)
+  private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.End.id))
+  private val selectFinished = $doc("s" -> $doc("$gte" -> okey.Status.End.id))
+  private val recentSort = $doc("d" -> -1)
+  private val chronoSort = $doc("d" -> 1)
 
   def recentByMasa(masaId: String, nb: Int): Fu[Pairings] =
     coll.find(selectMasa(masaId)).sort(recentSort).cursor[Pairing]().collect[List](nb)
 
+
+  def count(masaId: String): Fu[Int] =
+    coll.count(selectMasa(masaId).some)
 
   def finishedByPlayerChronological(masaId: String, playerId: String): Fu[Pairings] =
     coll.find(
@@ -37,12 +40,12 @@ object PairingRepo {
     ).sort(chronoSort).cursor[Pairing]().collect[List]()
 
   def insert(pairing: Pairing) = coll.insert {
-    pairingHandler.write(pairing) ++ BSONDocument("d" -> DateTime.now)
+    pairingHandler.write(pairing) ++ $doc("d" -> DateTime.now)
   }.void
 
   def finish(g: oyun.game.Game) = coll.update(
     selectId(g.id),
-    BSONDocument("$set" -> BSONDocument(
+    $doc("$set" -> $doc(
       "s" -> g.status.id,
       "ss" -> g.endScores.map(_.map(_.total)),
       "t" -> g.turns))).void

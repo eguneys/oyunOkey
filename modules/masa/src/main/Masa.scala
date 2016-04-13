@@ -1,18 +1,27 @@
 package oyun.masa
 
+import org.joda.time.{ DateTime }
 import ornicar.scalalib.Random
 
 case class Masa(
   id: String,
+  name: String,
   status: Status,
-  system: System) {
+  system: System,
+  rounds: Int,
+  variant: okey.variant.Variant,
+  nbPlayers: Int,
+  nbRounds: Int,
+  createdAt: DateTime,
+  createdBy: String,
+  winnerId: Option[String] = None) {
 
   def isCreated = status == Status.Created
   def isStarted = status == Status.Started
   def isFinished = status == Status.Finished
 
   def fullName =
-    s"name"
+    s"$name $system"
 
 
   def createPairings(masa: Masa, players: List[String]): Fu[Option[Pairing]] = {
@@ -32,8 +41,19 @@ case class Masa(
 
 object Masa {
 
-  def make(system: System) = Masa(
+  def make(
+    createdByUserId: String,
+    rounds: Int,
+    system: System,
+    variant: okey.variant.Variant) = Masa(
     id = Random nextStringUppercase 8,
-    status = Status.Created,
-    system = system)
+      name = GreatPlayer.randomName,
+      status = Status.Created,
+      system = system,
+      rounds = rounds,
+      createdBy = createdByUserId,
+      createdAt = DateTime.now,
+      nbPlayers = 0,
+      nbRounds = 0,
+      variant = variant)
 }

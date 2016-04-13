@@ -1,0 +1,8 @@
+@(form: Form[_], config: oyun.setup.BaseConfig)(implicit ctx: Context)
+
+<div class="time_mode_config">
+  <div class="round_choice slider">
+    @trans.roundsToPlay(): <span>@form("rounds").value</span>
+    @setup.input(form("rounds"))
+  </div>
+</div>

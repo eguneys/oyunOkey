@@ -1,4 +1,5 @@
 createAGame=Create A Game
+createAMasa=Create A Masa
 viewMasa=View Masa
 join=Join
 withdraw=Withdraw
@@ -10,3 +11,7 @@ talkInChat=Start Chat
 createdBy=Created by
 by=by %s
 winner=Winner
+cancel=Cancel
+variant=Variant
+standard=Standard
+roundsToPlay=Rounds to play
