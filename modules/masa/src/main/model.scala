@@ -4,6 +4,11 @@ import okey.Side
 
 case class PlayerInfo(side: Side, active: Boolean)
 
+case class VisibleMasas(
+  created: List[Masa],
+  started: List[Masa],
+  finished: List[Masa])
+
 case class RankedPlayer(rank: Int, player: Player) {
   override def toString = s"$rank. ${player.id}"
 }

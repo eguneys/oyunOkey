@@ -28,9 +28,7 @@ private[masa] final class MasaApi(
       variant = variant)
     logger.info(s"Create $masa")
 
-    val promise = Promise[Unit]()
-    MasaRepo.insert(masa) >>- join(masa.id, player, promise = promise.some)
-    promise.future inject masa
+    MasaRepo.insert(masa) >> join(masa.id, player) inject masa
   }
 
   def makePairings(oldMasa: Masa, players: List[String]) {
@@ -48,12 +46,15 @@ private[masa] final class MasaApi(
   }
 
 
-  def join(masaId: String, player: PlayerRef, side: Option[String] = None, promise: Option[Promise[Unit]] = None) {
-    Sequencing(masaId, promise)(MasaRepo.enterableById) { masa =>
+  def join(masaId: String, player: PlayerRef, side: Option[String] = None): Fu[Unit] = {
+    val promise = Promise[Unit]()
+    Sequencing(masaId)(MasaRepo.enterableById) { masa =>
       PlayerRepo.join(masa.id, player.toPlayer(masa.id), side flatMap Side.apply) >> updateNbPlayers(masa.id) >>- {
         socketReload(masa.id)
+        promise success()
       }
     }
+    promise.future
   }
 
   private def updateNbPlayers(masaId: String) =
@@ -62,10 +63,15 @@ private[masa] final class MasaApi(
   private def updateNbRounds(masaId: String) =
     PairingRepo count masaId flatMap { MasaRepo.setNbRounds(masaId, _) }
 
-  def withdraw(masaId: String, playerId: String) {
+  def withdraw(masaId: String, playerId: String): Fu[Unit] = {
+    val promise = Promise[Unit]()
     Sequencing(masaId)(MasaRepo.enterableById) { masa =>
-      PlayerRepo.withdraw(masa.id, playerId) >> updateNbPlayers(masa.id) >>- socketReload(masa.id)
+      PlayerRepo.withdraw(masa.id, playerId) >> updateNbPlayers(masa.id) >>- {
+        socketReload(masa.id)
+        promise success()
+      }
     }
+    promise.future
   }
 
   def masa(game: Game): Fu[Option[Masa]] = ~{
@@ -101,13 +107,21 @@ private[masa] final class MasaApi(
       }
     }
 
-  private def sequence(masaId: String, promise: Option[Promise[Unit]])(work: => Funit) {
-    sequencers ! Tell(masaId, Sequencer work(work, promise))
+  def fetchVisibleMasas: Fu[VisibleMasas] =
+    MasaRepo.publicCreatedSorted zip
+      MasaRepo.publicStarted zip
+      MasaRepo.finishedNotable(10) map {
+        case ((created, started), finished) =>
+          VisibleMasas(created, started, finished)
+      }
+
+  private def sequence(masaId: String)(work: => Funit) {
+    sequencers ! Tell(masaId, Sequencer work(work))
     // (() => work)()
   }
 
-  private def Sequencing(masaId: String, promise: Option[Promise[Unit]] = None)(fetch: String => Fu[Option[Masa]])(run: Masa => Funit) {
-    sequence(masaId, promise) {
+  private def Sequencing(masaId: String)(fetch: String => Fu[Option[Masa]])(run: Masa => Funit) {
+    sequence(masaId) {
       fetch(masaId) flatMap {
         case Some(m) => run(m)
         case None => fufail(s"Can't run sequence opeartion on missing masa $masaId")

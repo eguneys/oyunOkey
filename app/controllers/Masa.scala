@@ -16,6 +16,18 @@ object Masa extends OyunController with TheftPrevention {
 
   private def masaNotFound(implicit ctx: Context) = NotFound(html.masa.notFound())
 
+  def home = Open { implicit ctx =>
+    negotiate(
+      html = env.api.fetchVisibleMasas.map({
+        case visible =>
+          Ok(html.masa.home(env scheduleJsonView visible))
+      }) map NoCache,
+      api = _ => env.api.fetchVisibleMasas map { masas =>
+        Ok(env scheduleJsonView masas)
+      }
+    )
+  }
+
   def show(id: String) = Open { implicit ctx =>
     playerForReq(id) flatMap { playerOption =>
       val playerId = playerOption map(_.id)
@@ -47,15 +59,15 @@ object Masa extends OyunController with TheftPrevention {
     playerForReq(id) flatMap { playerOption =>
       val ref = playerOption.map(_.ref) | PlayerRef()
       negotiate(
-        html = repo enterableById id map {
-          case None => masaNotFound
+        html = repo enterableById id flatMap {
+          case None => masaNotFound.fuccess
           case Some(masa) =>
-            env.api.join(masa.id, ref, side = side)
+            env.api.join(masa.id, ref, side = side) inject
             Redirect(routes.Masa.show(masa.id))
         },
         api = _ => OptionFuOk(repo enterableById id) { masa =>
-          env.api.join(masa.id, ref, side)
-          fuccess(Json.obj("ok" -> true))
+          env.api.join(masa.id, ref, side) inject
+          Json.obj("ok" -> true)
         }
       ) flatMap withMasaAnonCookie(ctx.isAnon, ref.id)
     }
@@ -63,10 +75,11 @@ object Masa extends OyunController with TheftPrevention {
 
   def withdraw(id: String) = Open { implicit ctx =>
     OptionFuResult(repo byId id) { masa =>
-      OptionResult(playerForReq(masa.id)) { player =>
-        env.api.withdraw(masa.id, player.id)
-        if (HTTPRequest.isXhr(ctx.req)) Ok(Json.obj("ok" -> true)) as JSON
-        else Redirect(routes.Masa.show(masa.id))
+      OptionFuResult(playerForReq(masa.id)) { player =>
+        env.api.withdraw(masa.id, player.id) inject {
+          if (HTTPRequest.isXhr(ctx.req)) Ok(Json.obj("ok" -> true)) as JSON
+          else Redirect(routes.Masa.show(masa.id))
+        }
       }
     }
   }

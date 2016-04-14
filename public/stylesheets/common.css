@@ -337,6 +337,54 @@ div.under_side.bottom {
   bottom: 0px;
 }
 
+div.undertable {
+  font-size: 11.5px;
+  margin-top: 15px;
+}
+
+div.undertable_top {
+  border: 1px solid #ccc;
+  padding: 3px 5px;
+}
+
+div.undertable_top a.more {
+  float: right;
+  padding-right: 2px;
+  font-weight: normal;
+}
+
+div.undertable_top span.title {
+  font-weight: bold;
+  color: #999;
+}
+
+div.undertable_inner {
+  border: 1px solid #ccc;
+  border-top: 0;
+  height: 202px;
+  width: auto;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+div.undertable_inner:hover {
+  overflow-y: auto;
+}
+
+div.undertable table {
+  width: 100%;
+  height: 100%;
+}
+
+div.undertable td {
+  padding: 6px 5px 6px 5px;
+  border-top: 1px solid #eaeaea;
+}
+
+div.undertable tr:first-child td {
+  border-top: none;
+}
+
 div.chat_menu {
   margin-bottom: -12px;
   text-align: center;
@@ -379,6 +427,7 @@ a.button {
 
 /* soft inactive gradient */
 div.side_box div.top,
+div.undertable_top,
 .button,
 .ui-slider-handle,
 table.slist thead {
@@ -389,6 +438,7 @@ table.slist thead {
 }
 
 #chat div.top,
+div.undertable_top,
 .button {
   font-weight: bold;
 }
@@ -549,4 +599,25 @@ div.pagination span.current {
 .hint--top:hover:before {
   -webkit-transform: translateY(-8px);
   transform: translateY(-8px);
+}
+
+body ::-webkit-scrollbar,
+body ::-webkit-scrollbar-corner {
+  background: #eee;
+}
+
+body ::-webkit-scrollbar-thumb {
+  background: rgba(204, 204, 204, 0.7);
+}
+
+body ::-webkit-scrollbar-thumb:hover {
+  background: rgba(50, 50, 50, 0.2);
+}
+
+body ::-webkit-scrollbar-thumb:active {
+  background: rgba(50, 50, 50, 0.3);
+}
+
+body ::-webkit-scrollbar-track {
+  box-shadow: 0 0 6px rgba(50, 50, 50, 0.3) inset;
 }

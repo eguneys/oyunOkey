@@ -1,6 +1,6 @@
 createAGame=Create A Game
-createAMasa=Create A Masa
-viewMasa=View Masa
+createAMasa=Create A Table
+viewMasa=View Table
 join=Join
 withdraw=Withdraw
 finished=Finished
@@ -16,3 +16,8 @@ variant=Variant
 standard=Standard
 roundsToPlay=Rounds to play
 rounds=Rounds
+seeAllMasas=See all tables
+openMasas=Open tables
+masas=Tables
+more=More
+rated=Rated

@@ -17,6 +17,7 @@ object Environment
     with JsonHelper
     with SetupHelper
     with UserHelper
+    with MasaHelper
     with GameHelper {
   implicit val OyunHtmlMonoid = scalaz.Monoid.instance[Html](
     (a, b) => Html(a.body + b.body),

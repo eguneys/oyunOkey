@@ -1,0 +1,25 @@
+@(masas: List[Masa])(implicit ctx: Context)
+
+@masas.map { m =>
+  <tr>
+    <td class="name">
+      <a class="text" href="@routes.Masa.show(m.id)">
+        <span data-icon="@masaIconChar(m)"></span>
+        @m.name
+      </a>
+    </td>
+    <td class="small">
+      <!-- <span class="text" data-icon="p"></span> -->
+      @m.variant.shortName
+      <span>@trans.rated()</span>
+    </td>
+    <td>@m.roundString</td>
+    <td data-icon="r" class="text">@m.nbPlayers</td>
+    <td>
+      <form action="@routes.Masa.join(m.id)" method="POST">
+        <button type="submit" class="submit button" data-icon="G"></button>
+      </form>
+    </td>
+  </tr>
+
+}

@@ -22,6 +22,10 @@ private[controllers] trait OyunController
     def fuccess = scala.concurrent.Future successful result
   }
 
+  protected def NoCache(res: Result): Result = res.withHeaders(
+    CACHE_CONTROL -> "no-cache, no-store, must-revalidate", EXPIRES -> "0"
+  )
+
   protected def SocketEither[A: FrameFormatter](f: Context => Fu[Either[Result, (Iteratee[A, _], Enumerator[A])]]) =
     WebSocket.tryAccept[A] { req => reqToCtx(req) flatMap f }
 

@@ -1,0 +1,17 @@
+@(json: play.api.libs.json.JsObject)(implicit ctx: Context)
+
+@moreJs = {
+}
+
+@masa.layout(
+title = trans.masas.str(),
+moreJs = moreJs) {
+  <div class="content_box masa_box no_padding">
+    <h1>@trans.masas()</h1>
+    <div id="masa_list">
+      <table class="slist">
+        
+      </table>
+    </div>
+  </div>
+}

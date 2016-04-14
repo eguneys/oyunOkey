@@ -1,4 +1,4 @@
-@(data: play.api.libs.json.JsObject)(implicit ctx: Context)
+@(data: play.api.libs.json.JsObject, masas: List[Masa])(implicit ctx: Context)
 
 @moreJs = {
   @jsAt(s"compiled/oyunkeyf.lobby.js")
@@ -18,6 +18,15 @@
 ) {
   <div class="lobby_and_ground">
     <div id="hooks_wrap"></div>
+    <div class="undertable">
+      <div class="undertable_top">
+        <a class="more hint--bottom" data-hint="@trans.seeAllMasas()" href="@routes.Masa.home()">@trans.more() »</a>
+        <span class="title text" data-icon="g">@trans.openMasas()</span>
+      </div>
+      <div id="enterable_masas" class="enterable_list undertable_inner scroll-shadow-hard">
+        @masa.enterable(masas)
+      </div>
+    </div>
     <div id="start_buttons" class="oyun_ground">
       <a class="fat button config_masa" href="@routes.Masa.form" onclick="return false">@trans.createAGame()</a>
     </div>

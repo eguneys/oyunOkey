@@ -4,6 +4,7 @@ div.lobby_and_ground {
 }
 
 #hooks_wrap {
+  display: none;
   width: 510px;
   min-width: 510px;
   min-height: 510px;
@@ -119,4 +120,45 @@ div.game_config button {
   width: 75px;
   height: 75px;
   padding: 10px;
+}
+
+div.undertable {
+  width: 512px;
+}
+
+#oyunkeyf .enterable_list {
+  height: auto;
+  max-height: 500px;
+}
+
+#oyunkeyf .enterable_list td:first-child {
+  padding-left: 1em;
+}
+
+#oyunkeyf .enterable_list td.name a {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+#oyunkeyf .enterable_list td.name span {
+  font-size: 17px;
+  letter-spacing: -5px;
+}
+
+#oyunkeyf .enterable_list td:last-child {
+  width: 20px;
+}
+
+#oyunkeyf .enterable_list button {
+  padding: 4px 8px;
+  opacity: 0;
+  transition: 0.13s;
+}
+
+#oyunkeyf .enterable_list tr:hover button {
+  opacity: 1;
+}
+
+#oyunkeyf .enterable_list td.name span:last-child {
+  margin-right: 10px;
 }

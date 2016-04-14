@@ -13,7 +13,6 @@ object Prismic {
   private val logger = oyun.log("prismic")
 
   val prismicLogger = (level: Symbol, message: String) => level match {
-    case a => println(a); throw new Exception
     case 'DEBUG => logger debug message
     case 'ERROR => logger error message
     case _ => logger info message

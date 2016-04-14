@@ -355,15 +355,23 @@ oyunkeyf.StrongSocket.prototype = {
           }));
         });
       });
+
+      $form.find('a.close.icon').click(function() {
+        $form.remove();
+        $startButtons.find('a.active').removeClass('active');
+        return false;
+      });
     }
 
     $startButtons.find('a').click(function() {
+      $(this).addClass('active').siblings().removeClass('active');
       $('.oyunkeyf_overboard').remove();
       $.ajax({
         url: $(this).attr('href'),
         success: function(html) {
           $('.oyunkeyf_overboard').remove();
-          $('#hooks_wrap').prepend(html);
+          //$('#hooks_wrap').prepend(html);
+          $('#enterable_masas').prepend(html);
           prepareForm();
         },
         error: function() {

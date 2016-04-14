@@ -24,7 +24,7 @@ case class Masa(
     s"$name $system"
 
   def roundString =
-    s"$rounds"
+    s"$nbRounds/$rounds " + "el"
 
   def createPairings(masa: Masa, players: List[String]): Fu[Option[Pairing]] = {
     fuccess(for {

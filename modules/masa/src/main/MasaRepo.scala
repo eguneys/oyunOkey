@@ -13,6 +13,7 @@ object MasaRepo {
 
   private val createdSelect = $doc("status" -> Status.Created.id)
   private val startedSelect = $doc("status" -> Status.Started.id)
+  private[masa] val finishedSelect = $doc("status" -> Status.Finished.id)
 
   def byId(id: String): Fu[Option[Masa]] = coll.find($id(id)).uno[Masa]
 
@@ -28,6 +29,20 @@ object MasaRepo {
   def started: Fu[List[Masa]] =
     coll.find(startedSelect).sort($doc("createdAt" -> -1)).list[Masa](None)
 
+  def publicStarted: Fu[List[Masa]] =
+    coll.find(startedSelect)
+      .sort($doc("createdAt" -> -1))
+      .list[Masa]()
+
+  def finished(limit: Int): Fu[List[Masa]] =
+    coll.find(finishedSelect)
+      .sort($doc("createdAt" -> -1))
+      .list[Masa](limit)
+
+  def finishedNotable(limit: Int): Fu[List[Masa]] =
+    coll.find(finishedSelect)
+      .sort($doc("createdAt" -> -1))
+      .list[Masa](limit)
 
   def setStatus(masaId: String, status: Status) = coll.update(
     $id(masaId),
@@ -50,7 +65,15 @@ object MasaRepo {
 
   private def allCreatedSelect = createdSelect
 
+  def publicCreatedSorted: Fu[List[Masa]] =
+    coll.find(allCreatedSelect).list[Masa](none)
+
   def allCreated: Fu[List[Masa]] =
     coll.find(allCreatedSelect).cursor[Masa]().gather[List]()
 
+
+  def promotable: Fu[List[Masa]] =
+    publicCreatedSorted map {
+      case created => created
+    }
 }

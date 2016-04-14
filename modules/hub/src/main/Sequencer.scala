@@ -1,7 +1,6 @@
 package oyun.hub
 
 import scala.concurrent.duration._
-import scala.concurrent.Promise
 import scala.util.Try
 
 import akka.actor._
@@ -39,7 +38,7 @@ final class Sequencer(
   private def processThenDone(work: Any) {
     work match {
       case ReceiveTimeout => self ! PoisonPill
-      case Sequencer.Work(run, promiseOption, timeoutOption) =>
+      case Sequencer.Work(run, timeoutOption) =>
         val future = timeoutOption.orElse(executionTimeout).fold(run()) { timeout =>
           run().withTimeout(
             duration = timeout,
@@ -48,7 +47,6 @@ final class Sequencer(
         } andThenAnyway {
           self ! Done
         }
-        promiseOption foreach (_ completeWith future)
       case x => logger.branch("sequencer").warn(s"Unsupported message $x")
     }
   }
@@ -57,11 +55,9 @@ final class Sequencer(
 object Sequencer {
   case class Work(
     run: () => Funit,
-    promise: Option[Promise[Unit]] = None,
     timeout: Option[FiniteDuration] = None)
 
   def work(
     run: => Funit,
-    promise: Option[Promise[Unit]] = None,
-    timeout: Option[FiniteDuration] = None): Work = Work(() => run, promise, timeout)
+    timeout: Option[FiniteDuration] = None): Work = Work(() => run, timeout)
 }

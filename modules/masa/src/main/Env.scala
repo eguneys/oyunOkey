@@ -23,12 +23,16 @@ final class Env(
     val CollectionMasa = config getString "collection.masa"
     val CollectionPairing = config getString "collection.pairing"
     val CollectionPlayer = config getString "collection.player"
+    val CreatedCacheTtl = config duration "created.cache.ttl"
     val SocketName = config getString "socket.name"
     val ApiActorName = config getString "api_actor.name"
     val SequencerTimeout = config duration "sequencer.timeout"
   }
   import settings._
 
+
+  lazy val cached = new Cached(
+    createdTtl = CreatedCacheTtl)
 
   private def isPlayerOnline(player: Player) = true
 
@@ -44,6 +48,8 @@ final class Env(
     socketHub = socketHub)
 
   lazy val jsonView = new JsonView()
+
+  lazy val scheduleJsonView = new ScheduleJsonView()
 
   private val socketHub = system.actorOf(Props(new oyun.socket.SocketHubActor.Default[Socket] {
     def mkActor(masaId: String) = new Socket(
