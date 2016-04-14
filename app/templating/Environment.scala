@@ -10,6 +10,7 @@ object Environment
     with scalaz.std.StringInstances
     with scalalib.Zero.Instances
     with oyun.BooleanSteroids
+    with oyun.OptionSteroids
     with AssetHelper
     with I18nHelper
     with DateHelper

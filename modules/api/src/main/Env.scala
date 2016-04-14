@@ -11,6 +11,7 @@ final class Env(
     //val Domain = config getString "net.domain"
     val AssetDomain = config getString "net.asset.domain"
   }
+  val PrismicApiUrl = config getString "prismic.api_url"
 
   object assetVersion {
     def get = 1

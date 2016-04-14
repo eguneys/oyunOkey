@@ -15,7 +15,9 @@ object ApplicationBuild extends Build {
       resolvers ++= Dependencies.Resolvers.commons,
       scalacOptions := compilerOptions,
       libraryDependencies ++= Seq(
-        scalaz, scalalib, config, RM, java8compat),
+        scalaz, scalalib, config, RM,
+        spray.caching, prismic,
+        java8compat),
       TwirlKeys.templateImports ++= Seq(
         "oyun.game.{ Game, Player, Pov }",
         "oyun.masa.Masa",
@@ -70,8 +72,8 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api)
   )
 
-  lazy val memo = project("memo").settings(
-    libraryDependencies ++= provided(play.api, play.test)
+  lazy val memo = project("memo", Seq(common)).settings(
+    libraryDependencies ++= Seq(spray.caching) ++ provided(play.api, play.test)
   )
 
   lazy val socket = project("socket", Seq(common, hub)).settings(

@@ -1,7 +1,8 @@
-@(variant: okey.variant.Variant)(implicit ctx: Context)
+@(doc: io.prismic.Document, resolver: io.prismic.DocumentLinkResolver, variant: okey.variant.Variant)(implicit ctx: Context)
 
 @variantLayout(
 title = s"${variant.name} • ${variant.title}") {
+
   <div class="content_box small_box doc_box">
     
     <h1 class="oyunkeyf_title text">@variant.name</h1>
@@ -9,7 +10,7 @@ title = s"${variant.name} • ${variant.title}") {
     <h2 class="headline">@variant.title</h2>
 
     <div class="body">
-      @Html("variant.content")
+      @Html(~doc.getHtml("variant.content", resolver))
     </div>
   </div>
 }
