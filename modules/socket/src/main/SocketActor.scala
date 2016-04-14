@@ -1,5 +1,7 @@
 package oyun.socket
 
+import scala.concurrent.duration._
+
 import akka.actor._
 import play.api.libs.json._
 
@@ -11,11 +13,33 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
   val members = scala.collection.mutable.Map.empty[String, M]
   val pong = Socket.initialPong
 
+  val oyunBus = context.system.oyunBus
+
+  // this socket is created during application boot
+  // and therefore should delay its publication
+  // to ensure the listener is ready (sucks, I know)
+  val startsOnApplicationBoot: Boolean = false
+
+  override def preStart {
+    if (startsOnApplicationBoot)
+      context.system.scheduler.scheduleOnce(1 second) {
+        oyunBus.publish(oyun.socket.SocketHub.Open(self), 'socket)
+      }
+      else oyunBus.publish(oyun.socket.SocketHub.Open(self), 'socket)
+  }
+
+  override def postStop() {
+    oyunBus.publish(oyun.socket.SocketHub.Close(self), 'socket)
+    members.keys foreach eject
+  }
 
   def receiveSpecific: Receive
 
   def receiveGeneric: Receive = {
     case Ping(uid) => ping(uid)
+
+    case Broom => broom
+
     case Quit(uid) => quit(uid)
 
     case GetUids => sender ! SocketUids(members.keySet.toSet)
@@ -41,6 +65,12 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
 
   def ping(uid: String) {
     withMember(uid)(_ push pong)
+  }
+
+  def broom {
+    members.keys foreach { uid =>
+      // broom
+    }
   }
 
   def eject(uid: String) {

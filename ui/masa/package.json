@@ -4,7 +4,7 @@
   "description": "oyunkeyf.org masa",
   "main": "src/main.js",
   "dependencies": {
-    "mithril": "^0.2.0",
+    "mithril": "^0.2.3",
     "okeyground": "^1.0.4"
   },
   "devDependencies": {

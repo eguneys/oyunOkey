@@ -11,6 +11,12 @@ final class Env(
 
   lazy val preloader = new mashup.Preload(
     lobbyApi = Env.api.lobbyApi)
+
+  oyun.log.boot.info("Preloading modules")
+  oyun.common.Chronometer.syncEffect(List(Env.socket
+  )) { lap =>
+    oyun.log("boot").info(s"${lap.millis}ms Preloading complete")
+  }
 }
 
 object Env {
@@ -19,6 +25,8 @@ object Env {
     system = oyun.common.PlayApp.system)
 
   def api = oyun.api.Env.current
+  def hub = oyun.hub.Env.current
+  def socket = oyun.socket.Env.current
   def setup = oyun.setup.Env.current
   def lobby = oyun.lobby.Env.current
   def round = oyun.round.Env.current

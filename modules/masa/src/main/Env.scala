@@ -24,6 +24,7 @@ final class Env(
     val CollectionPairing = config getString "collection.pairing"
     val CollectionPlayer = config getString "collection.player"
     val CreatedCacheTtl = config duration "created.cache.ttl"
+    val SocketTimeout = config duration "socket.timeout"
     val SocketName = config getString "socket.name"
     val ApiActorName = config getString "api_actor.name"
     val SequencerTimeout = config duration "sequencer.timeout"
@@ -54,8 +55,8 @@ final class Env(
   private val socketHub = system.actorOf(Props(new oyun.socket.SocketHubActor.Default[Socket] {
     def mkActor(masaId: String) = new Socket(
       masaId = masaId,
-      history = new History()
-    )
+      history = new History(),
+      socketTimeout = SocketTimeout)
   }), name = SocketName)
 
   private val sequencerMap = system.actorOf(Props(ActorMap { id =>

@@ -6,7 +6,14 @@ import akka.pattern.{ ask, pipe }
 final class SocketHub extends Actor {
   private val sockets = collection.mutable.Set[ActorRef]()
 
-  //context.system.lilaBus.subscribe(self, 'socket)
+  override def preStart() {
+    context.system.oyunBus.subscribe(self, 'socket)
+  }
+
+  override def postStop() {
+    super.postStop()
+    context.system.oyunBus.unsubscribe(self)
+  }
 
   import SocketHub._
 

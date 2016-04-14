@@ -19,6 +19,7 @@ module.exports = function(env) {
   this.reload = (data) => {
     //if (this.data.isStarted !== data.isStarted) m.redraw.strategy('all');
     this.data = data;
+    this.playerId = data.playerId;
     this.loadPage(data.standing);
     this.vm.joinSpinner = false;
     redirectToMyGame();

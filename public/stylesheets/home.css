@@ -122,8 +122,18 @@ div.game_config button {
   padding: 10px;
 }
 
+div.game_config button {
+  opacity: 1 !important;
+}
+
 div.undertable {
   width: 512px;
+}
+
+#oyunkeyf #enterable_masas {
+  width: 510px;
+  min-width: 510px;
+  min-height: 510px;
 }
 
 #oyunkeyf .enterable_list {

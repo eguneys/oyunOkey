@@ -6,6 +6,10 @@ import ornicar.scalalib
 import scalaz.{ Monad, Monoid, OptionT, ~> }
 
 trait PackageObject extends Steroids with WithFuture {
+
+  def nowNanos: Long = System.nanoTime()
+  def nowMillis: Long = System.currentTimeMillis()
+
   implicit final def runOptionT[F[+_], A](ot: OptionT[F, A]): F[Option[A]] = ot.run
 
   // from scalaz. We don't want to import all OptionTFunctions, because of the clash with `some`

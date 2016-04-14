@@ -19,13 +19,13 @@ function rank(p) {
   return m('rank', {}, [p.rank]);
 }
 
+// mithril cannot read property parentNode: https://github.com/lhorie/mithril.js/issues/96#issuecomment-210044311
 function playerTr(ctrl, player) {
   var isLong = player.sheet.scores.length > 40;
   var playerName = player.name || 'Anonymous';
   var playerId = player.id;
   var userId = playerName.toLowerCase();
   return m('tr', {
-    key: userId,
     class: classSet({
       'me': ctrl.playerId === playerId,
       'long': isLong

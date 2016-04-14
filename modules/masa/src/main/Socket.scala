@@ -7,13 +7,16 @@ import play.api.libs.iteratee._
 import scala.concurrent.duration._
 
 import actorApi._
+import oyun.hub.TimeBomb
 import oyun.socket.actorApi.{ Connected => _, _ }
 import oyun.socket.{ SocketActor, History, Historical }
 
 private[oyun] final class Socket(
   masaId: String,
-  val history: History) extends SocketActor[Member] with Historical[Member] {
+  val history: History,
+  socketTimeout: Duration) extends SocketActor[Member] with Historical[Member] {
 
+  private val timeBomb = new TimeBomb(socketTimeout)
 
   private var delayedReloadNotification = false
 
@@ -25,6 +28,12 @@ private[oyun] final class Socket(
 
     case PingVersion(uid, v) => {
       ping(uid)
+      timeBomb.delay
+    }
+
+    case Broom => {
+      broom
+      if (timeBomb.boom) self ! PoisonPill
     }
 
     case GetVersion => sender ! history.version
