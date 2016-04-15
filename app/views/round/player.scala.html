@@ -24,7 +24,7 @@
   moreJs = moreJs) {
   <div class="round og-512"></div>
   @m match {
-    case Some(m) if !m.masa.isCreated => { @masa.gameStanding(m) }
+    case Some(m) if !m.masa.isCreated => { @masa.gameStanding(m, pov.player.playerId) }
     case _ => {
       @game.masaId.map { masaId =>
         <div class="game_masa side_box no_padding">

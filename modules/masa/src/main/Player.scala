@@ -13,6 +13,11 @@ case class Player(
 
   def id = _id
 
+  def withdraw = !active
+
+  def is(pid: String): Boolean = pid == id
+  def isUser(uid: String): Boolean = uid == userId
+
   def hasUser = userId.isDefined
 
   def doActiveSide(side: Side) = copy(side = side, active = true)

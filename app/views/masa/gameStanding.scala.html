@@ -1,4 +1,4 @@
-@(m: oyun.masa.MiniStanding)(implicit ctx: Context)
+@(m: oyun.masa.MiniStanding, playerId: Option[String])(implicit ctx: Context)
 
 <div class="game_masa side_box no_padding scroll-shadow-soft">
   <p class="top text" data-icon="g"><a href="@routes.Masa.show(m.masa.id)">@m.masa.fullName</a></p>
@@ -7,10 +7,11 @@
   </div>
   @m.standing.map { standing =>
     <table class="slist standing">
+      <thead><tr></tr></thead>
       <tbody>
         @standing.map {
           case oyun.masa.RankedPlayer(rank, player) => {
-            <tr>
+            <tr @if(playerId.exists(player.is)) { class="me" }>
               <td class="name">
                 @if(!player.active) {
                   <span data-icon="b" title="@trans.withdraw()"></span>
