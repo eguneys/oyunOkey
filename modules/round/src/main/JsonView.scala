@@ -23,10 +23,7 @@ final class JsonView(
         import pov._
         Json.obj(
           "game" -> povJson(pov),
-          "player" -> Json.obj(
-            "side" -> side.name,
-            "version" -> socket.version
-          ),
+          "player" -> playerJson(socket, player),
           "opponentLeft" -> opponentJson(socket, opponentLeft),
           "opponentRight" -> opponentJson(socket, opponentRight),
           "opponentUp" -> opponentJson(socket, opponentUp),
@@ -37,6 +34,13 @@ final class JsonView(
           "possibleMoves" -> possibleMoves(pov)
         ).noNull
     }
+
+  private def playerJson(socket: SocketStatus, player: GamePlayer) = Json.obj(
+    "side" -> player.side.name,
+    "version" -> socket.version,
+    "onGame" -> socket.onGame(player.side),
+    "isGone" -> socket.isGone(player.side)
+  )
 
   private def opponentJson(socket: SocketStatus, opponent: GamePlayer) = Json.obj(
     "side" -> opponent.side.name,

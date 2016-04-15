@@ -134,7 +134,16 @@ object Event {
     ).noNull
   }
 
-  private def sidesWriter(sides: Sides[okey.EndScoreSheet]) =
+  case class Crowd(
+    sidesOnGame: Sides[Boolean]
+  ) extends Event {
+    def typ = "crowd"
+    def data = sidesWriter(sidesOnGame) ++ Json.obj(
+      "watchers" -> 0
+    )
+  }
+
+  private def sidesWriter[A](sides: Sides[A])(implicit writer: Writes[A]) =
     Json.obj(
       "east" -> sides(Side.EastSide),
       "west" -> sides(Side.WestSide),

@@ -34,6 +34,19 @@ div.player_wrap .player {
   border: 1px solid #ccc;
 }
 
+div.player_wrap div.player span.status {
+  display: inline-block;
+  margin-left: 5px;
+}
+
+div.player_wrap div.player span.status span {
+  color: #ac524f;
+}
+
+div.player_wrap div.player.on-game span.status span {
+  color: #759900;
+}
+
 div.table_side {
   display: flex;
   flex-flow: column nowrap;

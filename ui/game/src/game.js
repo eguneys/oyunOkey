@@ -24,10 +24,16 @@ function sideByPly(ply) {
   return sides[ply % 4];
 }
 
+function setOnGame(data, side, onGame) {
+  var player = getPlayer(data, side);
+  player.onGame = onGame;
+}
+
 module.exports = {
   isPlayerPlaying: isPlayerPlaying,
   isPlayerTurn: isPlayerTurn,
   getPlayer: getPlayer,
   sideByPly: sideByPly,
-  playable: playable
+  playable: playable,
+  setOnGame: setOnGame
 };

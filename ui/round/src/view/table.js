@@ -31,7 +31,7 @@ function renderClock(ctrl, side, position) {
   var time = 10;
   var running = true && ctrl.data.game.player === side;
 
-  running = true;
+  // running = true;
 
   return running ? [
     m('div', {
@@ -192,7 +192,7 @@ function renderTablePlay(ctrl) {
 
 function renderPlayer(ctrl, player) {
   return m('div', {
-    class: 'player '
+    class: 'player ' + player.side + (player.onGame ? ' on-game' : '')
   },
            renderUser(ctrl, player)
    );

@@ -70,3 +70,5 @@ package round {
     uci: Uci,
     promise: Option[Promise[Unit]] = None)
 }
+
+private[round] case object NotifyCrowd
