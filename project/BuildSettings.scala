@@ -10,7 +10,7 @@ object BuildSettings {
     resolvers ++= Dependencies.Resolvers.commons
   )
 
-  def defaultDeps = Seq(scalaz, scalalib)
+  def defaultDeps = Seq(scalaz, scalalib, spray.util)
 
   def provided(deps: ModuleID*): Seq[ModuleID] = deps map (_ % "provided")
 

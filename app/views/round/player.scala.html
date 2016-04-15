@@ -1,4 +1,4 @@
-@(pov: Pov, data: play.api.libs.json.JsObject)(implicit ctx: Context)
+@(pov: Pov, data: play.api.libs.json.JsObject, m: Option[oyun.masa.MiniStanding])(implicit ctx: Context)
 
 @import pov._
 
@@ -22,11 +22,15 @@
   side = views.html.game.side(pov),
   chat = leftabs(pov).some,
   moreJs = moreJs) {
-    <div class="round og-512">
-      <div class="underboard">
-        <div class="center">
-          <div class="crosstable_placeholder"></div>
+  <div class="round og-512"></div>
+  @m match {
+    case Some(m) if !m.masa.isCreated => { @masa.gameStanding(m) }
+    case _ => {
+      @game.masaId.map { masaId =>
+        <div class="game_masa side_box no_padding">
+        <p class="top text" data-icon="g"><a href="@routes.Masa.show(masaId)">@masaIdToName(masaId)</a></p>
         </div>
-      </div>
-    </div>
+      }
+    }
+  }
 }

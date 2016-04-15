@@ -36,6 +36,9 @@ trait WithFuture {
   def fufail[A <: Throwable, B](a: A): Fu[B] = Future failed a
   def fufail[A](a: String): Fu[A] = fufail(common.OyunException(a))
   val funit = fuccess(())
+
+  implicit def SprayPimpedFuture[T](fut: Future[T]) =
+    new spray.util.pimps.PimpedFuture[T](fut)
 }
 
 trait WithPlay { self: PackageObject =>

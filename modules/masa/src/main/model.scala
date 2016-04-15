@@ -2,6 +2,10 @@ package oyun.masa
 
 import okey.Side
 
+case class MiniStanding(
+  masa: Masa,
+  standing: Option[RankedPlayers])
+
 case class PlayerInfo(side: Side, active: Boolean)
 
 case class VisibleMasas(

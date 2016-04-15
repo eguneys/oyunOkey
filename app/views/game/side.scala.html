@@ -1,19 +1,20 @@
 @(pov: Pov)(implicit ctx: Context)
 
-@import pov._
+@import pov.{ game => g, _ }
 
 <div class="side">
   <div class="side_box padded">
     <div class="game_infos">
       <div class="header">
         <span class="setup">
-          VARIANT • RATED
+          @game.variantLink(g.variant, g.variant.name, cssClass = "hint--top")
+          • RATED
         </span>
-        @game.isBeingPlayed.fold("playingRightNow", Html(s"<span title='${showDateTime(game.createdAt)}'>${momentFormat(game.createdAt)}</span>"))
+        @g.isBeingPlayed.fold("playingRightNow", Html(s"<span title='${showDateTime(g.createdAt)}'>${momentFormat(g.createdAt)}</span>"))
       </div>
     </div>
     <!-- <div class="players">
-    @game.players.map { p =>
+    @g.players.map { p =>
     <div class="player is @{p.side.name}">
     @playerLink(p, withOnline = false)
     </div>

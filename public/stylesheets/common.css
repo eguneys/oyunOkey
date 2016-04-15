@@ -200,7 +200,9 @@ a:visited {
 
 #site_header {
   min-width: 200px;
-  position: relative;
+  //position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 body > div.content {
@@ -332,9 +334,14 @@ div.side_box .game_infos .setup {
   display: block;
 }
 
+div.side_box .game_infos .variant_link {
+  border-bottom: 1px dotted #747474;
+}
+
 div.under_side.bottom {
-  position: absolute;
-  bottom: 0px;
+  /* position: absolute; */
+  /* bottom: 0px; */
+  margin-top:auto;
 }
 
 div.undertable {
