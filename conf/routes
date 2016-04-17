@@ -14,7 +14,7 @@ GET     /$fullId<\w{12}>/socket controllers.Round.websocketPlayer(fullId: String
 
 # Masa
 
-GET     /masa                           controllers.Masa.home
+GET     /masa                           controllers.Masa.home(page: Int ?= 1)
 GET     /masa/new                       controllers.Masa.form
 POST    /masa/new                       controllers.Masa.create
 GET     /masa/$id<\w{8}>                controllers.Masa.show(id: String)

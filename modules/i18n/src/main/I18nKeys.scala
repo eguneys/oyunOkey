@@ -1,4 +1,4 @@
-// Generated with bin/trans-dump at 2016-04-14 10:20:45 UTC
+// Generated with bin/trans-dump at 2016-04-17 13:16:24 UTC
 package oyun.i18n
 
 import play.twirl.api.Html
@@ -27,7 +27,9 @@ final class I18nKeys(translator: Translator) {
   val `viewMasa` = new Key("viewMasa")
   val `join` = new Key("join")
   val `withdraw` = new Key("withdraw")
+  val `playing` = new Key("playing")
   val `finished` = new Key("finished")
+  val `players` = new Key("players")
   val `freeOnlineOkey` = new Key("freeOnlineOkey")
   val `chatRoom` = new Key("chatRoom")
   val `toggleTheChat` = new Key("toggleTheChat")
@@ -45,8 +47,10 @@ final class I18nKeys(translator: Translator) {
   val `masas` = new Key("masas")
   val `more` = new Key("more")
   val `rated` = new Key("rated")
+  val `leaderboard` = new Key("leaderboard")
+  val `oyunkeyfMasas` = new Key("oyunkeyfMasas")
 
-  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `join`, `withdraw`, `finished`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `winner`, `cancel`, `variant`, `standard`, `roundsToPlay`, `rounds`, `seeAllMasas`, `openMasas`, `masas`, `more`, `rated`)
+  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `join`, `withdraw`, `playing`, `finished`, `players`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `winner`, `cancel`, `variant`, `standard`, `roundsToPlay`, `rounds`, `seeAllMasas`, `openMasas`, `masas`, `more`, `rated`, `leaderboard`, `oyunkeyfMasas`)
 
   lazy val count = keys.size
 }

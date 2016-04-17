@@ -219,3 +219,71 @@
   height: 100px;
   width: 100px;
 }
+
+#masa_list table.slist {
+  line-height: 2.3em;
+}
+
+#masa_list table.slist td {
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+#masa_list .icon span {
+  font-size: 4em;
+  opacity: 0.6;
+}
+
+#masa_list table.slist .header {
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: transform 0.3s;
+  padding: 0!important;
+}
+
+#masa_list table.slist .header a {
+  padding: 1em;
+  display: block;
+}
+
+#masa_list table.slist .header:hover {
+  transform: translateX(3px);
+  -webkit-transform: translateX(3px);
+}
+
+#masa_list table.slist .name {
+  letter-spacing: 3px;
+  font-size: 1.7em;
+  display: block;
+}
+
+#oyunkeyf,
+div.masa_box {
+  width: 100%;
+}
+
+.leaderboard_title {
+  font-size: 1.5em;
+  margin-top: 30px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #ccc;
+}
+
+ol.created_masas li {
+  padding: 5px 0;
+}
+
+ol.created_masas li::before {
+  font-size: 30px;
+  float: left;
+  margin: 3px 5px 0 0;
+  opacity: 0.8;
+}
+
+ol.created_masas li:hover::before {
+  opacity: 1;
+}
+
+ol.created_masas a {
+  font-weight: bold;
+}

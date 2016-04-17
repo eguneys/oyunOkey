@@ -1,16 +1,43 @@
-@(json: play.api.libs.json.JsObject)(implicit ctx: Context)
+@(created: List[Masa], playing: Paginator[Masa], json: play.api.libs.json.JsObject)(implicit ctx: Context)
 
 @moreJs = {
 }
 
+@side = {
+  <div class="masa_home_side">
+    <div class="masa_links">
+    </div>
+    <h2 class="leaderboard_title">@trans.leaderboard()</h2>
+    <h2 class="leaderboard_title">@trans.oyunkeyfMasas()</h2>
+    <ol class="created_masas">
+      @created.map { m =>
+        <li data-icon="@masaIconChar(m)">
+          <a href="@routes.Masa.show(m.id)">@m.fullName</a>
+          <div>@m.roundString
+            <span data-icon="r">@m.nbPlayers</span>
+          </div>
+        </li>
+      }
+    </ol>
+  </div>
+}
+
 @masa.layout(
 title = trans.masas.str(),
+side = side.some,
 moreJs = moreJs) {
   <div class="content_box masa_box no_padding">
     <h1>@trans.masas()</h1>
     <div id="masa_list">
       <table class="slist">
-        
+        <thead>
+          <tr>
+            <th colspan=2 class="large">@trans.playing()</th>
+            <th>@trans.rounds()</th>
+            <th>@trans.players()</th>
+          </tr>
+        </thead>
+        @playingPaginator(playing)
       </table>
     </div>
   </div>

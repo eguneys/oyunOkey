@@ -9,6 +9,8 @@ import reactivemongo.bson._
 trait QueryBuilderExt { self: dsl =>
   final implicit class ExtendQueryBuilder[A](val b: dsl.QueryBuilder) {
 
+    def skip(nb: Int) = b.options(b.options skip nb)
+
     // like collect, but with stopOnError defaulting to false
     def gather[A, M[_]](upTo: Int = Int.MaxValue)(implicit cbf: CanBuildFrom[M[_], A, M[A]], reader: BSONDocumentReader[A]): Fu[M[A]] =
       b.cursor[A]().collect[M](upTo, stopOnError = false)

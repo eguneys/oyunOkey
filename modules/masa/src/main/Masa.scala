@@ -30,15 +30,6 @@ case class Masa(
 
   def isAlmostFinished = roundsToFinish == 0
 
-  // nbRounds roundsToFinish isAlmostFinished
-  //     0          1              false
-  //     1          0              true
-
-  // startPairing
-  // pair game start nbRounds++ (players playing)
-  // game finish (players not playing)
-  // 
-
   def createPairings(masa: Masa, players: List[String]): Fu[Option[Pairing]] = {
     fuccess(for {
       prep <- makePrep(masa, players)

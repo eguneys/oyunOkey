@@ -22,7 +22,8 @@ object ApplicationBuild extends Build {
         "oyun.game.{ Game, Player, Pov }",
         "oyun.masa.Masa",
         "oyun.api.Context",
-        "oyun.app.templating.Environment._"
+        "oyun.app.templating.Environment._",
+        "oyun.common.paginator.Paginator"
       )
   )
 

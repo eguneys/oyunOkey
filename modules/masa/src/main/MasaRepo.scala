@@ -3,6 +3,9 @@ package oyun.masa
 import BSONHandlers._
 import oyun.db.dsl._
 
+import oyun.common.paginator.Paginator
+import oyun.db.paginator.Adapter
+
 object MasaRepo {
   private lazy val coll = Env.current.masaColl
 
@@ -47,6 +50,16 @@ object MasaRepo {
       .sort($doc("createdAt" -> -1))
       .list[Masa](limit)
 
+  def finishedPaginator(maxPerPage: Int, page: Int) = Paginator(
+    adapter = new Adapter[Masa](
+      collection = coll,
+      selector = startedSelect,
+      projection = $empty,
+      sort = $doc("createdAt" -> -1)
+    ),
+    currentPage = page,
+    maxPerPage = maxPerPage)
+
   def setStatus(masaId: String, status: Status) = coll.update(
     $id(masaId),
     $doc("$set" -> $doc("status" -> status.id))
@@ -69,11 +82,12 @@ object MasaRepo {
   private def allCreatedSelect = createdSelect
 
   def publicCreatedSorted: Fu[List[Masa]] =
-    coll.find(allCreatedSelect).list[Masa](none)
+    coll.find(allCreatedSelect)
+      .sort($doc("createdAt" -> -1))
+      .list[Masa](none)
 
   def allCreated: Fu[List[Masa]] =
     coll.find(allCreatedSelect).cursor[Masa]().gather[List]()
-
 
   def promotable: Fu[List[Masa]] =
     publicCreatedSorted map {

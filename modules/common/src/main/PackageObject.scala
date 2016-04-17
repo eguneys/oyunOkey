@@ -7,6 +7,8 @@ import scalaz.{ Monad, Monoid, OptionT, ~> }
 
 trait PackageObject extends Steroids with WithFuture {
 
+  def !![A](msg: String): Valid[A] = msg.failureNel[A]
+
   def nowNanos: Long = System.nanoTime()
   def nowMillis: Long = System.currentTimeMillis()
 

@@ -1,0 +1,28 @@
+@(playing: Paginator[Masa])(implicit ctx: Context)
+
+<tbody>
+  @playing.nextPage.map { np =>
+    <tr><th class="pager none">
+          <a href="@routes.Masa.home(np)">Next</a>
+    </th></tr>
+  }
+
+  @playing.currentPageResults.map { m =>
+    <tr class="paginated_element">
+      <td class="icon">
+        <span data-icon="@masaIconChar(m)"></span>
+      </td>
+      <td class="header">
+        <a href="@routes.Masa.show(m.id)">
+          <span class="name">@m.fullName</span>
+          <span class="setup">
+            @m.roundString •
+            @m.variant.name
+          </span>
+        </a>
+      </td>
+      <td class="duration">@m.roundString</td>
+      <td class="text" data-icon="r">@m.nbPlayers</td>
+    </tr>
+  }
+</tbody>

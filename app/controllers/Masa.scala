@@ -16,12 +16,17 @@ object Masa extends OyunController with TheftPrevention {
 
   private def masaNotFound(implicit ctx: Context) = NotFound(html.masa.notFound())
 
-  def home = Open { implicit ctx =>
+  def home(page: Int) = Open { implicit ctx =>
     negotiate(
-      html = env.api.fetchVisibleMasas.map({
-        case visible =>
-          Ok(html.masa.home(env scheduleJsonView visible))
-      }) map NoCache,
+      html = {
+        val playingPaginator = repo.finishedPaginator(maxPerPage = 30, page = page)
+        env.api.fetchVisibleMasas zip
+          repo.publicCreatedSorted zip
+          playingPaginator map({
+          case ((visible, created), playing) =>
+              Ok(html.masa.home(created, playing, env scheduleJsonView visible))
+        }) map NoCache
+      },
       api = _ => env.api.fetchVisibleMasas map { masas =>
         Ok(env scheduleJsonView masas)
       }

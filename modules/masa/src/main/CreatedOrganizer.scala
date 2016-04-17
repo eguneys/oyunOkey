@@ -31,6 +31,7 @@ private[masa] final class CreatedOrganizer(
       MasaRepo.allCreated map { masas =>
         masas foreach { masa =>
           PlayerRepo countActive masa.id foreach {
+            //case 0 => api wipe masa
             case 4 => api start masa
             case _ => // ejectLeavers(masa)
           }

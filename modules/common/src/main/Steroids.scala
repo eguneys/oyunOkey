@@ -20,6 +20,7 @@ trait Steroids
     with scalaz.std.ListInstances
 
     with scalaz.syntax.ToIdOps
+    with scalaz.syntax.ToValidationOps
     with scalaz.syntax.ToTraverseOps
     with scalaz.syntax.ToShowOps
 
