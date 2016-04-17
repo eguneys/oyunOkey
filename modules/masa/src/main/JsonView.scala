@@ -8,7 +8,8 @@ final class JsonView() {
 
   private case class CachableData(
     pairings: JsArray,
-    actives: JsObject)
+    actives: JsObject,
+    podium: Option[JsArray])
 
   def apply(masa: Masa,
     me: Option[String],
@@ -33,6 +34,7 @@ final class JsonView() {
     "pairings" -> data.pairings,
     "standing" -> stand,
     "me" -> myInfo.map(myInfoJson),
+    "podium" -> data.podium,
     "socketVersion" -> socketVersion
   ).noNull
 
@@ -54,10 +56,11 @@ final class JsonView() {
   private val cachableData = ((id: String) => for {
     pairings <- PairingRepo.recentByMasa(id, 40)
     actives <- PlayerRepo.activePlayers(id)
+    podium <- podiumJson(id)
   } yield CachableData(
     pairings = JsArray(pairings map pairingJson),
-    actives = JsObject(actives map activeJson)
-  ))
+    actives = JsObject(actives map activeJson),
+    podium))
 
   private def myInfoJson(i: PlayerInfo) = Json.obj(
     "side" -> i.side.letter.toString,
@@ -92,6 +95,20 @@ final class JsonView() {
   }
 
   private def activeJson(player: Player) = (player.side.name -> Json.obj("id" -> player.id))
+
+  private def podiumJson(id: String): Fu[Option[JsArray]] =
+    MasaRepo finishedById id flatMap {
+      _ ?? { masa =>
+        PlayerRepo.bestByMasaWithRank(id).flatMap {
+          _.map {
+            case rp@RankedPlayer(_, player) => for {
+              pairings <- PairingRepo.finishedByPlayerChronological(masa.id, player.id)
+              sheet = masa.system.scoringSystem.sheet(masa, player.id, pairings)
+            } yield playerJson(sheet.some, masa, rp)
+          }.sequenceFu
+        } map { l => JsArray(l).some }
+      }
+    }
 
   private def pairingUserJson(playerId: String) = JsString(playerId)
 

@@ -32,7 +32,12 @@ private[masa] final class StartedOrganizer(
       MasaRepo.started map { started =>
         started.map { masa =>
           PlayerRepo activePlayerIds masa.id map { activePlayerIds =>
-            startPairing(masa, activePlayerIds)
+            if (masa.roundsToFinish == 0) {
+              // println("masa finish", masa.rounds, masa.nbRounds)
+              fuccess(api finish masa)
+            }
+            else if (!masa.isAlmostFinished) startPairing(masa, activePlayerIds)
+            else funit
           }
         }
       } andThenAnyway scheduleNext
@@ -42,6 +47,7 @@ private[masa] final class StartedOrganizer(
     fuccess(activePlayerIds) zip PairingRepo.playingPlayerIds(masa) foreach {
       case (activePlayers, playingUsers) =>
         val users = activePlayerIds filter { k => !playingUsers.contains(k) }
+        // users.headOption map { _ => println("activePlayers", masa) }
         api.makePairings(masa, users)
     }
   }

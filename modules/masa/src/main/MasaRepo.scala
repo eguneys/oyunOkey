@@ -26,6 +26,9 @@ object MasaRepo {
   def startedById(id: String): Fu[Option[Masa]] =
     coll.find($id(id) ++ startedSelect).uno[Masa]
 
+  def finishedById(id: String): Fu[Option[Masa]] =
+    coll.find($id(id) ++ finishedSelect).uno[Masa]
+
   def started: Fu[List[Masa]] =
     coll.find(startedSelect).sort($doc("createdAt" -> -1)).list[Masa](None)
 

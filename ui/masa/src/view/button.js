@@ -27,6 +27,7 @@ module.exports = {
   withdraw: withdraw,
   join: join,
   joinWithdraw: function(ctrl) {
-    return ctrl.data.me && ctrl.data.me.active ? withdraw(ctrl) : join(ctrl);
+    return (ctrl.data.isFinished) ? null : (
+      ctrl.data.me && ctrl.data.me.active ? withdraw(ctrl) : join(ctrl));
   }
 };

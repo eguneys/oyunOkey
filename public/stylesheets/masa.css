@@ -42,6 +42,44 @@
   margin-left: 15px;
 }
 
+#masa .finished .header h1 {
+  text-align: center;
+}
+
+#masa .podium {
+  margin: 0 0 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+#masa .podium>div {
+  display: inline-block;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#masa .podium .first {
+  width: 44%;
+  font-size: 1.6em;
+}
+
+#masa .podium .trophy {
+  margin: 0 auto 8px auto;
+  background-size: contain!important;
+}
+
+#masa .podium .first .trophy {
+  height: 150px;
+  width: 195px;
+  background: url('../images/icons/trophy-1.png') no-repeat;
+  background-size: cover;
+}
+
+#masa .podium .first .user_link {
+  font-weight: bold;
+}
+
 #masa a.pov {
   display: block;
   margin: 0 25px 1em 25px;
@@ -107,6 +145,10 @@
   padding: 0.8em 0.6em;
   padding-left: 10px;
   white-space: nowrap;
+}
+
+#masa table.standing th {
+  height: 30px;
 }
 
 #masa table.standing tbody tr:hover {

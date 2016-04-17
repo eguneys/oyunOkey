@@ -34,6 +34,8 @@ object PairingRepo {
   def count(masaId: String): Fu[Int] =
     coll.count(selectMasa(masaId).some)
 
+  def removePlaying(masaId: String) = coll.remove(selectMasa(masaId) ++ selectPlaying).void
+
   def finishedByPlayerChronological(masaId: String, playerId: String): Fu[Pairings] =
     coll.find(
       selectMasaPlayer(masaId, playerId) ++ selectFinished

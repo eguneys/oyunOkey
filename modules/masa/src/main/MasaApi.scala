@@ -37,7 +37,8 @@ private[masa] final class MasaApi(
       masa.createPairings(masa, players).flatMap {
         case None => funit
         case Some(pairing) => {
-          PairingRepo.insert(pairing) >> updateNbRounds(masa.id) >>
+          //PairingRepo.insert(pairing) >> updateNbRounds(masa.id) >>
+          PairingRepo.insert(pairing) >>
             autoPairing(masa, pairing) addEffect { game =>
               sendTo(masa.id, StartGame(game))
             }
@@ -88,11 +89,29 @@ private[masa] final class MasaApi(
     }
   }
 
+  // def wipe(masa: Masa): Funit =
+  //   MasaRepo.remove(masa).void >>
+  //     PairingRepo.remove(masa.id) >>
+  //     PlayerRepo.removeByMasa(masa.id) >>- socketReload(masa.id)
+
+  def finish(oldMasa: Masa) {
+    Sequencing(oldMasa.id)(MasaRepo.startedById) { masa =>
+      PairingRepo count masa.id flatMap {
+        case _ => for {
+          _ <- MasaRepo.setStatus(masa.id, Status.Finished)
+          // _ <- PlayerRepo unWithdraw masa.id // why?
+          // _ <- PairingRepo removePlaying masa.id
+        } yield {
+          sendTo(masa.id, Reload)
+        }
+      }
+    }
+  }
 
   def finishGame(game: Game) {
     game.masaId foreach { masaId =>
       Sequencing(masaId)(MasaRepo.startedById) { masa =>
-        PairingRepo.finish(game) >>
+        PairingRepo.finish(game) >> updateNbRounds(masa.id) >>
         game.playerIds.map(updatePlayer(masa)).sequenceFu.void
       }
     }

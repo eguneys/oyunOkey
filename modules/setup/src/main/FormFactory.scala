@@ -39,7 +39,7 @@ private[setup] final class FormFactory() {
 object FormFactory {
   import okey.variant._
 
-  val rounds = (5 to 30 by 5)
+  val rounds = (5 to 30 by 5) :+ 1
   val roundChoices = options(rounds, "%d round")
 
   val validVariants = List(Standard)

@@ -299,7 +299,7 @@ oyunkeyf.StrongSocket.prototype = {
 
     var $startButtons = $('#start_buttons');
 
-    var sliderRounds = [5, 10, 15, 20, 25, 30];
+    var sliderRounds = [1, 5, 10, 15, 20, 25, 30];
 
     function sliderRound(v) { return v < sliderRounds.length ? sliderRounds[v] : 30; }
 

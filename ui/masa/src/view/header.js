@@ -23,6 +23,7 @@ function clock(ctrl) {
 }
 
 function image(d) {
+  if (d.isFinished) return;
   return m('i.img', {
     'data-icon': 'm'
   });
