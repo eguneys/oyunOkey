@@ -47,7 +47,7 @@ private[masa] final class StartedOrganizer(
     fuccess(activePlayerIds) zip PairingRepo.playingPlayerIds(masa) foreach {
       case (activePlayers, playingUsers) =>
         val users = activePlayerIds filter { k => !playingUsers.contains(k) }
-        // users.headOption map { _ => println("activePlayers", masa) }
+        users.headOption map { _ => pairingLogger.debug(s"start ${masa.id}") }
         api.makePairings(masa, users)
     }
   }

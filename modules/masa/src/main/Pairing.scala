@@ -8,9 +8,13 @@ case class Pairing(
   masaId: String,
   status: okey.Status,
   playerIds: Sides[String],
+  round: Int,
   scores: Sides[Int]) {
 
   def gameId = id
+
+  def finished = status >= okey.Status.End
+  def playing = !finished
 
   def scoreOf(playerId: String): Option[Int] = (playerIds zip scores find {
     _._1 == playerId
@@ -18,17 +22,18 @@ case class Pairing(
 }
 
 private[masa] object Pairing {
-  def apply(masaId: String, playerIds: Sides[String]): Pairing = new Pairing(
+  def apply(masaId: String, playerIds: Sides[String], round: Int): Pairing = new Pairing(
     id = IdGenerator.game,
     masaId = masaId,
     status = okey.Status.Created,
     playerIds = playerIds,
+    round = round,
     scores = Sides[Int])
 
-  case class Prep(masaId: String, player1: String, player2: String, player3: String, player4: String) {
+  case class Prep(masaId: String, round: Int, player1: String, player2: String, player3: String, player4: String) {
     def toPairing =
-      Pairing(masaId, Sides(player1, player2, player3, player4))
+      Pairing(masaId, Sides(player1, player2, player3, player4), round)
   }
 
-  def prep(masa: Masa, p1: String, p2: String, p3: String, p4: String) = Pairing.Prep(masa.id, p1, p2, p3, p4)
+  def prep(masa: Masa, p1: String, p2: String, p3: String, p4: String) = Pairing.Prep(masa.id, masa.nbRounds, p1, p2, p3, p4)
 }

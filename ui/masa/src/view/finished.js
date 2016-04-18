@@ -1,8 +1,8 @@
 import m from 'mithril';
 import header from './header';
 import pagination from '../pagination';
+import pairings from './pairings';
 import { podium, standing } from './arena';
-
 
 module.exports = {
   main: function(ctrl) {
@@ -12,5 +12,8 @@ module.exports = {
       podium(ctrl),
       standing(ctrl, pag)
     ];
+  },
+  side: function(ctrl) {
+    return pairings(ctrl);
   }
 };

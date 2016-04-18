@@ -42,7 +42,9 @@ private[masa] final class MasaApi(
             autoPairing(masa, pairing) addEffect { game =>
               sendTo(masa.id, StartGame(game))
             }
-        } >> funit
+        } >> funit >>- {
+          pairingLogger.debug(s"${masa.id} ${pairing}")
+        }
       }
     }
   }

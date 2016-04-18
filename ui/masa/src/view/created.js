@@ -37,5 +37,8 @@ module.exports = {
       seats(ctrl),
       standing(ctrl, pag, 'created')
     ];
+  },
+  side: function(ctrl) {
+    return null;
   }
 };

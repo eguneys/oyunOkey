@@ -15,7 +15,7 @@ function clock(ctrl) {
          m('span.time.text', playersToStart)]));
   }
 
-  if (d.nbRounds) {
+  if (d.nbRounds || d.nbRounds === 0) {
     children.push(m('div.round', [d.nbRounds, '/', d.rounds]));
   }
 

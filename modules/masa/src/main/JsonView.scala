@@ -115,6 +115,7 @@ final class JsonView() {
   private def pairingJson(p: Pairing) = Json.obj(
     "id" -> p.gameId,
     "u" -> JsArray(p.playerIds.toList map (pairingUserJson)),
-    "s" -> 0
-  )
+    "r" -> p.round,
+    "s" -> (if (p.finished) 1 else 0))
+
 }

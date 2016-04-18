@@ -11,7 +11,10 @@ module.exports = function(ctrl) {
   else if (ctrl.data.isFinished) handler = finished;
   else handler = created;
 
+  var side = handler.side(ctrl);
+
   return [
+    side ? m('div#masa_side', side) : null,
     m('div', {
       class: util.classSet({
         'content_box no_padding masa_box masa_show': true,

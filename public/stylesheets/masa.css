@@ -257,7 +257,46 @@
   display: block;
 }
 
+#masa_side {
+  position: relative;
+  float: right;
+  width: 252px;
+  text-align: center;
+  transition: 0.13s;
+}
+
+#masa_side .all_pairings {
+  font-style: italic;
+}
+
+#masa_side .scroll-shadow-soft {
+  max-height: 400px;
+  overflow: auto;
+}
+
+#masa_side .box {
+  border: 1px solid #ccc;
+}
+
+#masa_side .all_pairings a {
+  padding: 0.3em 0.2em;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#masa_side .all_pairings>a>* {
+  margin: 0 5px;
+  font-weight: bold;
+  font-style: normal;
+}
+
+#masa_side .all_pairings a finished {
+  color: #33aa33
+}
+
 #oyunkeyf,
+#masa,
 div.masa_box {
   width: 100%;
 }

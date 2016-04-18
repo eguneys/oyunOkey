@@ -2,6 +2,7 @@ import m from 'mithril';
 import header from './header';
 import button from './button';
 import pagination from '../pagination';
+import pairings from './pairings';
 import { standing } from './arena';
 import { myCurrentGameId } from '../masa';
 
@@ -20,5 +21,8 @@ module.exports = {
       ]) : null,
       standing(ctrl, pag, 'started'),
     ];
+  },
+  side: function(ctrl) {
+    return pairings(ctrl);
   }
 };

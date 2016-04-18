@@ -24,7 +24,7 @@ case class Player(
 
   def ref = PlayerRef(id = id, userId = userId)
 
-  def recomputeMagicScore = copy(magicScore = (score * -1))
+  def recomputeMagicScore = copy(magicScore = (active ?? 10000) + (score * -1))
 }
 
 object Player {

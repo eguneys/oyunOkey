@@ -76,6 +76,7 @@ object BSONHandlers {
         masaId = r str "mid",
         status = okey.Status(r int "s") err "masa pairing status",
         playerIds = r.get[Sides[String]]("pids"),
+        round = r.get[Int]("mr"),
         scores = r.get[List[Int]]("ss")
       )
     }
@@ -85,6 +86,7 @@ object BSONHandlers {
       "mid" -> o.masaId,
       "s" -> o.status.id,
       "pids" -> o.playerIds,
+      "mr" -> o.round,
       "ss" -> o.scores.toList
     )
   }
