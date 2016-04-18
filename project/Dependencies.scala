@@ -34,4 +34,10 @@ object Dependencies {
     val caching = "io.spray" %% "spray-caching" % version
     val util = "io.spray" %% "spray-util" % version
   }
+
+  object kamon {
+    val version = "0.5.2"
+    val core = "io.kamon" %% "kamon-core" % version
+    val statsd = "io.kamon" %% "kamon-statsd" % version
+  }
 }

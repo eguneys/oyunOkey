@@ -36,6 +36,7 @@ private[masa] final class CreatedOrganizer(
             case _ => // ejectLeavers(masa)
           }
         }
+        oyun.mon.masa.created(masas.size)
       } andThenAnyway scheduleNext
   }
 }

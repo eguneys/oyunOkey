@@ -21,8 +21,8 @@ oyunkeyf.StrongSocket.defaults = {
     pingMaxLag: 8000, // time to wait for pong before resetting the connection
     pingDelay: 1500,
     autoReconnectDelay: 2000,
-    baseUrls: [document.domain + ':' + 9000].concat(
-      [9000].map(function(port) {
+    baseUrls: [document.domain + ':' + 9663].concat(
+      [9663].map(function(port) {
         return 'socket.' + document.domain + ':' + port;
       })),
     baseUrlKey: 'surl3'

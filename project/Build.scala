@@ -17,7 +17,7 @@ object ApplicationBuild extends Build {
       libraryDependencies ++= Seq(
         scalaz, scalalib, config, RM,
         spray.caching, prismic,
-        java8compat),
+        kamon.core, java8compat),
       TwirlKeys.templateImports ++= Seq(
         "oyun.game.{ Game, Player, Pov }",
         "oyun.masa.Masa",
@@ -82,7 +82,7 @@ object ApplicationBuild extends Build {
   )
 
   lazy val common = project("common").settings(
-    libraryDependencies ++= provided(play.api, play.test)
+    libraryDependencies ++= provided(play.api, play.test, kamon.core)
   )
 
   lazy val okey = project("okey")

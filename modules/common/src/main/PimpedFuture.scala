@@ -36,15 +36,15 @@ object PimpedFuture {
       fua
     }
 
+    def addEffect(effect: A => Unit) = {
+      fua foreach effect
+      fua
+    }
+
     def addFailureEffect(effect: Exception => Unit) = {
       fua onFailure {
         case e: Exception => effect(e)
       }
-      fua
-    }
-
-    def addEffect(effect: A => Unit) = {
-      fua foreach effect
       fua
     }
 

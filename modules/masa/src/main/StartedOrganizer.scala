@@ -30,21 +30,29 @@ private[masa] final class StartedOrganizer(
     case Tick =>
       val myself = self
       MasaRepo.started map { started =>
-        started.map { masa =>
-          PlayerRepo activePlayerIds masa.id map { activePlayerIds =>
-            if (masa.roundsToFinish == 0) {
-              // println("masa finish", masa.rounds, masa.nbRounds)
-              fuccess(api finish masa)
-            }
-            else if (!masa.isAlmostFinished) startPairing(masa, activePlayerIds)
-            else funit
+        oyun.common.Future.traverseSequentially(started) { masa =>
+          PlayerRepo activePlayerIds masa.id flatMap { activePlayerIds =>
+            val nb = activePlayerIds.size
+
+            val result: Funit =
+              if (masa.roundsToFinish == 0) {
+                // println("masa finish", masa.rounds, masa.nbRounds)
+                fuccess(api finish masa)
+              }
+              else if (!masa.isAlmostFinished) startPairing(masa, activePlayerIds)
+              else funit
+            result >>- {
+            } inject nb
           }
+        }.addEffect { playerCounts =>
+          oyun.mon.masa.player(playerCounts.sum)
+          oyun.mon.masa.started(started.size)
         }
       } andThenAnyway scheduleNext
   }
 
-  private def startPairing(masa: Masa, activePlayerIds: List[String]) = {
-    fuccess(activePlayerIds) zip PairingRepo.playingPlayerIds(masa) foreach {
+  private def startPairing(masa: Masa, activePlayerIds: List[String]): Funit = {
+    fuccess(activePlayerIds) zip PairingRepo.playingPlayerIds(masa) map {
       case (activePlayers, playingUsers) =>
         val users = activePlayerIds filter { k => !playingUsers.contains(k) }
         users.headOption map { _ => pairingLogger.debug(s"start ${masa.id}") }
