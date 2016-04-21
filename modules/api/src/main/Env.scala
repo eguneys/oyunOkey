@@ -6,7 +6,8 @@ final class Env(
   config: Config,
   lobbyEnv: oyun.lobby.Env,
   roundJsonView: oyun.round.JsonView,
-  getMasa: oyun.game.Game => Fu[Option[oyun.masa.Masa]]) {
+  getMasa: oyun.game.Game => Fu[Option[oyun.masa.Masa]],
+  val isProd: Boolean) {
   object Net {
     //val Domain = config getString "net.domain"
     val AssetDomain = config getString "net.asset.domain"
@@ -32,5 +33,6 @@ object Env {
     config = oyun.common.PlayApp.loadConfig,
     lobbyEnv = oyun.lobby.Env.current,
     roundJsonView = oyun.round.Env.current.jsonView,
-    getMasa = oyun.masa.Env.current.masa)
+    getMasa = oyun.masa.Env.current.masa,
+    isProd = oyun.common.PlayApp.isProd)
 }

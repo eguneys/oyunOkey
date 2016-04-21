@@ -7,6 +7,8 @@ import play.twirl.api.Html
 trait AssetHelper { self: I18nHelper =>
   def assetVersion = oyun.api.Env.current.assetVersion.get
 
+  def isProd: Boolean
+
   val assetDomain = oyun.api.Env.current.Net.AssetDomain
 
   val assetBaseUrl = s"http://$assetDomain"
@@ -22,7 +24,7 @@ trait AssetHelper { self: I18nHelper =>
 
   def jsTag(name: String) = jsAt("javascripts/" + name)
 
-  def jsTagCompiled(name: String) = jsTag(name)
+  def jsTagCompiled(name: String) = if (isProd) jsAt("compiled/" + name) else jsTag(name)
 
   def jQueryTag = cdnOrLocal(
     cdn = "//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js",
@@ -42,8 +44,10 @@ trait AssetHelper { self: I18nHelper =>
   }
 
   private def cdnOrLocal(cdn: String, test: String, local: String) = Html {
+    // if (isProd)
     s"""<script src="$cdn"></script>"""
-    //s"""<script src="$local"></script>"""
+    // else 
+    //   s"""<script src="$local"></script>"""
   }
 
   def jsAt(path: String, static: Boolean = true) = Html {

@@ -1,5 +1,7 @@
+import com.typesafe.sbt.packager.Keys.scriptClasspath
 import play.sbt.PlayImport._
 import play.twirl.sbt.Import._
+import PlayKeys._
 import sbt._, Keys._
 
 object ApplicationBuild extends Build {
@@ -14,6 +16,14 @@ object ApplicationBuild extends Build {
     scalaVersion := globalScalaVersion,
       resolvers ++= Dependencies.Resolvers.commons,
       scalacOptions := compilerOptions,
+      // disable publishing the main API jar
+      publishArtifact in (Compile, packageDoc) := false,
+      // disable publishing the main sources jar
+      publishArtifact in (Compile, packageSrc) := false,
+      // don't stage the conf dir
+      externalizeResources := false,
+      // shorter prod classpath
+      scriptClasspath := Seq("*"),
       libraryDependencies ++= Seq(
         scalaz, scalalib, config, RM,
         spray.caching, prismic,

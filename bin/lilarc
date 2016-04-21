@@ -1,0 +1,8 @@
+#!/bin/sh
+
+PROD_URL="http://en.oyunkeyf.net"
+
+oyunlog() {
+  # echo -e "\x1b[7m[oyun]\x1b[0m $1"
+  echo "[oyun] $1"
+}

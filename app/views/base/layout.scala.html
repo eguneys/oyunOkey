@@ -43,9 +43,13 @@
 
     @jQueryTag
     @momentjsTag
-    @jsTag("util.js")
-    @jsTag("socket.js")
-    @jsTag("main.js")
+    @if(isProd) {
+      @jsTagCompiled("oyunkeyf.js")
+    } else {
+      @jsTag("util.js")
+      @jsTag("socket.js")
+      @jsTag("main.js")
+    }
     @moreJs
     @momentLangTag
   </body>

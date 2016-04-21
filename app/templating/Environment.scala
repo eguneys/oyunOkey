@@ -5,6 +5,8 @@ import ornicar.scalalib
 
 import play.twirl.api.Html
 
+import oyun.api.Env.{ current => apiEnv }
+
 object Environment 
     extends scalaz.syntax.std.ToOptionIdOps
     with scalaz.std.StringInstances
@@ -22,4 +24,6 @@ object Environment
   implicit val OyunHtmlMonoid = scalaz.Monoid.instance[Html](
     (a, b) => Html(a.body + b.body),
     Html(""))
+
+  def isProd = apiEnv.isProd
 }

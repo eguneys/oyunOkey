@@ -1,3 +1,7 @@
+// ==ClosureCompiler==
+// @compilation_level ADVANCED_OPTIMIZATIONS
+// ==/ClosureCompiler==
+
 var oyunkeyf = window.oyunkeyf = window.oyunkeyf || {};
 
 function withStorage(f) {

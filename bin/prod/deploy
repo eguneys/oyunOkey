@@ -1,0 +1,67 @@
+#!/bin/sh
+
+. bin/lilarc
+
+mode=$1
+
+if [ -z $mode ]; then
+   echo "Empty deploy target"
+   exit 1
+elif [ $mode = "main" ]; then
+   REMOTE="anand"
+   REMOTE_DIR="/home/ubuntu/oyun"
+elif [ $mode = "local" ]; then
+   REMOTE="localhost"
+   REMOTE_DIR="/tmp/oyun5"
+else
+   echo "Unknown deploy target $mode"
+   exit 1
+fi
+
+oyunlog "Deploy to $mode server $REMOTE:$REMOTE_DIR"
+
+if [ "$2" = "asset" ]; then
+  bin/prod/compile-client
+fi
+
+
+bin/dev ";stage;exit"
+if [ $? != 0 ]; then
+  oyunlog "Deploy cancelled"
+  exit 1
+fi
+
+RSYNC_OPTIONS=" \
+  --archive \
+  --no-o --no-g \
+  --force \
+  --delete \
+  --progress \
+  --compress \
+  --checksum \
+  --verbose \
+  --exclude conf/application.conf \
+  --exclude RUNNING_PID \
+  --exclude '.git/'"
+
+if [ $mode != "main" ] && [ $mode != "stage" ]; then
+   RSYNC_OPTIONS="$RSYNC_OPTIONS \
+     --exclude public";
+fi
+
+oyunlog "Rsync scripts, binaries and assets"
+stage="target/universal/stage"
+include="bin $stage/bin $stage/lib public"
+rsync_command="rsync $RSYNC_OPTIONS $include $REMOTE:$REMOTE_DIR"
+echo "$rsync_command"
+$rsync_command
+echo "rsync complete"
+
+# read -n 1 -p "Press [Enter] to complete deployment to $mode server $REMOTE:$REMOTE_DIR"
+
+if [ $mode = "main" ]; then
+  oyunlog "Restart oyunkeyf"
+  ssh $REMOTE "chown -R ubuntu:ubuntu $REMOTE_DIR && service oyunkeyf restart"
+fi
+
+oyunlog "Deploy complete"

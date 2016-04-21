@@ -1,0 +1,15 @@
+#!/bin/sh
+
+. bin/lilarc
+
+./ui/build prod
+
+SRC=public/javascripts
+TARGET=public/compiled
+
+mkdir -p public/compiled
+
+orig="$SRC/util.js $SRC/socket.js $SRC/main.js"
+comp=$TARGET/oyunkeyf.js
+oyunlog "Compiling oyunkeyf.js"
+closure-compiler --js $orig --js_output_file $comp

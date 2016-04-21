@@ -2,7 +2,7 @@ package oyun.common
 
 import com.typesafe.config.Config
 import play.api.i18n.{ Lang, Messages }
-import play.api.{ Play, Application }
+import play.api.{ Play, Application, Mode }
 import scala.collection.JavaConversions._
 
 object PlayApp {
@@ -41,4 +41,9 @@ object PlayApp {
     debug = loadConfig getBoolean "app.scheduler.debug")
 
   def lifecycle = withApp(_.injector.instanceOf[play.api.inject.ApplicationLifecycle])
+
+  lazy val isDev = isMode(_.Dev)
+  lazy val isProd = isMode(_.Prod) && !loadConfig.getBoolean("forcedev")
+
+  def isMode(f: Mode.type => Mode.Mode) = withApp { _.mode == f(Mode) }
 }
