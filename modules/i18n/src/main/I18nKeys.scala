@@ -1,4 +1,4 @@
-// Generated with bin/trans-dump at 2016-04-17 13:16:24 UTC
+// Generated with bin/trans-dump at 2016-04-22 11:53:22 UTC
 package oyun.i18n
 
 import play.twirl.api.Html
@@ -49,8 +49,39 @@ final class I18nKeys(translator: Translator) {
   val `rated` = new Key("rated")
   val `leaderboard` = new Key("leaderboard")
   val `oyunkeyfMasas` = new Key("oyunkeyfMasas")
+  val `play` = new Key("play")
+  val `reconnecting` = new Key("reconnecting")
+  val `signIn` = new Key("signIn")
+  val `signUp` = new Key("signUp")
+  val `community` = new Key("community")
+  val `contact` = new Key("contact")
+  val `forum` = new Key("forum")
+  val `questionsAndAnswers` = new Key("questionsAndAnswers")
+  val `inbox` = new Key("inbox")
+  val `preferences` = new Key("preferences")
+  val `profile` = new Key("profile")
+  val `logOut` = new Key("logOut")
+  val `networkLagBetweenYouAndOyunkeyf` = new Key("networkLagBetweenYouAndOyunkeyf")
+  val `timeToProcessAMoveOnOyunkeyfServer` = new Key("timeToProcessAMoveOnOyunkeyfServer")
+  val `newToOyunkeyf` = new Key("newToOyunkeyf")
+  val `forgotPassword` = new Key("forgotPassword")
+  val `passwordReset` = new Key("passwordReset")
+  val `email` = new Key("email")
+  val `password` = new Key("password")
+  val `username` = new Key("username")
+  val `usernameOrEmail` = new Key("usernameOrEmail")
+  val `textIsTooShort` = new Key("textIsTooShort")
+  val `textIsTooLong` = new Key("textIsTooLong")
+  val `invalidCaptcha` = new Key("invalidCaptcha")
+  val `haveAnAccount` = new Key("haveAnAccount")
+  val `changePassword` = new Key("changePassword")
+  val `changeEmail` = new Key("changeEmail")
+  val `termsOfService` = new Key("termsOfService")
+  val `youNeedAnAccountToDoThat` = new Key("youNeedAnAccountToDoThat")
+  val `computersAreNotAllowedToPlay` = new Key("computersAreNotAllowedToPlay")
+  val `byRegisteringYouAgreeToBeBoundByOur` = new Key("byRegisteringYouAgreeToBeBoundByOur")
 
-  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `join`, `withdraw`, `playing`, `finished`, `players`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `winner`, `cancel`, `variant`, `standard`, `roundsToPlay`, `rounds`, `seeAllMasas`, `openMasas`, `masas`, `more`, `rated`, `leaderboard`, `oyunkeyfMasas`)
+  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `join`, `withdraw`, `playing`, `finished`, `players`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `winner`, `cancel`, `variant`, `standard`, `roundsToPlay`, `rounds`, `seeAllMasas`, `openMasas`, `masas`, `more`, `rated`, `leaderboard`, `oyunkeyfMasas`, `play`, `reconnecting`, `signIn`, `signUp`, `community`, `contact`, `forum`, `questionsAndAnswers`, `inbox`, `preferences`, `profile`, `logOut`, `networkLagBetweenYouAndOyunkeyf`, `timeToProcessAMoveOnOyunkeyfServer`, `newToOyunkeyf`, `forgotPassword`, `passwordReset`, `email`, `password`, `username`, `usernameOrEmail`, `textIsTooShort`, `textIsTooLong`, `invalidCaptcha`, `haveAnAccount`, `changePassword`, `changeEmail`, `termsOfService`, `youNeedAnAccountToDoThat`, `computersAreNotAllowedToPlay`, `byRegisteringYouAgreeToBeBoundByOur`)
 
   lazy val count = keys.size
 }

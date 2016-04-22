@@ -222,8 +222,113 @@ body > div.content {
   margin: 0 auto;
   padding-top: 5px;
   box-sizing: border-box;
+}
+
+#top:hover {
   z-index: 5001;
 }
+
+@media (max-width: 1020px) {
+  #top {
+    width: calc(100% - 25px);
+  }
+}
+
+#topmenu {
+  position: absolute;
+  top: 0;
+  left: -10px;
+  font-size: 13px;
+}
+
+#topmenu section {
+  position: relative;
+  float: left;
+  margin: 0;
+}
+
+#topmenu section > a {
+  color: #888;
+  display: block;
+  padding: 9px 12px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 1px #fff;
+}
+
+#topmenu section:hover > a {
+  background: #fff;
+}
+
+#topmenu.hover section:hover div {
+  display: block;
+}
+
+#top .link {
+  font-size: 13px;
+  height: 24px;
+  line-height: 24px;
+  padding: 0 8px;
+}
+
+#reconnecting {
+  display: none;
+}
+
+#top .fright {
+  float: right;
+  position: relative;
+}
+
+#top .dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 24px;
+  background: #fff;
+  z-index: 3;
+  box-shadow: 2px 5px 6px rgba(0, 0, 0, 0.3);
+}
+
+#topmenu div {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  font-size: 12px;
+  background: #fff;
+  width: 148px;
+  box-shadow: 2px 5px 6px rgba(0, 0, 0, 0.3);
+}
+
+#topmenu div a {
+  display: block;
+  padding: 6px 10px;
+  transition: background 0.13s;
+}
+
+#topmenu div a:hover {
+  background: #f0f0f0;
+  color: #444;
+}
+
+#top div.auth,
+#top div.oyunkeyf_language {
+  position: relative;
+}
+
+#top a.signin {
+  margin: 3px 0.5em 0 0;
+  border-color: #d85000;
+  padding: 1px 5px;
+}
+
+#top div.auth .links > a {
+  display: block;
+  padding: 5px 10px;
+  transition: 0.13s;
+  white-space: nowrap;
+}
+
 
 #oyunkeyf {
   height: 610px;

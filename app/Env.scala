@@ -25,6 +25,7 @@ object Env {
     system = oyun.common.PlayApp.system)
 
   def api = oyun.api.Env.current
+  def security =  oyun.security.Env.current
   def hub = oyun.hub.Env.current
   def socket = oyun.socket.Env.current
   def setup = oyun.setup.Env.current

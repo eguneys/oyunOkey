@@ -1,0 +1,19 @@
+@()(implicit ctx: Context)
+
+<div id="topmenu" class="hover">
+  <section>
+    <a href="/">@trans.play()</a>
+    <div>
+      <a href="/?any#hook">@trans.createAGame()</a>
+      <a href="/@routes.Masa.home()">@trans.masas()</a>
+    </div>
+  </section>
+  <section>
+    <a href="#">@trans.community()</a>
+    <div>
+      <a href="#">@trans.players()</a>
+      <a href="#">@trans.forum()</a>
+      <a href="#">@trans.questionsAndAnswers()</a>
+    </div>
+  </section>
+</div>

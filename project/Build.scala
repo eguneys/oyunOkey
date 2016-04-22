@@ -31,13 +31,14 @@ object ApplicationBuild extends Build {
       TwirlKeys.templateImports ++= Seq(
         "oyun.game.{ Game, Player, Pov }",
         "oyun.masa.Masa",
+        "oyun.user.{ User, UserContext }",
         "oyun.api.Context",
         "oyun.app.templating.Environment._",
         "oyun.common.paginator.Paginator"
       )
   )
 
-  lazy val modules = Seq(common, db, user, game, setup, lobby, socket, hub, okey, round, masa, i18n)
+  lazy val modules = Seq(common, db, user, security, game, setup, lobby, socket, hub, okey, round, masa, i18n)
 
   lazy val moduleRefs = modules map projectToRef
   lazy val moduleCPDeps = moduleRefs map { new sbt.ClasspathDependency(_, None) }
@@ -47,8 +48,12 @@ object ApplicationBuild extends Build {
       play.api, RM)
   ) aggregate (moduleRefs: _*)
 
-  lazy val user = project("user", Seq(common, memo)).settings(
-    libraryDependencies ++= provided(play.api, play.test)
+  lazy val user = project("user", Seq(common, memo, db)).settings(
+    libraryDependencies ++= provided(play.api, play.test, RM)
+  )
+
+  lazy val security = project("security", Seq(common, db, user)).settings(
+    libraryDependencies ++= provided(play.api, play.test, RM, ws)
   )
 
   lazy val game = project("game", Seq(common, db, okey)).settings(

@@ -1,0 +1,28 @@
+package oyun.security
+
+import play.api.data._
+import play.api.data.Forms._
+import play.api.mvc.RequestHeader
+
+import oyun.user.{ User, UserRepo }
+
+final class Api(emailAddress: EmailAddress) {
+  def loginForm = Form(mapping(
+    "username" -> nonEmptyText,
+    "password" -> nonEmptyText
+  )(authenticateUser)(_.map(u => (u.username, "")))
+    .verifying("Invalid username or password", _.isDefined)
+  )
+
+  def saveAuthentication(userId: String)(implicit req: RequestHeader): Fu[String] =
+    UserRepo mustConfirmEmail userId flatMap {
+      case true => fufail(Api MustConfirmEmail userId)
+    }
+
+  // blocking function, required by Play2 form
+  private def authenticateUser(usernameOrEmail: String, password: String): Option[User] =
+    (emailAddress.validate(usernameOrEmail) match {
+      case Some(email) => UserRepo.authenticateByEmail(email, password)
+      case None => UserRepo.authenticateById(User normalize usernameOrEmail, password)
+    }) awaitSeconds 2
+}

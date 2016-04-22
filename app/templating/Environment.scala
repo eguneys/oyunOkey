@@ -9,15 +9,18 @@ import oyun.api.Env.{ current => apiEnv }
 
 object Environment 
     extends scalaz.syntax.std.ToOptionIdOps
+    with scalaz.std.OptionFunctions
     with scalaz.std.StringInstances
     with scalalib.Zero.Instances
     with oyun.BooleanSteroids
     with oyun.OptionSteroids
     with AssetHelper
+    with RequestHelper
     with I18nHelper
     with DateHelper
     with JsonHelper
     with SetupHelper
+    with FormHelper
     with UserHelper
     with MasaHelper
     with GameHelper {

@@ -5,7 +5,9 @@
   underchat: Option[Html] = None,
   underside: Boolean = false,
   moreCss: Html = Html(""),
-  moreJs: Html = Html(""))(body: Html)(implicit ctx: Context)
+  moreJs: Html = Html(""),
+  zen: Boolean = false,
+  playing: Boolean = false)(body: Html)(implicit ctx: Context)
 <!doctype html>
 <html lang="@lang.language">
   <head>
@@ -21,7 +23,20 @@
         data-asset-url="@assetBaseUrl"
         data-asset-version="@assetVersion">
     <div id="top">
-
+      @topmenu()
+      <div class="oyunkeyf_language fright">
+        <a class="toggle link" href="#">@langName(lang)</a>
+      </div>
+      @ctx.me.map { me =>
+        <div class="auth fright">
+          @auth.userDropdown(me, playing)
+        </div>
+        <div id="message_notifications_parent"></div>
+        <div class="challenge_notifications fright"></div>
+      }.getOrElse {
+        <a href="@routes.Auth.login" class="signin button fright text">@trans.signIn()</a>
+      }
+      <a id="reconnecting" class="fright link" onclick="location.reload();" data-icon="B">&nbsp;@trans.reconnecting()</a>
     </div>
     <div class="content">
       <div id="site_header">

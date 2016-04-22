@@ -92,6 +92,6 @@ private[controllers] trait OyunController
   private def pageDataBuilder(ctx: UserContext): Fu[PageData] =
     fuccess(PageData anon)
 
-  // protected def errorsAsJson(form: play.api.data.Form[_])(implicit lang: play.api.i18n.Messages) =
-  //   oyun.common.Form errorsAsJson form
+  protected def errorsAsJson(form: play.api.data.Form[_])(implicit lang: play.api.i18n.Messages) =
+    oyun.common.Form errorsAsJson form
 }

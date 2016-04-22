@@ -7,6 +7,14 @@ import views._
 
 object Page extends OyunController {
 
+  private def bookmark(name: String) = Open { implicit ctx =>
+    OptionOk(Prismic getBookmark name) {
+      case (doc, resolver) => views.html.site.page(doc, resolver)
+    }
+  }
+
+  def tos = bookmark("tos")
+
   def variantHome = Open { implicit ctx =>
     OptionOk(fuccess(3.some)) {
       case _ => views.html.site.variantHome()
