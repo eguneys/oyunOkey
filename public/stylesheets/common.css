@@ -226,8 +226,8 @@ body > div.content {
 }
 
 #oyunkeyf {
-  height: 610px;
   margin-left: 10px;
+  min-height: 610px;
 }
 
 #site_title {
