@@ -9,6 +9,7 @@ import play.twirl.api.Html
 
 import oyun.app._
 import oyun.api.{ PageData, Context, HeaderContext, BodyContext }
+import oyun.security.{ FingerprintedUser }
 import oyun.user.{ UserContext }
 
 private[controllers] trait OyunController
@@ -85,12 +86,17 @@ private[controllers] trait OyunController
 
   protected def reqToCtx[A](req: Request[A]): Fu[BodyContext[A]] =
   {
-    val ctx = UserContext(req, None)
-    pageDataBuilder(ctx) map { Context(ctx, _) }
+    restoreUser(req) flatMap { d =>
+      val ctx = UserContext(req, d.map(_.user))
+      pageDataBuilder(ctx) map { Context(ctx, _) }
+    }
   }
 
   private def pageDataBuilder(ctx: UserContext): Fu[PageData] =
     fuccess(PageData anon)
+
+  private def restoreUser(req: RequestHeader): Fu[Option[FingerprintedUser]] =
+    Env.security.api restoreUser req
 
   protected def errorsAsJson(form: play.api.data.Form[_])(implicit lang: play.api.i18n.Messages) =
     oyun.common.Form errorsAsJson form

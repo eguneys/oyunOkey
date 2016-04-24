@@ -72,6 +72,10 @@ trait WithPlay { self: PackageObject =>
     }
   }
 
+  implicit final class OyunPimpedFutureBoolean[A](fua: Fu[Boolean]) {
+    def unary_! = fua map (!_)
+  }
+
   implicit final class OyunPimpedActorSystem(self: akka.actor.ActorSystem) {
     def oyunBus = oyun.common.Bus(self)
   }

@@ -28,12 +28,13 @@ GET     /@/:username            controllers.User.show(username: String)
 
 # Authentication
 
-GET     /login                  controllers.Auth.login
-POST    /login                  controllers.Auth.authenticate
-GET     /logout                 controllers.Auth.logout
-GET     /signup                 controllers.Auth.signup
-POST    /signup                 controllers.Auth.signupPost
-GET     /password/reset         controllers.Auth.passwordReset
+GET     /login                          controllers.Auth.login
+POST    /login                          controllers.Auth.authenticate
+GET     /logout                         controllers.Auth.logout
+GET     /signup                         controllers.Auth.signup
+POST    /signup                         controllers.Auth.signupPost
+GET     /signup/check-your-email/:name  controllers.Auth.checkYourEmail(name: String)
+GET     /password/reset                 controllers.Auth.passwordReset
  
 
 # Variants

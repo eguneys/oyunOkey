@@ -12,6 +12,7 @@ final class Env(
   db: oyun.db.Env) {
 
   private val settings = new {
+    val CollectionSecurity = config getString "collection.security"
     val DisposableEmailProviderUrl = config getString "disposable_email.provider_url"
     val RecaptchaPrivateKey = config getString "recaptcha.private_key"
     val RecaptchaEndpoint = config getString "recaptcha.endpoint"
@@ -42,6 +43,8 @@ final class Env(
 
   lazy val api = new Api(emailAddress)
 
+
+  private[security] lazy val storeColl = db(CollectionSecurity)
 }
 
 object Env {

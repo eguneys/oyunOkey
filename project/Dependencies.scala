@@ -19,6 +19,7 @@ object Dependencies {
   val scalaz = "org.scalaz" %% "scalaz-core" % "7.1.7"
   val scalalib = "com.github.ornicar" %% "scalalib" % "5.4"
   val config = "com.typesafe" % "config" % "1.3.0"
+  val hasher = "com.roundeights" %% "hasher" % "1.2.0"
   val RM = "org.reactivemongo" %% "reactivemongo" % "0.11.10"
   val prismic = "io.prismic" %% "scala-kit" % "1.3.7"
   val java8compat = "org.scala-lang.modules" %% "scala-java8-compat" % "0.7.0"

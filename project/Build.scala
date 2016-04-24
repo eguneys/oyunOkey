@@ -25,7 +25,7 @@ object ApplicationBuild extends Build {
       // shorter prod classpath
       scriptClasspath := Seq("*"),
       libraryDependencies ++= Seq(
-        scalaz, scalalib, config, RM,
+        scalaz, scalalib, hasher, config, RM,
         spray.caching, prismic,
         kamon.core, java8compat),
       TwirlKeys.templateImports ++= Seq(
@@ -49,7 +49,7 @@ object ApplicationBuild extends Build {
   ) aggregate (moduleRefs: _*)
 
   lazy val user = project("user", Seq(common, memo, db)).settings(
-    libraryDependencies ++= provided(play.api, play.test, RM)
+    libraryDependencies ++= provided(play.api, play.test, RM, hasher)
   )
 
   lazy val security = project("security", Seq(common, db, user)).settings(
@@ -88,8 +88,8 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api)
   )
 
-  lazy val memo = project("memo", Seq(common)).settings(
-    libraryDependencies ++= Seq(spray.caching) ++ provided(play.api, play.test)
+  lazy val memo = project("memo", Seq(common, db)).settings(
+    libraryDependencies ++= Seq(spray.caching) ++ provided(play.api, play.test, RM)
   )
 
   lazy val socket = project("socket", Seq(common, hub)).settings(

@@ -66,6 +66,23 @@
         }
       };
     }, 50);
+
+    // user profile toggle
+    $('#top').on('click', 'a.toggle', function() {
+      var $p = $(this).parent();
+      $p.toggleClass('shown');
+      $p.siblings('.shown').removeClass('shown');
+      setTimeout(function() {
+        var handler = function(e) {
+          if ($.contains($p[0], e.target)) return;
+          $p.removeClass('shown');
+          $('html').off('click', handler);
+        };
+        $('html').on('click', handler);
+      }, 10);
+      // if ($p.hasClass('auth')) oyunkeyf.socket.send('moveLat', true);// ??
+      return false;
+    });
   });
 
   oyunkeyf.startRound = function(element, cfg) {

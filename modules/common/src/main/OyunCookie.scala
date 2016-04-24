@@ -13,6 +13,17 @@ object OyunCookie {
     req.domain
   }
 
+  val sessionId = "sid"
+
+  def session(name: String, value: String)(implicit req: RequestHeader): Cookie = withSession { s =>
+    s + (name -> value)
+  }
+
+  def withSession(op: Session => Session)(implicit req: RequestHeader): Cookie = cookie(
+    Session.COOKIE_NAME,
+    Session.encode(Session.serialize(op(req.session)))
+  )
+
   def cookie(name: String, value: String, maxAge: Option[Int] = None, httpOnly: Option[Boolean] = None)(implicit req: RequestHeader): Cookie = Cookie(
     name,
     value,
