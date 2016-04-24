@@ -100,3 +100,14 @@ join side playerId userId
   withdraw playerId
   playerId ?? newPlayer pId
     join playerId side
+
+
+## Round UI
+
+What to show?
+
+Min Open Serie
+Min Open Pair
+Open Status for each player
+last move indicator / oyun ozeti
+How to play hopscotch

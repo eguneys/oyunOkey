@@ -173,12 +173,12 @@ function renderTablePlay(ctrl) {
   //   onclick: function() { ctrl.saveBoard(); }
   // }, 'save'),
 
-
+  var trans = ctrl.trans;
   var icons = [
-    button.move(ctrl, ctrl.okeyground.canCollectOpen, 'C', 'collectOpen', ctrl.collectOpen),
-    button.move(ctrl, ctrl.okeyground.canLeaveTaken, 'L', 'leaveTaken', ctrl.leaveTaken),
-    button.move(ctrl, ctrl.okeyground.canOpenSeries, 'S', 'openSeries', ctrl.openSeries),
-    button.move(ctrl, ctrl.okeyground.canOpenPairs, 'P', 'openPairs', ctrl.openPairs)
+    button.move(ctrl, ctrl.okeyground.canCollectOpen, 'C', trans('collectOpen'), ctrl.collectOpen),
+    button.move(ctrl, ctrl.okeyground.canLeaveTaken, 'L', trans('leaveTaken'), ctrl.leaveTaken),
+    button.move(ctrl, ctrl.okeyground.canOpenSeries, 'S', trans('openSeries'), ctrl.openSeries),
+    button.move(ctrl, ctrl.okeyground.canOpenPairs, 'P', trans('openPairs'), ctrl.openPairs)
   ];
 
   return [

@@ -8,11 +8,11 @@ var init = function(ctrl) {
 var set = function(ctrl, text) {
   if (!text) {
     if (status.finished(ctrl.data)) {
-      text = 'transGameOver';
+      text = ctrl.trans('gameOver');
     } else if (game.isPlayerTurn(ctrl.data)) {
-      text = 'transYourTurn';
+      text = ctrl.trans('yourTurn');
     } else {
-      text = 'transWaitingForOpponent';
+      text = ctrl.trans('waitingForOpponent');
     }
   }
   document.title = text + " - " + initialTitle;

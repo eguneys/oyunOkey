@@ -8,9 +8,9 @@
       <div class="header">
         <span class="setup">
           @game.variantLink(g.variant, g.variant.name, cssClass = "hint--top")
-          • RATED
+          • @trans.rated.str()
         </span>
-        @g.isBeingPlayed.fold("playingRightNow", Html(s"<span title='${showDateTime(g.createdAt)}'>${momentFormat(g.createdAt)}</span>"))
+        @g.isBeingPlayed.fold(trans.playingRightNow(), Html(s"<span title='${showDateTime(g.createdAt)}'>${momentFormat(g.createdAt)}</span>"))
       </div>
     </div>
     <!-- <div class="players">

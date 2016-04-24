@@ -13,7 +13,7 @@ module.exports = {
         if (game.playable(ctrl.data)) {
           ctrl.saveBoard();
           ctrl.socket.send('bye');
-          var msg = 'trans There is a game in progress!';
+          var msg = ctrl.trans('thereIsAGameInProgress');
           (e || window.event).returnValue = msg;
           // return msg;
         }

@@ -1,3 +1,6 @@
 [submodule "modules/okey"]
 	path = modules/okey
 	url = git@bitbucket.org:eguneys/scalaokey.git
+[submodule "public/vendor/moment"]
+	path = public/vendor/moment
+	url = https://github.com/moment/moment
