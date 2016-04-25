@@ -26,6 +26,8 @@ trait ActorMap extends Actor {
       }
   }
 
+  protected def size = actors.size
+
   private def getOrMake(id: String) = actors get id getOrElse {
     context.actorOf(Props(mkActor(id)), name = id) ~ { actor =>
       actors += (id -> actor)

@@ -62,7 +62,8 @@ object Masa extends OyunController with TheftPrevention {
   def join(id: String) = OpenBody { implicit ctx =>
     val side = get("side")
     playerForReq(id) flatMap { playerOption =>
-      val ref = playerOption.map(_.ref) | PlayerRef()
+      val userId = ctx.me map(_.id)
+      val ref = playerOption.map(_.ref) | PlayerRef(userId = userId)
       negotiate(
         html = repo enterableById id flatMap {
           case None => masaNotFound.fuccess
@@ -95,7 +96,8 @@ object Masa extends OyunController with TheftPrevention {
 
   def create = OpenBody { implicit ctx =>
     implicit val req = ctx.body
-    val playerRef = PlayerRef()
+    val userId = ctx.me map (_.id)
+    val playerRef = PlayerRef(userId = userId)
     Env.setup.forms.masa(ctx).bindFromRequest.fold(
       err => BadRequest(html.masa.form(err)).fuccess,
       setup => {

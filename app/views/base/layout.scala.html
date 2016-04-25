@@ -1,5 +1,6 @@
 @(title: String,
   fullTitle: Option[String] = None,
+  baseline: Option[Html] = None,
   side: Option[Html] = None,
   chat: Option[Html] = None,
   underchat: Option[Html] = None,
@@ -43,6 +44,7 @@
         <h1>
           <a id="site_title" href="@routes.Lobby.home">oyunkeyf<span class="extension">.com</span></a>
         </h1>
+        @baseline
         @side
         <div class="under_side@{underside ?? " bottom"}">
           @chat

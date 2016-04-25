@@ -4,29 +4,33 @@ import play.api.libs.json._
 import oyun.common.PimpedJson._
 
 import oyun.game.{ Pov, Game, Player => GamePlayer }
-import oyun.user.{ User }
+import oyun.user.{ User, UserRepo }
 
 import actorApi.SocketStatus
 
 import okey.format.Forsyth
 
 final class JsonView(
+  userJsonView: oyun.user.JsonView,
   getSocketStatus: String => Fu[SocketStatus]) {
 
   import JsonView._
 
   def playerJson(
     pov: Pov,
-    playerUser: Option[User]): Fu[JsObject] =
-    getSocketStatus(pov.game.id) map {
-      case (socket) =>
+    playerUser: Option[User]): Fu[JsObject] = {
+    val opponents = List(pov.opponentLeft, pov.opponentRight, pov.opponentUp)
+
+    getSocketStatus(pov.game.id) zip
+    (opponents.map(_.userId ?? UserRepo.byId).sequence) map {
+      case (socket, List(opponentLeftUser, opponentRightUser, opponentUpUser)) =>
         import pov._
         Json.obj(
           "game" -> povJson(pov),
-          "player" -> playerJson(socket, player),
-          "opponentLeft" -> opponentJson(socket, opponentLeft),
-          "opponentRight" -> opponentJson(socket, opponentRight),
-          "opponentUp" -> opponentJson(socket, opponentUp),
+          "player" -> playerJson(socket, player, playerUser),
+          "opponentLeft" -> opponentJson(socket, opponentLeft, opponentLeftUser),
+          "opponentRight" -> opponentJson(socket, opponentRight, opponentRightUser),
+          "opponentUp" -> opponentJson(socket, opponentUp, opponentUpUser),
           "url" -> Json.obj(
             "socket" -> s"/$fullId/socket",
             "round" -> s"/$fullId"
@@ -34,19 +38,24 @@ final class JsonView(
           "possibleMoves" -> possibleMoves(pov)
         ).noNull
     }
+  }
 
-  private def playerJson(socket: SocketStatus, player: GamePlayer) = Json.obj(
+  private def playerJson(socket: SocketStatus, player: GamePlayer, playerUser: Option[User]) = Json.obj(
     "side" -> player.side.name,
     "version" -> socket.version,
+    "user" -> playerUser.map { userJsonView(_) },
     "onGame" -> socket.onGame(player.side),
     "isGone" -> socket.isGone(player.side)
   )
 
-  private def opponentJson(socket: SocketStatus, opponent: GamePlayer) = Json.obj(
-    "side" -> opponent.side.name,
-    "onGame" -> socket.onGame(opponent.side),
-    "isGone" -> socket.isGone(opponent.side)
-  )
+  private def opponentJson(socket: SocketStatus, opponent: GamePlayer, opponentUser: Option[User]) = {
+    Json.obj(
+      "side" -> opponent.side.name,
+      "user" -> opponentUser.map { userJsonView(_) },
+      "onGame" -> socket.onGame(opponent.side),
+      "isGone" -> socket.isGone(opponent.side)
+    )
+  }
 
   private def povJson(pov: Pov) = Json.obj(
     "id" -> pov.game.id,

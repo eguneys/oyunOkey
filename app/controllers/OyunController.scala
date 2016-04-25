@@ -8,6 +8,7 @@ import play.api.mvc.WebSocket.FrameFormatter
 import play.twirl.api.Html
 
 import oyun.app._
+import oyun.common.{ OyunCookie, HTTPRequest }
 import oyun.api.{ PageData, Context, HeaderContext, BodyContext }
 import oyun.security.{ FingerprintedUser }
 import oyun.user.{ UserContext }
@@ -80,8 +81,10 @@ private[controllers] trait OyunController
 
   protected def reqToCtx(req: RequestHeader): Fu[HeaderContext] =
   {
-    val ctx = UserContext(req, None)
-    pageDataBuilder(ctx) map { Context(ctx, _) }
+    restoreUser(req) flatMap { d =>
+      val ctx = UserContext(req, d.map(_.user))
+      pageDataBuilder(ctx) map { Context(ctx, _) }
+    }
   }
 
   protected def reqToCtx[A](req: Request[A]): Fu[BodyContext[A]] =
@@ -96,7 +99,11 @@ private[controllers] trait OyunController
     fuccess(PageData anon)
 
   private def restoreUser(req: RequestHeader): Fu[Option[FingerprintedUser]] =
-    Env.security.api restoreUser req
+    Env.security.api restoreUser req addEffect {
+      _ ifTrue (HTTPRequest isSynchronousHttp req) foreach { d =>
+        Env.current.bus.publish(oyun.user.User.Active(d.user), 'userActive)
+      }
+    }
 
   protected def errorsAsJson(form: play.api.data.Form[_])(implicit lang: play.api.i18n.Messages) =
     oyun.common.Form errorsAsJson form

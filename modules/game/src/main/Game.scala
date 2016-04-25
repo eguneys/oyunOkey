@@ -34,6 +34,8 @@ case class Game(
 
   def playerByPlayerId(playerId: String): Option[Player] = players find (_.playerId == Some(playerId))
 
+  def playerByUserId(userId: String): Option[Player] = players find (_.userId == Some(userId))
+
   def player: Player = player(turnSide)
 
   def turnSide = Side(turns)

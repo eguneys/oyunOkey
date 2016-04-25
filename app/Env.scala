@@ -10,6 +10,7 @@ final class Env(
   lazy val bus = oyun.common.Bus(system)
 
   lazy val preloader = new mashup.Preload(
+    countRounds = Env.round.count,
     lobbyApi = Env.api.lobbyApi)
 
   lazy val userInfo = mashup.UserInfo(

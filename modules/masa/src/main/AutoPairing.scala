@@ -10,7 +10,7 @@ final class AutoPairing {
       players = GamePlayer.allSides
     )
     game2 = game1
-    .updatePlayers(players.map { p => (gp: GamePlayer) => gp.withPlayer(p.id) })
+    .updatePlayers(players.map { p => (gp: GamePlayer) => gp.withPlayer(p.id).withUser(p.userId) })
     .withMasaId(masa.id)
     .withId(pairing.gameId)
     _ <- (GameRepo insertDenormalized game2)

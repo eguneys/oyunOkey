@@ -15,11 +15,18 @@ final class Env(
   import scala.concurrent.duration._
 
   private val HubName = config getString "hub.name"
+  private val UserRegisterName = config getString "user_register.name"
+  private val PopulationName = config getString "population.name"
 
   private val socketHub = system.actorOf(Props[SocketHub], name = HubName)
 
+  private val population = system.actorOf(Props[Population], name = PopulationName)
+
+  system.actorOf(Props[UserRegister], name = UserRegisterName)
+
   scheduler.once(10 seconds) {
     scheduler.message(4 seconds) { socketHub -> actorApi.Broom }
+    scheduler.message(1 seconds) { population -> PopulationTell }
   }
 
 }

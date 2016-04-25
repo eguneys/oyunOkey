@@ -51,6 +51,7 @@ object BSONHandlers {
       Player(
         _id = r str "_id",
         masaId = r str "mid",
+        userId = r strO "uid",
         active = r boolD "a",
         side = Side(r str "d") err s"No such side:",
         score = r intD "s",
@@ -61,6 +62,7 @@ object BSONHandlers {
     def writes(w: BSON.Writer, o: Player) = BSONDocument(
       "_id" -> o.id,
       "mid" -> o.masaId,
+      "uid" -> o.userId,
       "a" -> w.boolO(o.active),
       "d" -> o.side.letter.toString,
       "s" -> w.intO(o.score),

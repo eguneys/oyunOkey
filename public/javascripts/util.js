@@ -56,3 +56,15 @@ oyunkeyf.loadScript = function(url, noVersion) {
 oyunkeyf.slider = function() {
   return oyunkeyf.loadScript('/assets/javascripts/vendor/jquery-ui.slider.min.js', true);
 };
+
+oyunkeyf.numberFormat = (function() {
+  if (window.Intl && Intl.NumberFormat) {
+    var formatter = new Intl.NumberFormat();
+    return function(n) {
+      return formatter.format(n);
+    };
+  }
+  return function(n) {
+    return n;
+  };
+})();

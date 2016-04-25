@@ -22,11 +22,34 @@ final class Env(
 
   lazy val userColl = db(CollectionUser)
 
+  lazy val lightUserApi = new LightUserApi(userColl)
+
   lazy val onlineUserIdMemo = new ExpireSetMemo(ttl = OnlineTtl)
+
+  lazy val jsonView = new JsonView(isOnline)
+
+  def lightUser(id: String): Option[oyun.common.LightUser] = lightUserApi get id
 
   def isOnline(userId: String) = onlineUserIdMemo get userId
 
   def countEnabled = cached.countEnabled
+
+  system.oyunBus.subscribe(system.actorOf(Props(new Actor {
+    def receive = {
+      case User.Active(user) =>
+        if (!user.seenRecently) UserRepo setSeenAt user.id
+        onlineUserIdMemo put user.id
+    }
+  })), 'userActive)
+
+  {
+    import scala.concurrent.duration._
+    import oyun.hub.actorApi.WithUserIds
+
+    scheduler.effect(3 seconds, "refresh online user ids") {
+      system.oyunBus.publish(WithUserIds(onlineUserIdMemo.putAll), 'users)
+    }
+  }
 
   lazy val cached = new Cached(
     userColl = userColl,

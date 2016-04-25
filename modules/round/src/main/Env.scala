@@ -3,6 +3,7 @@ package oyun.round
 import akka.actor._
 import akka.pattern.{ ask }
 import com.typesafe.config.Config
+import scala.concurrent.duration._
 
 import actorApi.{ GetSocketStatus, SocketStatus }
 import oyun.common.PimpedConfig._
@@ -11,7 +12,9 @@ import makeTimeout.large
 
 final class Env(
   config: Config,
-  system: ActorSystem) {
+  system: ActorSystem,
+  userJsonView: oyun.user.JsonView,
+  scheduler: oyun.common.Scheduler) {
 
   private val settings = new {
     val PlayerDisconnectTimeout = config duration "player.disconnect.timeout"
@@ -31,8 +34,15 @@ final class Env(
       socketHub
     )
 
-    def receive: Receive = actorMapReceive
+    def receive: Receive = ({
+      case actorApi.GetNbRounds =>
+        nbRounds = size
+        system.oyunBus.publish(oyun.hub.actorApi.round.NbRounds(nbRounds), 'nbRounds)
+    }: Receive) orElse actorMapReceive
   }), name = ActorMapName)
+
+  private var nbRounds = 0
+  def count() = nbRounds
 
   private val socketHub = {
     val actor = system.actorOf(
@@ -64,11 +74,17 @@ final class Env(
   private def getSocketStatus(gameId: String): Fu[SocketStatus] =
     socketHub ? Ask(gameId, GetSocketStatus) mapTo manifest[SocketStatus]
 
-  lazy val jsonView = new JsonView(getSocketStatus)
+  lazy val jsonView = new JsonView(
+    userJsonView = userJsonView,
+    getSocketStatus = getSocketStatus)
+
+  scheduler.message(2.1 seconds)(roundMap -> actorApi.GetNbRounds)
 }
 
 object Env {
   lazy val current = "round" boot new Env(
     config = oyun.common.PlayApp loadConfig "round",
-    system = oyun.common.PlayApp.system)
+    system = oyun.common.PlayApp.system,
+    userJsonView = oyun.user.Env.current.jsonView,
+    scheduler = oyun.common.PlayApp.scheduler)
 }

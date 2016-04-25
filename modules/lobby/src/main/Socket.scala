@@ -12,6 +12,18 @@ import oyun.socket.{ SocketActor, History, Historical }
 private[lobby] final class Socket(
   val history: History) extends SocketActor[Member] with Historical[Member] {
 
+  override val startsOnApplicationBoot = true
+
+  override def preStart() {
+    super.preStart()
+    context.system.oyunBus.subscribe(self, 'nbMembers, 'nbRounds)
+  }
+
+  override def postStop() {
+    super.postStop()
+    context.system.oyunBus.unsubscribe(self)
+  }
+
   def receiveSpecific = {
     case PingVersion(uid, v) =>
       ping(uid)
@@ -31,6 +43,10 @@ private[lobby] final class Socket(
 
     case JoinHook(uid, challengeId, side) =>
       withMember(uid)(notifyPlayerJoin(challengeId, side))
+
+    case NbMembers(nb) => pong = pong + ("d" -> JsNumber(nb))
+    case oyun.hub.actorApi.round.NbRounds(nb) =>
+      pong = pong + ("r" -> JsNumber(nb))
   }
 
   private def notifyPlayerJoin(challengeId: String, side: okey.Side) = { member: Member =>

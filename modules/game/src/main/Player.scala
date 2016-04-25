@@ -16,6 +16,9 @@ case class Player(
   def withPlayer(id: String): Player = copy(
     playerId = id.some)
 
+  def withUser(id: Option[String]): Player = copy(
+    userId = id)
+
   def hasUser = userId.isDefined
 }
 
@@ -46,15 +49,16 @@ object Player {
   type PlayerId = Option[String]
   type EndScore = Option[EndScoreSheet]
 
-  type Builder = Side => Id => PlayerId => EndScore => Player
+  type Builder = Side => Id => PlayerId => UserId => EndScore => Player
 
   implicit val playerBSONHandler = new BSON[Builder] {
     import BSONFields._
 
-    def reads(r: BSON.Reader) = side => id => playerId => endScore => Player(
+    def reads(r: BSON.Reader) = side => id => playerId => userId => endScore => Player(
       id = id,
       side = side,
       playerId = playerId,
+      userId = userId,
       endScore = endScore
     )
 

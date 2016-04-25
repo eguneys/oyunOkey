@@ -172,3 +172,7 @@ div.undertable {
 #oyunkeyf .enterable_list td.name span:last-child {
   margin-right: 10px;
 }
+
+#nb_games_in_play {
+  margin-bottom: 10px;
+}

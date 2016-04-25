@@ -1,4 +1,5 @@
 import m from 'mithril';
+import { game } from 'game';
 
 module.exports = function(ctrl, player) {
   var d = ctrl.data;
@@ -11,8 +12,10 @@ module.exports = function(ctrl, player) {
 
   return player.user ? [
     m('a', {
-      class: 'text user_link ',
-      href: '/@/ + player.user.username'
+      class: 'text ulpt user_link ' + (player.user.online ? 'online is-green' : 'offline'),
+      href: '/@/' + player.user.username,
+      target: game.isPlayerPlaying(d) ? '_blank' : '_self',
+      'data-icon': 'r'
     }, [
       player.user.username
     ]),

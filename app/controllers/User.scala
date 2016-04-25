@@ -1,5 +1,6 @@
 package controllers
 
+import play.api.libs.json._
 import play.api.mvc._, Results._
 
 import oyun.app._
@@ -41,5 +42,17 @@ object User extends OyunController {
 
   private def userGames(u: UserModel, filterOption: Option[String], page: Int)(implicit ctx: BodyContext[_]) = {
     Ok("user games").fuccess
+  }
+
+  def list = Open { implicit ctx =>
+    val nb = 10
+    for {
+      res <- negotiate(
+        html = fuccess(Ok(html.user.list())),
+        api = _ =>  fuccess {
+          Ok(Json.obj())
+        }
+      )
+    } yield res
   }
 }

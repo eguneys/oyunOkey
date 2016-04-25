@@ -17,6 +17,7 @@ final class Env(
   system: ActorSystem,
   db: oyun.db.Env,
   hub: oyun.hub.Env,
+  lightUser: String => Option[oyun.common.LightUser],
   scheduler: oyun.common.Scheduler) {
 
   private val settings = new {
@@ -48,7 +49,7 @@ final class Env(
     hub = hub,
     socketHub = socketHub)
 
-  lazy val jsonView = new JsonView()
+  lazy val jsonView = new JsonView(lightUser)
 
   lazy val scheduleJsonView = new ScheduleJsonView()
 
@@ -100,6 +101,7 @@ object Env {
     system = oyun.common.PlayApp.system,
     db = oyun.db.Env.current,
     hub = oyun.hub.Env.current,
+    lightUser = oyun.user.Env.current.lightUser,
     scheduler = oyun.common.PlayApp.scheduler
   )
 }

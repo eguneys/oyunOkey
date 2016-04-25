@@ -43,6 +43,10 @@ object UserRepo {
   def nameExists(username: String): Fu[Boolean] = idExists(normalize(username))
   def idExists(id: String): Fu[Boolean] = coll exists $id(id)
 
+  def setSeenAt(id: ID) {
+    coll.updateFieldUnchecked($id(id), "seenAt", DateTime.now)
+  }
+
   def mustConfirmEmail(id: String): Fu[Boolean] =
     coll.exists($id(id) ++ $doc(F.mustConfirmEmail $exists true))
 

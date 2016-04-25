@@ -37,7 +37,6 @@ private[masa] final class MasaApi(
       masa.createPairings(masa, players).flatMap {
         case None => funit
         case Some(pairing) => {
-          println("makepairing inseq", masa)
           //PairingRepo.insert(pairing) >> updateNbRounds(masa.id) >>
           PairingRepo.insert(pairing) >>
             autoPairing(masa, pairing) addEffect { game =>

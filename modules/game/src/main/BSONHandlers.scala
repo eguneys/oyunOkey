@@ -129,10 +129,12 @@ object BSONHandlers {
 
       val sidesPid = r.get[Sides[Option[String]]](playerPids)
 
+      val sidesUid = r.get[Sides[Option[String]]](playerUids)
+
       val builder = r.get[Sides[Player.Builder]](sidesPlayer)
 
       val players = Sides(eastId, westId, northId, southId) sideMap {
-        case (side, id) => builder(side)(side)(id)(sidesPid(side))(oEndScores.map(_(side)))
+        case (side, id) => builder(side)(side)(id)(sidesPid(side))(sidesUid(side))(oEndScores.map(_(side)))
       }
 
       val bPieces = r.get[Sides[ByteArray]](binaryPieces)
@@ -184,7 +186,8 @@ object BSONHandlers {
       id -> o.id,
       playerIds -> (o.players.map(_.id) mkString),
       playerPids -> o.players.mapt(_.playerId),
-      sidesPlayer -> o.players.mapt(p => playerBSONHandler write ((_: Side) => (_: Player.Id) => (_: Player.PlayerId) => (_: Player.EndScore) => p)),
+      playerUids -> o.players.mapt(_.userId),
+      sidesPlayer -> o.players.mapt(p => playerBSONHandler write ((_: Side) => (_: Player.Id) => (_: Player.PlayerId) => (_: Player.UserId) => (_: Player.EndScore) => p)),
       binaryPieces -> o.binaryPieces,
       binaryDiscards -> o.binaryDiscards,
       binaryMiddles -> o.binaryMiddles,

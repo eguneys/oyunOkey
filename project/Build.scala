@@ -48,7 +48,7 @@ object ApplicationBuild extends Build {
       play.api, RM)
   ) aggregate (moduleRefs: _*)
 
-  lazy val user = project("user", Seq(common, memo, db)).settings(
+  lazy val user = project("user", Seq(common, memo, hub, db)).settings(
     libraryDependencies ++= provided(play.api, play.test, RM, hasher)
   )
 

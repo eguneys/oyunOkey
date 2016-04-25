@@ -3,8 +3,9 @@ package oyun.masa
 import play.api.libs.json._
 import oyun.common.PimpedJson._
 
+import oyun.common.LightUser
 
-final class JsonView() {
+final class JsonView(getLightUser: String => Option[LightUser]) {
 
   private case class CachableData(
     pairings: JsArray,
@@ -83,10 +84,10 @@ final class JsonView() {
 
   private def playerJson(sheet: Option[ScoreSheet], masa: Masa, rankedPlayer: RankedPlayer): JsObject = {
     val p = rankedPlayer.player
-    //val light = getLightUser(p.userId)
+    val light = p.userId flatMap getLightUser
     Json.obj(
       "rank" -> rankedPlayer.rank,
-      //"name" -> light.fold(p.userId)(_.name)
+      "name" -> light.map(_.name),
       "id" -> p.id,
       "active" -> p.active.option(true),
       "score" -> p.score,

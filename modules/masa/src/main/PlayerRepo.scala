@@ -16,6 +16,11 @@ object PlayerRepo {
   private def selectMasaPlayer(masaId: String, playerId: String) = BSONDocument(
     "mid" -> masaId,
     "_id" -> playerId)
+
+  private def selectMasaUser(masaId: String, userId: String) = BSONDocument(
+    "mid" -> masaId,
+    "uid" -> userId)
+
   private val selectActive = BSONDocument("a" -> BSONDocument("$eq" -> true))
   private def selectSide(side: Side) = BSONDocument("d" -> side.letter.toString)
   private def selectActiveSide(side: Side) = BSONDocument(
@@ -44,7 +49,7 @@ object PlayerRepo {
     }
 
   def findByUserId(masaId: String, userId: String): Fu[Option[Player]] =
-    fuccess(None)
+    coll.find(selectMasaUser(masaId, userId)).uno[Player]
 
   def activeSide(masaId: String, side: Side): Fu[Option[Player]] =
     coll.find(selectMasa(masaId) ++ selectActiveSide(side)).uno[Player]

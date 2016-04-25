@@ -43,6 +43,7 @@ case class PlayerRef(
 
   def toPlayer(masaId: String) = Player(
     _id = id,
-    masaId = masaId)
+    masaId = masaId,
+    userId = userId)
 
 }

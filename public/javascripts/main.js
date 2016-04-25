@@ -15,6 +15,31 @@
     location.href = href;
   };
 
+  $.fp = {};
+
+  $.spreadNumber = function(el, nbSteps, getDuration) {
+    var previous, displayed;
+    var display = function(prev, cur, it) {
+      var val = oyunkeyf.numberFormat(Math.round(((prev * (nbSteps - 1 - it)) + (cur * (it +  1))) / nbSteps));
+      if (val !== displayed) {
+        el.textContent = val;
+        displayed = val;
+      }
+    };
+    var timeouts = [];
+    return function(nb) {
+      if (!el || !nb) return;
+      timeouts.forEach(clearTimeout);
+      timeouts = [];
+      var prev = previous || nb;
+      previous = nb;
+      var interv = getDuration() / nbSteps;
+      for (var i = 0; i < nbSteps; i++) {
+        timeouts.push(setTimeout(display.bind(null, prev, nb, i), Math.round(i * interv)));
+      }
+    };
+  };
+
   oyunkeyf.socket = null;
   $.extend(true, oyunkeyf.StrongSocket.defaults, {
     events: {
@@ -46,6 +71,14 @@
         });
       }
       setMoment();
+
+      function setMomentFromNow() {
+        $("time.moment-from-now").each(function() {
+          this.textContent = moment(this.getAttribute('datetime')).fromNow();
+        });
+      }
+      setMomentFromNow();
+      setInterval(setMomentFromNow, 2000);
 
       // Zoom
       var getZoom = function() {
@@ -109,6 +142,19 @@
 
   function startLobby(element, cfg) {
     var lobby;
+    var nbRoundSpread = $.spreadNumber(
+      document.querySelector('#nb_games_in_play > strong'),
+      8,
+      function() {
+        return oyunkeyf.socket.pingInterval();
+      });
+    var nbUserSpread = $.spreadNumber(
+      document.querySelector('#nb_connected_players > strong'),
+      10,
+      function() {
+        return oyunkeyf.socket.pingInterval();
+      });
+
     oyunkeyf.socket = new oyunkeyf.StrongSocket(
       '/lobby/socket/v1',
       cfg.data.version, {
@@ -116,6 +162,12 @@
           lobby.socketReceive(t, d);
         },
         events: {
+          n: function(nbUsers, msg) {
+            nbUserSpread(msg.d);
+            setTimeout(function() {
+              nbRoundSpread(msg.r);
+            }, oyunkeyf.socket.pingInterval() / 2);
+          },
           redirect: function(e) {
             $.redirect(e);
           }

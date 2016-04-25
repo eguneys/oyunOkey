@@ -71,4 +71,5 @@ package round {
     promise: Option[Promise[Unit]] = None)
 }
 
+private[round] case object GetNbRounds
 private[round] case object NotifyCrowd

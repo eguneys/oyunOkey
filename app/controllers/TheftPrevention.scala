@@ -21,7 +21,9 @@ private[controllers] trait TheftPrevention { self: OyunController =>
 
   protected def playablePovForReq(game: GameModel)(implicit ctx: Context) = 
   {
-    ctx.req.cookies.get(AnonCookie.name).map(_.value)
-      .flatMap(game.playerByPlayerId).filterNot(_.hasUser)
-  }.map { Pov(game, _) }
+    ctx.userId.flatMap(game.playerByUserId).orElse {
+      ctx.req.cookies.get(AnonCookie.name).map(_.value)
+        .flatMap(game.playerByPlayerId).filterNot(_.hasUser)
+    }.map { Pov(game, _) }
+  }
 }

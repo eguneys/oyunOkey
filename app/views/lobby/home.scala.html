@@ -1,4 +1,14 @@
-@(data: play.api.libs.json.JsObject, masas: List[Masa])(implicit ctx: Context)
+@(data: play.api.libs.json.JsObject, masas: List[Masa], nbRounds: Int)(implicit ctx: Context)
+
+@baseline = {
+  <a id="nb_connected_players" href="@routes.User.list">
+    @trans.nbConnectedPlayers("<strong>?</strong>")
+  </a>
+  <!-- <br /> -->
+  <a id="nb_games_in_play" href="#">
+    @trans.nbGamesInPlay(s"<strong>${nbRounds}</strong>")
+  </a>
+}
 
 @moreJs = {
   @jsAt(s"compiled/oyunkeyf.lobby.js")
@@ -13,6 +23,7 @@
 @base.layout(
   title = "",
   fullTitle = Some("oyunkeyf.org * " + trans.freeOnlineOkey.str()),
+  baseline = baseline.some,
   moreJs = moreJs,
   moreCss = cssTag("home.css")
 ) {

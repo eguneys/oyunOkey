@@ -1,5 +1,7 @@
 package oyun.user
 
+import scala.concurrent.duration._
+
 import org.joda.time.DateTime
 
 case class User(
@@ -12,6 +14,11 @@ case class User(
 
   def titleUsername = username
 
+  def seenRecently: Boolean = timeNoSee < 2.minutes
+
+  def timeNoSee: Duration = seenAt.fold[Duration](Duration.Inf) { s =>
+    (nowMillis - s.getMillis).millis
+  }
 }
 
 object User {
@@ -19,6 +26,8 @@ object User {
   type ID = String
 
   val anonymous = "Anonymous"
+
+  case class Active(user: User)
 
   import oyun.db.BSON.BSONJodaDateTimeHandler
 

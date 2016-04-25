@@ -15,7 +15,7 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
   var pingSchedule = null;
   var connectSchedule = null;
   var ackableMessages = [];
-  var lastPingTimem = now();
+  var lastPingTime = now();
   var currentLag = 0;
   var averageLag = 0;
   var tryOtherUrl = false;
@@ -106,6 +106,11 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
     clearTimeout(connectSchedule);
     schedulePing(options.pingDelay);
     currentLag = now() - lastPingTime;
+    if (!averageLag) averageLag = currentLag;
+    else averageLag = 0.2 * (currentLag - averageLag) + averageLag;
+    if (options.lagTag) {
+      options.lagTag.html(Math.round(averageLag));
+    }
   };
 
   var pingData = function() {
@@ -137,7 +142,7 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
     default:
       if (settings.receive) settings.receive(m.t, m.d);
       var h = settings.events[m.t];
-      if (h) h(m.d || null);
+      if (h) h(m.d || null, m);
     }
   };
 
@@ -196,11 +201,14 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
     disconnect: disconnect,
     send: send,
     destroy: destroy,
-    options: options
-    // pingInterval: function() {
-    //   return options.pingDelay + averageLag;
+    options: options,
+    pingInterval: function() {
+      return options.pingDelay + averageLag;
 
-    // },
+    },
+    averageLag: function() {
+      return averageLag;
+    }
   };
 };
 

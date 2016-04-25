@@ -11,7 +11,7 @@ import oyun.hub.actorApi.{ GetUids, SocketUids }
 abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
 
   val members = scala.collection.mutable.Map.empty[String, M]
-  val pong = Socket.initialPong
+  var pong = Socket.initialPong
 
   val oyunBus = context.system.oyunBus
 
@@ -83,12 +83,14 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
   def quit(uid: String) {
     members get uid foreach { member =>
       members -= uid
+      oyunBus.publish(SocketLeave(uid, member), 'socketDoor)
     }
   }
 
   def addMember(uid: String, member: M) {
     eject(uid)
     members += (uid -> member)
+    oyunBus.publish(SocketEnter(uid, member), 'socketDoor)
   }
 
   def withMember(uid: String)(f: M => Unit) {
