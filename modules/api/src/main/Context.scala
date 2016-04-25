@@ -13,6 +13,8 @@ object PageData {
 
 
 sealed trait Context extends oyun.user.UserContextWrapper {
+  val userContext: UserContext
+  val pageData: PageData
 }
 
 sealed abstract class BaseContext(

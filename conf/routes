@@ -22,11 +22,29 @@ GET     /masa/$id<\w{8}>/socket/v:apiVersion controllers.Masa.websocket(id: Stri
 POST     /masa/$id<\w{8}>/join          controllers.Masa.join(id: String)
 POST     /masa/$id<\w{8}>/withdraw     controllers.Masa.withdraw(id: String)
 
+# User
+
+GET     /@/:username            controllers.User.show(username: String)
+
+# Authentication
+
+GET     /login                          controllers.Auth.login
+POST    /login                          controllers.Auth.authenticate
+GET     /logout                         controllers.Auth.logout
+GET     /signup                         controllers.Auth.signup
+POST    /signup                         controllers.Auth.signupPost
+GET     /signup/check-your-email/:name  controllers.Auth.checkYourEmail(name: String)
+GET     /password/reset                 controllers.Auth.passwordReset
+ 
+
 # Variants
 
 GET     /variant                controllers.Page.variantHome
 GET     /variant/:key           controllers.Page.variant(key)
 
+# Pages
+
+GET     /terms-of-service       controllers.Page.tos
 
 # Assets
 GET     /assets/*file           controllers.Assets.at(path="/public", file)

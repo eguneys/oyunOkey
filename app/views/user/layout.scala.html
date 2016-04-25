@@ -1,0 +1,16 @@
+@(title: String, side: Option[Html] = None)(body: Html)(implicit ctx: Context)
+
+@moreCss = {
+  @cssTag("user-list.css")
+  @cssTag("user-show.css")
+}
+
+@moreJs = {
+  @jsTagCompiled("user.js")
+}
+
+@base.layout(
+  title = title,
+  side = side,
+  moreCss = moreCss,
+  moreJs = moreJs)(body)

@@ -11,6 +11,8 @@ trait UserHelper { self: I18nHelper =>
 
   def usernameOrAnon(userId: Option[String]) = User.anonymous
 
+  def isOnline(userId: String) = Env.user isOnline userId
+
   def userInfosLink(userId: String) = {
     // val href = userHref(name)
 

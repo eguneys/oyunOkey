@@ -11,6 +11,8 @@ sealed trait UserContext {
   def isAuth = me.isDefined
 
   def isAnon = !isAuth
+
+  def is(user: User): Boolean = me ?? (user ==)
   
   def userId = me map (_.id)
 }

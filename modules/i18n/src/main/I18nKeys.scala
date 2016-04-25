@@ -1,4 +1,4 @@
-// Generated with bin/trans-dump at 2016-04-24 12:31:59 UTC
+// Generated with bin/trans-dump at 2016-04-25 06:37:06 UTC
 package oyun.i18n
 
 import play.twirl.api.Html
@@ -64,8 +64,46 @@ final class I18nKeys(translator: Translator) {
   val `collectOpen` = new Key("collectOpen")
   val `scores` = new Key("scores")
   val `waitingPlayers` = new Key("waitingPlayers")
+  val `reconnecting` = new Key("reconnecting")
+  val `signIn` = new Key("signIn")
+  val `signUp` = new Key("signUp")
+  val `community` = new Key("community")
+  val `contact` = new Key("contact")
+  val `forum` = new Key("forum")
+  val `questionsAndAnswers` = new Key("questionsAndAnswers")
+  val `inbox` = new Key("inbox")
+  val `preferences` = new Key("preferences")
+  val `profile` = new Key("profile")
+  val `logOut` = new Key("logOut")
+  val `online` = new Key("online")
+  val `offline` = new Key("offline")
+  val `networkLagBetweenYouAndOyunkeyf` = new Key("networkLagBetweenYouAndOyunkeyf")
+  val `timeToProcessAMoveOnOyunkeyfServer` = new Key("timeToProcessAMoveOnOyunkeyfServer")
+  val `newToOyunkeyf` = new Key("newToOyunkeyf")
+  val `forgotPassword` = new Key("forgotPassword")
+  val `passwordReset` = new Key("passwordReset")
+  val `email` = new Key("email")
+  val `password` = new Key("password")
+  val `username` = new Key("username")
+  val `usernameOrEmail` = new Key("usernameOrEmail")
+  val `textIsTooShort` = new Key("textIsTooShort")
+  val `textIsTooLong` = new Key("textIsTooLong")
+  val `invalidCaptcha` = new Key("invalidCaptcha")
+  val `haveAnAccount` = new Key("haveAnAccount")
+  val `changePassword` = new Key("changePassword")
+  val `changeEmail` = new Key("changeEmail")
+  val `checkYourEmail` = new Key("checkYourEmail")
+  val `termsOfService` = new Key("termsOfService")
+  val `youNeedAnAccountToDoThat` = new Key("youNeedAnAccountToDoThat")
+  val `computersAreNotAllowedToPlay` = new Key("computersAreNotAllowedToPlay")
+  val `byRegisteringYouAgreeToBeBoundByOur` = new Key("byRegisteringYouAgreeToBeBoundByOur")
+  val `weHaveSentYouAnEmailClickTheLink` = new Key("weHaveSentYouAnEmailClickTheLink")
+  val `ifYouDoNotSeeTheEmailCheckOtherPlaces` = new Key("ifYouDoNotSeeTheEmailCheckOtherPlaces")
+  val `memberSince` = new Key("memberSince")
+  val `lastSeenActive` = new Key("lastSeenActive")
+  val `tpTimeSpentPlaying` = new Key("tpTimeSpentPlaying")
 
-  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `join`, `withdraw`, `play`, `playingRightNow`, `playing`, `finished`, `players`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `winner`, `cancel`, `variant`, `standard`, `roundsToPlay`, `rounds`, `seeAllMasas`, `openMasas`, `masas`, `more`, `rated`, `leaderboard`, `oyunkeyfMasas`, `youArePlaying`, `joinTheGame`, `playerHasJoinedTheGame`, `playerHasLeftTheGame`, `thereIsAGameInProgress`, `yourTurn`, `waitingForOpponent`, `gameOver`, `openSeries`, `openPairs`, `collectOpen`, `scores`, `waitingPlayers`)
+  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `join`, `withdraw`, `play`, `playingRightNow`, `playing`, `finished`, `players`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `winner`, `cancel`, `variant`, `standard`, `roundsToPlay`, `rounds`, `seeAllMasas`, `openMasas`, `masas`, `more`, `rated`, `leaderboard`, `oyunkeyfMasas`, `youArePlaying`, `joinTheGame`, `playerHasJoinedTheGame`, `playerHasLeftTheGame`, `thereIsAGameInProgress`, `yourTurn`, `waitingForOpponent`, `gameOver`, `openSeries`, `openPairs`, `collectOpen`, `scores`, `waitingPlayers`, `reconnecting`, `signIn`, `signUp`, `community`, `contact`, `forum`, `questionsAndAnswers`, `inbox`, `preferences`, `profile`, `logOut`, `online`, `offline`, `networkLagBetweenYouAndOyunkeyf`, `timeToProcessAMoveOnOyunkeyfServer`, `newToOyunkeyf`, `forgotPassword`, `passwordReset`, `email`, `password`, `username`, `usernameOrEmail`, `textIsTooShort`, `textIsTooLong`, `invalidCaptcha`, `haveAnAccount`, `changePassword`, `changeEmail`, `checkYourEmail`, `termsOfService`, `youNeedAnAccountToDoThat`, `computersAreNotAllowedToPlay`, `byRegisteringYouAgreeToBeBoundByOur`, `weHaveSentYouAnEmailClickTheLink`, `ifYouDoNotSeeTheEmailCheckOtherPlaces`, `memberSince`, `lastSeenActive`, `tpTimeSpentPlaying`)
 
   lazy val count = keys.size
 }

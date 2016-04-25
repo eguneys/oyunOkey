@@ -11,4 +11,9 @@ cd scalalib
 sbt publish-local
 cd ..
 
+git clone https://github.com/Nycto/Hasher
+cd Hasher
+sbt publish-local
+cd ..
+
 rm -rf "$dir"

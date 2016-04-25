@@ -1,0 +1,42 @@
+div.user_show .social {
+  position: relative;
+  border-top: 0;
+  padding: 0 0 5px 10px;
+  height: 52px;
+}
+
+div.user_show div.meat {
+  height: 325px;
+  position: relative;
+}
+
+div.user_show .rating_history {
+  position: absolute;
+  left: -10px;
+  display: block;
+  width: 477px;
+  height: 339px;
+}
+
+div.user_show .user-infos {
+  position: absolute;
+  top: 0;
+  left: 458px;
+  padding: 0 14px;
+  border-left: 1px solid #c0c0c0;
+  overflow: hidden;
+  width: 305px;
+  height: 325px;
+}
+
+div.user_show .stats {
+  display: block;
+  margin-top: 16px;
+}
+
+div.user_show div.content_box_inter.tabs {
+  margin-left: -8px;
+  padding-left: 30px;
+  width: 775px;
+  border: 1px solid #ccc;
+}

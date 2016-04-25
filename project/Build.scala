@@ -25,19 +25,20 @@ object ApplicationBuild extends Build {
       // shorter prod classpath
       scriptClasspath := Seq("*"),
       libraryDependencies ++= Seq(
-        scalaz, scalalib, config, RM,
+        scalaz, scalalib, hasher, config, RM,
         spray.caching, prismic,
         kamon.core, java8compat),
       TwirlKeys.templateImports ++= Seq(
         "oyun.game.{ Game, Player, Pov }",
         "oyun.masa.Masa",
+        "oyun.user.{ User, UserContext }",
         "oyun.api.Context",
         "oyun.app.templating.Environment._",
         "oyun.common.paginator.Paginator"
       )
   )
 
-  lazy val modules = Seq(common, db, user, game, setup, lobby, socket, hub, okey, round, masa, i18n)
+  lazy val modules = Seq(common, db, user, security, game, setup, lobby, socket, hub, okey, round, masa, i18n)
 
   lazy val moduleRefs = modules map projectToRef
   lazy val moduleCPDeps = moduleRefs map { new sbt.ClasspathDependency(_, None) }
@@ -47,8 +48,12 @@ object ApplicationBuild extends Build {
       play.api, RM)
   ) aggregate (moduleRefs: _*)
 
-  lazy val user = project("user", Seq(common, memo)).settings(
-    libraryDependencies ++= provided(play.api, play.test)
+  lazy val user = project("user", Seq(common, memo, db)).settings(
+    libraryDependencies ++= provided(play.api, play.test, RM, hasher)
+  )
+
+  lazy val security = project("security", Seq(common, db, user)).settings(
+    libraryDependencies ++= provided(play.api, play.test, RM, ws)
   )
 
   lazy val game = project("game", Seq(common, db, okey)).settings(
@@ -83,8 +88,8 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api)
   )
 
-  lazy val memo = project("memo", Seq(common)).settings(
-    libraryDependencies ++= Seq(spray.caching) ++ provided(play.api, play.test)
+  lazy val memo = project("memo", Seq(common, db)).settings(
+    libraryDependencies ++= Seq(spray.caching) ++ provided(play.api, play.test, RM)
   )
 
   lazy val socket = project("socket", Seq(common, hub)).settings(
