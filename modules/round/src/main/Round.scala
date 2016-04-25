@@ -1,18 +1,27 @@
 package oyun.round
 
+import scala.concurrent.duration._
+
 import akka.actor._
 
 import actorApi._, round._
 import oyun.game.{ GameRepo, Game, Pov, PlayerRef, Event }
 import oyun.hub.actorApi.map._
+import oyun.hub.SequentialActor
 
 private[round] final class Round(
   gameId: String,
   player: Player,
-  socketHub: ActorRef
-) extends Actor {
+  socketHub: ActorRef,
+  activeTtl: Duration) extends SequentialActor {
 
-  def receive = {
+  context setReceiveTimeout activeTtl
+
+  def process = {
+    case ReceiveTimeout => fuccess {
+      self ! SequentialActor.Terminate
+    }
+
     case p: HumanPlay =>
       handle(p.playerId) { pov =>
         player.human(p, self)(pov)

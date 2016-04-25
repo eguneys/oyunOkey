@@ -22,6 +22,7 @@ final class Env(
     val SocketTimeout = config duration "socket.timeout"
     val SocketName = config getString "socket.name"
     val ActorMapName = config getString "actor.map.name"
+    val ActiveTtl = config duration "active.ttl"
   }
   import settings._
 
@@ -31,9 +32,8 @@ final class Env(
     def mkActor(id: String) = new Round(
       gameId = id,
       player = player,
-      socketHub
-    )
-
+      socketHub,
+      activeTtl = ActiveTtl)
     def receive: Receive = ({
       case actorApi.GetNbRounds =>
         nbRounds = size
