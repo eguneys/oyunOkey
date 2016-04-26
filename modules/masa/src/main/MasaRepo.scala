@@ -77,6 +77,8 @@ object MasaRepo {
 
   def insert(masa: Masa) = coll.insert(masa)
 
+  def remove(masa: Masa) = coll.remove($doc("_id" -> masa.id))
+
   def exists(id: String) = coll.count($doc("_id" -> id).some) map (0 != )
 
   private def allCreatedSelect = createdSelect

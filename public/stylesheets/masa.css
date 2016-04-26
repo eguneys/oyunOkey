@@ -301,6 +301,11 @@ div.masa_box {
   width: 100%;
 }
 
+div.faq_page h1 {
+  display: block;
+  margin-bottom: 1em;
+}
+
 .leaderboard_title {
   font-size: 1.5em;
   margin-top: 30px;

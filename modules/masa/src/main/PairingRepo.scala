@@ -30,6 +30,7 @@ object PairingRepo {
   def recentByMasa(masaId: String, nb: Int): Fu[Pairings] =
     coll.find(selectMasa(masaId)).sort(recentSort).cursor[Pairing]().gather[List](nb)
 
+  def removeByMasa(masaId: String) = coll.remove(selectMasa(masaId)).void
 
   def count(masaId: String): Fu[Int] =
     coll.count(selectMasa(masaId).some)

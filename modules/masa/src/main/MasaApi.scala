@@ -92,10 +92,10 @@ private[masa] final class MasaApi(
     }
   }
 
-  // def wipe(masa: Masa): Funit =
-  //   MasaRepo.remove(masa).void >>
-  //     PairingRepo.remove(masa.id) >>
-  //     PlayerRepo.removeByMasa(masa.id) >>- socketReload(masa.id)
+  def wipe(masa: Masa): Funit =
+    MasaRepo.remove(masa).void >>
+      PairingRepo.removeByMasa(masa.id) >>
+      PlayerRepo.removeByMasa(masa.id) >>- socketReload(masa.id)
 
   def finish(oldMasa: Masa) {
     Sequencing(oldMasa.id)(MasaRepo.startedById) { masa =>

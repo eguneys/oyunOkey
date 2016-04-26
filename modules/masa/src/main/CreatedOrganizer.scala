@@ -31,12 +31,17 @@ private[masa] final class CreatedOrganizer(
       MasaRepo.allCreated map { masas =>
         masas foreach { masa =>
           PlayerRepo countActive masa.id foreach {
-            // case 0 => api wipe masa
+            case 0 => api wipe masa
             case 4 => api start masa
-            case _ => // ejectLeavers(masa)
+            //case _ => ejectLeavers(masa)
           }
         }
         oyun.mon.masa.created(masas.size)
       } andThenAnyway scheduleNext
   }
+
+  // private def ejectLeavers(masa: Masa) =
+  //   PlayerRepo userIds masa.id foreach {
+  //     _ filterNot isOnline foreach { api.withdraw(masa.id, _) }
+  //   }
 }

@@ -57,6 +57,8 @@ object PlayerRepo {
   def countActive(masaId: String): Fu[Int] =
     coll.count(Some(selectMasa(masaId) ++ selectActive))
 
+  def removeByMasa(masaId: String) = coll.remove(selectMasa(masaId)).void
+
   def join(masaId: String, player: Player, oside: Option[Side]) =
     freeSides(masaId) flatMap { l =>
       l.find(s => (oside | s) == s) match {
