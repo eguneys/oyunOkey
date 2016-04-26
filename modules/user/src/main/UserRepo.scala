@@ -2,6 +2,8 @@ package oyun.user
 
 import com.roundeights.hasher.Implicits._
 import org.joda.time.DateTime
+import reactivemongo.api._
+import reactivemongo.bson._
 
 import oyun.db.dsl._
 
@@ -26,11 +28,25 @@ object UserRepo {
   val enabledSelect = $doc(F.enabled -> true)
 
   def authenticateById(id: ID, password: String): Fu[Option[User]] =
-    fuccess(None) // checkPasswordById(id, password) flatMap { _ ?? coll.byId[User](id) }
+    checkPasswordById(id, password) flatMap { _ ?? coll.byId[User](id) }
 
 
   def authenticateByEmail(email: String, password: String): Fu[Option[User]] = fuccess(None)
 
+
+  private case class AuthData(password: String, salt: String, enabled: Boolean, sha512: Option[Boolean]) {
+    def compare(p: String) = password == (~sha512).fold(hash512(p, salt), hash(p, salt))
+  }
+
+  private implicit val AuthDataBSONHandler = Macros.handler[AuthData]
+
+  def checkPasswordById(id: ID, password: String): Fu[Boolean] =
+    checkPassword($id(id), password)
+
+  private def checkPassword(select: Bdoc, password: String): Fu[Boolean] =
+    coll.uno[AuthData](select) map {
+      _ ?? ( data  => data.enabled && data.compare(password))
+    }
 
   def create(username: String, password: String, email: Option[String], mobileApiVersion: Option[Int]): Fu[Option[User]] =
     !nameExists(username) flatMap {
@@ -71,4 +87,5 @@ object UserRepo {
   }
 
   private def hash(pass: String, salt: String): String = "%s{$s}".format(pass, salt).sha1
+  private def hash512(pass: String, salt: String): String = "%s{%s}".format(pass, salt).sha512
 }

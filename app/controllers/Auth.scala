@@ -2,6 +2,7 @@ package controllers
 
 import play.api.data._, Forms._
 import play.api.i18n.Messages.Implicits._
+import play.api.libs.json._
 import play.api.mvc._, Results._
 import play.api.Play.current
 
@@ -17,6 +18,30 @@ object Auth extends OyunController {
   private def env = Env.security
   private def api = env.api
   private def forms = env.forms
+
+  private def mobileUserOk(u: UserModel): Fu[Result] =
+    funit map { _ =>
+      Ok {
+        Env.user.jsonView(u)
+      }
+    }
+
+  private def authenticateUser(u: UserModel)(implicit ctx: Context) = {
+    implicit val req = ctx.req
+
+    api.saveAuthentication(u.id) flatMap { sessionId =>
+      negotiate(
+        html = Redirect {
+          get("referrer").filter(_.nonEmpty) orElse req.session.get(api.AccessUri) getOrElse routes.Lobby.home.url
+        }.fuccess,
+        api = _ => mobileUserOk(u)
+      ) map {
+        _ withCookies OyunCookie.withSession { session =>
+          session + ("sessionId" -> sessionId) - api.AccessUri
+        }
+      }
+    } recoverWith authRecovery
+  }
 
   private def authRecovery(implicit ctx: Context): PartialFunction[Throwable, Fu[Result]] = {
     case _ => BadRequest.fuccess
@@ -34,12 +59,17 @@ object Auth extends OyunController {
         html = Unauthorized(html.auth.login(err, get("referrer"))).fuccess,
         api = _ => Unauthorized(errorsAsJson(err)).fuccess
       ),
-      _.fold(InternalServerError("Authentication error").fuccess)(_ => Ok("authsuccess").fuccess)
+      _.fold(InternalServerError("Authentication error").fuccess)(authenticateUser)
     )
   }
 
   def logout = Open { implicit ctx =>
-    Ok("lkajdf").fuccess
+    implicit val req = ctx.req
+    req.session get "sessionId" foreach oyun.security.Store.delete
+    negotiate(
+      html = fuccess(Redirect(routes.Main.mobile)),
+      api = apiVersion => Ok(Json.obj("ok" -> true)).fuccess
+    ) map (_ withCookies OyunCookie.newSession)
   }
 
   def signup = Open { implicit ctx =>

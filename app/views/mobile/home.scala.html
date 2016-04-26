@@ -1,0 +1,16 @@
+@(apkDoc: io.prismic.Document, resolver: io.prismic.DocumentLinkResolver)(implicit ctx: Context)
+
+@base.layout(
+  title = "Mobile",
+  moreCss = cssTag("mobile.css")) {
+    <div class="mobile content_box small_box clearfix">
+      <div class="right-side">
+      </div>
+      <div class="left-side">
+        <h1>@trans.playOkeyEverywhere()</h1>
+        <div class="apk" style="margin-top: 20px">
+          @Html(~apkDoc.getHtml("doc.content", resolver))
+        </div>
+      </div>
+    </div>
+}

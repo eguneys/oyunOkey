@@ -263,6 +263,15 @@
       });
       return false;
     });
+
+    if (['#hook', '#masa'].indexOf(location.hash) !== -1) {
+      $startButtons
+        .find('a.config_' + location.hash.replace('#', ''))
+        .each(function() {
+          console.log('ineach');
+          $(this).attr("href", $(this).attr("href") + location.search);
+        }).click();
+    }
   }
 
   function startMasa(element, cfg) {

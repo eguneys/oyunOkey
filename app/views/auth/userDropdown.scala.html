@@ -3,8 +3,10 @@
 <a id="user_tag" class="toggle toggle_auth link">@me.username</a>
 <div class="links dropdown">
   <a href="@routes.User.show(me.username)" class="blank_if_play"><span class="text" data-icon="r">@trans.profile()</span></a>
+  <!--
   <a href="#"><span class="text" data-icon="e">@trans.inbox()</span></a>
   <a href="#"><span class="text" data-icon="%">@trans.preferences()</span></a>
+  -->
   <a href="@routes.Auth.logout"><span class="text" data-icon="w">@trans.logOut()</span></a>
   <span class="sep"></span>
   <a class="status" href="/lag">

@@ -4,16 +4,18 @@
   <section>
     <a href="/">@trans.play()</a>
     <div>
-      <a href="/?any#hook">@trans.createAGame()</a>
-      <a href="/@routes.Masa.home()">@trans.masas()</a>
+      <a href="/?any#masa">@trans.createAGame()</a>
+      <a href="@routes.Masa.home()">@trans.masas()</a>
     </div>
   </section>
   <section>
-    <a href="#">@trans.community()</a>
+    <a href="@routes.User.list">@trans.community()</a>
     <div>
-      <a href="#">@trans.players()</a>
+      <a href="@routes.User.list">@trans.players()</a>
+      <!-- 
       <a href="#">@trans.forum()</a>
       <a href="#">@trans.questionsAndAnswers()</a>
+      -->
     </div>
   </section>
 </div>

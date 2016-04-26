@@ -33,4 +33,9 @@ object Store {
       $doc("_id" -> sessionId, "up" -> true),
       $doc("user" -> true, "fp" -> true, "_id" -> false)
     ).uno[UserIdAndFingerprint]
+
+  def delete(sessionId: String): Funit =
+    coll.update(
+      $doc("_id" -> sessionId),
+      $doc("$set" -> $doc("up" -> false))).void
 }

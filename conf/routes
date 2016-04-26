@@ -43,6 +43,10 @@ GET     /password/reset                 controllers.Auth.passwordReset
 GET     /variant                controllers.Page.variantHome
 GET     /variant/:key           controllers.Page.variant(key)
 
+# Misc
+GET     /mobile         controllers.Main.mobile
+GET     /lag            controllers.Main.lag
+
 # Pages
 
 GET     /terms-of-service       controllers.Page.tos

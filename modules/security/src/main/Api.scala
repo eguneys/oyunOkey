@@ -9,6 +9,9 @@ import play.api.mvc.RequestHeader
 import oyun.user.{ User, UserRepo }
 
 final class Api(emailAddress: EmailAddress) {
+
+  val AccessUri = "access_uri"
+
   def loginForm = Form(mapping(
     "username" -> nonEmptyText,
     "password" -> nonEmptyText
@@ -29,7 +32,7 @@ final class Api(emailAddress: EmailAddress) {
     (emailAddress.validate(usernameOrEmail) match {
       case Some(email) => UserRepo.authenticateByEmail(email, password)
       case None => UserRepo.authenticateById(User normalize usernameOrEmail, password)
-    }) awaitSeconds 2
+    }) awaitSeconds 4
 
   def restoreUser(req: RequestHeader): Fu[Option[FingerprintedUser]] =
     reqSessionId(req) ?? { sessionId =>
