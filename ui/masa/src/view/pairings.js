@@ -3,7 +3,7 @@ import m from 'mithril';
 function round(ctrl, p) {
   return {
     tag: p.s === 0 ? 'playing' : 'finished',
-    children: [ctrl.trans('round'), ' ',  p.r + 1]
+    children: [ctrl.trans('roundX', p.r + 1)]
   };
 }
 

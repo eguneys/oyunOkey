@@ -20,6 +20,7 @@ variant=Tür
 standard=Standard
 roundsToPlay=El sayısı
 rounds=El
+roundX=%s. el
 seeAllMasas=Tüm masaları gör
 openMasas=Açık Masalar
 masas=Masalar

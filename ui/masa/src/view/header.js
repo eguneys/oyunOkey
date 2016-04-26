@@ -13,9 +13,7 @@ function clock(ctrl) {
       m('div.players',
         [m('span.shy', ctrl.trans('waitingPlayers')),
          m('span.time.text', playersToStart)]));
-  }
-
-  if (d.nbRounds || d.nbRounds === 0) {
+  } else if (d.nbRounds || d.nbRounds === 0) {
     children.push(m('div.round', [d.nbRounds, '/', d.rounds]));
   }
 

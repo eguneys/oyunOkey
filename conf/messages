@@ -21,6 +21,7 @@ standard=Standard
 yuzbirOkey=101 Okey
 roundsToPlay=Rounds to play
 rounds=Rounds
+roundX=Round %s
 seeAllMasas=See all tables
 openMasas=Open tables
 masas=Tables

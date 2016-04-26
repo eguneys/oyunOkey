@@ -79,12 +79,16 @@ module.exports = {
         pag.currentPageResults.map(partial(playerTr, ctrl)) :
         m.trust(oyunkeyf.spinnerHtml);
 
+    var playersToStart = 4 - ctrl.data.nbPlayers;
+    var canJoinOrWithdraw = playersToStart > 0 ||
+        (ctrl.data.me && ctrl.data.me.active);
+
     return m('div.standing_wrap',
              m('table.slist.standing', [
                m('thead',
                  m('tr',
                    m('th.pager[colspan=3]', [
-                     button.joinWithdraw(ctrl)
+                     canJoinOrWithdraw ? button.joinWithdraw(ctrl) : null
                    ])
                   )),
                m('tbody', {
