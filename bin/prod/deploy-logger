@@ -1,0 +1,6 @@
+#!/bin/sh
+
+REMOTE="anand"
+
+rsync -av conf/prod-logger.xml $REMOTE:/etc/oyunkeyf/oyunkeyf.logger.xml
+

@@ -1,0 +1,84 @@
+<!-- The default logback configuration that play uses if no other configuration is provided -->
+<configuration>
+
+  <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
+
+  <!-- STDOUT that accepts WARN and ERROR -->
+  <!-- Exceptions yes, stacktraces no -->
+  <appender name="STDOUT_WARN" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter"><level>WARN</level></filter>
+    <encoder><pattern>%-5level %logger{30} - %message%n%xException{0}</pattern></encoder>
+  </appender>
+
+  <!-- STDOUT that accepts INFO and above -->
+  <appender name="STDOUT_INFO" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter"><level>INFO</level></filter>
+    <encoder><pattern>%-5level %logger{30} - %message%n%xException{0}</pattern></encoder>
+  </appender>
+
+  <!-- File where every INFO and above is written -->
+  <appender name="ALL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter"><level>INFO</level></filter>
+    <file>/var/log/oyunkeyf/all.log</file>
+    <encoder><pattern>%date %-5level %logger{30} %n%message%n%xException{30}</pattern></encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/oyunkeyf/all-log-%d{yyyy-MM-dd}.gz</fileNamePattern>
+      <maxHistory>14</maxHistory>
+    </rollingPolicy>
+  </appender>
+
+  <!-- Asynchrnously write to the above file -->
+  <appender name="ASYNC_ALL_FILE" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="ALL_FILE"/>
+  </appender>
+
+  <!--By default, write WARNs in STDOUT and INFOs in the ALL file -->
+  <root level="INFO">
+    <appender-ref ref="ASYNC_ALL_FILE" />
+    <appender-ref ref="STDOUT_WARN" />
+  </root>
+
+
+  <!-- But allow some interesting INFOs in STDOUT -->
+  <logger name="boot" level="INFO"><appender-ref ref="STDOUT_INFO" /></logger>
+  <logger name="play" level="INFO"><appender-ref ref="STDOUT_INFO" /></logger>
+  <logger name="akka" level="INFO"><appender-ref ref="STDOUT_INFO" /></logger>
+  <logger name="reactivemongo" level="INFO"><appender-ref ref="STDOUT_INFO" /></logger>
+
+  <logger name="lobby" level="DEBUG">
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>/var/log/oyunkeyf/lobby.log</file>
+      <encoder><pattern>%date %-5level %logger{30} %message%n%xException</pattern></encoder>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <fileNamePattern>/var/log/oyunkeyf/lobby-log-%d{yyyy-MM-dd}.gz</fileNamePattern>
+        <maxHistory>7</maxHistory>
+      </rollingPolicy>
+    </appender>
+  </logger>
+
+  <logger name="masa" level="DEBUG">
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>/var/log/oyunkeyf/masa.log</file>
+      <encoder><pattern>%date %-5level %logger{30} %message%n%xException</pattern></encoder>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <fileNamePattern>/var/log/oyunkeyf/masa-log-%d{yyyy-MM-dd}.gz</fileNamePattern>
+        <maxHistory>7</maxHistory>
+      </rollingPolicy>
+    </appender>
+  </logger>
+
+  <!--  <logger name="java.nio.channels.ClosedChannelException" level="OFF" /> -->
+
+  <!-- Set a specific actor to DEBUG -->
+  <!-- <logger name="actors.MyActor" level="DEBUG" /> -->
+
+  <!-- Avoid "HTTP header is larger than 4096 bytes." messages -->
+  <logger name="play.core.server.netty.PlayDefaultUpstreamHandler" level="ERROR" />
+
+  <!-- Off these ones as they are annoying, and anyway we manage configuration ourself -->
+  <!-- <logger name="com.avaje.ebean.config.PropertyMapLoader" level="OFF" /> -->
+  <!-- <logger name="com.avaje.ebeaninternal.server.core.XmlConfigLoader" level="OFF" /> -->
+  <!-- <logger name="com.avaje.ebeaninternal.server.lib.BackgroundThread" level="OFF" /> -->
+  <!-- <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" /> -->
+
+</configuration>
