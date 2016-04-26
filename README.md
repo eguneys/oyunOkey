@@ -111,3 +111,20 @@ Min Open Pair
 Open Status for each player
 last move indicator / oyun ozeti
 How to play hopscotch
+
+Game Status
+
+Has withdrawn?
+Can discard
+
+User opened hand
+User draw middle
+User discard
+
+Game started turn east
+east draw middle
+east open series
+east discard turn west
+west draw left
+west open series
+west collect open

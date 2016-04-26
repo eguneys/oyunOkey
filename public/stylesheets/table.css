@@ -85,6 +85,58 @@ div.table_right .scores .top {
   color: #747474;
 }
 
+/* .table_right .replay { */
+/*   flex: 2 1 0px; */
+/*   position: relative; */
+/* } */
+
+.table_right .replay_wrap {
+  width: 100%;
+  padding: 10px;
+  padding-top: 0px;
+  box-sizing: border-box;
+}
+
+.table_right .replay .moves {
+  border-top: 1px solid #e2e2e2;
+  border-bottom: 1px solid #e2e2e2;
+  margin: 0 -10px 0 -10px;
+  height: 115px;
+  overflow: auto;
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+.table_right .replay turn {
+  display: flex;
+  height: 26px;
+}
+
+.table_right .replay turn>index,
+.table_right .replay turn>move {
+  display: inline-block;
+  height: 22px;
+  line-height: 22px;
+}
+
+.table_right .replay turn>index {
+  flex: 0 0 22px;
+  padding: 2px 0;
+  background: #e0e0e0;
+  text-align: center;
+  font-family: 'Roboto';
+  font-weight: 300;
+}
+
+.table_right .replay move {
+  cursor: pointer;
+  transition: background-color 0.13s;
+  flex: 1 1 50%;
+  font-size: 12px;
+  padding: 2px 5px;
+}
+
 div.game_masa {
   max-height: 180px;
   overflow: hidden;
@@ -222,7 +274,7 @@ div.scores_info td {
 #oyunkeyf {
   display: flex;
   /* debug */
-  /* margin-left: -250px; */
+  margin-left: -250px;
 }
 
 div.table_middle {

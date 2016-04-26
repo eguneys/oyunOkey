@@ -1,6 +1,7 @@
 import m from 'mithril';
 import okeyground from 'okeyground';
 import renderUser from './user';
+import renderReplay from './replay';
 import { game } from 'game';
 import button from './button';
 
@@ -231,7 +232,8 @@ module.exports = function(ctrl) {
       ]),
       m('div.table_side.table_right', [
         renderSeat(ctrl, d.opponentRight),
-        game.playable(ctrl.data) ? null : renderTableScores(ctrl),
+        // game.playable(ctrl.data) ? null : renderTableScores(ctrl),
+        renderReplay(ctrl),
         ctrl.vm.scoresheetInfo.side ? renderTableScoreInfo(ctrl) : null
       ])
     ])
