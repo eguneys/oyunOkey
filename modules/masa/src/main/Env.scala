@@ -18,6 +18,7 @@ final class Env(
   db: oyun.db.Env,
   hub: oyun.hub.Env,
   lightUser: String => Option[oyun.common.LightUser],
+  isOnline: String => Boolean,
   scheduler: oyun.common.Scheduler) {
 
   private val settings = new {
@@ -36,7 +37,10 @@ final class Env(
   lazy val cached = new Cached(
     createdTtl = CreatedCacheTtl)
 
-  private def isPlayerOnline(player: Player) = true
+  private def isAnonOnline(masaId: String, player: Player) =
+    socketHub ? Ask(masaId, actorApi.GetWaitingPlayers) mapTo manifest[Set[String]] map (_.exists(player.id==))
+
+  private def isPlayerOnline(masaId: String)(player: Player) = player.userId.fold(isAnonOnline(masaId, player))(funit inject isOnline(_))
 
   lazy val api = new MasaApi(
     sequencers = sequencerMap,
@@ -102,6 +106,7 @@ object Env {
     db = oyun.db.Env.current,
     hub = oyun.hub.Env.current,
     lightUser = oyun.user.Env.current.lightUser,
+    isOnline = oyun.user.Env.current.isOnline,
     scheduler = oyun.common.PlayApp.scheduler
   )
 }

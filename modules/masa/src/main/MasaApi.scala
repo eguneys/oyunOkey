@@ -70,11 +70,18 @@ private[masa] final class MasaApi(
 
   def withdraw(masaId: String, playerId: String): Fu[Unit] = {
     val promise = Promise[Unit]()
-    Sequencing(masaId)(MasaRepo.enterableById) { masa =>
-      PlayerRepo.withdraw(masa.id, playerId) >> updateNbPlayers(masa.id) >>- {
-        socketReload(masa.id)
-        promise success()
-      }
+    Sequencing(masaId)(MasaRepo.enterableById) { 
+      case masa if masa.isCreated =>
+        PlayerRepo.remove(masa.id, playerId) >> updateNbPlayers(masa.id) >>- {
+          socketReload(masa.id)
+          promise success()
+        }
+      case masa if masa.isStarted =>
+        PlayerRepo.withdraw(masa.id, playerId) >> updateNbPlayers(masa.id) >>- {
+          socketReload(masa.id)
+          promise success()
+        }
+      case _ => funit
     }
     promise.future
   }

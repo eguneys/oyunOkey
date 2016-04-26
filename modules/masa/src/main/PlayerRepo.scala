@@ -59,6 +59,9 @@ object PlayerRepo {
 
   def removeByMasa(masaId: String) = coll.remove(selectMasa(masaId)).void
 
+  def remove(masaId: String, playerId: String) =
+    coll.remove(selectMasaPlayer(masaId, playerId)).void
+
   def join(masaId: String, player: Player, oside: Option[Side]) =
     freeSides(masaId) flatMap { l =>
       l.find(s => (oside | s) == s) match {
@@ -85,6 +88,9 @@ object PlayerRepo {
 
   def freeSides(masaId: String): Fu[List[Side]] =
     activePlayers(masaId) map { l => Side.all filterNot (l map (_.side) toSet) }
+
+  def allByMasa(masaId: String): Fu[List[Player]] =
+    coll.find(selectMasa(masaId)).cursor[Player]().gather[List]()
 
 
   def playerInfo(masaId: String, playerId: String): Fu[Option[PlayerInfo]] = find(masaId, playerId) map {

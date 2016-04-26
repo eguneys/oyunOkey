@@ -73,7 +73,7 @@ object Masa extends OyunController with TheftPrevention {
         },
         api = _ => OptionFuOk(repo enterableById id) { masa =>
           env.api.join(masa.id, ref, side) inject
-          Json.obj("ok" -> true)
+            Json.obj("ok" -> true)
         }
       ) flatMap withMasaAnonCookie(ctx.isAnon, ref.id)
     }
@@ -122,7 +122,9 @@ object Masa extends OyunController with TheftPrevention {
 
   def websocket(id: String, apiVersion: Int) = SocketOption[JsValue] { implicit ctx =>
     get("sri") ?? { uid =>
-      env.socketHandler.join(id, uid, ctx.me)
+      playerForReq(id) flatMap {
+        env.socketHandler.join(id, uid, ctx.me, _)
+      }
     }
   }
 }

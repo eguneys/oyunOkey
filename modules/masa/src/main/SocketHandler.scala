@@ -18,12 +18,13 @@ private[masa] final class SocketHandler(
   def join(
     masaId: String,
     uid: String,
-    user: Option[User]): Fu[Option[JsSocketHandler]] =
+    user: Option[User],
+    player: Option[Player]): Fu[Option[JsSocketHandler]] =
     MasaRepo.exists(masaId) flatMap {
       _ ?? {
         for {
           socket <- socketHub ? Get(masaId) mapTo manifest[ActorRef]
-          join = Join(uid = uid, user = user)
+          join = Join(uid = uid, user = user, player = player)
           handler <- Handler(socket, uid, join) {
             case Connected(enum, member) =>
               (controller(socket, masaId, uid, member), enum, member)

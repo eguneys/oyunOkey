@@ -26,6 +26,8 @@ case class Masa(
   def roundString =
     s"$nbRounds/$rounds " + "el"
 
+  def isRecentlyCreated = isCreated && (nowSeconds - createdAt.getSeconds) < 60
+
   def roundsToFinish = (rounds - nbRounds) max 0
 
   def isAlmostFinished = roundsToFinish == 0

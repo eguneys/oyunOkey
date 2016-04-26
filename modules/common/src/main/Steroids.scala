@@ -27,6 +27,15 @@ trait Steroids
     with BooleanSteroids
     with OptionSteroids
 
+    with JodaTimeSteroids
+
+trait JodaTimeSteroids {
+  import org.joda.time.DateTime
+  implicit final class OyunPimpedDateTime(date: DateTime) {
+    def getSeconds: Long = date.getMillis / 1000
+  }
+}
+
 trait BooleanSteroids {
   /*
    * Replaces scalaz boolean ops

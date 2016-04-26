@@ -7,7 +7,7 @@ import actorApi._
 
 private[masa] final class StartedOrganizer(
   api: MasaApi,
-  isOnline: Player => Boolean,
+  isOnline: String => Player => Fu[Boolean],
   socketHub: ActorRef) extends Actor {
 
   override def preStart {

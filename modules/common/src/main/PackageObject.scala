@@ -11,6 +11,7 @@ trait PackageObject extends Steroids with WithFuture {
 
   def nowNanos: Long = System.nanoTime()
   def nowMillis: Long = System.currentTimeMillis()
+  def nowSeconds: Int = (nowMillis / 1000).toInt
 
   implicit final def runOptionT[F[+_], A](ot: OptionT[F, A]): F[Option[A]] = ot.run
 

@@ -22,9 +22,20 @@ private[oyun] final class Socket(
 
   def receiveSpecific = {
     case StartGame(game) =>
-      notifyAll("redirect", game.id)
+      //notifyAll("redirect", game.id)
+      game.players foreach { player =>
+        player.playerId foreach { playerId =>
+          membersByPlayerId(playerId) foreach { member =>
+            notifyMember("redirect", game.id)(member)
+          }
+        }
+      }
 
     case Reload => notifyReload
+
+    case GetWaitingPlayers =>
+      val waitingPlayers = playerIds.toSet
+      sender ! waitingPlayers
 
     case PingVersion(uid, v) => {
       ping(uid)
@@ -38,9 +49,9 @@ private[oyun] final class Socket(
 
     case GetVersion => sender ! history.version
 
-    case Join(uid, user) =>
+    case Join(uid, user, player) =>
       val (enumerator, channel) = Concurrent.broadcast[JsValue]
-      val member = Member(channel, user)
+      val member = Member(channel, user, player)
       addMember(uid, member)
       sender ! Connected(enumerator, member)
 
@@ -58,4 +69,10 @@ private[oyun] final class Socket(
       context.system.scheduler.scheduleOnce(300 millis, self, NotifyReload)
     }
   }
+
+  def membersByPlayerId(playerId: String): Iterable[Member] = members collect {
+    case (_, member) if member.playerId.contains(playerId) => member
+  }
+
+  def playerIds: Iterable[String] = members.values.flatMap(_.playerId)
 }
