@@ -1,4 +1,4 @@
-// Generated with bin/trans-dump at 2016-04-26 13:02:31 UTC
+// Generated with bin/trans-dump at 2016-04-26 18:43:27 UTC
 package oyun.i18n
 
 import play.twirl.api.Html
@@ -71,6 +71,14 @@ final class I18nKeys(translator: Translator) {
   val `collectOpen` = new Key("collectOpen")
   val `scores` = new Key("scores")
   val `waitingPlayers` = new Key("waitingPlayers")
+  val `gameEndByHand` = new Key("gameEndByHand")
+  val `gameEndByPair` = new Key("gameEndByPair")
+  val `gameEndByDiscardOkey` = new Key("gameEndByDiscardOkey")
+  val `handZero` = new Key("handZero")
+  val `handOkeyLeft` = new Key("handOkeyLeft")
+  val `handNotOpened` = new Key("handNotOpened")
+  val `handOpenedPair` = new Key("handOpenedPair")
+  val `handOpenedSome` = new Key("handOpenedSome")
   val `reconnecting` = new Key("reconnecting")
   val `signIn` = new Key("signIn")
   val `signUp` = new Key("signUp")
@@ -114,7 +122,7 @@ final class I18nKeys(translator: Translator) {
   val `isOyunkeyfLagging` = new Key("isOyunkeyfLagging")
   val `playOkeyEverywhere` = new Key("playOkeyEverywhere")
 
-  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `join`, `withdraw`, `play`, `playingRightNow`, `playing`, `finished`, `players`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `winner`, `cancel`, `variant`, `standard`, `yuzbirOkey`, `roundsToPlay`, `rounds`, `roundX`, `seeAllMasas`, `openMasas`, `masas`, `more`, `rated`, `leaderboard`, `oyunkeyfMasas`, `masaNotFound`, `masaDoesNotExist`, `masaMayHaveBeenCancelled`, `returnToLobby`, `returnToMasasHomepage`, `youArePlaying`, `joinTheGame`, `playerHasJoinedTheGame`, `playerHasLeftTheGame`, `thereIsAGameInProgress`, `yourTurn`, `waitingForOpponent`, `gameOver`, `openSeries`, `openPairs`, `collectOpen`, `scores`, `waitingPlayers`, `reconnecting`, `signIn`, `signUp`, `community`, `contact`, `forum`, `questionsAndAnswers`, `inbox`, `preferences`, `profile`, `logOut`, `online`, `offline`, `networkLagBetweenYouAndOyunkeyf`, `timeToProcessAMoveOnOyunkeyfServer`, `newToOyunkeyf`, `forgotPassword`, `passwordReset`, `email`, `password`, `username`, `usernameOrEmail`, `textIsTooShort`, `textIsTooLong`, `invalidCaptcha`, `haveAnAccount`, `changePassword`, `changeEmail`, `checkYourEmail`, `termsOfService`, `youNeedAnAccountToDoThat`, `computersAreNotAllowedToPlay`, `byRegisteringYouAgreeToBeBoundByOur`, `weHaveSentYouAnEmailClickTheLink`, `ifYouDoNotSeeTheEmailCheckOtherPlaces`, `memberSince`, `lastSeenActive`, `tpTimeSpentPlaying`, `nbConnectedPlayers`, `nbGamesInPlay`, `isOyunkeyfLagging`, `playOkeyEverywhere`)
+  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `join`, `withdraw`, `play`, `playingRightNow`, `playing`, `finished`, `players`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `winner`, `cancel`, `variant`, `standard`, `yuzbirOkey`, `roundsToPlay`, `rounds`, `roundX`, `seeAllMasas`, `openMasas`, `masas`, `more`, `rated`, `leaderboard`, `oyunkeyfMasas`, `masaNotFound`, `masaDoesNotExist`, `masaMayHaveBeenCancelled`, `returnToLobby`, `returnToMasasHomepage`, `youArePlaying`, `joinTheGame`, `playerHasJoinedTheGame`, `playerHasLeftTheGame`, `thereIsAGameInProgress`, `yourTurn`, `waitingForOpponent`, `gameOver`, `openSeries`, `openPairs`, `collectOpen`, `scores`, `waitingPlayers`, `gameEndByHand`, `gameEndByPair`, `gameEndByDiscardOkey`, `handZero`, `handOkeyLeft`, `handNotOpened`, `handOpenedPair`, `handOpenedSome`, `reconnecting`, `signIn`, `signUp`, `community`, `contact`, `forum`, `questionsAndAnswers`, `inbox`, `preferences`, `profile`, `logOut`, `online`, `offline`, `networkLagBetweenYouAndOyunkeyf`, `timeToProcessAMoveOnOyunkeyfServer`, `newToOyunkeyf`, `forgotPassword`, `passwordReset`, `email`, `password`, `username`, `usernameOrEmail`, `textIsTooShort`, `textIsTooLong`, `invalidCaptcha`, `haveAnAccount`, `changePassword`, `changeEmail`, `checkYourEmail`, `termsOfService`, `youNeedAnAccountToDoThat`, `computersAreNotAllowedToPlay`, `byRegisteringYouAgreeToBeBoundByOur`, `weHaveSentYouAnEmailClickTheLink`, `ifYouDoNotSeeTheEmailCheckOtherPlaces`, `memberSince`, `lastSeenActive`, `tpTimeSpentPlaying`, `nbConnectedPlayers`, `nbGamesInPlay`, `isOyunkeyfLagging`, `playOkeyEverywhere`)
 
   lazy val count = keys.size
 }
