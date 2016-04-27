@@ -137,7 +137,8 @@ case class Game(
       binaryPlayer = BinaryFormat.player write game.player,
       opensLastMove = OpensLastMove(
         opens = history.openStates,
-        lastMoves = history.lastMoves),
+        lastMoves = history.lastMoves,
+        turn = turns),
       turns = game.turns,
       status = situation.status | status
     )
@@ -284,11 +285,12 @@ case class BinaryOpens(
   save: Option[(ByteArray, BinaryOpens)] = None)
 
 case class OpensLastMove(
+  turn: Int,
   lastMoves: List[Uci],
   opens: Sides[Option[Opens]])
 
 object OpensLastMove {
-  def init = OpensLastMove(lastMoves = Nil, opens = Sides[Option[Opens]])
+  def init = OpensLastMove(lastMoves = Nil, turn = 0, opens = Sides[Option[Opens]])
 
   import reactivemongo.bson._
   import oyun.db.BSON
@@ -310,10 +312,16 @@ object OpensLastMove {
 
       val opens = r.get[Sides[Option[Opens]]]("op")
 
-      OpensLastMove(lastMoves, opens)
+      val turn = r.get[Int]("t")
+
+      OpensLastMove(
+        turn = turn,
+        lastMoves = lastMoves,
+        opens = opens)
     }
 
     def writes(w: BSON.Writer, o: OpensLastMove) = BSONDocument(
+      "t" -> o.turn,
       "lm" -> Uci.writeList(o.lastMoves),
       "op" -> o.opens
     )

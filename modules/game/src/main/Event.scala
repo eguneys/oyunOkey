@@ -80,6 +80,7 @@ object Event {
     def data = Move.data(fen, state, possibleMoves) {
       Json.obj(
         "key" -> action.key,
+        "uci" -> action.toUci.uci,
         "drawmiddle" -> drawMiddle.map(_.data),
         "discard" -> discard.map(_.data),
         "opens" -> opens.map(_.data),

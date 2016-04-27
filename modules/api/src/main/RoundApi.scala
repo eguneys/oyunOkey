@@ -16,9 +16,18 @@ private[api] final class RoundApi(
     jsonView.playerJson(pov, ctx.me) zip
       getMasa(pov.game) map {
         case ((json, masaOption)) => (
-          withMasa(pov, masaOption)_
+          withMasa(pov, masaOption)_ compose
+            withSteps(pov)_
         )(json)
       }
+
+  private def withSteps(pov: Pov)(obj: JsObject) =
+    obj + ("steps" -> oyun.round.StepBuilder(
+      id = pov.game.id,
+      ply = pov.game.opensLastMove.turn,
+      pgnMoves = pov.game.opensLastMove.lastMoves.map(_.uci),
+      side = pov.game.turnSide,
+      variant = pov.game.variant))
 
   private def withMasa(pov: Pov, masaOption: Option[Masa])(json: JsObject) =
     masaOption.fold(json) { data =>

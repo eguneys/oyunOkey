@@ -1,7 +1,14 @@
 import { game } from 'game';
+import round from './round';
 import title from './title';
 
 module.exports = {
+  startPly: function(data) {
+    var lp = round.lastPly(data);
+    var ls = round.lastStep(data);
+
+    return [lp, Math.min(0, ls.moves.length - 1)];
+  },
   yolo: function(ctrl) {
     var d = ctrl.data;
 

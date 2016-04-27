@@ -71,7 +71,6 @@ div.table_side .player_wrap {
 }
 
 div.table_right .scores {
-  width: 100%;
   border: 1px solid #ccc;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
@@ -83,6 +82,63 @@ div.table_right .scores .top {
   padding: 3px 5px;
   font-weight: bold;
   color: #747474;
+}
+
+div.sideboard_content {
+  width: 100%;
+}
+
+div.sideboard_menu {
+  text-align: center;
+  border-top: 1px solid #c0c0c0;
+  height: 21px;
+}
+
+div.sideboard_panels {
+  border: 1px solid #ccc;
+  border-top: none;
+  border-bottom: none;
+}
+
+div.sideboard_panels .panel {
+  height: 260px;
+  display: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: left;
+}
+
+div.sideboard_panels .replay {
+  overflow: auto;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+div.sideboard_panels>div.active {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+div.sideboard_panels .replay .turns {
+  flex: 1;
+  overflow: auto;
+}
+
+div.sideboard_menu>a {
+  background: #f0f0f0;
+  border: 1px solid #c0c0c0;
+  padding: 2px 8px;
+  height: 16px;
+  line-height: 16px;
+  margin: -1px 0 0 -1px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+div.sideboard_menu > a.active {
+  border-bottom: 2px solid #d85000;
+  background-color: #eee;
+  border-top: 1px solid #eee;
 }
 
 /* .table_right .replay { */
@@ -98,10 +154,10 @@ div.table_right .scores .top {
 }
 
 .table_right .replay .moves {
-  border-top: 1px solid #e2e2e2;
-  border-bottom: 1px solid #e2e2e2;
-  margin: 0 -10px 0 -10px;
-  height: 115px;
+  /* border-top: 1px solid #e2e2e2; */
+  /* border-bottom: 1px solid #e2e2e2; */
+  /* margin: 0 -10px 0 -10px; */
+  /* height: 115px; */
   overflow: auto;
   position: relative;
   -webkit-user-select: none;
@@ -109,19 +165,21 @@ div.table_right .scores .top {
 }
 
 .table_right .replay turn {
-  display: flex;
+  /* display: flex; */
   height: 26px;
 }
 
 .table_right .replay turn>index,
-.table_right .replay turn>move {
-  display: inline-block;
+.table_right .replay turn .moves>move {
+  display: block;
   height: 22px;
   line-height: 22px;
 }
 
-.table_right .replay turn>index {
-  flex: 0 0 22px;
+.table_right .replay turn>index,
+.table_right .replay move>index
+{
+  /* flex: 0 0 22px; */
   padding: 2px 0;
   background: #e0e0e0;
   text-align: center;
@@ -129,12 +187,27 @@ div.table_right .scores .top {
   font-weight: 300;
 }
 
+
+.table_right .replay move>index {
+  flex: 0 0 34px;
+  padding: 2px 0;
+}
+
 .table_right .replay move {
+  white-space: nowrap;
+  overflow-x: hidden;
   cursor: pointer;
   transition: background-color 0.13s;
-  flex: 1 1 50%;
   font-size: 12px;
-  padding: 2px 5px;
+}
+
+.table_right .replay move.active {
+  color: #d85000;
+  font-weight: bold;
+}
+
+.table_right .replay move:hover {
+  background: #e0e0e0;
 }
 
 div.game_masa {

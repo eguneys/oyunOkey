@@ -4,6 +4,7 @@ import renderUser from './user';
 import renderReplay from './replay';
 import { game } from 'game';
 import button from './button';
+import renderTabs from './tabs';
 
 const { classSet, partial } = okeyground.util;
 
@@ -216,6 +217,16 @@ function visualTable(ctrl) {
   ]);
 }
 
+function renderGameStatus(ctrl) {
+  return [m('div.sideboard_content',
+            [m('div.sideboard_panels', [
+              renderTabs.panel(ctrl, 'replay_tab',renderReplay(ctrl)),
+              renderTabs.panel(ctrl, 'scores_tab',
+                               game.playable(ctrl.data) ? null : renderTableScores(ctrl))]),
+             m('div.sideboard_menu', renderTabs.tabs(ctrl))]),
+          ctrl.vm.scoresheetInfo.side ? renderTableScoreInfo(ctrl) : null];
+}
+
 module.exports = function(ctrl) {
   var d = ctrl.data;
   return [
@@ -232,9 +243,7 @@ module.exports = function(ctrl) {
       ]),
       m('div.table_side.table_right', [
         renderSeat(ctrl, d.opponentRight),
-        // game.playable(ctrl.data) ? null : renderTableScores(ctrl),
-        renderReplay(ctrl),
-        ctrl.vm.scoresheetInfo.side ? renderTableScoreInfo(ctrl) : null
+        renderGameStatus(ctrl)
       ])
     ])
   ];
