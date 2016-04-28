@@ -1,3 +1,4 @@
+import m from 'mithril';
 import { game } from 'game';
 import round from './round';
 import title from './title';
@@ -6,9 +7,6 @@ module.exports = {
   startPly: function(data) {
     var lp = round.lastPly(data);
     var ls = round.lastStep(data);
-
-    console.log(ls);
-
     return [lp, ls.moves.length - 1];
   },
   yolo: function(ctrl) {
@@ -27,6 +25,13 @@ module.exports = {
           // return msg;
         }
       });
+    }
+
+    if (!ctrl.data.player.spectator &&
+        ctrl.vm.ply[0] === round.lastPly(ctrl.data)) {
+      setTimeout(function() {
+        if (ctrl.jump(round.lastPly(ctrl.data))) m.redraw();
+      }, 200);
     }
   }
 };

@@ -6,7 +6,7 @@ import ground from './ground';
 import title from './title';
 import init from './init';
 import mutil from './util';
-import { game } from 'game';
+import { game, status } from 'game';
 import store from './store';
 
 const { util } = okeyground;
@@ -20,6 +20,11 @@ module.exports = function(opts) {
   //   { ply: 16, side: 'south', moves: [{ san: 'Tas cekti' }] }
   // ];
 
+  this.jump = (ply) => {
+    this.vm.autoScroll && this.vm.autoScroll.throttle();
+    return true;
+  };
+
   this.pushNewTurn = () => {
     this.data.steps.push({
       ply: round.lastPly(this.data) + 1,
@@ -27,7 +32,8 @@ module.exports = function(opts) {
   };
 
   var newTurn = this.data.game.turns !== round.lastPly(this.data);
-  if (newTurn) {
+
+  if (newTurn && status.playing(this.data)) {
     this.pushNewTurn();
   }
 
@@ -46,6 +52,7 @@ module.exports = function(opts) {
 
   this.setTab = (tab) => {
     this.vm.tab = store.tab.set(tab);
+    this.vm.autoScroll && this.vm.autoScroll.now();
   };
 
   this.socket = new socket(opts.socketSend, this);
@@ -143,7 +150,7 @@ module.exports = function(opts) {
       san: o.uci
     });
 
-    if (newTurn) {
+    if (newTurn && status.playing(this.data)) {
       this.pushNewTurn();
     }
 

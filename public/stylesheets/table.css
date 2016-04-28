@@ -85,7 +85,16 @@ div.table_right .scores .top {
 }
 
 div.sideboard_content {
-  width: 100%;
+  width: 242px;
+  margin-left: 42px;
+}
+
+div.sideboard_content .scores {
+  border: none;
+}
+
+div.sideboard_panels .panel>.scores {
+  margin-top: 0px;
 }
 
 div.sideboard_menu {
@@ -109,7 +118,6 @@ div.sideboard_panels .panel {
 }
 
 div.sideboard_panels .replay {
-  overflow: auto;
   display: flex;
   flex-flow: column nowrap;
 }
@@ -121,7 +129,14 @@ div.sideboard_panels>div.active {
 
 div.sideboard_panels .replay .turns {
   flex: 1;
-  overflow: auto;
+  overflow:auto;
+}
+
+div.sideboard_panels .replay .result {
+  font-weight: bold;
+  font-size: 1.3em;
+  padding: 4px 0;
+  text-align: center;
 }
 
 div.sideboard_menu>a {

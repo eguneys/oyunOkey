@@ -1,8 +1,9 @@
 import m from 'mithril';
 import util from '../util';
-import { game } from 'game';
+import { game, status } from 'game';
 import round from '../round';
 import okeyground from 'okeyground';
+import { renderTableScores, renderTableScoreInfo } from './scores';
 
 const partial = okeyground.util.partial;
 const raf = okeyground.util.requestAnimationFrame;
@@ -33,6 +34,26 @@ function renderMoves(ctrl, turn) {
   return rows;
 }
 
+function renderResult(ctrl) {
+  var result;
+  if (status.finished(ctrl.data)) switch(ctrl.data.game.winner) {
+    default:
+    result = ctrl.trans('gameEnded');
+    break;
+  }
+
+  if (result || status.aborted(ctrl.data)) {
+    var winner = game.getPlayer(ctrl.data, ctrl.data.game.winner);
+    return [
+      m('p.result', result),
+      m('p.status', [
+        //renderStatus(ctrl),
+        winner ? ', ' + ctrl.trans('isVictorous'): null
+      ])
+    ];
+  }
+}
+
 function renderTurns(ctrl) {
   var steps = ctrl.data.steps;
 
@@ -61,6 +82,10 @@ function renderTurns(ctrl) {
     });
   }
 
+  rows.push(renderResult(ctrl));
+
+  if (!game.playable(ctrl.data)) rows.push(renderTableScores(ctrl));
+
   return rows;
 }
 
@@ -68,7 +93,9 @@ function autoScroll(el, ctrl) {
   raf(function() {
     if (round.replayLength(ctrl.data) < 7) return;
     var st;
-    {
+    if (ctrl.vm.ply[0] >= round.lastPly(ctrl.data)) {
+      st = 9999;
+    } else {
       var plyEl = el.querySelector('.active') || el.querySelector('turn:first-child');
       if (plyEl) {
         var plyElParent = plyEl.parentElement;
