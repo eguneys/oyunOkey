@@ -7,7 +7,9 @@ module.exports = {
     var lp = round.lastPly(data);
     var ls = round.lastStep(data);
 
-    return [lp, Math.min(0, ls.moves.length - 1)];
+    console.log(ls);
+
+    return [lp, ls.moves.length - 1];
   },
   yolo: function(ctrl) {
     var d = ctrl.data;

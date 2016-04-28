@@ -26,7 +26,7 @@ private[api] final class RoundApi(
       id = pov.game.id,
       ply = pov.game.opensLastMove.turn,
       pgnMoves = pov.game.opensLastMove.lastMoves.map(_.uci),
-      side = pov.game.turnSide,
+      side = okey.Side(pov.game.opensLastMove.turn),
       variant = pov.game.variant))
 
   private def withMasa(pov: Pov, masaOption: Option[Masa])(json: JsObject) =

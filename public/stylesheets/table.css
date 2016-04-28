@@ -201,7 +201,8 @@ div.sideboard_menu > a.active {
   font-size: 12px;
 }
 
-.table_right .replay move.active {
+.table_right .replay move.active,
+.table_right .replay index.active {
   color: #d85000;
   font-weight: bold;
 }

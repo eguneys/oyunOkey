@@ -1,5 +1,6 @@
 import m from 'mithril';
 import util from '../util';
+import { game } from 'game';
 import round from '../round';
 import okeyground from 'okeyground';
 
@@ -26,7 +27,6 @@ function renderMoves(ctrl, turn) {
   var rows = [];
   for (var i = 0, len = moves.length; i < len; i++) {
     stepPly = [turn.ply, i];
-    console.log(stepPly, ctrl.vm.ply);
     rows.push(renderMove(moves[i], stepPly, ctrl.vm.ply));
   }
 
@@ -38,17 +38,28 @@ function renderTurns(ctrl) {
 
   var turns = steps;
 
+  var player;
   var rows = [];
-  for (var i = 0, len = turns.length; i < len; i++) rows.push({
-    tag: 'turn',
-    children: [{
-      tag: 'index',
-      children: [turns[i].side]
-    },
-               m('div.moves', {},
-                 renderMoves(ctrl, turns[i])
-                )]
-  });
+  for (var i = 0, len = turns.length; i < len; i++) {
+    var turn = turns[i];
+    var curPly = ctrl.vm.ply;
+
+    player = game.getPlayer(ctrl.data, turn.side);
+    player = player.user ? player.user.username : 'Anonymous';
+
+    rows.push({
+      tag: 'turn',
+      children: [{
+        tag: 'index',
+        attrs: (turn.ply !== curPly[0] || -1 !== curPly[1])
+          ? {} : { class: 'active' },
+        children: [player]
+      },
+                 m('div.moves', {},
+                   renderMoves(ctrl, turn)
+                  )]
+    });
+  }
 
   return rows;
 }

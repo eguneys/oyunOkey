@@ -23,7 +23,7 @@ module.exports = function(opts) {
   this.pushNewTurn = () => {
     this.data.steps.push({
       ply: round.lastPly(this.data) + 1,
-      moves: [], side: 'east' });
+      moves: [], side: game.sideByPly(this.data.game.turns) });
   };
 
   var newTurn = this.data.game.turns !== round.lastPly(this.data);
@@ -108,7 +108,7 @@ module.exports = function(opts) {
     if (true) {
 
       this.vm.ply[1]++;
-      if (newTurn) this.vm.ply = [this.vm.ply[0] + 1, 0];
+      if (newTurn) this.vm.ply = [this.vm.ply[0] + 1, -1];
 
       if (o.isMove) {
         if (o.drawmiddle) {
