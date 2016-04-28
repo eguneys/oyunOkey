@@ -66,6 +66,9 @@ function boardDiff(oldFen, newFen) {
   var rest = unusedIndexes.map(_ => pieces[_]);
   var result = oldPieces + rest.slice(0).fill('  ').join("");
 
+  // index 0 not allowed piece shift hack
+  result = result.replace(/^\s/, "");
+
   rest.forEach(p => result = result.replace(/\s\s/, p));
 
   if (!assertEqual(result.match(regPiece).sort(), newFen.match(regPiece).sort())) {

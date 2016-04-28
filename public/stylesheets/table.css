@@ -348,7 +348,7 @@ div.scores_info td {
 #oyunkeyf {
   display: flex;
   /* debug */
-  margin-left: -250px;
+  /* margin-left: -250px; */
 }
 
 div.table_middle {
@@ -464,21 +464,34 @@ div.control.icons .button.move.enabled {
   position: relative;
 }
 
-.og-board {
-  background: rgb(213, 145, 32);
-}
+/* .og-board { */
+/*   background: rgb(213, 145, 32); */
+/* } */
 
 .og-table-wrap {
   background: rgb(117, 153, 0);
 }
 
-/* okeyground */
+.og-board {
+  width: 100%;
+  background-image: url("../images/board/istakain.png");
+  background-size: cover; }
+
+.og-board .wood {
+  background-image: url("../images/board/istakaside.png");
+  background-size: cover; }
+
+
+/* okeyground notheme copy paste */
 
 /* 6.25% */
 /* 50% */
 .og-table-wrap {
   width: 100%;
-  height: 100%; }
+  height: 100%;
+  background-size: cover;
+  line-height: 0;
+  user-select: none; }
 
 .og-table {
   height: 100%;
@@ -521,8 +534,8 @@ div.control.icons .button.move.enabled {
   left: 75%; }
   .og-top piece.mmiddleCount:not(.dragging)::before {
     position: absolute;
-    top: calc(50% - 7px);
-    left: calc(50% - 3px);
+    top: calc(50% - 2px);
+    left: calc(50% - 5px);
     font-size: 11px;
     font-weight: bold;
     opacity: 0.7;
@@ -592,6 +605,13 @@ piece {
 .og-board piece {
   height: 50%;
   width: 6.25%; }
+
+.og-board .wood {
+  position: absolute;
+  height: 100%;
+  width: 3.125%; }
+  .og-board .wood.right {
+    right: 0; }
 
 piece.selected:not(.dragging) {
   z-index: 2;
