@@ -13,6 +13,7 @@ final class AutoPairing {
     .updatePlayers(players.map { p => (gp: GamePlayer) => gp.withPlayer(p.id).withUser(p.userId) })
     .withMasaId(masa.id)
     .withId(pairing.gameId)
+    .start
     _ <- (GameRepo insertDenormalized game2)
   } yield game2
 

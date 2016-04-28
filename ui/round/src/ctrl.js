@@ -150,7 +150,7 @@ module.exports = function(opts) {
       san: o.uci
     });
 
-    if (newTurn && status.playing(this.data)) {
+    if (newTurn && status.playing(d)) {
       this.pushNewTurn();
     }
 
