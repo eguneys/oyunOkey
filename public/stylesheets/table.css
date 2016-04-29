@@ -85,8 +85,9 @@ div.table_right .scores .top {
 }
 
 div.sideboard_content {
-  width: 242px;
-  margin-left: 42px;
+  width: 100%;
+  /* width: 242px; */
+  /* margin-left: 42px; */
 }
 
 div.sideboard_content .scores {

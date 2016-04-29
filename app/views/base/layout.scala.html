@@ -18,7 +18,6 @@
     @cssTag("common.css")
     @cssTag("table.css")
     @moreCss
-    <link id="piece-sprite" href="@staticUrl(s"stylesheets/piece/standard.css?v=$assetVersion")" type="text/css" rel="stylesheet"/>
   </head>
   <body class="preload base"
         data-asset-url="@assetBaseUrl"
@@ -69,5 +68,8 @@
     }
     @moreJs
     @momentLangTag
+
+    // dont block above the fold content
+    <link id="piece-sprite" href="@staticUrl(s"stylesheets/piece/standard.css?v=$assetVersion")" type="text/css" rel="stylesheet"/>
   </body>
 </html>

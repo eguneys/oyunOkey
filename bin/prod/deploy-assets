@@ -1,0 +1,28 @@
+#!/bin/sh
+
+. bin/lilarc
+
+mode=$1
+
+if [ -z $mode ]; then
+   echo "Empty deploy target"
+   exit 1
+elif [ $mode = "main" ]; then
+   REMOTE="anand"
+   REMOTE_DIR="/home/ubuntu/oyun"
+elif [ $mode = "local" ]; then
+   REMOTE="localhost"
+   REMOTE_DIR="/tmp/oyun5"
+else
+   echo "Unknown deploy target $mode"
+   exit 1
+fi
+
+oyunlog "Deploy assets to $mode server $REMOTE:$REMOTE_DIR"
+
+bin/prod/compile-client
+
+oyunlog "Rsync scripts"
+rsync --archive --no-o --no-g --progress --exclude 'public/vendor/moment/.git/' public $REMOTE:$REMOTE_DIR
+
+oyunlog "Deploy complete"
