@@ -44,7 +44,7 @@ RSYNC_OPTIONS=" \
   --exclude RUNNING_PID \
   --exclude '.git/' \
   --exclude 'public/vendor/moment/.git/' \
-  --exclude bin/.translate_version"
+  --exclude /bin/.translate_version"
 
 if [ $mode != "main" ] && [ $mode != "stage" ]; then
    RSYNC_OPTIONS="$RSYNC_OPTIONS \
@@ -68,7 +68,7 @@ fi
 
 if [ $mode = "main" ]; then
   oyunlog "Restart oyunkeyf"
-  ssh $REMOTE "chown -R ubuntu:ubuntu $REMOTE_DIR && sudo service oyunkeyf restart"
+  ssh $REMOTE "sudo chown -R ubuntu:ubuntu $REMOTE_DIR && sudo service oyunkeyf restart"
 fi
 
 oyunlog "Deploy complete"

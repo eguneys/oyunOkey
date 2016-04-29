@@ -7,7 +7,15 @@ object BuildSettings {
 
   def buildSettings = Defaults.defaultSettings ++ Seq(
     scalaVersion := globalScalaVersion,
-    resolvers ++= Dependencies.Resolvers.commons
+    resolvers ++= Dependencies.Resolvers.commons,
+    scalacOptions := compilerOptions,
+    incOptions := incOptions.value.withNameHashing(true),
+    updateOptions := updateOptions.value.withCachedResolution(true),
+    sources in doc in Compile := List(),
+    // disable publishing the main API jar
+    publishArtifact in (Compile, packageDoc) := false,
+    // disable publishing the main sources jar
+    publishArtifact in (Compile, packageSrc) := false
   )
 
   def defaultDeps = Seq(scalaz, scalalib, spray.util)

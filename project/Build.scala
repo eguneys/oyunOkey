@@ -1,4 +1,5 @@
 import com.typesafe.sbt.packager.Keys.scriptClasspath
+import com.typesafe.sbt.web.SbtWeb.autoImport._
 import play.sbt.PlayImport._
 import play.twirl.sbt.Import._
 import PlayKeys._
@@ -12,8 +13,8 @@ object ApplicationBuild extends Build {
     .enablePlugins(_root_.play.sbt.PlayScala)
     .dependsOn(api)
     .aggregate(api)
-    .settings(
-    scalaVersion := globalScalaVersion,
+    .settings(Seq(
+      scalaVersion := globalScalaVersion,
       resolvers ++= Dependencies.Resolvers.commons,
       scalacOptions := compilerOptions,
       // disable publishing the main API jar
@@ -35,8 +36,12 @@ object ApplicationBuild extends Build {
         "oyun.api.Context",
         "oyun.app.templating.Environment._",
         "oyun.common.paginator.Paginator"
-      )
-  )
+      ),
+      watchSources <<= sourceDirectory in Compile map { sources =>
+        (sources ** "*").get
+      },
+      // trump sbt-web into not looking at public/
+      resourceDirectory in Assets := (sourceDirectory in Compile).value / "assets"))
 
   lazy val modules = Seq(common, db, user, security, game, setup, lobby, socket, hub, okey, round, masa, i18n)
 

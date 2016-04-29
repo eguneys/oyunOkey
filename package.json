@@ -1,0 +1,26 @@
+{
+  "name": "oyun",
+  "version": "1.0.0",
+  "description": "[oyunkeyf.org](http://oyunkeyf.org)",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://eguneys@bitbucket.org/eguneys/oyun.git"
+  },
+  "keywords": [
+    "okey"
+  ],
+  "author": "Emre Guneyler",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/eguneys/oyun#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-csso": "^2.0.0"
+  }
+}
