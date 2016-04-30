@@ -5,6 +5,8 @@ import okey.{ Side, Sides, Status, EndScoreSheet }
 import reactivemongo.bson.{ BSONDocument }
 import oyun.db.dsl._
 
+import oyun.user.{ User }
+
 object GameRepo {
   // dirty ??
   private val coll = Env.current.gameColl
@@ -41,6 +43,18 @@ object GameRepo {
         ).void
     }
 
+  def urgentGames(user: User): Fu[List[Pov]] =
+    coll.list[Game](Query nowPlaying user.id, 100) map { games =>
+      val povs = games flatMap { Pov(_, user) }
+        povs sortBy (-_.game.updatedAtOrCreatedAt.getSeconds)
+      // try {
+      //povs sortWith Pov.priority
+      // } catch {
+      //   case e: IllegalArgumentException =>
+      //     povs sortBy 
+      // }
+    }
+
   private def nonEmptyMod(mod: String, doc: BSONDocument) =
     if (doc.isEmpty) $empty else $doc(mod -> doc)
 
@@ -48,26 +62,35 @@ object GameRepo {
   def finish(
     id: ID,
     status: Status,
-    result: Option[Sides[EndScoreSheet]]) = {
+    result: Option[Sides[EndScoreSheet]],
+    winnerSide: Option[Side],
+    winnerId: Option[String]) = {
     import BSONHandlers.scoresBSONHandler
 
     val partialUnsets = $doc(
+      F.playingUids -> true
     )
 
     val unsets = 
-      if (status >= Status.End) partialUnsets ++ $doc(F.checkAt -> true)
+      if (status >= Status.NormalEnd) partialUnsets ++ $doc(F.checkAt -> true)
       else partialUnsets
 
     coll.update(
       $id(id),
       nonEmptyMod("$set", $doc(
+        F.winnerId -> winnerId,
+        F.winnerSide -> winnerSide.map(_.letter.toString),
         F.endScores -> result.map (BSONHandlers.sidesBSONHandler[EndScoreSheet].write _)
       )) ++ $doc("$unset" -> unsets)
     )
   }
 
   def insertDenormalized(g: Game): Funit = {
-    val bson = (gameBSONHandler write g)
+    val userIds = g.userIds.distinct
+
+    val bson = (gameBSONHandler write g) ++ $doc(
+      F.playingUids -> (g.started && userIds.nonEmpty).option(userIds)
+    )
     coll insert bson void
   }
 }

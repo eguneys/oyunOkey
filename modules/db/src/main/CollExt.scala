@@ -9,6 +9,12 @@ trait CollExt { self: dsl with QueryBuilderExt =>
     def uno[D: BSONDocumentReader](selector: BSONDocument): Fu[Option[D]] =
       coll.find(selector).uno[D]
 
+    def list[D: BSONDocumentReader](selector: BSONDocument): Fu[List[D]] =
+      coll.find(selector).list[D]()
+
+    def list[D: BSONDocumentReader](selector: BSONDocument, max: Int): Fu[List[D]] =
+      coll.find(selector).list[D](max)
+
     def byId[D: BSONDocumentReader](id: String): Fu[Option[D]] = uno[D]($id(id))
     
     def byId[D: BSONDocumentReader](id: Int): Fu[Option[D]] = uno[D]($id(id))

@@ -1,5 +1,6 @@
 import m from 'mithril';
 import okeyground from 'okeyground';
+import { game } from 'game';
 const { classSet, partial } = okeyground.util;
 
 
@@ -14,11 +15,11 @@ function playerTr(ctrl, player) {
   var mySide = ctrl.data.player.side;
 
   function utilPlayer(p, tag) {
-    var fullName = p.name || 'Anonymous';
+    var fullName = p.user ? p.user.username : 'Anonymous';
     var attrs = {
       class: 'user_link'
     };
-    if (p.name) attrs[tag === 'a' ? 'href' : 'data-href'] = '/@/' + p.name;
+    // if (p.name) attrs[tag === 'a' ? 'href' : 'data-href'] = '/@/' + p.name;
     return {
       tag: tag,
       attrs: attrs,
@@ -90,6 +91,7 @@ function renderTableScores(ctrl) {
   var scores = Object.keys(d.game.scores).map(k => {
     var s = d.game.scores[k];
     s.side = k;
+    s.user = game.getPlayer(d, k).user;
     return s;
   });
   var tableBody = scores.map(partial(playerTr, ctrl));

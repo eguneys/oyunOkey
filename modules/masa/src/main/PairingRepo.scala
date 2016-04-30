@@ -22,8 +22,8 @@ object PairingRepo {
 
   private def selectMasaPlayer(masaId: String, playerId: String) = selectMasa(masaId) ++ selectPlayer(playerId)
 
-  private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.End.id))
-  private val selectFinished = $doc("s" -> $doc("$gte" -> okey.Status.End.id))
+  private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.NormalEnd.id))
+  private val selectFinished = $doc("s" -> $doc("$gte" -> okey.Status.NormalEnd.id))
   private val recentSort = $doc("d" -> -1)
   private val chronoSort = $doc("d" -> 1)
 
@@ -51,6 +51,7 @@ object PairingRepo {
     $doc("$set" -> $doc(
       "s" -> g.status.id,
       "ss" -> g.endScores.map(_.map(_.total)),
+      "w" -> g.winnerSide.map(_.letter.toString),
       "t" -> g.turns))).void
 
   def playingPlayerIds(masa: Masa): Fu[Set[String]] =

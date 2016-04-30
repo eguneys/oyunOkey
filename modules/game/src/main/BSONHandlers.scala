@@ -121,6 +121,7 @@ object BSONHandlers {
 
     def reads(r: BSON.Reader): Game = {
       val nbTurns = r int turns
+      val winS = r getO[String] winnerSide flatMap Side.apply
       val createdAtValue = r date createdAt
 
       val oEndScores = r getO[Sides[EndScoreSheet]](endScores)
@@ -134,7 +135,9 @@ object BSONHandlers {
       val builder = r.get[Sides[Player.Builder]](sidesPlayer)
 
       val players = Sides(eastId, westId, northId, southId) sideMap {
-        case (side, id) => builder(side)(side)(id)(sidesPid(side))(sidesUid(side))(oEndScores.map(_(side)))
+        case (side, id) =>
+          val win = winS map (_ == side)
+          builder(side)(side)(id)(sidesPid(side))(sidesUid(side))(oEndScores.map(_(side)))(win)
       }
 
       val bPieces = r.get[Sides[ByteArray]](binaryPieces)
@@ -187,7 +190,7 @@ object BSONHandlers {
       playerIds -> (o.players.map(_.id) mkString),
       playerPids -> o.players.mapt(_.playerId),
       playerUids -> o.players.mapt(_.userId),
-      sidesPlayer -> o.players.mapt(p => playerBSONHandler write ((_: Side) => (_: Player.Id) => (_: Player.PlayerId) => (_: Player.UserId) => (_: Player.EndScore) => p)),
+      sidesPlayer -> o.players.mapt(p => playerBSONHandler write ((_: Side) => (_: Player.Id) => (_: Player.PlayerId) => (_: Player.UserId) => (_: Player.EndScore) => (_: Player.Win) => p)),
       binaryPieces -> o.binaryPieces,
       binaryDiscards -> o.binaryDiscards,
       binaryMiddles -> o.binaryMiddles,

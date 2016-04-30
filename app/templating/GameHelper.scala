@@ -3,6 +3,8 @@ package templating
 
 import play.twirl.api.Html
 
+import okey.{ Status => S }
+
 import oyun.game.{ Game, Player, Pov }
 import oyun.user.{ User, UserContext }
 
@@ -19,5 +21,18 @@ trait GameHelper { self: I18nHelper with UserHelper =>
         s"""<span class="user_link$klass">$content</span>"""
     }
 
+  }
+
+  def gameEndStatus(game: Game)(implicit ctx: UserContext): Html = game.status match {
+    case S.Aborted => trans.gameAborted()
+    case S.NormalEnd => trans.gameFinished()
+    case S.MiddleEnd => trans.gameMiddleFinished()
+    case _ => Html("")
+  }
+
+  def gameEndWinner(game: Game)(implicit ctx: UserContext): Html = {
+    val winner = usernameOrAnon(game.winner flatMap (_.userId))
+
+    trans.gameEndBy(winner)
   }
 }

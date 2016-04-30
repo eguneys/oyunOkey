@@ -557,6 +557,11 @@ div.side_box .game_infos .variant_link {
   border-bottom: 1px dotted #747474;
 }
 
+div.side_box div.status {
+  text-align: center;
+  margin-top: 5px;
+}
+
 div.under_side.bottom {
   /* position: absolute; */
   /* bottom: 0px; */

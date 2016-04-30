@@ -11,22 +11,25 @@ import oyun.db.dsl._
 object PlayerRepo {
   private lazy val coll = Env.current.playerColl
 
-  private def selectId(id: String) = BSONDocument("_id" -> id)
-  private def selectMasa(masaId: String) = BSONDocument("mid" -> masaId)
-  private def selectMasaPlayer(masaId: String, playerId: String) = BSONDocument(
+  private def selectId(id: String) = $doc("_id" -> id)
+  private def selectMasa(masaId: String) = $doc("mid" -> masaId)
+  private def selectMasaPlayer(masaId: String, playerId: String) = $doc(
     "mid" -> masaId,
     "_id" -> playerId)
 
-  private def selectMasaUser(masaId: String, userId: String) = BSONDocument(
+  private def selectMasaUser(masaId: String, userId: String) = $doc(
     "mid" -> masaId,
     "uid" -> userId)
 
-  private val selectActive = BSONDocument("a" -> BSONDocument("$eq" -> true))
-  private def selectSide(side: Side) = BSONDocument("d" -> side.letter.toString)
-  private def selectActiveSide(side: Side) = BSONDocument(
+  private val selectActive = $doc("a" -> $doc("$eq" -> true))
+  private def selectSide(side: Side) = $doc("d" -> side.letter.toString)
+  private def selectActiveSide(side: Side) = $doc(
     "d" -> side.letter.toString,
     "a" -> true)
-  private val bestSort = BSONDocument("m" -> -1)
+
+  private def selectUser = $doc("uid" -> $doc("$exists" -> true))
+
+  private val bestSort = $doc("m" -> -1)
 
   def byId(id: String): Fu[Option[Player]] = coll.uno[Player](selectId(id))
 
@@ -69,7 +72,7 @@ object PlayerRepo {
           find(masaId, player.id) flatMap {
             case Some(p) =>
               coll.update(selectId(p._id),
-                BSONDocument("$set" -> selectActiveSide(side)))
+                $doc("$set" -> selectActiveSide(side)))
             case None => coll.insert(player.doActiveSide(side))
           } void
         case None => funit
@@ -78,7 +81,7 @@ object PlayerRepo {
 
   def withdraw(masaId: String, playerId: String) = coll.update(
     selectMasaPlayer(masaId, playerId),
-    BSONDocument("$set" -> BSONDocument("a" -> false))).void
+    $doc("$set" -> $doc("a" -> false))).void
 
   def activePlayerIds(masaId: String): Fu[List[String]] =
     activePlayers(masaId) map { _ map (_.id) }
@@ -92,6 +95,9 @@ object PlayerRepo {
   def allByMasa(masaId: String): Fu[List[Player]] =
     coll.find(selectMasa(masaId)).cursor[Player]().gather[List]()
 
+
+  def allUserPlayers(masaId: String): Fu[List[Player]] =
+    coll.find(selectMasa(masaId) ++ selectUser).cursor[Player]().gather[List]()
 
   def playerInfo(masaId: String, playerId: String): Fu[Option[PlayerInfo]] = find(masaId, playerId) map {
     _ map { player =>

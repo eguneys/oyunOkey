@@ -61,7 +61,7 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api, play.test, RM, ws)
   )
 
-  lazy val game = project("game", Seq(common, db, okey)).settings(
+  lazy val game = project("game", Seq(common, db, user, okey)).settings(
     libraryDependencies ++= provided(play.api, play.test, RM)
   )
 

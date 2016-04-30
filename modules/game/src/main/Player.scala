@@ -2,15 +2,19 @@ package oyun.game
 
 import okey.{ Side, Sides, EndScoreSheet }
 
+import oyun.user.User
+
 case class Player(
   id: String,
   playerId: Option[String] = None,
   userId: Option[String] = None,
   side: Side,
+  isWinner: Option[Boolean] = None,
   endScore: Option[EndScoreSheet] = None) {
 
-  def finish(score: Option[EndScoreSheet]) = copy(
-    endScore = endScore
+  def finish(score: Option[EndScoreSheet], winner: Boolean) = copy(
+    endScore = endScore,
+    isWinner = if (winner) Some(true) else None
   )
 
   def withPlayer(id: String): Player = copy(
@@ -20,6 +24,10 @@ case class Player(
     userId = id)
 
   def hasUser = userId.isDefined
+
+  def isUser(u: User) = userId.fold(false)(_ == u.id)
+
+  def wins = isWinner getOrElse false
 }
 
 object Player {
@@ -48,22 +56,24 @@ object Player {
   type UserId = Option[String]
   type PlayerId = Option[String]
   type EndScore = Option[EndScoreSheet]
+  type Win = Option[Boolean]
 
-  type Builder = Side => Id => PlayerId => UserId => EndScore => Player
+  type Builder = Side => Id => PlayerId => UserId => EndScore => Win => Player
 
   implicit val playerBSONHandler = new BSON[Builder] {
     import BSONFields._
 
-    def reads(r: BSON.Reader) = side => id => playerId => userId => endScore => Player(
+    def reads(r: BSON.Reader) = side => id => playerId => userId => endScore => win => Player(
       id = id,
       side = side,
       playerId = playerId,
       userId = userId,
-      endScore = endScore
+      endScore = endScore,
+      isWinner = win
     )
 
     def writes(w: BSON.Writer, o: Builder) =
-      o(Side.EastSide)("0000")(none)(none) |> { p =>
+      o(Side.EastSide)("0000")(none)(none)(none) |> { p =>
         BSONDocument(
           
         )

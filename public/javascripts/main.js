@@ -71,6 +71,7 @@
         });
       }
       setMoment();
+      $('body').on('oyunkeyf.content_loaded', setMoment);
 
       function setMomentFromNow() {
         $("time.moment-from-now").each(function() {
@@ -134,6 +135,19 @@
         },
         receive: function(t, d) {
           round.socketReceive(t, d);
+        },
+        events: {
+          end: function() {
+            var url = '/' + [data.game.id, data.player.side, 'sides', data.player.spectator ? 'watcher' : 'player'].join('/');
+            $.ajax({
+              url: url,
+              success: function(html) {
+                var $html = $(html);
+                $('#site_header div.side').replaceWith($html.find('>.side'));
+                $('body').trigger('oyunkeyf.content_loaded');
+              }
+            });
+          }
         }
       });
     cfg.element = element.querySelector('.round');

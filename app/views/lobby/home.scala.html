@@ -1,4 +1,4 @@
-@(data: play.api.libs.json.JsObject, masas: List[Masa], nbRounds: Int)(implicit ctx: Context)
+@(data: play.api.libs.json.JsObject, masas: List[Masa], playing: List[Pov], nbRounds: Int)(implicit ctx: Context)
 
 @baseline = {
   <a id="nb_connected_players" href="@routes.User.list">
@@ -42,4 +42,17 @@
       <a class="fat button config_masa" href="@routes.Masa.form" onclick="return false">@trans.createAGame()</a>
     </div>
   </div>
+
+
+  @if(playing.headOption.isDefined) {
+    <div class="undertable">
+      <div class="undertable_top">
+        <span class="title text" data-icon="g">@trans.nbGamesInPlay(playing.size)</span>
+      </div>
+      <div class="nowplaying_list undertable_inner">
+        @game.enterable(playing)
+      </div>
+    </div>
+  }
+
 }

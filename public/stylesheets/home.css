@@ -130,6 +130,11 @@ div.undertable {
   width: 512px;
 }
 
+#oyunkeyf {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
 #oyunkeyf #enterable_masas {
   width: 510px;
   min-width: 510px;

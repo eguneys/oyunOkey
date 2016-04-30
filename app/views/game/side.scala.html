@@ -1,4 +1,4 @@
-@(pov: Pov)(implicit ctx: Context)
+@(pov: Pov, m: Option[oyun.masa.MiniStanding])(implicit ctx: Context)
 
 @import pov.{ game => g, _ }
 
@@ -20,5 +20,11 @@
     </div>
     }
     </div> -->
+    @if(g.finishedOrAborted) {
+      <div class="status">
+        @gameEndStatus(g)
+        • @gameEndWinner(g)
+      </div>
+    }
   </div>
 </div>

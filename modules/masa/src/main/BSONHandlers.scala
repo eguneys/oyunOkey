@@ -73,13 +73,15 @@ object BSONHandlers {
 
   implicit val pairingHandler = new BSON[Pairing] {
     def reads(r: BSON.Reader) = {
+      val pids = r.get[Sides[String]]("pids")
       Pairing(
         id = r str "_id",
         masaId = r str "mid",
         status = okey.Status(r int "s") err "masa pairing status",
-        playerIds = r.get[Sides[String]]("pids"),
+        playerIds = pids,
         round = r.get[Int]("mr"),
-        scores = r.get[List[Int]]("ss")
+        scores = r.get[List[Int]]("ss"),
+        winner = r getO[String] "w" flatMap (s => Side(s) map (_.name))
       )
     }
 
@@ -89,7 +91,8 @@ object BSONHandlers {
       "s" -> o.status.id,
       "pids" -> o.playerIds,
       "mr" -> o.round,
-      "ss" -> o.scores.toList
+      "ss" -> o.scores.toList,
+      "w" -> o.winner
     )
   }
 }

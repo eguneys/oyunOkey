@@ -7,6 +7,7 @@ import okey.{ Game => OkeyGame, Player => OkeyPlayer, History => OkeyHistory, Ta
 import okey.format.Uci
 
 import oyun.db.ByteArray
+import oyun.user.User
 
 case class Game(
   id: String,
@@ -32,6 +33,10 @@ case class Game(
   def player(playerId: String): Option[Player] =
     players find (_.id == playerId)
 
+  def player(user: User): Option[Player] =
+    players find (_ isUser user)
+
+
   def playerByPlayerId(playerId: String): Option[Player] = players find (_.playerId == Some(playerId))
 
   def playerByUserId(userId: String): Option[Player] = players find (_.userId == Some(userId))
@@ -46,6 +51,8 @@ case class Game(
   def fullIdOf(side: Side): String = s"$id${player(side).id}"
 
   def masaId = metadata.masaId
+
+  def updatedAtOrCreatedAt = updatedAt | createdAt
 
   lazy val toOkey: OkeyGame = {
     val pieces = binaryPieces map BinaryFormat.piece.read
@@ -167,11 +174,16 @@ case class Game(
     updatedAt = DateTime.now.some
   ))
 
-  def finish(status: Status, result: Option[Sides[EndScoreSheet]]) = Progress(
+  def finish(
+    status: Status,
+    result: Option[Sides[EndScoreSheet]],
+    winner: Option[Side]) = Progress(
     this,
     copy(
       status = status,
-      players = players sideMap ((side, p) => p finish (result map(_.apply(side))))
+      players = players sideMap ((side, p) => p finish (
+        score = result map(_.apply(side)),
+        winner = winner == Some(side)))
     ),
     List(Event.End(result))
   )
@@ -186,13 +198,19 @@ case class Game(
 
   def playableBy(s: Side): Boolean = playableBy(player(s))
 
-  def finished = status >= Status.End
+  def finished = status >= Status.NormalEnd
 
   def finishedOrAborted = finished || aborted
 
   def endScores: Option[Sides[EndScoreSheet]] = players.map(_.endScore).toList.sequence.map (Sides.fromIterable)
 
+  def winner = players find (_.wins)
+
+  def winnerSide: Option[Side] = winner map (_.side)
+
   def isBeingPlayed = !finishedOrAborted
+
+  def userIds = playerMaps(_.userId)
 
   def playerIds = playerMaps(_.playerId)
 
@@ -255,6 +273,7 @@ object Game {
     val playerIds = "is"
     val playerUids = "uis"
     val playerPids = "pis"
+    val playingUids = "plis"
     val sidesPlayer = "sip"
     val binaryPieces = "ps"
     val binaryDiscards = "ds"
@@ -270,6 +289,8 @@ object Game {
     val opensLastMove = "ol"
     val status = "s"
     val turns = "t"
+    val winnerSide = "w"
+    val winnerId = "wid"
     val endScores = "es"
     val createdAt = "ca"
     val updatedAt = "ua"

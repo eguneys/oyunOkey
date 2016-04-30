@@ -22,6 +22,9 @@ case class Pov(game: Game, side: Side) {
 object Pov {
 
   def apply(game: Game, player: Player) = new Pov(game, player.side)
+
+  def apply(game: Game, user: oyun.user.User): Option[Pov] =
+    game player user map { apply(game, _) }
 }
 
 case class PlayerRef(gameId: String, playerId: String)

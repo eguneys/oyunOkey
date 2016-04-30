@@ -42,9 +42,12 @@ private[round] final class Player(
   }
 
   private def moveFinish(game: Game, side: Side): Fu[Events] = {
-    lazy val result = game.toOkey.situation.endScores
+    lazy val situation = game.toOkey.situation
+    lazy val result = situation.endScores
+    lazy val winner = situation.winner
     game.status match {
-      case Status.End => finisher.other(game, _.End, result)
+      case Status.NormalEnd => finisher.other(game, _.NormalEnd, result, winner)
+      case Status.MiddleEnd => finisher.other(game, _.MiddleEnd, result, none)
       case _ => fuccess(Nil)
     }
   }
