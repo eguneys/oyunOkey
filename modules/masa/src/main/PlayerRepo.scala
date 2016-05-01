@@ -86,6 +86,9 @@ object PlayerRepo {
   def activePlayerIds(masaId: String): Fu[List[String]] =
     activePlayers(masaId) map { _ map (_.id) }
 
+  def winner(masaId: String): Fu[Option[Player]] =
+    coll.find(selectMasa(masaId)).sort(bestSort).uno[Player]
+
   def activePlayers(masaId: String): Fu[List[Player]] =
     coll.find(selectMasa(masaId) ++ selectActive).cursor[Player]().gather[List]()
 

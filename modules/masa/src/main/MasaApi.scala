@@ -111,6 +111,8 @@ private[masa] final class MasaApi(
           _ <- MasaRepo.setStatus(masa.id, Status.Finished)
           // _ <- PlayerRepo unWithdraw masa.id // why?
           // _ <- PairingRepo removePlaying masa.id
+          winner <- PlayerRepo winner masa.id
+          _ <- winner.??(p => p.userId.??(MasaRepo.setWinnerId(masa.id, _)))
         } yield {
           sendTo(masa.id, Reload)
         }

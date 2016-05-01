@@ -75,6 +75,11 @@ object MasaRepo {
     $doc("$set" -> $doc("nbRounds" -> nb))
   ).void
 
+  def setWinnerId(masaId: String, userId: String) = coll.update(
+    $id(masaId),
+    $doc("$set" -> $doc("winner" -> userId))
+  ).void
+
   def insert(masa: Masa) = coll.insert(masa)
 
   def remove(masa: Masa) = coll.remove($doc("_id" -> masa.id))

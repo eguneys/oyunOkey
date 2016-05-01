@@ -12,6 +12,8 @@
   @trans.by(usernameOrAnon(m.createdBy.some))
   •
   <span title="@showDateTime(m.createdAt)">@momentFormat(m.createdAt)</span>
-  <br /> <br />
-  @trans.winner(): Anonymous
+  @m.winnerId.map { userId =>
+    <br /> <br />
+    @trans.winner(): @userIdLink(userId.some)
+  }
 </div>
