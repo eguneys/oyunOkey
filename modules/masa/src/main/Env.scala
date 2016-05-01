@@ -38,7 +38,9 @@ final class Env(
     createdTtl = CreatedCacheTtl)
 
   private def isAnonOnline(masaId: String, player: Player) =
-    socketHub ? Ask(masaId, actorApi.GetWaitingPlayers) mapTo manifest[Set[String]] map (_.exists(player.id==))
+    player.isRecentlyCreated.fold(fuccess(true), {
+      socketHub ? Ask(masaId, actorApi.GetWaitingPlayers) mapTo manifest[Set[String]] map (_.exists(player.id==))
+    })
 
   private def isPlayerOnline(masaId: String)(player: Player) = player.userId.fold(isAnonOnline(masaId, player))(funit inject isOnline(_))
 
