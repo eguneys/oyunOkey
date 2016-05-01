@@ -4,7 +4,6 @@
   "description": "oyunkeyf.org masa",
   "main": "src/main.js",
   "dependencies": {
-    "game": "file:///home/ubuntu/fp/scala/oyun/ui/game",
     "mithril": "^0.2.3",
     "okeyground": "^1.0.4"
   },

@@ -51,7 +51,7 @@ object PairingRepo {
     $doc("$set" -> $doc(
       "s" -> g.status.id,
       "ss" -> g.endScores.map(_.map(_.total)),
-      "w" -> g.winnerSide.map(_.letter.toString),
+      "w" -> g.winnerSide.flatMap(g.player(_).playerId),
       "t" -> g.turns))).void
 
   def playingPlayerIds(masa: Masa): Fu[Set[String]] =

@@ -81,7 +81,7 @@ object BSONHandlers {
         playerIds = pids,
         round = r.get[Int]("mr"),
         scores = r.get[List[Int]]("ss"),
-        winner = r getO[String] "w" flatMap (s => Side(s) map (_.name))
+        winner = r getO[String] "w"
       )
     }
 

@@ -1,20 +1,19 @@
 import m from 'mithril';
-import { game } from 'game';
+import { usernameOrAnon } from './util';
 
 function round(ctrl, p) {
   return {
-    tag: p.s === 0 ? 'playing' : 'finished',
+    tag: 'span',
     children: [ctrl.trans('roundX', p.r + 1)]
   };
 }
 
 function winner(ctrl, p) {
   if (p.s === 0) return null;
-  var player = game.getPlayer(ctrl.data, p.s);
-  var name = player.user ? player.user.username : 'Anonymous';
+  var username = usernameOrAnon(ctrl.data, p.s);
   return {
-    tag: 'div',
-    children: [name]
+    tag: p.s === 0 ? 'playing' : 'finished',
+    children: [username]
   };
 }
 

@@ -1,4 +1,8 @@
 module.exports = {
+  usernameOrAnon: function(data, pid) {
+    var p = data.users[pid];
+    return p || 'Anonymous';
+  },
   player: function(p, tag) {
     var fullName = (p.name || 'Anonymous');
     var attrs = {
