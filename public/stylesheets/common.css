@@ -290,6 +290,10 @@ body > div.content {
   padding-left: 10px;
 }
 
+#top div.auth .status strong {
+  padding: 0 5px;
+}
+
 #top div.auth .status .led {
   position: absolute;
   right: 10px;

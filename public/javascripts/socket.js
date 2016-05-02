@@ -224,6 +224,7 @@ oyunkeyf.StrongSocket.defaults = {
     pingMaxLag: 8000, // time to wait for pong before resetting the connection
     pingDelay: 1500,
     autoReconnectDelay: 2000,
+    lagTag: false,
     baseUrls: [document.domain + ':9021'].concat(
       //[9021, 9022, 9023, 9024]
       [9022].map(function(port) {

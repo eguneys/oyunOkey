@@ -43,6 +43,17 @@
   oyunkeyf.socket = null;
   $.extend(true, oyunkeyf.StrongSocket.defaults, {
     events: {
+      mlat: function(e) {
+        var $t = $('#top .server strong');
+        if ($t.is(':visible')) {
+          $t.text(e);
+          var l = parseInt(e || 0) + parseInt(oyunkeyf.socket.options.lagTag.text()) - 100;
+          var ratio = Math.max(Math.min(l / 1200, 1), 0);
+          var hue = ((1 - ratio) * 120).toString(10);
+          var color = ['hsl(', hue, ',100%,40%)'].join('');
+          $('$top .status .led').css('background', color);
+        }
+      },
       redirect: function(o) {
         setTimeout(function() {
           oyunkeyf.hasToReload = true;
@@ -52,7 +63,8 @@
     },
     params: {},
     options: {
-      name: "site"
+      name: "site",
+      lagTag: $('#top .ping strong')
     }
   });
 
