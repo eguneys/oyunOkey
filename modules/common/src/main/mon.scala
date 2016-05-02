@@ -12,6 +12,14 @@ object mon {
     val player = rec("masa.player")
   }
 
+  object round {
+    object titivate {
+      val game = rec("round.titivate.game") // how many games were processed
+      val total = rec("round.titivate.total") // how many games should have been processed
+      val old = rec("round.titivate.old") // how many old games remain
+    }
+  }
+
   type Rec = Long => Unit
   type Inc = () => Unit
 

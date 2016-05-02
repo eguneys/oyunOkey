@@ -48,6 +48,8 @@ case class Game(
   def turnOf(p: Player): Boolean = p == player
   def turnOf(s: Side): Boolean = s == turnSide
 
+  def playedTurns = turns
+
   def fullIdOf(side: Side): String = s"$id${player(side).id}"
 
   def masaId = metadata.masaId
@@ -208,7 +210,14 @@ case class Game(
 
   def winnerSide: Option[Side] = winner map (_.side)
 
+  def onePlayerHasMoved = playedTurns > 0
+  def allPlayersHaveMoved = playedTurns > 3
+
   def isBeingPlayed = !finishedOrAborted
+
+  def unplayed = !allPlayersHaveMoved && (createdAt isBefore Game.unplayedDate)
+
+  def abandoned = (status <= Status.Started) && ((updatedAt | createdAt) isBefore Game.abandonedDate)
 
   def userIds = playerMaps(_.userId)
 
@@ -228,6 +237,12 @@ object Game {
   val gameIdSize = 8
   val playerIdSize = 4
   val fullIdSize = 12
+
+  val unplayedHours = 1
+  def unplayedDate = DateTime.now minusMinutes unplayedHours
+
+  val abandonedDays = 24
+  def abandonedDate = DateTime.now minusSeconds abandonedDays
 
   def takeGameId(fullId: String) = fullId take gameIdSize
   def takePlayerId(fullId: String) = fullId drop gameIdSize

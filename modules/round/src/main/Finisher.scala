@@ -11,8 +11,8 @@ private[round] final class Finisher(
   def other(
     game: Game,
     status: Status.type => Status, // why?
-    result: Option[Sides[EndScoreSheet]],
-    winner: Option[Side]
+    result: Option[Sides[EndScoreSheet]] = None,
+    winner: Option[Side] = None
   )(implicit proxy: GameProxy): Fu[Events] =
     apply(game, status, result, winner)
 

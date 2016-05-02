@@ -2,7 +2,9 @@ package oyun.game
 
 import okey.{ Side, Sides, Status, EndScoreSheet }
 
-import reactivemongo.bson.{ BSONDocument }
+import org.joda.time.DateTime
+import reactivemongo.api.ReadPreference
+
 import oyun.db.dsl._
 
 import oyun.user.{ User }
@@ -33,6 +35,13 @@ object GameRepo {
 
   def pov(fullId: ID): Fu[Option[Pov]] = pov(PlayerRef(fullId))
 
+  def remove(id: ID) = coll.remove($id(id)).void
+
+  def cursor(
+    selector: Bdoc,
+    readPreference: ReadPreference = ReadPreference.secondaryPreferred) =
+    coll.find(selector).cursor[Game](readPreference)
+
   def save(progress: Progress): Funit =
     GameDiff(progress.origin, progress.game) match {
       case (Nil, Nil) => funit
@@ -55,7 +64,7 @@ object GameRepo {
       // }
     }
 
-  private def nonEmptyMod(mod: String, doc: BSONDocument) =
+  private def nonEmptyMod(mod: String, doc: Bdoc) =
     if (doc.isEmpty) $empty else $doc(mod -> doc)
 
 
@@ -69,6 +78,8 @@ object GameRepo {
 
     val partialUnsets = $doc(
       F.playingUids -> true
+        // keep the checkAt field when game is aborted,
+        // so it gets deleted in 24h
     )
 
     val unsets = 
@@ -89,8 +100,19 @@ object GameRepo {
     val userIds = g.userIds.distinct
 
     val bson = (gameBSONHandler write g) ++ $doc(
+      //F.checkAt -> DateTime.now plusHours 1,
+      F.checkAt -> (DateTime.now plusSeconds 20),
       F.playingUids -> (g.started && userIds.nonEmpty).option(userIds)
     )
     coll insert bson void
   }
+
+  def setCheckAt(g: Game, at: DateTime) =
+    coll.update($id(g.id), $doc("$set" -> $doc(F.checkAt -> at)))
+
+  def unsetCheckAt(g: Game) =
+    coll.update($id(g.id), $doc("$unset" -> $doc(F.checkAt -> true)))
+
+  def count(query: Query.type => Bdoc): Fu[Int] = coll countSel query(Query)
+
 }

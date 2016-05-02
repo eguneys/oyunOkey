@@ -31,6 +31,7 @@ final class Env(
   val roundMap = system.actorOf(Props(new oyun.hub.ActorMap {
     def mkActor(id: String) = new Round(
       gameId = id,
+      finisher = finisher,
       player = player,
       socketHub,
       activeTtl = ActiveTtl)
@@ -79,6 +80,10 @@ final class Env(
     getSocketStatus = getSocketStatus)
 
   scheduler.message(2.1 seconds)(roundMap -> actorApi.GetNbRounds)
+
+  system.actorOf(
+    Props(classOf[Titivate], roundMap),
+    name = "Titivate")
 }
 
 object Env {

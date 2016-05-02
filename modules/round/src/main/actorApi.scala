@@ -69,6 +69,8 @@ package round {
     playerId: String,
     uci: Uci,
     promise: Option[Promise[Unit]] = None)
+
+  case object Abandon
 }
 
 private[round] case object GetNbRounds

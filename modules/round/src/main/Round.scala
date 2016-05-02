@@ -11,6 +11,7 @@ import oyun.hub.SequentialActor
 
 private[round] final class Round(
   gameId: String,
+  finisher: Finisher,
   player: Player,
   socketHub: ActorRef,
   activeTtl: Duration) extends SequentialActor {
@@ -28,6 +29,19 @@ private[round] final class Round(
       handleHumanPlay(p) { pov =>
         player.human(p, self)(pov)
       }
+
+    // exceptionally we don't block nor publish events
+    // if the game is abandoned, then nobody is around to see it
+    // we can also terminate this actor
+    case Abandon => fuccess {
+      proxy withGame { game =>
+        game.abandoned ?? {
+          self ! PoisonPill
+          //if (game.abortable) finisher.other(game, _.Aborted)
+          finisher.other(game, _.Aborted)
+        }
+      }
+    }
   }
 
   protected def handleHumanPlay(p: HumanPlay)(op: Pov => Fu[Events]): Funit =
