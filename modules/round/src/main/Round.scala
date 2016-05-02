@@ -17,19 +17,26 @@ private[round] final class Round(
 
   context setReceiveTimeout activeTtl
 
+  implicit val proxy = new GameProxy(gameId)
+
   def process = {
     case ReceiveTimeout => fuccess {
       self ! SequentialActor.Terminate
     }
 
     case p: HumanPlay =>
-      handle(p.playerId) { pov =>
+      handleHumanPlay(p) { pov =>
         player.human(p, self)(pov)
       }
   }
 
+  protected def handleHumanPlay(p: HumanPlay)(op: Pov => Fu[Events]): Funit =
+    handlePov {
+      proxy playerPov p.playerId
+    }(op)
+
   def handle(playerId: String)(op: Pov => Fu[Events]): Funit =
-    handlePov((GameRepo pov PlayerRef(gameId, playerId)))(op)
+    handlePov(proxy playerPov playerId)(op)
 
   private def handlePov(pov: Fu[Option[Pov]])(op: Pov => Fu[Events]): Funit = publish {
     pov flatten "pov not found" flatMap { p =>

@@ -23,6 +23,9 @@ object Pov {
 
   def apply(game: Game, player: Player) = new Pov(game, player.side)
 
+  def apply(game: Game, playerId: String): Option[Pov] =
+    game player playerId map { apply(game, _) }
+
   def apply(game: Game, user: oyun.user.User): Option[Pov] =
     game player user map { apply(game, _) }
 }

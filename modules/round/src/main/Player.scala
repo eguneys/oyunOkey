@@ -12,13 +12,13 @@ import actorApi.round.{ HumanPlay }
 private[round] final class Player(
   finisher: Finisher) {
 
-  def human(play: HumanPlay, round: ActorRef)(pov: Pov): Fu[Events] = play match {
+  def human(play: HumanPlay, round: ActorRef)(pov: Pov)(implicit proxy: GameProxy): Fu[Events] = play match {
     case HumanPlay(playerId, uci, promiseOption) => pov match {
       case Pov(game, side) if game playableBy side =>
         applyUci(game, side, uci).prefixFailuresWith(s"$pov")
           .fold(errs => fufail(ClientError(errs.shows)), fuccess).flatMap {
           case (progress, move) =>
-            (GameRepo save progress) >>
+            (proxy save progress) >>
             progress.game.finished.fold(moveFinish(progress.game, side) map { progress.events ::: _ }, {
                 funit inject progress.events
               }) >>- promiseOption.foreach(_.success(()))
@@ -41,7 +41,7 @@ private[round] final class Player(
       game.update(newChessGame, move) -> move
   }
 
-  private def moveFinish(game: Game, side: Side): Fu[Events] = {
+  private def moveFinish(game: Game, side: Side)(implicit proxy: GameProxy): Fu[Events] = {
     lazy val situation = game.toOkey.situation
     lazy val result = situation.endScores
     lazy val winner = situation.winner
