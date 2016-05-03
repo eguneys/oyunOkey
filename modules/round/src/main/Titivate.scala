@@ -33,7 +33,6 @@ private[round] final class Titivate(
       throw new RuntimeException(msg)
 
     case Run => GameRepo.count(_.checkable).flatMap { total =>
-      println(s"titivate ${total}")
       GameRepo.cursor(Query.checkable)
         .enumerate(5000, stopOnError = false)
         .|>>>(Iteratee.foldM[Game, Int](0) {

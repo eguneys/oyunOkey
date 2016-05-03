@@ -2,7 +2,7 @@ import m from 'mithril';
 import okeyground from 'okeyground';
 import renderUser from './user';
 import renderReplay from './replay';
-import { game } from 'game';
+import { game, status } from 'game';
 import button from './button';
 import renderTabs from './tabs';
 import { renderTableScores, renderTableScoreInfo } from './scores';
@@ -122,7 +122,7 @@ function renderGameStatus(ctrl) {
             [m('div.sideboard_panels', [
               renderTabs.panel(ctrl, 'replay_tab',renderReplay(ctrl)),
               renderTabs.panel(ctrl, 'scores_tab',
-                               game.playable(ctrl.data) ? null : renderTableScores(ctrl))]),
+                               (game.playable(ctrl.data)) ? null : renderTableScores(ctrl))]),
              m('div.sideboard_menu', renderTabs.tabs(ctrl))]),
           ctrl.vm.scoresheetInfo.side ? renderTableScoreInfo(ctrl) : null];
 }

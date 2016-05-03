@@ -1,0 +1,17 @@
+@(system: Option[oyun.masa.System])(implicit ctx: Context)
+
+@side = {
+  <div class="masa_home_side masa_links">
+    <a href="@routes.Masa.help("arena".some)">@trans.masaFAQ()</a>
+    <a href="@routes.Masa.home()">@trans.backToMasa()</a>
+  </div>
+}
+
+@masa.layout(title = "Masa SSS", side = side.some) {
+  <div id="masa">
+    <div class="content_box small_box">
+      <h1>@system Masa SSS</h1>
+      @masa.faq(system = system)
+    </div>
+  </div>
+}

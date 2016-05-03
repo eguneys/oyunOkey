@@ -7,6 +7,7 @@
         @game.variantLink(m.variant, m.variant.name, cssClass = "hint--top") •
         @m.roundString
       </span>
+      (<a href="@routes.Masa.help(m.system.toString.toLowerCase.some)">?</a>)
     </div>
   </div>
   @trans.by(usernameOrAnon(m.createdBy.some))

@@ -18,4 +18,9 @@
   chat = base.chat(trans.chatRoom.str()).some,
   moreJs = moreJs) {
     <div id="masa"></div>
+    @if(m.isCreated) {
+      <div id="masa_faq" class="none">
+        @faq(m.system.some)
+      </div>
+    }
 }

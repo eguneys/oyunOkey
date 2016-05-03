@@ -55,7 +55,7 @@ object PairingRepo {
       "t" -> g.turns))).void
 
   def playingPlayerIds(masa: Masa): Fu[Set[String]] =
-    coll.find(selectMasa(masa.id) ++ selectPlaying).uno[Pairing] map {
+    coll.find(selectMasa(masa.id) ++ selectPlaying).one[Pairing] map {
       _ map { _.playerIds.toSet } getOrElse Set.empty
     }
 }

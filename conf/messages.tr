@@ -1,6 +1,8 @@
 createAGame=Bir oyun kur
 createAMasa=Bir masa aç
 viewMasa=Masayı Gör
+backToMasa=Masaya dön
+masaFAQ=Masa SSS
 join=Katıl
 withdraw=Çekil
 play=Oyna

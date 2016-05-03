@@ -34,8 +34,13 @@ module.exports = {
     var pag = pagination.players(ctrl);
     return [
       header(ctrl),
+      standing(ctrl, pag, 'created'),
       seats(ctrl),
-      standing(ctrl, pag, 'created')
+      m('div.content_box_content', {
+        config: function(el, isUpdate) {
+          if (!isUpdate) $(el).html($('#masa_faq').show());
+        }
+      })
     ];
   },
   side: function(ctrl) {

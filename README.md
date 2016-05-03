@@ -1,4 +1,4 @@
-tournament
+<tournament
 
 pairing
 id = gameid

@@ -6,7 +6,7 @@ import play.api.libs.json._
 import oyun.api.Context
 import oyun.app._
 import oyun.common.{ HTTPRequest, OyunCookie }
-import oyun.masa.{ MasaRepo, PlayerRef, AnonCookie }
+import oyun.masa.{ System, MasaRepo, PlayerRef, AnonCookie }
 import views._
 
 object Masa extends OyunController with TheftPrevention {
@@ -31,6 +31,14 @@ object Masa extends OyunController with TheftPrevention {
         Ok(env scheduleJsonView masas)
       }
     )
+  }
+
+  def help(sysStr: Option[String]) = Open { implicit ctx =>
+    val system = sysStr flatMap {
+      case "arena" => System.Arena.some
+      case _ => none
+    }
+    Ok(html.masa.faqPage(system)).fuccess
   }
 
   def show(id: String) = Open { implicit ctx =>

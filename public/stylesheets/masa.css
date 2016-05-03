@@ -1,3 +1,18 @@
+#site_header .masa_links {
+  margin-top: 10px;
+}
+
+#site_header .masa_links a {
+  line-height: 2em;
+  display: block;
+}
+
+#masa article.faq h2 {
+  font-weight: bold;
+  font-style: italic;
+  margin: 20px 0 10px 0;
+}
+
 #masa .header {
   display: flex;
   align-items: center;
