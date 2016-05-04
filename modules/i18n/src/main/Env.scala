@@ -11,8 +11,12 @@ final class Env(
   private val settings = new {
     val WebPathRelative = config getString "web_path.relative"
     val FilePathRelative = config getString "file_path.relative"
+    val CdnDomain = config getString "cdn_domain"
   }
   import settings._
+
+  // public settings
+  val RequestHandlerProtocol = config getString "request_handler.protocol"
 
   lazy val pool = new I18nPool(
     langs = Lang.availables(play.api.Play.current).toSet,
@@ -24,6 +28,11 @@ final class Env(
     pool = pool)
 
   lazy val keys = new I18nKeys(translator)
+
+  lazy val requestHandler = new I18nRequestHandler(
+    pool,
+    RequestHandlerProtocol,
+    CdnDomain)
 
   lazy val jsDump = new JsDump(
     path = appPath + "/" + WebPathRelative,

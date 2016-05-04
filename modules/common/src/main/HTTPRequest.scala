@@ -12,6 +12,10 @@ object HTTPRequest {
 
   def isSynchronousHttp(req: RequestHeader) = !isXhr(req) && !isSocket(req)
 
+  def isSafe(req: RequestHeader) = req.method == "GET"
+
+  def isRedirectable(req: RequestHeader) = isSynchronousHttp(req) && isSafe(req)
+
   def userAgent(req: RequestHeader): Option[String] = req.headers get HeaderNames.USER_AGENT
 
   def lastRemoteAddress(req: RequestHeader): String =

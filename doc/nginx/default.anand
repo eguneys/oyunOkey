@@ -1,0 +1,77 @@
+server {
+  listen 80;
+  server_name www.oyunkeyf.net ~^www\.\w\w\.oyunkeyf\.net$;
+  return 301 http://oyunkeyf.net$request_uri;
+}
+
+# serve static files
+server {
+  listen 80;
+  server_name oyunkeyf.eguneys.com;
+
+  # forward all to anand
+  location /assets {
+    alias /home/ubuntu/oyun/public;
+  }
+
+  location /assets/stylesheets {
+    alias /home/ubuntu/oyun/public/compiled;
+  }
+
+  location /assets/font50 {
+    alias /home/ubuntu/oyun/public/font50;
+    add_header Access-Control-Allow-Origin *;
+  }
+}
+
+server {
+  listen 80;
+
+  server_name oyunkeyf.net ~^\w\w.oyunkeyf\.net$; 
+
+  charset utf-8;
+
+#  location /assets {
+#    alias /home/ubuntu/oyun/public;
+#  }
+
+#  location /assets/stylesheets {
+#    alias /home/ubuntu/oyun/public/compiled;
+#  }
+
+
+  location /assets/font50 {
+    alias /home/ubuntu/oyun/public/font50;
+    add_header Access-Control-Allow-Origin *; 
+  }
+
+  location ~ \.html$ {
+    root /home/ubuntu/oyun/serve;
+  }
+
+  location / {
+    proxy_http_version 1.1;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_read_timeout 90s;
+    proxy_pass http://localhost:9000/;
+  }
+
+  error_page 500 /oops/servererrror.html;
+
+  location /oops/ {
+    root /home/ubuntu/oyun/public/;
+  }
+}
+
+server {
+  listen 9021;
+  server_name oyunkeyf.net;
+  charset utf-8;
+  location / {
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_pass http://localhost:9000/;
+  }
+}

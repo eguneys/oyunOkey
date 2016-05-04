@@ -9,6 +9,8 @@ private[i18n] case class I18nPool(val langs: Set[Lang], val default: Lang) {
 
   def lang(req: RequestHeader) = domainLang(req) getOrElse default
 
+  def preferred(req: RequestHeader) =
+    (req.acceptLanguages find langs.contains) getOrElse default
 
   def domainLang(req: RequestHeader) =
     cache.getOrElseUpdate(req.domain, {

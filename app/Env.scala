@@ -32,6 +32,7 @@ object Env {
   def api = oyun.api.Env.current
   def db = oyun.db.Env.current
   def user = oyun.user.Env.current
+  def i18n = oyun.i18n.Env.current
   def security =  oyun.security.Env.current
   def hub = oyun.hub.Env.current
   def socket = oyun.socket.Env.current
