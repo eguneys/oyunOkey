@@ -81,7 +81,11 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api, play.test, RM)
   )
 
-  lazy val round = project("round", Seq(common, user, game, okey, socket, hub)).settings(
+  lazy val fishnet = project("fishnet", Seq(common, okey, game, db)).settings(
+    libraryDependencies ++= provided(play.api, RM)
+  )
+
+  lazy val round = project("round", Seq(common, user, game, okey, socket, hub, fishnet)).settings(
     libraryDependencies ++= provided(play.api, play.test, RM)
   )
 

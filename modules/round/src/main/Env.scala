@@ -13,6 +13,7 @@ import makeTimeout.large
 final class Env(
   config: Config,
   system: ActorSystem,
+  fishnetPlayer: oyun.fishnet.Player,
   userJsonView: oyun.user.JsonView,
   scheduler: oyun.common.Scheduler) {
 
@@ -69,6 +70,7 @@ final class Env(
     bus = system.oyunBus)
 
   private lazy val player: Player = new Player(
+    fishnetPlayer = fishnetPlayer,
     finisher = finisher
   )
 
@@ -91,6 +93,7 @@ object Env {
   lazy val current = "round" boot new Env(
     config = oyun.common.PlayApp loadConfig "round",
     system = oyun.common.PlayApp.system,
+    fishnetPlayer = oyun.fishnet.Env.current.player,
     userJsonView = oyun.user.Env.current.jsonView,
     scheduler = oyun.common.PlayApp.scheduler)
 }

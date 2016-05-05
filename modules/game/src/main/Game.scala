@@ -200,6 +200,10 @@ case class Game(
 
   def playableBy(s: Side): Boolean = playableBy(player(s))
 
+  def playableByAi: Boolean = playable && player.isAi
+
+  def aiLevel: Option[Int] = players find (_.isAi) flatMap (_.aiLevel)
+
   def finished = status >= Status.NormalEnd
 
   def finishedOrAborted = finished || aborted

@@ -10,6 +10,7 @@ import actorApi.round.{ HumanPlay }
 
 
 private[round] final class Player(
+  fishnetPlayer: oyun.fishnet.Player,
   finisher: Finisher) {
 
   def human(play: HumanPlay, round: ActorRef)(pov: Pov)(implicit proxy: GameProxy): Fu[Events] = play match {
@@ -19,8 +20,12 @@ private[round] final class Player(
           .fold(errs => fufail(ClientError(errs.shows)), fuccess).flatMap {
           case (progress, move) =>
             (proxy save progress) >>
-            progress.game.finished.fold(moveFinish(progress.game, side) map { progress.events ::: _ }, {
-                funit inject progress.events
+            progress.game.finished.fold(
+              moveFinish(progress.game, side) map { progress.events ::: _ }, {
+                funit addEffect {
+                  case _ =>
+                    if (progress.game.playableByAi) requestFishnet(progress.game)
+                } inject progress.events
               }) >>- promiseOption.foreach(_.success(()))
         } addFailureEffect { e =>
           promiseOption.foreach(_ failure e)
@@ -31,6 +36,7 @@ private[round] final class Player(
     }
   }
 
+  def requestFishnet(game: Game) = game.playableByAi ?? fishnetPlayer(game)
 
   private def applyUci(game: Game, side: Side, uci: Uci) = {
     game.toOkey.apply(side, uci.action) map {

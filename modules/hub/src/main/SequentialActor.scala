@@ -26,7 +26,7 @@ trait SequentialActor extends Actor {
       case None => context become idle
       case Some(msg) => processThenDone(msg)
     }
-    case msg => println(queue); queue enqueue msg
+    case msg => queue enqueue msg
   }
 
   def receive = idle

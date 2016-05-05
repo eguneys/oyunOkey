@@ -9,6 +9,7 @@ case class Player(
   playerId: Option[String] = None,
   userId: Option[String] = None,
   side: Side,
+  aiLevel: Option[Int],
   isWinner: Option[Boolean] = None,
   endScore: Option[EndScoreSheet] = None) {
 
@@ -25,6 +26,8 @@ case class Player(
 
   def hasUser = userId.isDefined
 
+  def isAi = aiLevel.isDefined
+
   def isUser(u: User) = userId.fold(false)(_ == u.id)
 
   def wins = isWinner getOrElse false
@@ -32,9 +35,12 @@ case class Player(
 
 object Player {
 
-  def make(side: Side): Player = Player(
-    id = IdGenerator.player,
-    side = side)
+  def make(
+    side: Side,
+    aiLevel: Option[Int] = None): Player = Player(
+      id = IdGenerator.player,
+      side = side,
+      aiLevel = aiLevel)
 
   def east = make(Side.EastSide)
   def west = make(Side.WestSide)
@@ -45,7 +51,7 @@ object Player {
 
 
   object BSONFields {
-
+    val aiLevel = "ai"
   }
 
 
@@ -68,14 +74,15 @@ object Player {
       side = side,
       playerId = playerId,
       userId = userId,
+      aiLevel = r intO aiLevel,
       endScore = endScore,
       isWinner = win
     )
 
     def writes(w: BSON.Writer, o: Builder) =
-      o(Side.EastSide)("0000")(none)(none)(none) |> { p =>
+      o(Side.EastSide)("0000")(none)(none)(none)(none) |> { p =>
         BSONDocument(
-          
+          aiLevel -> p.aiLevel
         )
       }
   }

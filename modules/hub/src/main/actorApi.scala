@@ -13,6 +13,8 @@ package map {
 
 package round {
   case class NbRounds(nb: Int)
+
+  case class FishnetPlay(uci: okey.format.Uci)
 }
 
 case class WithUserIds(f: Iterable[String] => Unit)

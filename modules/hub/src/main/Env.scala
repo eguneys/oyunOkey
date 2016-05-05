@@ -6,6 +6,7 @@ import com.typesafe.config.Config
 final class Env(config: Config, system: ActorSystem) {
   object actor {
     val lobby = select("actor.lobby")
+    val roundMap = select("actor.round.map")
   }
 
   object socket {
