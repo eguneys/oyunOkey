@@ -66,6 +66,22 @@ object Masa extends OyunController with TheftPrevention {
     }
   }
 
+  def invite(id: String) = OpenBody { implicit ctx =>
+    val side = get("side")
+    playerForReq(id) flatMap { playerOption =>
+      negotiate(
+        html = repo enterableById id flatMap {
+          case None => masaNotFound.fuccess
+          case Some(masa) =>
+            env.api.invite(masa.id, side) inject
+            Redirect(routes.Masa.show(masa.id))
+        },
+        api = _ => OptionFuOk(repo enterableById id) { masa =>
+          env.api.invite(masa.id, side) inject
+          Json.obj("ok" -> true)
+        })
+    }
+  }
 
   def join(id: String) = OpenBody { implicit ctx =>
     val side = get("side")

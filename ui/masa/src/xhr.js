@@ -37,6 +37,7 @@ function reloadMasa(ctrl) {
 }
 
 module.exports = {
+  invite: throttle(1000, false, partial(masaAction, 'invite')),
   join: throttle(1000, false, partial(masaAction, 'join')),
   withdraw: throttle(1000, false, partial(masaAction, 'withdraw')),
   reloadMasa: throttle(2000, false, reloadMasa)

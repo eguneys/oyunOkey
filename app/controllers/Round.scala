@@ -17,7 +17,7 @@ object Round extends OyunController with TheftPrevention {
     GameRepo pov fullId flatMap {
       case Some(pov) =>
         get("sri") match {
-          case Some(uid) => env.socketHandler.player(
+          case Some(uid) => requestAiMove(pov) >> env.socketHandler.player(
             pov, uid, ctx.me
           ) map Right.apply
           case None => fuccess(Left(NotFound))
@@ -25,6 +25,8 @@ object Round extends OyunController with TheftPrevention {
       case None => fuccess(Left(NotFound))
     }
   }
+
+  private def requestAiMove(pov: Pov) = pov.game.playableByAi ?? Env.fishnet.player(pov.game)
 
   private def renderPlayer(pov: Pov)(implicit ctx: Context): Fu[Result] = {
     negotiate(

@@ -50,6 +50,10 @@ private[masa] final class MasaApi(
     }
   }
 
+  def invite(masaId: String, side: Option[String] = None): Fu[Unit] = {
+    val ref = PlayerRef(aiLevel = 1.some)
+    join(masaId, ref, side)
+  }
 
   def join(masaId: String, player: PlayerRef, side: Option[String] = None): Fu[Unit] = {
     val promise = Promise[Unit]()

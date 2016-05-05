@@ -35,6 +35,7 @@ object Env {
   def i18n = oyun.i18n.Env.current
   def security =  oyun.security.Env.current
   def hub = oyun.hub.Env.current
+  def fishnet = oyun.fishnet.Env.current
   def socket = oyun.socket.Env.current
   def setup = oyun.setup.Env.current
   def lobby = oyun.lobby.Env.current

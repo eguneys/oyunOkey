@@ -10,7 +10,7 @@ final class AutoPairing {
       players = GamePlayer.allSides
     )
     game2 = game1
-    .updatePlayers(players.map { p => (gp: GamePlayer) => gp.withPlayer(p.id).withUser(p.userId) })
+    .updatePlayers(players.map { p => (gp: GamePlayer) => gp.withPlayer(p.id).withUser(p.userId).withAi(p.aiLevel) })
     .withMasaId(masa.id)
     .withId(pairing.gameId)
     .start

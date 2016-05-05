@@ -55,6 +55,7 @@ object BSONHandlers {
         active = r boolD "a",
         side = Side(r str "d") err s"No such side:",
         score = r intD "s",
+        aiLevel = r intO "al",
         magicScore = r int "m",
         createdAt = r date "createdAt"
       )
@@ -67,6 +68,7 @@ object BSONHandlers {
       "a" -> w.boolO(o.active),
       "d" -> o.side.letter.toString,
       "s" -> w.intO(o.score),
+      "al" ->  w.intO(o.aiLevel.getOrElse(0)),
       "m" -> o.magicScore,
       "createdAt" -> w.date(o.createdAt)
     )

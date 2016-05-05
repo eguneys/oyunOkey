@@ -15,4 +15,5 @@ package round {
 
   private [round] sealed trait BenignError extends oyun.common.OyunException
   private [round] case class ClientError(message: String) extends BenignError
+  private [round] case class FishnetError(message: String) extends BenignError
 }

@@ -43,17 +43,19 @@ final class JsonView(
   private def playerJson(socket: SocketStatus, player: GamePlayer, playerUser: Option[User]) = Json.obj(
     "side" -> player.side.name,
     "version" -> socket.version,
+    "ai" -> player.aiLevel,
     "user" -> playerUser.map { userJsonView(_) },
-    "onGame" -> socket.onGame(player.side),
-    "isGone" -> socket.isGone(player.side)
+    "onGame" -> (player.isAi || socket.onGame(player.side)),
+    "isGone" -> (!player.isAi || socket.isGone(player.side))
   )
 
   private def opponentJson(socket: SocketStatus, opponent: GamePlayer, opponentUser: Option[User]) = {
     Json.obj(
       "side" -> opponent.side.name,
+      "ai" -> opponent.aiLevel,
       "user" -> opponentUser.map { userJsonView(_) },
-      "onGame" -> socket.onGame(opponent.side),
-      "isGone" -> socket.isGone(opponent.side)
+      "onGame" -> (opponent.isAi || socket.onGame(opponent.side)),
+      "isGone" -> (!opponent.isAi || socket.isGone(opponent.side))
     )
   }
 

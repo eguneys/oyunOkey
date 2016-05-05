@@ -93,7 +93,14 @@ function renderTablePlay(ctrl) {
 }
 
 function renderPlayer(ctrl, player) {
-  return m('div', {
+  return player.ai ? m('div.player.on-game', [
+    'Bot AI' + player.ai,
+    m('span.status.hint--top', {
+      'data-hint': ctrl.trans('aiReady')
+    }, m('span', {
+      'data-icon': '3'
+    }))
+  ]) : m('div', {
     class: 'player ' + player.side + (player.onGame ? ' on-game' : '')
   },
            renderUser(ctrl, player)

@@ -24,6 +24,9 @@ case class Player(
   def withUser(id: Option[String]): Player = copy(
     userId = id)
 
+  def withAi(aiLevel: Option[Int]): Player = copy(
+    aiLevel = aiLevel)
+
   def hasUser = userId.isDefined
 
   def isAi = aiLevel.isDefined

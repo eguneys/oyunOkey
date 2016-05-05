@@ -38,6 +38,23 @@ private[round] final class Player(
 
   def requestFishnet(game: Game) = game.playableByAi ?? fishnetPlayer(game)
 
+  def fishnet(game: Game, uci: Uci)(implicit proxy: GameProxy): Fu[Events] =
+    if (game.playable && game.player.isAi) {
+      applyUci(game, game.player.side, uci)
+        .fold(errs =>fufail(ClientError(errs.shows)), fuccess).flatMap {
+        case (progress, move) =>
+          proxy.save(progress) >>
+          progress.game.finished.fold(
+            moveFinish(progress.game, game.player.side) map { progress.events ::: _ },
+            funit addEffect {
+              case _ =>
+                if (progress.game.playableByAi) requestFishnet(progress.game)
+            } inject progress.events
+          )
+      }
+    }
+    else fufail(FishnetError("Not AI turn"))
+
   private def applyUci(game: Game, side: Side, uci: Uci) = {
     game.toOkey.apply(side, uci.action) map {
       case (ncg, move) => ncg -> move

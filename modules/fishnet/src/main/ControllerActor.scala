@@ -23,11 +23,25 @@ private[fishnet] class ControllerActor(
   def receive = {
     case Acquire(client) => {
       api acquireMove client map { _ ?? { workMove =>
-        println(s"workmove ${workMove}")
-        api.postMove(workMove.id, client, none)
+        val move = findMove(workMove.game.game)
+        api.postMove(workMove.id, client, move)
       }
       }
     } andThenAnyway scheduleNext
+  }
+
+  private def findMove(game: oyun.game.Game): Option[okey.format.Uci] = {
+    import okey.{ DrawMiddle, Discard }
+
+    val okeyGame = game.toOkey
+
+    val board = okeyGame.table.boards(okeyGame.player.side)
+    return (okeyGame.situation.actions.foldLeft(none[okey.Action]) {
+      case (found@Some(_), _) => found
+      case (_, DrawMiddle) => DrawMiddle.some
+      case (_, Discard) => board.pieceList.headOption map Discard.apply
+      case _ => None
+    }).map (_.toUci)
   }
 
 }

@@ -7,6 +7,7 @@ import akka.actor._
 import actorApi._, round._
 import oyun.game.{ GameRepo, Game, Pov, PlayerRef, Event }
 import oyun.hub.actorApi.map._
+import oyun.hub.actorApi.round.FishnetPlay
 import oyun.hub.SequentialActor
 
 private[round] final class Round(
@@ -30,6 +31,10 @@ private[round] final class Round(
         player.human(p, self)(pov)
       }
 
+    case FishnetPlay(uci) => handle { game =>
+      player.fishnet(game, uci)
+    }
+
     // exceptionally we don't block nor publish events
     // if the game is abandoned, then nobody is around to see it
     // we can also terminate this actor
@@ -44,6 +49,9 @@ private[round] final class Round(
     }
   }
 
+  protected def handle[A](op: Game => Fu[Events]): Funit =
+    handleGame(proxy.game)(op)
+
   protected def handleHumanPlay(p: HumanPlay)(op: Pov => Fu[Events]): Funit =
     handlePov {
       proxy playerPov p.playerId
@@ -57,6 +65,10 @@ private[round] final class Round(
       op(p)
     }
   }
+
+  private def handleGame(game: Fu[Option[Game]])(op: Game => Fu[Events]): Funit = publish {
+    game flatten "game not found" flatMap op
+  } recover errorHandler("handleGame")
 
   private def publish[A](op: Fu[Events]) = op.addEffect { events =>
     if (events.nonEmpty) socketHub ! Tell(gameId, EventList(events))
