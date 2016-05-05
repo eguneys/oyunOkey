@@ -23,9 +23,26 @@ function join(ctrl, side) {
   });
 }
 
+function seatInvite(ctrl, side) {
+  return m('button.button.right.text.invite', {
+    // 'data-icon': 'G',
+    onclick: util.partial(ctrl.invite, side)
+  }, ctrl.trans('invite'));
+}
+
+function seatJoin(ctrl, side) {
+  return m('button.button.right.text', {
+//    'data-icon': 'G',
+    onclick: util.partial(ctrl.join, side)
+  }, ctrl.trans('join'));
+}
+
 module.exports = {
   withdraw: withdraw,
   join: join,
+  seatJoin: seatJoin,
+  seatInvite: seatInvite,
+  orJoinSpinner: orJoinSpinner,
   joinWithdraw: function(ctrl) {
     return (ctrl.data.isFinished) ? null : (
       ctrl.data.me && ctrl.data.me.active ? withdraw(ctrl) : join(ctrl));

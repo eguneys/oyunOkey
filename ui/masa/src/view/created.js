@@ -3,6 +3,8 @@ import header from './header';
 import button from './button';
 import pagination from '../pagination';
 import { standing } from './arena';
+import vUtil from './util';
+import { util } from 'okeyground';
 
 function table(ctrl) {
   return m('div.table');
@@ -10,8 +12,24 @@ function table(ctrl) {
 
 function seat(ctrl, side) {
   var player = ctrl.data.actives[side];
-  return m('div.seat', [
-    player ? player.id : button.join(ctrl, side)
+  var me = player && ctrl.playerId === player.id;
+
+  var attrs = {
+    class: util.classSet({
+      'me': me,
+      'empty': !player
+    })
+  };
+
+  return m('div.seat.in', attrs, [
+    player ?
+      m('span.title', vUtil.usernameOrAnon(ctrl.data, player.id)) :
+      button.orJoinSpinner(ctrl, function() {
+        return m('div.buttons', [
+          button.seatInvite(ctrl, side),
+          button.seatJoin(ctrl, side)
+        ]);
+      })
   ]);
 }
 
@@ -38,7 +56,8 @@ module.exports = {
       seats(ctrl),
       m('div.content_box_content', {
         config: function(el, isUpdate) {
-          if (!isUpdate) $(el).html($('#masa_faq').show());
+          var $masaFaq = $('#masa_faq');
+          if (!isUpdate && $masaFaq[0]) $(el).html($masaFaq.show());
         }
       })
     ];

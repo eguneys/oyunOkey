@@ -223,11 +223,85 @@
 
 #masa .seats .seat {
   margin: 5px;
+  height: 36px;
+  width: 100px;
+  transition: 0.13s;
+  background: #fff;
+  box-shadow: 0 1px 7px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+}
+
+#masa .seats .seat:not(.empty):not(.me) {
+  background: #707070;
+  color: #fff;
+}
+
+#masa .seats .seat.empty:hover {
+  height: 80px;
+  box-shadow: 0 1px 13px rgba(0, 0, 0, 0.7);
+}
+
+#masa .seat.me {
+  /* border-left: 2px solid #d59120; */
+  background: #d59120;
+  color: #fff;
+}
+
+#masa .seat .title {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+#masa .seats .buttons {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  opacity: 0;
+  width: 100%;
+}
+
+#masa .seats .buttons .button {
+  transition: 0.13s;
+  border: none;
+}
+
+#masa .seats .seat:hover .buttons {
+  opacity: 1;
+}
+
+#masa .seats button {
+  height: 40px;
+  box-sizing; border-box;
+}
+
+#masa .seats button:hover {
+  background: #848484;
+  color: #fff;
+}
+
+#masa .seats button {
+  cursor: pointer;
+  width: 100%;
+  display: block;
+  padding: 0;
+  background: transparent;
+  font-size: 18px;
+  border-radius: 0;
+  transition: 0.13s;
+  border-width: 1px 1px 0 0;
 }
 
 #masa .seats .middle {
   display: flex;
-  align-items: center;
+  /* align-items: center; */
+  height: 80px;
+}
+
+#masa .seats .seat:not(:hover),
+#masa .seats .seat:not(.empty) {
+  margin-bottom: 49px;
 }
 
 #masa .table {

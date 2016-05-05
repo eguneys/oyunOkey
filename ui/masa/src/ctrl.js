@@ -59,6 +59,10 @@ module.exports = function(env) {
   //   }
   // }] });
 
+  this.invite = (side) => {
+    console.log('invite ', side);
+  };
+
   this.join = (side) => {
     xhr.join(this, side);
     this.vm.joinSpinner = true;
