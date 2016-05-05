@@ -23,7 +23,7 @@ function seat(ctrl, side) {
 
   return m('div.seat.in', attrs, [
     player ?
-      m('span.title', vUtil.usernameOrAnon(ctrl.data, player.id)) :
+      m('span.title', vUtil.usernameOrAnon(ctrl, player.id)) :
       button.orJoinSpinner(ctrl, function() {
         return m('div.buttons', [
           button.seatInvite(ctrl, side),

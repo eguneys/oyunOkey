@@ -11,6 +11,7 @@ playingRightNow=Playing right now
 playing=Playing
 finished=Finished
 players=Players
+aiBot=Bot AI%s
 freeOnlineOkey=Free Online Okey
 chatRoom=Chat Room
 toggleTheChat=Chat on/off

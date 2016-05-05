@@ -11,6 +11,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     pairings: JsArray,
     actives: JsObject,
     users: JsObject,
+    players: JsObject,
     podium: Option[JsArray])
 
   def apply(masa: Masa,
@@ -34,6 +35,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     "isFinished" -> masa.isFinished,
     "actives" -> data.actives,
     "users" -> data.users,
+    "players" -> data.players,
     "pairings" -> data.pairings,
     "standing" -> stand,
     "me" -> myInfo.map(myInfoJson),
@@ -60,11 +62,13 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     pairings <- PairingRepo.recentByMasa(id, 40)
     actives <- PlayerRepo.activePlayers(id)
     users <- PlayerRepo.allUserPlayers(id)
+    players <- PlayerRepo.allByMasa(id)
     podium <- podiumJson(id)
   } yield CachableData(
     pairings = JsArray(pairings map pairingJson),
     actives = JsObject(actives map activeJson),
     users = JsObject(users flatMap playerUserMap),
+    players = JsObject(players map (p => p.id -> playerInfoJson(p))),
     podium))
 
   private def myInfoJson(i: PlayerInfo) = Json.obj(
@@ -81,6 +85,15 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
         "total" -> s.total
       )
       o
+  }
+
+  private def playerInfoJson(p: Player): JsObject = {
+    val light = p.userId flatMap getLightUser
+    Json.obj(
+      "userId" -> p.userId,
+      "ai" -> p.aiLevel,
+      "name" -> light.map(_.name)
+    )
   }
 
   private def playerJson(sheets: Map[String, ScoreSheet], masa: Masa)(rankedPlayer: RankedPlayer): JsObject =

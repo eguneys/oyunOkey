@@ -23,7 +23,7 @@ private[masa] final class MasaApi(
   def createMasa(setup: MasaSetup, player: PlayerRef): Fu[Masa] = {
     val variant = okey.variant.Variant orDefault setup.variant
     val masa = Masa.make(
-      createdByUserId = player.id,
+      createdByUserId = player.userId | player.id,
       rounds = setup.rounds,
       system = System.Arena,
       variant = variant)

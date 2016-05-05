@@ -22,7 +22,11 @@ function rank(p) {
 // mithril cannot read property parentNode: https://github.com/lhorie/mithril.js/issues/96#issuecomment-210044311
 function playerTr(ctrl, player) {
   var isLong = player.sheet.scores.length > 40;
-  var playerName = player.name || 'Anonymous';
+
+  var ai = ctrl.data.players[player.id].ai;
+
+  var playerName = ai ? ctrl.trans('aiBot', ai) :
+      (player.name || 'Anonymous');
   var playerId = player.id;
   var userId = playerName.toLowerCase();
   return m('tr', {
@@ -37,7 +41,7 @@ function playerTr(ctrl, player) {
           'data-icon': 'b',
           'title': ctrl.trans('withdraw')
         }),
-      util.player(player, 'span')
+      util.player(playerName, 'span')
     ]),
     ctrl.data.isCreated ? m('td') :
       m('td.sheet', player.sheet.scores.map(scoreTag)),
@@ -60,18 +64,18 @@ function podiumStats(p, data) {
   ];
 }
 
-function podiumPosition(p, data, pos) {
+function podiumPosition(ctrl, p, pos) {
   if (p) return m('div.' + pos, [
     trophy,
-    podiumUsername(p),
-    podiumStats(p, data)
+    p.ai ? ctrl.trans('aiBot', p.ai) : podiumUsername(p),
+    podiumStats(p, ctrl.data)
   ]);
 }
 
 module.exports = {
   podium: function(ctrl) {
     return m('div.podium', [
-      podiumPosition(ctrl.data.podium[0], ctrl.data, 'first')
+      podiumPosition(ctrl, ctrl.data.podium[0], 'first')
     ]);
   },
   standing: function(ctrl, pag) {
