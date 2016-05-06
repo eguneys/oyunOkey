@@ -10,6 +10,17 @@ import oyun.user.{ User, UserContext }
 
 trait GameHelper { self: I18nHelper with UserHelper =>
 
+  def povOpenGraph(pov: Pov) = oyun.app.ui.OpenGraph(
+    title = "titleGame(pov.game)",
+    //url = s"$netBaseUrl${routes.Round.watcher(pov.game.id, pov.side.name).url}",
+    url = "$netBaseUrl",
+    description = "describePov")
+
+  // def describePov(pov: Pov) = {
+  //   import pov._
+  //   // val p1 = playerText(player,
+  // }
+
   def playerLink(
     player: Player,
     withOnline: Boolean = true)(implicit ctx: UserContext) = Html {

@@ -596,8 +596,8 @@ div.control.icons .button.move.enabled {
   left: 74%; }
   .og-top piece.mmiddleCount:not(.dragging)::before {
     position: absolute;
-    top: calc(50% - 7px);
-    left: calc(50% - 3px);
+    top: calc(50%);
+    left: calc(50% - 5px);
     font-size: 11px;
     font-weight: bold;
     opacity: 0.7;
@@ -632,7 +632,7 @@ div.control.icons .button.move.enabled {
   width: 75%;
   height: 68.57143%;
   border-radius: 2px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
   margin: auto;
   bottom: 0;
   top: 0;

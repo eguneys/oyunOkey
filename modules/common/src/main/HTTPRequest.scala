@@ -22,4 +22,9 @@ object HTTPRequest {
     req.remoteAddress.split(", ").lastOption | req.remoteAddress
 
   def sid(req: RequestHeader): Option[String] = None
+
+  private val fileExtensionPattern = """.+\.[a-z0-9]{2,4}$""".r.pattern
+
+  def hasFileExtension(req: RequestHeader) =
+    fileExtensionPattern.matcher(req.path).matches
 }

@@ -9,7 +9,8 @@ final class Env(
   getMasa: oyun.game.Game => Fu[Option[oyun.masa.Masa]],
   val isProd: Boolean) {
   object Net {
-    //val Domain = config getString "net.domain"
+    val Domain = config getString "net.domain"
+    val BaseUrl = config getString "net.base_url"
     val AssetDomain = config getString "net.asset.domain"
     val AssetVersion = config getString "net.asset.version"
   }

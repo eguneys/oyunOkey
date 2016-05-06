@@ -18,6 +18,7 @@ object Environment
     with RequestHelper
     with I18nHelper
     with DateHelper
+    with StringHelper
     with JsonHelper
     with SetupHelper
     with FormHelper
@@ -27,6 +28,9 @@ object Environment
   implicit val OyunHtmlMonoid = scalaz.Monoid.instance[Html](
     (a, b) => Html(a.body + b.body),
     Html(""))
+
+  def netDomain = apiEnv.Net.Domain
+  def netBaseUrl = apiEnv.Net.BaseUrl
 
   def isProd = apiEnv.isProd
 }

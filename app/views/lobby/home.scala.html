@@ -25,8 +25,12 @@
   fullTitle = Some("oyunkeyf.org * " + trans.freeOnlineOkey.str()),
   baseline = baseline.some,
   moreJs = moreJs,
-  moreCss = cssTag("home.css")
-) {
+  moreCss = cssTag("home.css"),
+  openGraph = oyun.app.ui.OpenGraph(
+    title = trans.theBestFreeOkeyServer.str(),
+    url = netBaseUrl,
+    description = trans.freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents.str()
+  ).some) {
   <div class="lobby_and_ground">
     <div id="hooks_wrap"></div>
     <div class="undertable">

@@ -21,7 +21,8 @@
   title = title,
   side = views.html.game.side(pov, m),
   chat = leftabs(pov).some,
-  moreJs = moreJs) {
+  moreJs = moreJs,
+  openGraph = povOpenGraph(pov).some) {
   <div class="round og-512"></div>
   @game.sideMasa(pov, m)
 }

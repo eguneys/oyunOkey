@@ -16,7 +16,8 @@
   title = s"${m.fullName} #${m.id}",
   side = masa.side(m).some,
   chat = chat.map(c => base.chat(c, trans.chatRoom.str())),
-  moreJs = moreJs) {
+  moreJs = moreJs,
+  openGraph = masaOpenGraph(m).some) {
     <div id="masa"></div>
     @if(m.isCreated) {
       <div id="masa_faq" class="none">

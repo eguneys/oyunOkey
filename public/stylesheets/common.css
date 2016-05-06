@@ -418,6 +418,11 @@ body > div.content {
   width: 100%;
 }
 
+#site_description {
+  position: absolute;
+  top: -100px;
+}
+
 #site_title {
   font-size: 30px;
   display: block;

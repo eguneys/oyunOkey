@@ -8,7 +8,8 @@
   moreCss: Html = Html(""),
   moreJs: Html = Html(""),
   zen: Boolean = false,
-  playing: Boolean = false)(body: Html)(implicit ctx: Context)
+  playing: Boolean = false,
+  openGraph: Option[oyun.app.ui.OpenGraph] = None)(body: Html)(implicit ctx: Context)
 <!doctype html>
 <html lang="@lang.language">
   <head>
@@ -18,12 +19,16 @@
     @cssTag("common.css")
     @cssTag("table.css")
     @moreCss
+
+    <meta content="@openGraph.fold(trans.freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents())(o => Html(escapeEvenDoubleQuotes(o.description))))" name="description">
     <meta name="google" content="notranslate"/>
+    @openGraph.map(_.html)
 
   </head>
   <body class="preload base"
         data-asset-url="@assetBaseUrl"
         data-asset-version="@assetVersion">
+    <div id="site_description">@trans.freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents()</div>
     <div id="top">
       @topmenu()
       <div class="oyunkeyf_language fright">
