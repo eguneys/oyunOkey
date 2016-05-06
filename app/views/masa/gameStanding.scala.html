@@ -1,6 +1,6 @@
 @(m: oyun.masa.MiniStanding, playerId: Option[String])(implicit ctx: Context)
 
-<div class="game_masa side_box no_padding scroll-shadow-soft">
+<div class="game_masa side_box no_padding scroll-shadow-soft none">
   <p class="top text" data-icon="g"><a href="@routes.Masa.show(m.masa.id)">@m.masa.fullName</a></p>
   <div class="clock">
     <div class="round">@m.masa.roundString</div>

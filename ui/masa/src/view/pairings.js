@@ -9,7 +9,7 @@ function round(ctrl, p) {
 }
 
 function winner(ctrl, p) {
-  if (p.s === 0) return null;
+  if (p.s === 0 || !p.s) return null;
   var username = usernameOrAnon(ctrl, p.s);
   return {
     tag: p.s === 0 ? 'playing' : 'finished',

@@ -34,6 +34,7 @@ oyunkeyfMasas=Oyunkeyf Masaları
 masaNotFound=Masa bulunamadı.
 masaDoesNotExist=Böyle bir masa yok.
 masaMayHaveBeenCancelled=Eğer tüm oyuncular masa başlamadan ayrıldıysa, iptal edilmiş olabilir.
+masaTryRefreshingPage=Tekrar denemek için sayfayı yenileyin.
 returnToLobby=Lobiye dön
 returnToMasasHomepage=Turnuva anasayfasına dön
 youArePlaying=Şu an oynuyorsunuz!

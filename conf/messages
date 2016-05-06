@@ -36,6 +36,7 @@ oyunkeyfMasas=Oyunkeyf Tables
 masaNotFound=Table not found.
 masaDoesNotExist=Table does not exists.
 masaMayHaveBeenCancelled=Table may have been cancelled, if all players have left.
+masaTryRefreshingPage=You may try again by refreshing the page.
 returnToLobby=Return to lobby
 returnToMasasHomepage=Return to tables homepage
 youArePlaying=You are playing!

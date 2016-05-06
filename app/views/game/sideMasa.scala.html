@@ -6,7 +6,7 @@
   case Some(m) if !m.masa.isCreated => { @masa.gameStanding(m, player.playerId) }
   case _ => {
     @g.masaId.map { masaId =>
-      <div class="game_masa side_box no_padding">
+      <div class="game_masa side_box no_padding none">
       <p class="top text" data-icon="g"><a href="@routes.Masa.show(masaId)">@masaIdToName(masaId)</a></p>
       </div>
     }

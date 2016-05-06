@@ -13,11 +13,13 @@
 <html lang="@lang.language">
   <head>
     <meta charset="utf-8">
-    <title>@fullTitle.getOrElse{@title • oyunkeyf.com}</title>
+    <title>@if(!isProd) { [dev] }@fullTitle.getOrElse{@title • oyunkeyf.net}</title>
     <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300' rel='stylesheet' type='text/css'>
     @cssTag("common.css")
     @cssTag("table.css")
     @moreCss
+    <meta name="google" content="notranslate"/>
+
   </head>
   <body class="preload base"
         data-asset-url="@assetBaseUrl"
@@ -67,8 +69,10 @@
       @jsTag("main.js")
     }
     @moreJs
-    @momentLangTag
-
+    @if(lang.language != "en") {
+      @momentLangTag
+    }
+    @base.ga()
     <!-- dont block above the fold content -->
     <link id="piece-sprite" href="@staticUrl(s"stylesheets/piece/standard.css?v=$assetVersion")" type="text/css" rel="stylesheet"/>
   </body>

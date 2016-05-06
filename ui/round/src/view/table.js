@@ -148,7 +148,12 @@ module.exports = function(ctrl) {
         m('div.table_over',
           game.playable(ctrl.data) ? renderTablePlay(ctrl) : renderTableEnd(ctrl))
       ]),
-      m('div.table_side.table_right', [
+      m('div.table_side.table_right',[
+        m('div', {
+          config: function(el, isUpdate) {
+            if (!isUpdate) $(el).html($('.game_masa').show());
+          }
+        }),
         renderSeat(ctrl, d.opponentRight),
         renderGameStatus(ctrl)
       ])
