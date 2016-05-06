@@ -13,6 +13,7 @@ final class Env(
 
   private val settings = new {
     val CollectionSecurity = config getString "collection.security"
+    val FloodDuration = config duration "flood.duration"
     val DisposableEmailProviderUrl = config getString "disposable_email.provider_url"
     val RecaptchaPrivateKey = config getString "recaptcha.private_key"
     val RecaptchaEndpoint = config getString "recaptcha.endpoint"
@@ -21,6 +22,8 @@ final class Env(
   import settings._
 
   val RecaptchaPublicKey = config getString "recaptcha.public_key"
+
+  lazy val flood = new Flood(FloodDuration)
 
   lazy val recaptcha: Recaptcha =
     if (RecaptchaEnabled) new RecaptchaGoogle(

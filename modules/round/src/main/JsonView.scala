@@ -11,6 +11,7 @@ import actorApi.SocketStatus
 import okey.format.Forsyth
 
 final class JsonView(
+  chatApi: oyun.chat.ChatApi,
   userJsonView: oyun.user.JsonView,
   getSocketStatus: String => Fu[SocketStatus]) {
 
@@ -22,22 +23,33 @@ final class JsonView(
     val opponents = List(pov.opponentLeft, pov.opponentRight, pov.opponentUp)
 
     getSocketStatus(pov.game.id) zip
-    (opponents.map(_.userId ?? UserRepo.byId).sequence) map {
-      case (socket, List(opponentLeftUser, opponentRightUser, opponentUpUser)) =>
-        import pov._
-        Json.obj(
-          "game" -> povJson(pov),
-          "player" -> playerJson(socket, player, playerUser),
-          "opponentLeft" -> opponentJson(socket, opponentLeft, opponentLeftUser),
-          "opponentRight" -> opponentJson(socket, opponentRight, opponentRightUser),
-          "opponentUp" -> opponentJson(socket, opponentUp, opponentUpUser),
-          "url" -> Json.obj(
-            "socket" -> s"/$fullId/socket",
-            "round" -> s"/$fullId"
-          ),
-          "possibleMoves" -> possibleMoves(pov)
-        ).noNull
-    }
+    (opponents.map(_.userId ?? UserRepo.byId).sequence) zip
+      getPlayerChat(pov.game, playerUser) map {
+        case ((socket, List(opponentLeftUser, opponentRightUser, opponentUpUser)), chat) =>
+          import pov._
+          Json.obj(
+            "game" -> povJson(pov),
+            "player" -> playerJson(socket, player, playerUser),
+            "opponentLeft" -> opponentJson(socket, opponentLeft, opponentLeftUser),
+            "opponentRight" -> opponentJson(socket, opponentRight, opponentRightUser),
+            "opponentUp" -> opponentJson(socket, opponentUp, opponentUpUser),
+            "url" -> Json.obj(
+              "socket" -> s"/$fullId/socket",
+              "round" -> s"/$fullId"
+            ),
+            "chat" -> chat.map { c =>
+              JsArray(c.lines map {
+                case oyun.chat.UserLine(username, text, _) => Json.obj(
+                  "u" -> username,
+                  "t" -> text)
+                case oyun.chat.PlayerLine(side, text) => Json.obj(
+                  "s" -> side.name,
+                  "t" -> text)
+              })
+            },
+            "possibleMoves" -> possibleMoves(pov)
+          ).noNull
+      }
   }
 
   private def playerJson(socket: SocketStatus, player: GamePlayer, playerUser: Option[User]) = Json.obj(
@@ -67,6 +79,11 @@ final class JsonView(
     "turns" -> pov.game.turns,
     "status" -> pov.game.status
   )
+
+  private def getPlayerChat(game: Game, forUser: Option[User]): Fu[Option[oyun.chat.MixedChat]] =
+    game.hasChat optionFu {
+      chatApi.playerChat find game.id map (_ forUser forUser)
+    }
 
   private def possibleMoves(pov: Pov) = (pov.game playableBy pov.player) option {
     pov.game.toOkey.situation.actions map { action =>

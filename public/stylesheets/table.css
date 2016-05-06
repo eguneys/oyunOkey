@@ -391,6 +391,12 @@ div.table_over {
   padding: 2px 0;
 }
 
+div.table_over .button.strong {
+  padding: 8px 0;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
 div.control {
   text-align: center;
   width: 200px;
@@ -431,6 +437,14 @@ div.control.icons .button.move.enabled {
   border-radius: 3px 3px 0 0;
 }
 
+.oyunkeyf_ground .follow_up.button.strong {
+  margin-bottom: 7px;
+}
+
+.oyunkeyf_table_wrap {
+  margin: 10px 0;
+}
+
 #chat div.top {
   position: relative;
 }
@@ -448,6 +462,24 @@ div.control.icons .button.move.enabled {
   overflow: hidden;
   overflow-y: auto;
   word-wrap: break-word;
+}
+
+#chat .messages li {
+  padding-left: 3px;
+  line-height: 14px;
+  margin: 0.6em 0 0.6em 3px;
+}
+
+#chat li span {
+  font-weight: bold;
+  margin-right: 6px;
+  color: #aaa;
+}
+
+#chat a.user_link {
+  padding: 0;
+  color: #aaa;
+  font-weight: bold;
 }
 
 #chat form {
@@ -472,6 +504,11 @@ div.control.icons .button.move.enabled {
   width: 16px;
   z-index: 1;
   opacity: 0.5;
+}
+
+#chat.hidden ol.messages,
+#chat.hidden form {
+  display: none;
 }
 
 .round.og-512 {

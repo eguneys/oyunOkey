@@ -14,7 +14,9 @@ import makeTimeout.short
 
 private[masa] final class SocketHandler(
   hub: oyun.hub.Env,
-  socketHub: ActorRef) {
+  socketHub: ActorRef,
+  chat: ActorSelection) {
+
   def join(
     masaId: String,
     uid: String,
@@ -39,5 +41,10 @@ private[masa] final class SocketHandler(
     uid: String,
     member: Member): Handler.Controller = {
     case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }
+    case ("talk", o) => o str "d" foreach { text =>
+      member.userId foreach { userId =>
+        chat ! oyun.chat.actorApi.UserTalk(masaId, userId, text, socket)
+      }
+    }
   }
 }

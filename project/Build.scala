@@ -43,7 +43,7 @@ object ApplicationBuild extends Build {
       // trump sbt-web into not looking at public/
       resourceDirectory in Assets := (sourceDirectory in Compile).value / "assets"))
 
-  lazy val modules = Seq(common, db, user, security, game, setup, lobby, socket, hub, okey, round, masa, i18n)
+  lazy val modules = Seq(common, db, user, chat, security, game, setup, lobby, socket, hub, okey, round, masa, i18n)
 
   lazy val moduleRefs = modules map projectToRef
   lazy val moduleCPDeps = moduleRefs map { new sbt.ClasspathDependency(_, None) }
@@ -61,7 +61,7 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api, play.test, RM, ws)
   )
 
-  lazy val game = project("game", Seq(common, db, user, okey)).settings(
+  lazy val game = project("game", Seq(common, db, user, chat, okey)).settings(
     libraryDependencies ++= provided(play.api, play.test, RM)
   )
 
@@ -85,7 +85,7 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api, RM)
   )
 
-  lazy val round = project("round", Seq(common, user, game, okey, socket, hub, fishnet)).settings(
+  lazy val round = project("round", Seq(common, user, chat, game, okey, socket, hub, fishnet)).settings(
     libraryDependencies ++= provided(play.api, play.test, RM)
   )
 
@@ -99,6 +99,10 @@ object ApplicationBuild extends Build {
 
   lazy val memo = project("memo", Seq(common, db)).settings(
     libraryDependencies ++= Seq(spray.caching) ++ provided(play.api, play.test, RM)
+  )
+
+  lazy val chat = project("chat", Seq(common, db, user, security, i18n)).settings(
+    libraryDependencies ++= Seq(spray.caching) ++ provided(play.api, RM)
   )
 
   lazy val socket = project("socket", Seq(common, hub)).settings(

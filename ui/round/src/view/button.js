@@ -32,7 +32,8 @@ module.exports = {
     var d = ctrl.data;
 
     return m('div.follow_up', [
-      d.masa ? m('a.button', {
+      d.masa ? m('a.text.button.strong.glowed', {
+        'data-icon': 'G',
         href: '/masa/' + d.masa.id
       }, ctrl.trans('viewMasa')) : null
     ]);

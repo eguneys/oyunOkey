@@ -1,4 +1,4 @@
-@(m: Masa, data: play.api.libs.json.JsObject)(implicit ctx: Context)
+@(m: Masa, data: play.api.libs.json.JsObject, chat: Option[oyun.chat.UserChat])(implicit ctx: Context)
 
 @moreJs = {
   @jsAt(s"compiled/oyunkeyf.masa.js")
@@ -15,7 +15,7 @@
 @masa.layout(
   title = s"${m.fullName} #${m.id}",
   side = masa.side(m).some,
-  chat = base.chat(trans.chatRoom.str()).some,
+  chat = chat.map(c => base.chat(c, trans.chatRoom.str())),
   moreJs = moreJs) {
     <div id="masa"></div>
     @if(m.isCreated) {

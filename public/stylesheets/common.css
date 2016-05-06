@@ -578,6 +578,8 @@ div.under_side.bottom {
   /* position: absolute; */
   /* bottom: 0px; */
   margin-top:auto;
+  /* fix overlap div */
+  z-index: 10;
 }
 
 div.undertable {

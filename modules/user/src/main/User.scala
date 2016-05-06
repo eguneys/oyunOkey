@@ -7,10 +7,15 @@ import org.joda.time.DateTime
 case class User(
   id: String,
   username: String,
+  troll: Boolean = false,
   enabled: Boolean,
   seenAt: Option[DateTime],
   createdAt: DateTime,
   lang: Option[String]) {
+
+  def noTroll = !troll
+
+  def disabled = !enabled
 
   def titleUsername = username
 

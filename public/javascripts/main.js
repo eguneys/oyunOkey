@@ -4,6 +4,18 @@
 
 ;(function() {
 
+  $.userLink = function(u) {
+    return $.userLinkLimit(u, false);
+  };
+
+  $.userLinkLimit = function(u, limit, klass) {
+    var split = u.split(' ');
+    var id = split.length == 1 ? split[0] : split[1];
+    return (u || false) ? '<a class="user_link ulpt ' + (klass || '') +
+      '" href="/@/' + id + '">' +
+      ((limit || false) ? u.substring(0, limit) : u) + '</a>' : 'Anonymous';
+  };
+
   $.redirect = function(obj) {
     var url;
     if (typeof obj == "string") url = obj;
@@ -43,6 +55,9 @@
   oyunkeyf.socket = null;
   $.extend(true, oyunkeyf.StrongSocket.defaults, {
     events: {
+      message: function(msg) {
+        $('#chat').chat("append", msg);
+      },
       mlat: function(e) {
         var $t = $('#top .server strong');
         if ($t.is(':visible')) {
@@ -131,6 +146,106 @@
     });
   });
 
+  function urlToLink(text) {
+    var exp = /\bhttp:\/\/(?:[a-z]{0, 3}\.)?(oyunkeyf\.net[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(exp, "<a href='http://$1'>$1</a>");
+  }
+
+  oyunkeyf.widget("chat", {
+    _create: function() {
+      this.options = $.extend({
+        messages: [],
+        initialNote: '',
+        gameId: null
+      }, this.options);
+      var self = this;
+      var $parent = self.element.parent();
+      self.$msgs = self.element.find('.messages');
+      self.withMsgs = !!self.$msgs.length;
+      if (self.withMsgs) {
+        self.$msgs.on('click', 'a', function() {
+          $(this).attr('target', '_blank');
+        });
+        var $form = self.element.find('form');
+        var $input = self.element.find('input.oyunkeyf_say')
+            .focus(function() {
+              document.body.classList.add('typing');
+              warning();
+            }).blur(function() {
+              document.body.classList.remove('typing');
+            });
+        var warning = function() {
+          // if (oyunkeyf.once('chat-nice-notice')) $input.
+        };
+
+        $form.submit(function() {
+          var text = $.trim($input.val());
+          if (!text) return false;
+          if (text.length > 140) {
+            alert('Max length: 140 chars. ' + text.length + ' chars used.');
+            return false;
+          }
+          $input.val('');
+          oyunkeyf.socket.send('talk', text);
+          return false;
+        });
+
+        self.element.find('a.send').click(function() {
+          $input.trigger('click');
+          $form.submit();
+        });
+
+        // toggle the chat
+        var $toggle = $parent.find('input.toggle_chat');
+        $toggle.change(function() {
+          var enabled = $toggle.is(':checked');
+          self.element.toggleClass('hidden', !enabled);
+          if (!enabled) oyunkeyf.storage.set('nochat', 1);
+          else oyunkeyf.storage.remove('nochat');
+        });
+        $toggle[0].checked = oyunkeyf.storage.get('nochat') != 1;
+        if (!$toggle[0].checked) {
+          self.element.addClass('hidden');
+        }
+        if (self.options.messages.length > 0) self._appendMany(self.options.messages);
+      } // end if self.msgs
+
+      $panels = self.element.find('div.chat_panels > div');
+    },
+    append: function(msg) {
+      this._appendHtml(this._render(msg));
+    },
+    _appendMany: function(objs) {
+      var self = this;
+      var html = "";
+      $.each(objs, function () { html += self._render(this); });
+      self._appendHtml(html);
+    },
+    _render: function(msg) {
+      var user, sys = false;
+      if (msg.s) {
+        user = '<span class="side">[' + msg.s + ']</span>';
+      } else if (msg.u === 'oyunkeyf') {
+        sys = true;
+        user = '<span class="system"></span>';
+      } else {
+        user = '<span class="user">' + $.userLinkLimit(msg.u, 14) + '</span>';
+      }
+      return '<li class="' + (sys ? 'system trans_me' : '') +
+        (msg.r ? 'troll' : '') +
+        '">' + user + urlToLink(msg.t) + '</li>';
+    },
+    _appendHtml: function(html) {
+      if (!html) return;
+      this.$msgs.each(function(i, el) {
+        var autoScroll = (el.scrollTop == 0 || (el.scrollTop > (el.scrollHeight - el.clientHeight - 50)));
+        $(el).append(html);
+        if (autoScroll) el.scrollTop = 99999;
+      });
+      $('body').trigger('oyunkeyf.content_loaded');
+    }
+  }); // end chat widget
+
   oyunkeyf.startRound = function(element, cfg) {
     var data = cfg.data;
     var round;
@@ -162,9 +277,16 @@
           }
         }
       });
+
+    var $chat;
     cfg.element = element.querySelector('.round');
     cfg.socketSend = oyunkeyf.socket.send.bind(oyunkeyf.socket);
     round = OyunkeyfRound(cfg);
+    $chat = $('#chat').chat({
+      messages: data.chat,
+      initialNote: data.note,
+      gameId: data.game.id
+    });
   };
 
   function startLobby(element, cfg) {
@@ -303,6 +425,9 @@
 
   function startMasa(element, cfg) {
     $('body').data('masa-id', cfg.data.id);
+    if (typeof oyunkeyf_chat !== 'undefined') $('#chat').chat({
+      messages: oyunkeyf_chat
+    });
     var masa;
     oyunkeyf.socket = new oyunkeyf.StrongSocket(
       '/masa/' + cfg.data.id + '/socket/v1', cfg.data.socketVersion, {

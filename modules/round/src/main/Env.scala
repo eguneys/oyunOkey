@@ -13,8 +13,10 @@ import makeTimeout.large
 final class Env(
   config: Config,
   system: ActorSystem,
+  hub: oyun.hub.Env,
   fishnetPlayer: oyun.fishnet.Player,
   userJsonView: oyun.user.JsonView,
+  chatApi: oyun.chat.ChatApi,
   scheduler: oyun.common.Scheduler) {
 
   private val settings = new {
@@ -63,7 +65,8 @@ final class Env(
 
   lazy val socketHandler = new SocketHandler(
     roundMap = roundMap,
-    socketHub = socketHub
+    socketHub = socketHub,
+    messenger = messenger
   )
 
   private lazy val finisher = new Finisher(
@@ -74,10 +77,16 @@ final class Env(
     finisher = finisher
   )
 
+  lazy val messenger = new Messenger(
+    socketHub = socketHub,
+    chat = hub.actor.chat
+  )
+
   private def getSocketStatus(gameId: String): Fu[SocketStatus] =
     socketHub ? Ask(gameId, GetSocketStatus) mapTo manifest[SocketStatus]
 
   lazy val jsonView = new JsonView(
+    chatApi = chatApi,
     userJsonView = userJsonView,
     getSocketStatus = getSocketStatus)
 
@@ -93,7 +102,9 @@ object Env {
   lazy val current = "round" boot new Env(
     config = oyun.common.PlayApp loadConfig "round",
     system = oyun.common.PlayApp.system,
+    hub = oyun.hub.Env.current,
     fishnetPlayer = oyun.fishnet.Env.current.player,
     userJsonView = oyun.user.Env.current.jsonView,
+    chatApi = oyun.chat.Env.current.api,
     scheduler = oyun.common.PlayApp.scheduler)
 }

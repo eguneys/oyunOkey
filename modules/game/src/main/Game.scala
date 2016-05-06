@@ -54,6 +54,8 @@ case class Game(
 
   def masaId = metadata.masaId
 
+  def hasChat = true
+
   def updatedAtOrCreatedAt = updatedAt | createdAt
 
   lazy val toOkey: OkeyGame = {

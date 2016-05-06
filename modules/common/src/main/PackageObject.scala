@@ -77,6 +77,10 @@ trait WithPlay { self: PackageObject =>
     def unary_! = fua map (!_)
   }
 
+  implicit final class OyunPimpedBooleanWithFuture(self: Boolean) {
+    def optionFu[A](v: => Fu[A]): Fu[Option[A]] = if (self) v map (_.some) else fuccess(none)
+  }
+
   implicit final class OyunPimpedActorSystem(self: akka.actor.ActorSystem) {
     def oyunBus = oyun.common.Bus(self)
   }

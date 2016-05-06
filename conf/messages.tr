@@ -45,6 +45,7 @@ thereIsAGameInProgress=Şu anda bir oyun oynanıyor!
 yourTurn=Sıra sizde
 waitingForOpponent=Rakip bekleniyor
 gameOver=Oyun bitti
+gameEnded=Oyun bitti
 gameAborted=El iptal edildi
 gameFinished=El bitti
 gameMiddleFinished=Yerdeki taşlar bitti

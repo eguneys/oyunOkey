@@ -39,6 +39,32 @@ oyunkeyf.trans = function(i18n) {
   };
 };
 
+oyunkeyf.widget = function(name, prototype) {
+  var contructor = $[name] = function(options, element) {
+    var self = this;
+    self.element = $(element);
+    $.data(element, name, self);
+    self.options = options;
+    self._create();
+  };
+  contructor.prototype = prototype;
+  $.fn[name] = function(method) {
+    var returnValue = this;
+    var args = Array.prototype.slice.call(arguments, 1);
+    if (typeof method === 'string') this.each(function() {
+      var instance = $.data(this, name);
+      if (!$.isFunction(instance[method]) || method.charAt(0) === "_")
+        return $.error("no such method '" + method + "' for " + name + " widget instance");
+      returnValue = instance[method].apply(instance, args);
+    });
+    else this.each(function() {
+      if ($.data(this, name)) return $.error("widget " + name + " already bound to " + this);
+      $.data(this, name, new contructor(method, this));
+    });
+    return returnValue;
+  }
+}
+
 oyunkeyf.spinnerHtml = '<div class="spinner"><svg viewBox="0 0 40 40"><circle cx=20 cy=20 r=18 fill="none"></circle></svg></div>';
 
 oyunkeyf.assetUrl = function(url, noVersion) {

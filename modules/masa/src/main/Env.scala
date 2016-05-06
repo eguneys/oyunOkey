@@ -53,7 +53,8 @@ final class Env(
 
   lazy val socketHandler = new SocketHandler(
     hub = hub,
-    socketHub = socketHub)
+    socketHub = socketHub,
+    chat = hub.actor.chat)
 
   lazy val jsonView = new JsonView(lightUser)
 

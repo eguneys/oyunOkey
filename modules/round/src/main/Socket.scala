@@ -73,6 +73,11 @@ private[round] final class Socket(
 
     case eventList: EventList => notify(eventList.events)
 
+    case oyun.chat.actorApi.ChatLine(chatId, line) => notify(List(line match {
+      case l: oyun.chat.UserLine => Event.UserMessage(l, chatId endsWith "/w")
+      case l: oyun.chat.PlayerLine => Event.PlayerMessage(l)
+    }))
+
     case Quit(uid) =>
       members get uid foreach { member =>
         quit(uid)

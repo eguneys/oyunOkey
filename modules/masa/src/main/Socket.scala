@@ -55,6 +55,11 @@ private[oyun] final class Socket(
       addMember(uid, member)
       sender ! Connected(enumerator, member)
 
+    case oyun.chat.actorApi.ChatLine(_, line) => line match {
+      case line: oyun.chat.UserLine =>
+        notifyVersion("message", oyun.chat.Line toJson line)
+      case _ =>
+    }
 
     case NotifyReload =>
       delayedReloadNotification = false

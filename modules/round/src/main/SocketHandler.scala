@@ -19,7 +19,8 @@ import makeTimeout.short
 
 private[round] final class SocketHandler(
   roundMap: ActorRef,
-  socketHub: ActorRef
+  socketHub: ActorRef,
+  messenger: Messenger
 ) {
 
   private def controller(
@@ -32,6 +33,9 @@ private[round] final class SocketHandler(
 
     member.playerIdOption.fold[Handler.Controller]({
       case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }
+      case ("talk", o) => o str "d" foreach { text =>
+        messenger.watcher(gameId, member, text, socket)
+      }
     }) { playerId =>
       {
         case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }
@@ -44,6 +48,10 @@ private[round] final class SocketHandler(
             send(HumanPlay(
               playerId, move, promise.some
             ))
+        }
+        // case ("bye", _) => socket ! Bye(
+        case ("talk", o) => o str "d" foreach { text =>
+          messenger.owner(gameId, member, text, socket)
         }
       }
     }

@@ -47,6 +47,7 @@ thereIsAGameInProgress=There is a game in progress!
 yourTurn=Your turn
 waitingForOpponent=Waiting for opponnent
 gameOver=Hand over
+gameEnded=Hand over
 gameAborted=Hand aborted
 gameFinished=Hand finished
 gameMiddleFinished=Middle stones finished

@@ -47,10 +47,11 @@ object Masa extends OyunController with TheftPrevention {
       negotiate(
         html = repo byId id flatMap {
           _.fold(masaNotFound.fuccess) { masa =>
-            env.version(masa.id) flatMap { version =>
-              env.jsonView(masa, playerId, version.some) map {
-                html.masa.show(masa, _)
-              }
+            env.version(masa.id).zip(chatOf(masa)).flatMap {
+              case (version, chat) =>
+                env.jsonView(masa, playerId, version.some) map {
+                  html.masa.show(masa, _, chat)
+                }
             }
           }
         },
@@ -151,4 +152,9 @@ object Masa extends OyunController with TheftPrevention {
       }
     }
   }
+
+  private def chatOf(masa: oyun.masa.Masa)(implicit ctx: Context) =
+    ctx.isAuth ?? {
+      Env.chat.api.userChat find masa.id map (_.forUser(ctx.me).some)
+    }
 }

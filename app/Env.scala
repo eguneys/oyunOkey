@@ -18,7 +18,13 @@ final class Env(
   ) _
 
   oyun.log.boot.info("Preloading modules")
-  oyun.common.Chronometer.syncEffect(List(Env.socket
+  oyun.common.Chronometer.syncEffect(List(Env.socket,
+    // Env.site,
+    Env.masa,
+    Env.lobby,
+    Env.round,
+    Env.chat,
+    Env.fishnet
   )) { lap =>
     oyun.log("boot").info(s"${lap.millis}ms Preloading complete")
   }
@@ -41,4 +47,7 @@ object Env {
   def lobby = oyun.lobby.Env.current
   def round = oyun.round.Env.current
   def masa = oyun.masa.Env.current
+  // def site = oyun.site.Env.current
+  def chat = oyun.chat.Env.current
 }
+

@@ -5,12 +5,15 @@ import oyun.common.PimpedJson._
 
 import okey.{ Move => OkeyMove, Side, Sides, Status, Situation, Action, EndScoreSheet, Piece, PieceGroups, OpenPos }
 
+import oyun.chat.{ Line, UserLine, PlayerLine }
+
 sealed trait Event {
   def typ: String
   def data: JsValue
   def only: Option[Side] = None
   def owner: Boolean = false
   def watcher: Boolean = false
+  def troll: Boolean = false
 }
 
 object Event {
@@ -95,6 +98,19 @@ object Event {
       else JsArray(moves.map(move => JsString(move.key)))
   }
 
+  case class PlayerMessage(line: PlayerLine) extends Event {
+    def typ = "message"
+    def data = Line toJson line
+    override def owner = true
+    override def troll = false
+  }
+
+  case class UserMessage(line: UserLine, w: Boolean) extends Event {
+    def typ = "message"
+    def data = Line toJson line
+    override def owner = w
+    override def troll = !w
+  }
 
   case class End(result: Option[Sides[EndScoreSheet]]) extends Event {
     def typ = "end"
