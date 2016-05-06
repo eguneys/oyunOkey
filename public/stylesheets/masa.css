@@ -273,7 +273,6 @@
 
 #masa .seats button {
   height: 40px;
-  box-sizing; border-box;
 }
 
 #masa .seats button:hover {

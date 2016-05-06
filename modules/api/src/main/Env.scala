@@ -11,11 +11,12 @@ final class Env(
   object Net {
     //val Domain = config getString "net.domain"
     val AssetDomain = config getString "net.asset.domain"
+    val AssetVersion = config getString "net.asset.version"
   }
   val PrismicApiUrl = config getString "prismic.api_url"
 
   object assetVersion {
-    def get = 1
+    def get = Net.AssetVersion
   }
 
   val roundApi = new RoundApi(
