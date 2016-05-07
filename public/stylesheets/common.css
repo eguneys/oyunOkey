@@ -356,6 +356,12 @@ body > div.content {
   display: none;
 }
 
+body.offline #reconnecting,
+#network_error {
+  display: inline-block;
+  color: #dc322f;
+}
+
 #top .fright {
   float: right;
   position: relative;

@@ -43,6 +43,8 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
       };
       ws.onopen = function() {
         debug('connected to ' + fullUrl, true);
+        onSuccess();
+        $('body').removeClass('offline');
         pingNow();
       };
       ws.onmessage = function(e) {
@@ -80,6 +82,7 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
     clearTimeout(pingSchedule);
     clearTimeout(connectSchedule);
     connectSchedule = setTimeout(function() {
+      $('body').addClass('offline');
       tryOtherUrl = true;
       connect();
     }, delay);
@@ -174,7 +177,21 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
     options.debug = true;
     debug('error: ' + JSON.stringify(e));
     tryOtherUrl = true;
+    setTimeout(function() {
+      if (!$('#network_error').length) {
+        var msg = "Tarayıcınız websocket'ı destekliyor, fakat bağlantı kuramıyor. Belki websocket'ı desteklemeyen bir proxy arkasındasınız. Sistem yöneticinizden düzeltmesini isteyin!";
+        $('#top').append('<span class="fright link text" id="network_error" title="' + 
+                         msg + '" data-icon="j">' +
+                         "Bağlantı hatası" + '</span>');
+      }
+    }, 1000);
     clearTimeout(pingSchedule);
+  };
+
+  var onSuccess = function() {
+    $('#network_error').remove();
+    nbConnects = (nbConnects || 0) + 1;
+    if (nbConnects === 1) options.onFirstConnect();
   };
 
   var baseUrl = function() {
@@ -231,6 +248,7 @@ oyunkeyf.StrongSocket.defaults = {
         //return 'socket.' + document.domain + ':' + port;
         return document.domain + ':' + port;
       })),
+    onFirstConnect: $.noop,
     baseUrlKey: 'surl3'
   }
 };
