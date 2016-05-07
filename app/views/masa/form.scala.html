@@ -3,7 +3,7 @@
 @import oyun.setup.HookConfig
 
 @fields = {
-  @setup.variant(form, translatedVariantChoicesWithVariants)
+  @setup.variant(form, isProd.fold(translatedVariantChoicesWithVariants, translatedVariantChoicesWithTestVariants))
   @setup.timeMode(form, oyun.setup.MasaConfig)
 }
 

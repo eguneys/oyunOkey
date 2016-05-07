@@ -255,7 +255,8 @@ object Game {
 
   def make(
     game: OkeyGame,
-    players: Sides[Player]): Game = {
+    players: Sides[Player],
+    variant: Variant): Game = {
     val binaryPieces = game.table.boards map (board => BinaryFormat.piece.write(board.pieceList))
     val binaryDiscards = game.table.discards map BinaryFormat.piece.write
     val binaryMiddles = BinaryFormat.piece write game.table.middles
@@ -283,6 +284,7 @@ object Game {
       opensLastMove = OpensLastMove.init,
       status = Status.Created,
       turns = game.turns,
+      variant = variant,
       metadata = Metadata(
         masaId = none
       ),
@@ -310,6 +312,7 @@ object Game {
     val opensLastMove = "ol"
     val status = "s"
     val turns = "t"
+    val variant = "v"
     val winnerSide = "w"
     val winnerId = "wid"
     val endScores = "es"

@@ -55,6 +55,7 @@ gameEndBy=%s elini bitirdi
 openSeries=Seri aç
 openPairs=Çift aç
 collectOpen=Eli geri topla
+leaveTaken=Geri bırak
 scores=Puanlar
 replay=Oynama
 waitingPlayers=Beklenen Oyuncular

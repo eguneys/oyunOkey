@@ -17,7 +17,7 @@ object BSONHandlers {
 
   implicit val masaHandler = new BSON[Masa] {
     def reads(r: BSON.Reader) = {
-      val variant = Variant.default
+      val variant = r.intO("variant").fold[Variant](Variant.default)(Variant.orDefault)
       Masa(
         id = r str "_id",
         name = r str "name",
@@ -38,6 +38,7 @@ object BSONHandlers {
       "name" -> o.name,
       "status" -> o.status,
       "rounds" -> o.rounds,
+      "variant" -> o.variant.some.filterNot(_.standard).map(_.id),
       "nbPlayers" -> o.nbPlayers,
       "nbRounds" -> o.nbRounds,
       "createdAt" -> w.date(o.createdAt),

@@ -84,11 +84,11 @@ module.exports = function(opts) {
   };
 
   this.leaveTaken = () => {
-    // this.sendMove(okeyground.move.leaveTaken);
+    this.sendMove(okeyground.move.leaveTaken);
   };
 
   this.collectOpen = () => {
-    this.sendMove("co");
+    this.sendMove(okeyground.move.collectOpen);
   };
 
   this.openSeries = () => {
@@ -132,7 +132,9 @@ module.exports = function(opts) {
           this.okeyground.set({
             fen: mutil.persistentFen(o.fen, oldFen)
           });
-        } else {
+        } else if (o.key === okeyground.move.leaveTaken) {
+          this.restoreFen(o.fen);
+        }else {
           this.okeyground.apiMove(o.key);
         }
       }
@@ -180,6 +182,13 @@ module.exports = function(opts) {
       data: data
     };
     m.redraw();
+  };
+
+  this.restoreFen = (fen) => {
+    var oldFen = this.okeyground.getFen();
+    this.okeyground.set({
+      fen: mutil.persistentFen(fen, oldFen)
+    });
   };
 
   this.saveBoard = () => {

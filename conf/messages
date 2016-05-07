@@ -57,6 +57,7 @@ gameEndBy=%s finished hand
 openSeries=Open series
 openPairs=Open pairs
 collectOpen=Collect opened hand
+leaveTaken=Leave taken
 scores=Scores
 replay=Replay
 waitingPlayers=Waiting Players

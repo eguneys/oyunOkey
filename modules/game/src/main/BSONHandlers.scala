@@ -4,6 +4,7 @@ import oyun.db.{ BSON, ByteArray }
 import reactivemongo.bson._
 
 import okey.{ Sides, Side, Status, EndScoreSheet }
+import okey.variant._
 
 object BSONHandlers {
 
@@ -165,6 +166,8 @@ object BSONHandlers {
 
       val bpp = r bytes binaryPlayer
 
+      val realVariant = Variant(r intD variant) | okey.variant.Standard
+
       Game(
         id = r str id,
         players = players,
@@ -177,6 +180,7 @@ object BSONHandlers {
         opensLastMove = r.get[OpensLastMove](opensLastMove)(OpensLastMove.opensLastMoveBSONHandler),
         status = r.get[Status](status),
         turns = nbTurns,
+        variant = realVariant,
         createdAt = createdAtValue,
         updatedAt = r dateO updatedAt,
         metadata = Metadata(
@@ -202,6 +206,7 @@ object BSONHandlers {
       opensLastMove -> OpensLastMove.opensLastMoveBSONHandler.write(o.opensLastMove),
       status -> o.status,
       turns -> o.turns,
+      variant -> o.variant.exotic.option(o.variant.id).map(w.int),
       createdAt -> w.date(o.createdAt),
       updatedAt -> o.updatedAt.map(w.date),
       masaId -> o.metadata.masaId
