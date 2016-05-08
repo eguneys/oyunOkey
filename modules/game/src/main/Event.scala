@@ -3,9 +3,10 @@ package oyun.game
 import play.api.libs.json._
 import oyun.common.PimpedJson._
 
-import okey.{ Move => OkeyMove, Side, Sides, Status, Situation, Action, EndScoreSheet, Piece, PieceGroups, OpenPos }
+import okey.{ Move => OkeyMove, Side, Sides, Status, Situation, Action, EndScoreSheet, Piece, PieceGroups, OpenPos, Clock => OkeyClock }
 
 import oyun.chat.{ Line, UserLine, PlayerLine }
+import oyun.common.Maths.truncateAt
 
 sealed trait Event {
   def typ: String
@@ -19,7 +20,7 @@ sealed trait Event {
 object Event {
 
   object Move {
-    def apply(side: Side, move: OkeyMove, situation: Situation, state: State): Move = Move(
+    def apply(side: Side, move: OkeyMove, situation: Situation, state: State, clock: Option[Event]): Move = Move(
       side = side,
       action = move.action,
       drawMiddle = matchDrawMiddle(side, state.side, move),
@@ -28,18 +29,21 @@ object Event {
       drop = matchDrop(move),
       fen = okey.format.Forsyth.exportTable(situation.table, side),
       state = state,
+      clock = clock,
       possibleMoves = situation.actions
     )
 
     def data(
       fen: String,
       state: State,
+      clock: Option[Event],
       possibleMoves: List[Action])(extra: JsObject) = {
       extra ++ Json.obj(
         "fen" -> fen,
         "ply" -> state.turns,
         "status" -> state.status,
-        "dests" -> PossibleMoves.json(possibleMoves)
+        "dests" -> PossibleMoves.json(possibleMoves),
+        "clock" -> clock.map(_.data)
       ).noNull
     }
 
@@ -75,12 +79,13 @@ object Event {
     drop: Option[DropData],
     fen: String,
     state: State,
+    clock: Option[Event],
     possibleMoves: List[Action]) extends Event {
     def typ = "move"
 
     override def only = Some(side)
 
-    def data = Move.data(fen, state, possibleMoves) {
+    def data = Move.data(fen, state, clock, possibleMoves) {
       Json.obj(
         "key" -> action.key,
         "uci" -> action.toUci.uci,
@@ -115,6 +120,15 @@ object Event {
   case class End(result: Option[Sides[EndScoreSheet]]) extends Event {
     def typ = "end"
     def data = Json.obj("result" ->  result.map(sidesWriter(_)))
+  }
+
+  case class Clock(times: Sides[Float]) extends Event {
+    def typ = "clock"
+    def data = sidesWriter(times.map(d => JsNumber(truncateAt(d, 2))))
+  }
+
+  object Clock {
+    def apply(clock: OkeyClock): Clock = Clock(Sides(clock.remainingTime(_)))
   }
 
   case class PieceGroupData(groups: PieceGroups) extends Event {

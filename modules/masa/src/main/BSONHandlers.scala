@@ -15,6 +15,8 @@ object BSONHandlers {
     def write(x: Status) = BSONInteger(x.id)
   }
 
+  private implicit val masaClockBSONHandler = Macros.handler[MasaClock]
+
   implicit val masaHandler = new BSON[Masa] {
     def reads(r: BSON.Reader) = {
       val variant = r.intO("variant").fold[Variant](Variant.default)(Variant.orDefault)
@@ -23,6 +25,7 @@ object BSONHandlers {
         name = r str "name",
         status = r.get[Status]("status"),
         system = System.default,
+        clock = r.get[MasaClock]("clock"),
         rounds = r int "rounds",
         variant = variant,
         nbPlayers = r int "nbPlayers",
@@ -37,6 +40,7 @@ object BSONHandlers {
       "_id" -> o.id,
       "name" -> o.name,
       "status" -> o.status,
+      "clock" -> o.clock,
       "rounds" -> o.rounds,
       "variant" -> o.variant.some.filterNot(_.standard).map(_.id),
       "nbPlayers" -> o.nbPlayers,

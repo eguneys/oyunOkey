@@ -3,7 +3,7 @@ package oyun.game
 import org.joda.time.DateTime
 import reactivemongo.bson._
 
-import okey.{ Sides, Side }
+import okey.{ Sides, Side, Clock }
 import Game.BSONFields._
 
 import oyun.db.BSON.BSONJodaDateTimeHandler
@@ -77,6 +77,10 @@ private[game] object GameDiff {
     d(turns, _.turns, w.int)
     d(opensLastMove, _.opensLastMove, OpensLastMove.opensLastMoveBSONHandler.write)
     d(status, _.status.id, w.int)
+
+    dOpt(clock, _.clock, (o: Option[Clock]) => o map { c =>
+      BSONHandlers.clockBSONWrite(a.createdAt, c)
+    })
 
     (addUa(setBuilder.toList), unsetBuilder.toList)
 

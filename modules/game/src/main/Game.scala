@@ -3,7 +3,7 @@ package oyun.game
 import org.joda.time.DateTime
 
 import okey.variant.Variant
-import okey.{ Game => OkeyGame, Player => OkeyPlayer, History => OkeyHistory, Table, Board, Sides, Side, Opener, Status, Move, EndScoreSheet, Opens }
+import okey.{ Game => OkeyGame, Player => OkeyPlayer, History => OkeyHistory, Table, Board, Sides, Side, Opener, Status, Move, EndScoreSheet, Opens, Clock }
 import okey.format.Uci
 
 import oyun.db.ByteArray
@@ -18,6 +18,7 @@ case class Game(
   binarySign: Int,
   binaryOpens: Option[BinaryOpens],
   binaryPlayer: ByteArray,
+  clock: Option[Clock],
   opensLastMove: OpensLastMove,
   status: Status,
   turns: Int,
@@ -105,6 +106,7 @@ case class Game(
         sign = sign,
         variant = variant),
       player = player,
+      clock = clock,
       turns = turns
     )
   }
@@ -151,7 +153,8 @@ case class Game(
         lastMoves = history.lastMoves,
         turn = turns),
       turns = game.turns,
-      status = situation.status | status
+      status = situation.status | status,
+      clock = game.clock
     )
 
     val state = Event.State(
@@ -160,10 +163,12 @@ case class Game(
       status = (status != updated.status) option updated.status
     )
 
-    val events = Event.Move(Side.EastSide, move, situation, state) ::
-    Event.Move(Side.WestSide, move, situation, state) ::
-    Event.Move(Side.NorthSide, move, situation, state) ::
-    Event.Move(Side.SouthSide, move, situation, state) :: Nil
+    val clockEvent = updated.clock map Event.Clock.apply
+
+    val events = Event.Move(Side.EastSide, move, situation, state, clockEvent) ::
+    Event.Move(Side.WestSide, move, situation, state, clockEvent) ::
+    Event.Move(Side.NorthSide, move, situation, state, clockEvent) ::
+    Event.Move(Side.SouthSide, move, situation, state, clockEvent) :: Nil
 
     Progress(this, updated, events)
   }
@@ -284,6 +289,7 @@ object Game {
       opensLastMove = OpensLastMove.init,
       status = Status.Created,
       turns = game.turns,
+      clock = game.clock,
       variant = variant,
       metadata = Metadata(
         masaId = none
@@ -312,6 +318,7 @@ object Game {
     val opensLastMove = "ol"
     val status = "s"
     val turns = "t"
+    val clock = "c"
     val variant = "v"
     val winnerSide = "w"
     val winnerId = "wid"

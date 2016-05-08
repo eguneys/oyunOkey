@@ -8,6 +8,7 @@ case class Masa(
   name: String,
   status: Status,
   system: System,
+  clock: MasaClock,
   rounds: Int,
   variant: okey.variant.Variant,
   nbPlayers: Int,
@@ -51,6 +52,7 @@ object Masa {
 
   def make(
     createdByUserId: String,
+    clock: MasaClock,
     rounds: Int,
     system: System,
     variant: okey.variant.Variant) = Masa(
@@ -58,6 +60,7 @@ object Masa {
       name = GreatPlayer.randomName,
       status = Status.Created,
       system = system,
+      clock = clock,
       rounds = rounds,
       createdBy = createdByUserId,
       createdAt = DateTime.now,

@@ -2,8 +2,9 @@ package oyun.game
 
 import oyun.db.{ BSON, ByteArray }
 import reactivemongo.bson._
+import org.joda.time.DateTime
 
-import okey.{ Sides, Side, Status, EndScoreSheet }
+import okey.{ Sides, Side, Status, EndScoreSheet, Clock }
 import okey.variant._
 
 object BSONHandlers {
@@ -177,6 +178,7 @@ object BSONHandlers {
         binarySign = r int binarySign toByte,
         binaryOpens = bOpens2,
         binaryPlayer = r bytes binaryPlayer,
+        clock = r.getO[Side => Clock](clock)(clockBSONReader(createdAtValue)) map (_(Side(nbTurns))),
         opensLastMove = r.get[OpensLastMove](opensLastMove)(OpensLastMove.opensLastMoveBSONHandler),
         status = r.get[Status](status),
         turns = nbTurns,
@@ -206,10 +208,23 @@ object BSONHandlers {
       opensLastMove -> OpensLastMove.opensLastMoveBSONHandler.write(o.opensLastMove),
       status -> o.status,
       turns -> o.turns,
+      clock -> (o.clock map { c => clockBSONWrite(o.createdAt, c)}),
       variant -> o.variant.exotic.option(o.variant.id).map(w.int),
       createdAt -> w.date(o.createdAt),
       updatedAt -> o.updatedAt.map(w.date),
       masaId -> o.metadata.masaId
     )
+  }
+
+  import oyun.db.ByteArray.ByteArrayBSONHandler
+
+  private[game] def clockBSONReader(since: DateTime) = new BSONReader[BSONBinary, Side => Clock] {
+    def read(bin: BSONBinary) = BinaryFormat.clock(since).read(
+      ByteArrayBSONHandler read bin
+    )
+  }
+
+  private[game] def clockBSONWrite(since: DateTime, clock: Clock) = ByteArrayBSONHandler write {
+    BinaryFormat clock since write clock
   }
 }

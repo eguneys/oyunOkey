@@ -1,7 +1,11 @@
 import m from 'mithril';
 import { game } from 'game';
+import util from './util';
 import xhr from './xhr';
 import ground from './ground';
+import okeyground from 'okeyground';
+
+const { partial } = okeyground.util;
 
 module.exports = function(send, ctrl) {
   this.send = send;
@@ -29,6 +33,8 @@ module.exports = function(send, ctrl) {
       xhr.reload(ctrl).then(ctrl.reload);
     }
   };
+
+  this.outoftime = $.noop; // util.throttle(500, false, partial(this.send, 'outoftime', null));
 
   this.receive = (type, data) => {
     if (handlers[type]) {

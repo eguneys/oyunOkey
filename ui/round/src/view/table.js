@@ -3,6 +3,7 @@ import okeyground from 'okeyground';
 import renderUser from './user';
 import renderReplay from './replay';
 import { game, status } from 'game';
+import clockView from '../clock/view';
 import button from './button';
 import renderTabs from './tabs';
 import { renderTableScores, renderTableScoreInfo } from './scores';
@@ -19,28 +20,19 @@ function compact(x) {
   return x;
 }
 
-function clockShowBar(ctrl, time) {
-  return m('div', {
-    class: 'bar'
-  }, m('span', {
-    style: {
-      //width: Math.max(0, Math.min(100, (time / ctrl.data.barTime) * 100)) + '%'
-      width: '90%'
-    }
-  }));
-}
-
 function renderClock(ctrl, side, position) {
-  var time = 10;
+  var time = ctrl.clock.data.sides[side];
   var running = true && ctrl.data.game.player === side;
-
-  // running = true;
-
   return running ? [
     m('div', {
-      class: 'clock clock_' + side + ' clock_' + position
+      class: 'clock clock_' + side + ' clock_' + position + ' ' +
+        classSet({
+          'outoftime': !time,
+          'running': running,
+          'emerg': time < ctrl.clock.data.emerg
+        })
     }, [
-      clockShowBar(ctrl.clock, time)
+      clockView.showBar(ctrl.clock, time)
     ])
   ]: null;
 }

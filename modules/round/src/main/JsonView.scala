@@ -2,6 +2,7 @@ package oyun.round
 
 import play.api.libs.json._
 import oyun.common.PimpedJson._
+import oyun.common.Maths.truncateAt
 
 import oyun.game.{ Pov, Game, Player => GamePlayer }
 import oyun.user.{ User, UserRepo }
@@ -29,6 +30,7 @@ final class JsonView(
           import pov._
           Json.obj(
             "game" -> povJson(pov),
+            "clock" -> game.clock.map(clockJson),
             "player" -> playerJson(socket, player, playerUser),
             "opponentLeft" -> opponentJson(socket, opponentLeft, opponentLeftUser),
             "opponentRight" -> opponentJson(socket, opponentRight, opponentRightUser),
@@ -90,6 +92,9 @@ final class JsonView(
       action.key
     }
   }
+
+  private def clockJson(clock: okey.Clock): JsObject =
+    clockWriter.writes(clock)
 }
 
 object JsonView {
@@ -97,6 +102,16 @@ object JsonView {
     Json.obj(
       "id" -> s.id,
       "name" -> s.name)
+  }
+
+  implicit val clockWriter: OWrites[okey.Clock] = OWrites { c =>
+    Json.obj(
+      "running" -> c.isRunning,
+      "initial" -> c.limit,
+      "sides" -> JsObject(
+        okey.Side.all.map(s => s.name -> JsNumber(truncateAt(c.remainingTime(s), 2)))),
+      "emerg" -> c.emergTime
+    )
   }
 
   private def sidesWriter(sides: okey.Sides[okey.EndScoreSheet]) =

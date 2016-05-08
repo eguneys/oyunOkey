@@ -5,6 +5,7 @@ import round from './round';
 import ground from './ground';
 import title from './title';
 import init from './init';
+import clockCtrl from './clock/ctrl';
 import mutil from './util';
 import { game, status } from 'game';
 import store from './store';
@@ -147,6 +148,12 @@ module.exports = function(opts) {
       });
     }
 
+    if (o.clock) {
+      //console.log('clock', [o.clock.east, o.clock.north, o.clock.west, o.clock.south].join('|'));
+      var c = o.clock;
+      if (this.clock) this.clock.update(c);
+    }
+
     this.pushLastMove({
       uci: o.uci,
       san: o.uci
@@ -172,6 +179,35 @@ module.exports = function(opts) {
     m.endComputation();
     this.vm.autoScroll && this.vm.autoScroll.now();
   };
+
+  // this.data.clock = {
+  //   running: true,
+  //   initial: 60,
+  //   emerg: 10,
+  //   sides: {
+  //     east: 10,
+  //     west: 60,
+  //     north: 60,
+  //     south: 60
+  //   }
+  // };
+
+  this.clock = this.data.clock ? new clockCtrl(
+    this.data.clock,
+    this.socket.outoftime, this.data.player.side) : false;
+
+  console.log('iclock east', this.data.clock.sides['east']);
+
+  this.isClockRunning = () => {
+    return this.data.clock && game.playable(this.data) &&
+      ((this.data.game.turns > 0 ) || this.data.clock.running);
+  };
+
+  var clockTick = () => {
+    if (this.isClockRunning()) this.clock.tick(this.data.game.player);
+  };
+
+  if (this.clock) setInterval(clockTick, 100);
 
   this.toggleScoresheet = (side, data) => {
     if (this.vm.scoresheetInfo.side === side) {

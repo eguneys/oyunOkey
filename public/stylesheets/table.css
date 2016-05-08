@@ -18,6 +18,10 @@ div.player_wrap .clock .bar {
   color: #444;
 }
 
+div.player_wrap .clock.running.emerg .bar {
+  background: #eFAAAA;
+}
+
 div.player_wrap .clock .bar span {
   display: block;
   height: 4px;

@@ -1,6 +1,7 @@
 package oyun.game
 
-import okey.{ Player => OkeyPlayer, Board, Piece, Side, OpenState, OpenPair, OpenSerie, Opener, NewOpen, OldOpen, SerieScore, PairScore, Sides, Color }
+import org.joda.time.DateTime
+import okey.{ Player => OkeyPlayer, Board, Piece, Side, OpenState, OpenPair, OpenSerie, Opener, NewOpen, OldOpen, SerieScore, PairScore, Sides, Color, Clock }
 
 import okey.Color._
 import okey.{ EastSide, WestSide, NorthSide, SouthSide }
@@ -8,6 +9,58 @@ import okey.{ EastSide, WestSide, NorthSide, SouthSide }
 import oyun.db.ByteArray
 
 object BinaryFormat {
+  case class clock(since: DateTime) {
+    def write(clock: Clock): ByteArray = ByteArray {
+      def time(t: Float) = writeSignedInt24((t * 100).toInt)
+      def timer(seconds: Double) = writeTimer((seconds * 100).toLong)
+      (writeClockLimit(clock.limit) +:
+        clock.times.flatMap(time).toArray) ++
+        timer(clock.timerOption getOrElse 0d) map (_.toByte)
+    }
+
+    def read(ba: ByteArray): Side => Clock = side => ba.value map toInt match {
+      case Array(b0, e1, e2, e3, w1, w2, w3, n1, n2, n3, s1, s2, s3, b13, b14, b15, b16) =>
+        readTimer(b13, b14, b15, b16) match {
+          case 0 => okey.PausedClock(
+            side = side,
+            limit = readClockLimit(b0),
+            times = Sides(
+              readSignedInt24(e1, e2, e3).toFloat / 100,
+              readSignedInt24(w1, w2, w3).toFloat / 100,
+              readSignedInt24(n1, n2, n3).toFloat / 100,
+              readSignedInt24(s1, s2, s3).toFloat / 100))
+          case timer => okey.RunningClock(
+            side = side,
+            limit = readClockLimit(b0),
+            times = Sides(
+              readSignedInt24(e1, e2, e3).toFloat / 100,
+              readSignedInt24(w1, w2, w3).toFloat / 100,
+              readSignedInt24(n1, n2, n3).toFloat / 100,
+              readSignedInt24(s1, s2, s3).toFloat / 100),
+            timer = timer.toDouble / 100)
+        }
+      case x => sys error s"BinaryFormat.clock.read invalid bytes: ${ba.showBytes}"
+    }
+
+    private def decay = (since.getMillis / 10) - 10
+
+    private def writeTimer(long: Long) = {
+      val i = math.max(0, long - decay).toInt
+      Array(i >> 24, (i >> 16) & 0xff, (i >> 8) & 0xff, i & 0xff)
+    }
+
+    private def readTimer(b1: Int, b2: Int, b3: Int, b4: Int) = {
+      val l = (b1 << 24) + (b2 << 16) + (b3 << 8) + b4
+      if (l == 0) 0 else l + decay
+    }
+
+    private def writeClockLimit(limit: Int) = {
+      limit
+    }
+
+    private def readClockLimit(b: Int) = b
+  }
+
   object piece {
 
     // private def convert4PieceTo3(a: Int, b: Int, c: Int, d: Int): Array[Byte] = {
@@ -264,4 +317,16 @@ object BinaryFormat {
   }
 
   @inline private def toInt(b: Byte): Int = b & 0xff
+
+  private val int23Max = math.pow(2, 24).toInt
+  def writeSignedInt24(int: Int) = {
+    val i = math.abs(math.min(int23Max, int))
+    val j = if (int < 0) i + int23Max else i
+    Array(j >> 16, (j >> 8) & 255, j & 255)
+  }
+
+  def readSignedInt24(b1: Int, b2: Int, b3: Int) = {
+    val i = (b1 << 16) + (b2 << 8) + b3
+    if (i > int23Max) int23Max - i else i
+  }
 }
