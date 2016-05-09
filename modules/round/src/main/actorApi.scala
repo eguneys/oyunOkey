@@ -70,6 +70,7 @@ package round {
     uci: Uci,
     promise: Option[Promise[Unit]] = None)
 
+  case object OutOfTime
   case object Abandon
 }
 

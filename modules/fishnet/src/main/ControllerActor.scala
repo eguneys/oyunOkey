@@ -31,7 +31,7 @@ private[fishnet] class ControllerActor(
   }
 
   private def findMove(game: oyun.game.Game): Option[okey.format.Uci] = {
-    import okey.{ DrawMiddle, Discard }
+    import okey.{ DrawMiddle, Discard, LeaveTaken, CollectOpen }
 
     val okeyGame = game.toOkey
 
@@ -40,6 +40,8 @@ private[fishnet] class ControllerActor(
       case (found@Some(_), _) => found
       case (_, DrawMiddle) => DrawMiddle.some
       case (_, Discard) => board.pieceList.headOption map Discard.apply
+      case (_, LeaveTaken) => LeaveTaken.some
+      case (_, CollectOpen) => CollectOpen.some
       case _ => None
     }).map (_.toUci)
   }

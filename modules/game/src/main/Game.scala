@@ -221,6 +221,14 @@ case class Game(
 
   def winnerSide: Option[Side] = winner map (_.side)
 
+  def outoftime: Boolean = outoftimeClock
+
+  private def outoftimeClock: Boolean = clock ?? { c =>
+    started && playable && {
+      (!c.isRunning) || c.outoftime(player.side)
+    }
+  }
+
   def onePlayerHasMoved = playedTurns > 0
   def allPlayersHaveMoved = playedTurns > 3
 

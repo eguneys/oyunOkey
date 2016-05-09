@@ -34,7 +34,7 @@ module.exports = function(send, ctrl) {
     }
   };
 
-  this.outoftime = $.noop; // util.throttle(500, false, partial(this.send, 'outoftime', null));
+  this.outoftime = util.throttle(1500, false, partial(this.send, 'outoftime', null));
 
   this.receive = (type, data) => {
     if (handlers[type]) {

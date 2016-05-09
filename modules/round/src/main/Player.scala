@@ -36,10 +36,10 @@ private[round] final class Player(
     }
   }
 
-  def requestFishnet(game: Game) = game.playableByAi ?? fishnetPlayer(game)
+  def requestFishnet(game: Game) = (game.playableByAi || game.outoftime) ?? fishnetPlayer(game)
 
   def fishnet(game: Game, uci: Uci)(implicit proxy: GameProxy): Fu[Events] =
-    if (game.playable && game.player.isAi) {
+    if (game.playable && (game.player.isAi || game.outoftime)) {
       applyUci(game, game.player.side, uci)
         .fold(errs =>fufail(ClientError(errs.shows)), fuccess).flatMap {
         case (progress, move) =>

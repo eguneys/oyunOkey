@@ -12,6 +12,11 @@ function lastStep(d) {
   return d.steps[d.steps.length - 1];
 }
 
+function lastVmPly(d) {
+  var step = lastStep(d);
+  return [step.ply,  step.moves.length - 1];
+}
+
 function plyCompare(ply1, ply2) {
   if (ply1[0] === ply2[0]) {
     return ply1[1] - ply2[1];
@@ -28,6 +33,7 @@ module.exports = {
       changes: {}
     };
   },
+  lastVmPly: lastVmPly,
   lastPly: lastPly,
   lastStep: lastStep,
   replayLength,

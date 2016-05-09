@@ -45,6 +45,7 @@ module.exports = function(opts) {
   };
 
   this.vm = {
+    // ply: [lastPly, lastStep.moves.length - 1];
     ply: init.startPly(this.data),
     tab: store.tab.get(),
     scoresheetInfo: {},
@@ -69,6 +70,10 @@ module.exports = function(opts) {
 
     if (key === okeyground.move.drawMiddle) {
       this.sendMove(key);
+    }
+
+    if (key === okeyground.move.discard) {
+      this.vm.hasPlayedDiscard = true;
     }
   };
 
@@ -120,9 +125,14 @@ module.exports = function(opts) {
 
       if (o.isMove) {
         if (o.drawmiddle) {
-          this.okeyground.apiDrawMiddleEnd(o.drawmiddle.piece);
+          this.okeyground.apiMove(o.key, wrapPiece(o.drawmiddle.piece));
         } else if (o.discard) {
-          this.okeyground.apiMove(o.key, wrapPiece(o.discard.piece));
+          if (!this.vm.hasPlayedDiscard) {
+            this.okeyground.apiMove(o.key, wrapPiece(o.discard.piece));
+          } else {
+            // console.log('skip discard', o);
+          }
+          this.vm.hasPlayedDiscard = false;
         } else if (o.opens) {
           this.okeyground.apiMove(o.key, wrapGroup(o.opens.group));
         } else if (o.drop) {
@@ -135,7 +145,7 @@ module.exports = function(opts) {
           });
         } else if (o.key === okeyground.move.leaveTaken) {
           this.restoreFen(o.fen);
-        }else {
+        } else {
           this.okeyground.apiMove(o.key);
         }
       }
@@ -171,9 +181,11 @@ module.exports = function(opts) {
 
   this.reload = (cfg) => {
     m.startComputation();
-    this.vm.ply = round.lastStep(cfg).ply;
+    //this.vm.ply = round.lastStep(cfg).ply;
+    this.vm.ply = round.lastVmPly(cfg);
     var merged = round.merge(this.data, cfg);
     this.data = merged.data;
+
     this.setTitle();
     // move on
     m.endComputation();
@@ -195,8 +207,6 @@ module.exports = function(opts) {
   this.clock = this.data.clock ? new clockCtrl(
     this.data.clock,
     this.socket.outoftime, this.data.player.side) : false;
-
-  console.log('iclock east', this.data.clock.sides['east']);
 
   this.isClockRunning = () => {
     return this.data.clock && game.playable(this.data) &&

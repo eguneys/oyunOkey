@@ -24,7 +24,7 @@ private[masa] final class MasaApi(
     val variant = okey.variant.Variant orDefault setup.variant
     val masa = Masa.make(
       createdByUserId = player.userId | player.id,
-      clock = MasaClock(60),
+      clock = MasaClock(30),
       rounds = setup.rounds,
       system = System.Arena,
       variant = variant)

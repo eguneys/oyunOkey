@@ -49,6 +49,7 @@ private[round] final class SocketHandler(
               playerId, move, promise.some
             ))
         }
+        case ("outoftime", _) => send(OutOfTime)
         // case ("bye", _) => socket ! Bye(
         case ("talk", o) => o str "d" foreach { text =>
           messenger.owner(gameId, member, text, socket)

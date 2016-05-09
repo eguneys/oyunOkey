@@ -35,6 +35,11 @@ private[round] final class Round(
       player.fishnet(game, uci)
     }
 
+    case OutOfTime => proxy withGame { game =>
+      println("game outoftime", game.outoftime)
+      game.outoftime ?? player.requestFishnet(game)
+    }
+
     // exceptionally we don't block nor publish events
     // if the game is abandoned, then nobody is around to see it
     // we can also terminate this actor
