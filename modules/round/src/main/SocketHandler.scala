@@ -48,6 +48,7 @@ private[round] final class SocketHandler(
             send(HumanPlay(
               playerId, move, promise.some
             ))
+            member push ackEvent
         }
         case ("outoftime", _) => send(OutOfTime)
         // case ("bye", _) => socket ! Bye(
@@ -91,4 +92,6 @@ private[round] final class SocketHandler(
     pos = d str "pos"
     move <- Uci.Move.fromStrings(key, piece, group, pos)
   } yield move
+
+  private val ackEvent = Json.obj("t" -> "ack")
 }

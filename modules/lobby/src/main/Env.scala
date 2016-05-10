@@ -12,6 +12,7 @@ final class Env(
   hub: oyun.hub.Env,
   scheduler: oyun.common.Scheduler) {
   private val settings = new {
+    val MessageTtl = config duration "message.ttl"
     val SocketName = config getString "socket.name"
     val ActorName = config getString "actor.name"
     val BroomPeriod = config duration "broom_period"
@@ -30,7 +31,7 @@ final class Env(
     lobby = lobby,
     socket = socket)
 
-  lazy val history = new History()
+  lazy val history = new History(ttl = MessageTtl)
 
   {
     import scala.concurrent.duration._

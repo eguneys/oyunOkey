@@ -9,6 +9,7 @@ import play.api.libs.json._
 
 import actorApi._
 import oyun.game.Event
+import oyun.hub.TimeBomb
 import oyun.socket.actorApi.{ Connected => _, _ }
 import oyun.socket._
 import okey.{ Sides, Side }
@@ -21,6 +22,8 @@ private[round] final class Socket(
   disconnectTimeout: Duration,
   ragequitTimeout: Duration) extends SocketActor[Member] {
 
+  private val timeBomb = new TimeBomb(socketTimeout)
+
   private var delayedCrowdNotification = false
 
   private final class Player(side: Side) {
@@ -31,6 +34,8 @@ private[round] final class Socket(
     private var bye: Int = 0
 
     var userId = none[String]
+
+    var isAi = false
 
     def ping {
       isGone foreach { _ ?? notifyGone(side, false) }
@@ -44,16 +49,39 @@ private[round] final class Socket(
     private def isBye = bye > 0
 
     def isGone = if (time < (nowMillis - isBye.fold(ragequitTimeout, disconnectTimeout).toMillis))
-      fuccess(true)
+      fuccess(!isAi)
     else fuccess(false)
   }
 
   private val players = Sides(side => new Player(side))
 
-  def receiveSpecific = {
-    case PingVersion(uid, v) =>
-      ping(uid)
+  override def preStart() {
+    super.preStart()
+    oyun.game.GameRepo game gameId map SetGame.apply pipeTo self
+  }
 
+  def receiveSpecific = {
+
+    case SetGame(Some(game)) =>
+      players sideMap { case (side, p) =>
+        p.isAi = game.player(side).isAi
+      }
+
+    case PingVersion(uid, v) =>
+      timeBomb.delay
+      ping(uid)
+      ownerOf(uid) foreach { o =>
+        playerDo(o.side, _.ping)
+      }
+      withMember(uid) { member =>
+        (history getEventsSince v).fold(resyncNow(member))(batch(member, _))
+      }
+
+    case Broom =>
+      broom
+      if (timeBomb.boom) self ! PoisonPill
+      else playersGet(_.isGone) sideMap { case (side, isGone) => isGone foreach { _ ?? notifyGone(side, true) } }
+      
     case GetSocketStatus =>
       playersGet(_.isGone).sequenceSides map { sidesIsGone =>
 
@@ -69,6 +97,7 @@ private[round] final class Socket(
       val member = Member(channel, user, side, playerId)
       addMember(uid, member)
       notifyCrowd
+      playerDo(side, _.ping)
       sender ! Connected(enumerator, member)
 
     case eventList: EventList => notify(eventList.events)
@@ -114,12 +143,26 @@ private[round] final class Socket(
     }
   }
 
+  def notifyOwner[A: Writes](side: Side, t: String, data: A) {
+    ownerOf(side) foreach { m =>
+      m push makeMessage(t, data)
+    }
+  }
+
   def notifyGone(side: Side, gone: Boolean) {
     //  notify all gone
+    Side.all.filterNot(side==) foreach { notifyOwner(_, "gone", Json.obj(side.name -> gone)) }
   }
 
   def ownerOf(side: Side): Option[Member] =
     members.values find { m => m.owner && m.side == side }
 
+  def ownerOf(uid: String): Option[Member] =
+    members get uid filter (_.owner)
+
   private def playersGet[A](getter: Player => A): Sides[A] = players map getter
+
+  private def playerDo(side: Side, effect: Player => Unit) {
+    effect(players(side))
+  }
 }

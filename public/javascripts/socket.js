@@ -2,14 +2,15 @@
 // @compilation_level ADVANCED_OPTIMIZATIONS
 // ==/ClosureCompiler==
 
-oyunkeyf.StrongSocket = function(url, version, settings) {
+// versioned events, acks, retries, resync
+oyunkeyf.StrongSocket = function(murl, mversion, msettings) {
   var now = function() {
     return new Date().getTime();
   };
 
-  var settings = $.extend(true, {}, oyunkeyf.StrongSocket.defaults, settings);
-  var url = url;
-  var version = version;
+  var settings = $.extend(true, {}, oyunkeyf.StrongSocket.defaults, msettings);
+  var url = murl;
+  var version = mversion;
   var options = settings.options;
   var ws = null;
   var pingSchedule = null;
@@ -46,16 +47,23 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
         onSuccess();
         $('body').removeClass('offline');
         pingNow();
+
+        var resend = ackableMessages;
+        ackableMessages = [];
+        resend.forEach(function(x) {
+          send(x.t, x.d);
+        });
       };
       ws.onmessage = function(e) {
         var m = JSON.parse(e.data);
+        // if (Math.random() > 0.5) {
+        //   console.log(m, 'skip');
+        //   return;
+        // }
         if (m.t === 'n') pong();
 
-        if (m.t === 'b') {
-          m.d.forEach(function(mm) {
-            handle(mm);
-          });
-        } else handle(m);
+        if (m.t === 'b') m.d.forEach(handle);
+        else handle(m);
       };
     } catch(e) {
       onError(e);
@@ -66,6 +74,14 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
   var send = function(t, d, o, again) {
     var data = d || {},
         options = o || {};
+
+    if (options && options.ackable) {
+      ackableMessages.push({
+        t: t,
+        d: d
+      });
+    }
+
     var message = JSON.stringify({
       t: t,
       d: data
@@ -76,6 +92,12 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
     } catch (e) {
       debug('send failed');
     }
+  };
+
+  var sendAckable = function(t, d) {
+    send(t, d, {
+      ackable: true
+    });
   };
 
   var scheduleConnect = function(delay) {
@@ -142,6 +164,9 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
     case 'resync':
       oyunkeyf.reload();
       break;
+    case 'ack':
+      ackableMessages: [];
+      break;
     default:
       if (settings.receive) settings.receive(m.t, m.d);
       var h = settings.events[m.t];
@@ -165,6 +190,7 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
   var disconnect = function() {
     if (ws) {
       debug("Disconnect", true);
+      autoReconnect = false;
       ws.onerror = $.noop;
       ws.onclose = $.noop;
       ws.onopen = $.noop;
@@ -239,9 +265,9 @@ oyunkeyf.StrongSocket.defaults = {
     debug: true,
     name: "unnamed",
     pingMaxLag: 8000, // time to wait for pong before resetting the connection
-    pingDelay: 1500,
+    pingDelay: 1500, // time between pong and ping
     autoReconnectDelay: 2000,
-    lagTag: false,
+    lagTag: false, // jQuery object showing ping lag
     baseUrls: [document.domain + ':9021'].concat(
       //[9021, 9022, 9023, 9024]
       [9022].map(function(port) {

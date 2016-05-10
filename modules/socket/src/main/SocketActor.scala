@@ -1,6 +1,7 @@
 package oyun.socket
 
 import scala.concurrent.duration._
+import scala.util.Random
 
 import akka.actor._
 import play.api.libs.json._
@@ -85,6 +86,19 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
       members -= uid
       oyunBus.publish(SocketLeave(uid, member), 'socketDoor)
     }
+  }
+
+  private val resyncMessage = makeMessage("resync")
+
+  protected def resync(member: M) {
+    import scala.concurrent.duration._
+    context.system.scheduler.scheduleOnce((Random nextInt 2000).milliseconds) {
+      resyncNow(member)
+    }
+  }
+
+  protected def resyncNow(member: M) {
+    member push resyncMessage
   }
 
   def addMember(uid: String, member: M) {

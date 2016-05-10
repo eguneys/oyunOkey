@@ -18,4 +18,8 @@ trait Historical[M <: SocketMember] { self: SocketActor[M] =>
       message.fullMsg
     }
   }
+
+  def sendMessage(member: M)(message: Message) {
+    sendMessage(message)(member)
+  }
 }

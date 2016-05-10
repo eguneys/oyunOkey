@@ -64,6 +64,8 @@ case class SocketStatus(
   def isGone(side: Side) = sidesIsGone(side)
 }
 
+case class SetGame(game: Option[oyun.game.Game])
+
 package round {
   case class HumanPlay(
     playerId: String,

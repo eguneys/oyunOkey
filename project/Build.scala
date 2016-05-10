@@ -105,7 +105,7 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= Seq(spray.caching) ++ provided(play.api, RM)
   )
 
-  lazy val socket = project("socket", Seq(common, hub)).settings(
+  lazy val socket = project("socket", Seq(common, memo, hub)).settings(
     libraryDependencies ++= provided(play.api, play.test)
   )
 

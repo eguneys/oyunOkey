@@ -12,6 +12,19 @@ private[round] final class History(
     events.headOption.??(_.version)
   }
 
+  // none if version asked is > to history version
+  // none if an event is missing (asked too old version)
+  def getEventsSince(v: Int): Option[VersionedEvents] = {
+    waitForLoadedEvents
+    val version = getVersion
+    if (v > version) none
+    else if (v == version) Some(Nil)
+    else events.takeWhile(_.version > v).reverse.some filter {
+      case first :: rest => first.version == v + 1
+      case _ => true
+    }
+  }
+
   def addEvents(xs: List[Event]): VersionedEvents = {
     waitForLoadedEvents
     val vevs = xs.foldLeft(List.empty[VersionedEvent] -> getVersion) {
