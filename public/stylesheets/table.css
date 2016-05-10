@@ -211,6 +211,18 @@ div.sideboard_menu > a.active {
   font-weight: 300;
 }
 
+.table_right .replay turn>index {
+  display: flex;
+}
+
+.table_right .replay turn>index span {
+  flex: 0 0 34px;
+}
+
+.table_right .replay turn>index .user {
+  flex: 1 1 100%;
+}
+
 
 .table_right .replay move>index {
   flex: 0 0 34px;

@@ -66,7 +66,19 @@ function renderTurns(ctrl) {
     var curPly = ctrl.vm.ply;
 
     player = game.getPlayer(ctrl.data, turn.side);
-    player = player.user ? player.user.username : 'Anonymous';
+    player = player.user ? player.user.username :
+      player.ai ? `Bot AI${player.ai}` : 'Anonymous';
+
+    var plyTag = {
+      tag: 'span',
+      children: [turn.ply + 1]
+    };
+
+    var playerTag = {
+      tag: 'span',
+      attrs: { class: 'user' },
+      children: [player]
+    };
 
     rows.push({
       tag: 'turn',
@@ -74,7 +86,7 @@ function renderTurns(ctrl) {
         tag: 'index',
         attrs: (turn.ply !== curPly[0] || -1 !== curPly[1])
           ? {} : { class: 'active' },
-        children: [player]
+        children: [plyTag, playerTag]
       },
                  m('div.moves', {},
                    renderMoves(ctrl, turn)
