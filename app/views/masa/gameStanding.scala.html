@@ -18,7 +18,7 @@
                 } else {
                   <span class="rank">@rank</span>
                 }
-                @usernameOrAnon(player.userId)
+                @player.isAi.fold(aiName, usernameOrAnon(player.userId))
             </td>
               <td class="total">
                 <strong>@player.score</strong>

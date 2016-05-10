@@ -237,7 +237,7 @@
   color: #fff;
 }
 
-#masa .seats .seat.empty:hover {
+#masa .seats .seat.empty.invite:hover {
   height: 80px;
   box-shadow: 0 1px 13px rgba(0, 0, 0, 0.7);
 }
@@ -298,6 +298,7 @@
   height: 80px;
 }
 
+#masa .seats .seat:not(.invite),
 #masa .seats .seat:not(:hover),
 #masa .seats .seat:not(.empty) {
   margin-bottom: 49px;

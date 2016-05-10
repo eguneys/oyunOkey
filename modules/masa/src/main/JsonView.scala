@@ -22,6 +22,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     stand <- standing(masa)
   } yield Json.obj(
     "id" -> masa.id,
+    "createdBy" -> masa.createdBy,
     "playerId" -> me,
     "fullName" -> masa.fullName,
     "greatPlayer" -> GreatPlayer.wikiUrl(masa.name).map { url =>

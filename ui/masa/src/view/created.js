@@ -14,10 +14,14 @@ function seat(ctrl, side) {
   var player = ctrl.data.actives[side];
   var me = player && ctrl.playerId === player.id;
 
+  var withInvite = (ctrl.data.createdBy === ctrl.data.playerId) |
+      (ctrl.data.createdBy === ctrl.userId);
+
   var attrs = {
     class: util.classSet({
       'me': me,
-      'empty': !player
+      'empty': !player,
+      'invite': withInvite
     })
   };
 
@@ -26,7 +30,7 @@ function seat(ctrl, side) {
       m('span.title', vUtil.usernameOrAnon(ctrl, player.id)) :
       button.orJoinSpinner(ctrl, function() {
         return m('div.buttons', [
-          button.seatInvite(ctrl, side),
+          withInvite ? button.seatInvite(ctrl, side) : null,
           button.seatJoin(ctrl, side)
         ]);
       })

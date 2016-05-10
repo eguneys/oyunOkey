@@ -22,6 +22,7 @@ object Environment
     with JsonHelper
     with SetupHelper
     with FormHelper
+    with AiHelper
     with UserHelper
     with MasaHelper
     with GameHelper {
