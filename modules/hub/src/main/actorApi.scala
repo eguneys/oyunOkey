@@ -5,6 +5,9 @@ import play.api.libs.json._
 
 case class SendTo(userId: String, message: JsObject)
 
+case class SendTos(userIds: Set[String], message: JsObject)
+
+
 package map {
   case class Get(id: String)
   case class Tell(id: String, msg: Any)
@@ -21,3 +24,7 @@ case class WithUserIds(f: Iterable[String] => Unit)
 
 case object GetUids
 case class SocketUids(uids: Set[String])
+
+package lobby {
+  case class ReloadMasas(html: String)
+}

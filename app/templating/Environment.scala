@@ -17,6 +17,7 @@ object Environment
     with AssetHelper
     with RequestHelper
     with I18nHelper
+    with NotificationHelper
     with DateHelper
     with StringHelper
     with JsonHelper

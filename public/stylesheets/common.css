@@ -446,6 +446,31 @@ body.offline #reconnecting,
   opacity: 0.7;
 }
 
+#notifications_wrapper {
+  position: relative;
+}
+
+#notifications {
+  position: absolute;
+  top: -20px;
+  left: -30px;
+  width: 228px;
+  z-index: 2;
+}
+
+#notifications>div {
+  border: 1px solid #c0c0c0;
+  padding: 6px 8px 7px 8px;
+  margin-bottom: 8px;
+  border-radius: 2px;
+  box-shadow: 0 0 3px 0 #d85000;
+  transition: box-shadow: 1.5s;
+}
+
+#notifications a {
+  font-weight: bold;
+}
+
 div.content_box_content {
   padding: 20px;
 }
@@ -686,6 +711,7 @@ div.side_box div.top,
 div.undertable_top,
 .button,
 .ui-slider-handle,
+#notifications>div,
 table.slist thead {
   background: rgb(245, 245, 245);
   background: linear-gradient(to bottom, rgba(245, 245, 245, 1) 0%, rgba(240, 240, 240, 1) 100%);

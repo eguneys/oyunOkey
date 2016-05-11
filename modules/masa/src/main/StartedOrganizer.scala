@@ -7,6 +7,7 @@ import actorApi._
 
 private[masa] final class StartedOrganizer(
   api: MasaApi,
+  reminder: ActorRef,
   isOnline: String => Player => Fu[Boolean],
   socketHub: ActorRef) extends Actor {
 
@@ -31,7 +32,9 @@ private[masa] final class StartedOrganizer(
       val myself = self
       MasaRepo.started map { started =>
         oyun.common.Future.traverseSequentially(started) { masa =>
-          PlayerRepo activePlayerIds masa.id flatMap { activePlayerIds =>
+          PlayerRepo activePlayers masa.id flatMap { activePlayers =>
+            val activePlayerIds = activePlayers map (_.id)
+            val activeUserIds = activePlayers flatMap (_.userId)
             val nb = activePlayerIds.size
 
             val result: Funit =
@@ -42,6 +45,7 @@ private[masa] final class StartedOrganizer(
               else if (!masa.isAlmostFinished) startPairing(masa, activePlayerIds)
               else funit
             result >>- {
+              reminder ! RemindMasa(masa, activeUserIds)
             } inject nb
           }
         }.addEffect { playerCounts =>

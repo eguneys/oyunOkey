@@ -47,6 +47,13 @@
     </div>
     <div class="content">
       <div id="site_header">
+        <div id="notifications_wrapper">
+          @ctx.me.map { me =>
+            <div id="notifications">@notifications(me)</div>
+          }.getOrElse {
+            <div id="notifications"></div>
+          }
+        </div>
         <h1>
           <a id="site_title" href="@routes.Lobby.home">oyunkeyf<span class="extension">.net</span></a>
         </h1>
@@ -75,6 +82,9 @@
     }
     @moreJs
     @if(lang.language != "en") {
+      @embedJs {
+        oyunkeyf_translations = @js18n()
+      }
       @momentLangTag
     }
     @base.ga()

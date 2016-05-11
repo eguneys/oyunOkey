@@ -7,6 +7,8 @@ final class Env(
   config: Config,
   system: ActorSystem) {
 
+  private val RendererName = config getString "app.renderer.name"
+
   lazy val bus = oyun.common.Bus(system)
 
   lazy val preloader = new mashup.Preload(
@@ -16,6 +18,8 @@ final class Env(
   lazy val userInfo = mashup.UserInfo(
     countUsers = () => Env.user.countEnabled
   ) _
+
+  system.actorOf(Props(new actor.Renderer), name = RendererName)
 
   oyun.log.boot.info("Preloading modules")
   oyun.common.Chronometer.syncEffect(List(Env.socket,

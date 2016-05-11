@@ -1,4 +1,4 @@
-@(masas: List[Masa])(implicit ctx: Context)
+@(masas: List[Masa])
 
 @masas.map { m =>
   <tr>
@@ -11,7 +11,7 @@
     <td class="small">
       <!-- <span class="text" data-icon="p"></span> -->
       @m.variant.shortName
-      <span>@trans.rated()</span>
+      <span class="trans_me">@trans.rated.en()</span>
     </td>
     <td>@m.roundString</td>
     <td data-icon="r" class="text">@m.nbPlayers</td>

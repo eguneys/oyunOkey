@@ -1,0 +1,10 @@
+@(m: Masa)
+
+@notification.view("masa_reminder", closable = false, glow = true) {
+  <a data-icon="g" href="@routes.Masa.show(m.id)">&nbsp;@m.name</a>
+  <span class="trans_me">@trans.inProgress.en()</span>
+  <div class="actions">
+    <a class="withdraw trans_me text" href="@routes.Masa.withdraw(m.id)" data-icon="b">@trans.withdraw.en()</a>
+    <a class="trans_me text" href="@routes.Masa.show(m.id)" data-icon="G">@trans.join.en()</a>
+  </div>
+}

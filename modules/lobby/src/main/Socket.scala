@@ -1,11 +1,15 @@
 package oyun.lobby
 
+import scala.concurrent.Future
+
 import akka.pattern.ask
 import play.api.libs.json._
 import play.api.libs.iteratee._
-import oyun.common.PimpedJson._
+import play.twirl.api.Html
 
 import actorApi._
+import oyun.common.PimpedJson._
+import oyun.hub.actorApi.lobby._
 import oyun.socket.actorApi.{ Connected => _, _ }
 import oyun.socket.{ SocketActor, History, Historical }
 
@@ -25,14 +29,23 @@ private[lobby] final class Socket(
   }
 
   def receiveSpecific = {
-    case PingVersion(uid, v) =>
+
+    case PingVersion(uid, v) => Future {
       ping(uid)
+      withMember(uid) { m =>
+        history.since(v).fold {
+          resync(m)
+        }(_ foreach sendMessage(m))
+      }
+    }
 
     case Join(uid, user) =>
       val (enumerator, channel) = Concurrent.broadcast[JsValue]
       val member = Member(channel, user, uid)
       addMember(uid, member)
       sender ! Connected(enumerator, member)
+
+    case ReloadMasas(html) => notifyAllAsync(makeMessage("masas", html))
 
     case AddHook(hook) =>
       notifyVersion("had", hook.render)

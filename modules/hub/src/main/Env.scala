@@ -5,12 +5,16 @@ import com.typesafe.config.Config
 
 final class Env(config: Config, system: ActorSystem) {
   object actor {
+    val renderer = select("actor.renderer")
     val lobby = select("actor.lobby")
     val roundMap = select("actor.round.map")
     val chat = select("actor.chat")
   }
 
   object socket {
+    val lobby = select("socket.lobby")
+    val round = select("socket.round")
+    val masa = select("socket.masa")
   }
 
   private def select(name: String) =

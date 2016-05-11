@@ -41,6 +41,9 @@ GET     /signup/check-your-email/:name  controllers.Auth.checkYourEmail(name: St
 GET     /password/reset                 controllers.Auth.passwordReset
  
 
+# Notification
+DELETE /notification/$id<\w{8}>         controllers.Notification.remove(id)
+
 # Variants
 
 GET     /variant                controllers.Page.variantHome

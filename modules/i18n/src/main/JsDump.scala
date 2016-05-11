@@ -13,4 +13,10 @@ private[i18n] final class JsDump(
       k.key -> JsString(k.to(lang)())
     }
   }
+
+  def keysToMessageObject(keys: Seq[I18nKey], lang: Lang) = JsObject {
+    keys.map { k =>
+      k.en() -> JsString(k.to(lang)())
+    }
+  }
 }

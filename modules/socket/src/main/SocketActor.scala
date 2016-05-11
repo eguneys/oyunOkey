@@ -1,6 +1,7 @@
 package oyun.socket
 
 import scala.concurrent.duration._
+import scala.concurrent.Future
 import scala.util.Random
 
 import akka.actor._
@@ -58,6 +59,14 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
 
   def notifyAll(msg: JsObject) {
     members.values.foreach(_ push  msg)
+  }
+
+  def notifyAllAsync[A: Writes](t: String, data: A) = Future {
+    notifyAll(t, data)
+  }
+
+  def notifyAllAsync(msg: JsObject) = Future {
+    notifyAll(msg)
   }
 
   def notifyMember[A: Writes](t: String, data: A)(member: M) {

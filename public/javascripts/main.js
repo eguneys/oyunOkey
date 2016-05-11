@@ -74,6 +74,16 @@
           oyunkeyf.hasToReload = true;
           $.redirect(o);
         }, 300);
+      },
+      masaReminder: function(data) {
+        if (!$('#masa_reminder').length && !$('body').data('masa-id')) {
+          $('#notifications').append(data.html).find('a.withdraw').click(function() {
+            $.post($(this).attr("href"));
+            $('#masa_reminder').remove();
+            return false;
+          });
+          $('body').trigger('oyunkeyf.content_loaded');
+        }
       }
     },
     params: {},
@@ -106,6 +116,7 @@
         });
       }
       setMomentFromNow();
+      $('body').on('oyunkeyf.content_loaded', setMomentFromNow);
       setInterval(setMomentFromNow, 2000);
 
       // Zoom
@@ -128,6 +139,16 @@
       };
     }, 50);
 
+    function translateTexts() {
+      $('.trans_me').each(function() {
+        $(this).removeClass('trans_me');
+        if ($(this).val()) $(this).val($.trans($(this).val()));
+        else $(this).text($.trans($(this).text()));
+      });
+    }
+    translateTexts();
+    $('body').on('oyunkeyf.content_loaded', translateTexts);
+
     // user profile toggle
     $('#top').on('click', 'a.toggle', function() {
       var $p = $(this).parent();
@@ -149,6 +170,15 @@
   function urlToLink(text) {
     var exp = /\bhttp:\/\/(?:[a-z]{0, 3}\.)?(oyunkeyf\.net[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
     return text.replace(exp, "<a href='http://$1'>$1</a>");
+  }
+
+  $.trans = function() {
+    var str = oyunkeyf_translations[arguments[0]];
+    if (!str) return arguments[0];
+    Array.prototype.slice.call(arguments, 1).forEach(function(arg) {
+      str = str.replace('%s', arg);
+    });
+    return str;
   }
 
   oyunkeyf.widget("chat", {
@@ -249,7 +279,7 @@
   oyunkeyf.startRound = function(element, cfg) {
     var data = cfg.data;
     var round;
-
+    if (data.masa) $('body').data('masa-id', data.masa.id);
     if (!data.player.spectator && data.game.status.id < 25) {
       oyunkeyf.storage.set('last-game', data.game.id);
     }
@@ -319,6 +349,10 @@
           },
           redirect: function(e) {
             $.redirect(e);
+          },
+          masas: function(data) {
+            $('#enterable_masas').html(data);
+            $('body').trigger('oyunkeyf.content_loaded');
           }
         },
         options: {

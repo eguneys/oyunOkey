@@ -25,6 +25,10 @@ trait UserHelper { self: I18nHelper =>
     }
   }
 
+  def userIdLink(
+    userId: String,
+    cssClass: Option[String]): Html = userIdLink(userId.some)
+
   def userIdNameLink(
     userId: String,
     username: String,

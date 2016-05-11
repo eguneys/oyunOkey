@@ -5,7 +5,7 @@ import play.api.libs.json.JsObject
 import scala.collection.mutable
 
 import actorApi.{ SocketLeave, SocketEnter }
-import oyun.hub.actorApi.{ SendTo, WithUserIds }
+import oyun.hub.actorApi.{ SendTo, SendTos, WithUserIds }
 
 private final class UserRegister extends Actor {
 
@@ -26,6 +26,9 @@ private final class UserRegister extends Actor {
   def receive = {
 
     case SendTo(userId, msg) => sendTo(userId, msg)
+
+    case SendTos(userIds, msg) => userIds foreach { sendTo(_, msg) }
+
 
     case WithUserIds(f) => f(users.keys)
 

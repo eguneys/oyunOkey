@@ -3,22 +3,26 @@ package oyun.masa
 import scala.concurrent.duration._
 import scala.concurrent.Promise
 
-import akka.actor.{ ActorRef }
-import akka.pattern.ask
+import akka.actor._
+import akka.pattern.{ ask, pipe }
 
 import actorApi._
+import oyun.common.Debouncer
 import oyun.hub.actorApi.map.{ Tell }
+import oyun.hub.actorApi.lobby.ReloadMasas
 import oyun.hub.Sequencer
 import oyun.game.{ Game }
 
-
 import okey.Side
+import makeTimeout.short
 
 private[masa] final class MasaApi(
+  system: ActorSystem,
   sequencers: ActorRef,
   autoPairing: AutoPairing,
-  socketHub: ActorRef
-) {
+  socketHub: ActorRef,
+  renderer: ActorSelection,
+  lobby: ActorSelection) {
 
   def createMasa(setup: MasaSetup, player: PlayerRef): Fu[Masa] = {
     val variant = okey.variant.Variant orDefault setup.variant
@@ -61,7 +65,8 @@ private[masa] final class MasaApi(
     Sequencing(masaId)(MasaRepo.enterableById) { masa =>
       PlayerRepo.join(masa.id, player.toPlayer(masa.id), side flatMap Side.apply) >> updateNbPlayers(masa.id) >>- {
         socketReload(masa.id)
-        promise success()
+        publish()
+        promise success(())
       }
     }
     promise.future
@@ -78,13 +83,17 @@ private[masa] final class MasaApi(
     Sequencing(masaId)(MasaRepo.enterableById) { 
       case masa if masa.isCreated =>
         PlayerRepo.remove(masa.id, playerId) >> updateNbPlayers(masa.id) >>- {
-          socketReload(masa.id)
-          promise success()
+          funit >>-
+          socketReload(masa.id) >>-
+          publish()
+          promise success(())
         }
       case masa if masa.isStarted =>
         PlayerRepo.withdraw(masa.id, playerId) >> updateNbPlayers(masa.id) >>- {
-          socketReload(masa.id)
-          promise success()
+          funit >>-
+          socketReload(masa.id) >>-
+          publish()
+          promise success(())
         }
       case _ => funit
     }
@@ -100,14 +109,15 @@ private[masa] final class MasaApi(
   def start(oldMasa: Masa) {
     Sequencing(oldMasa.id)(MasaRepo.createdById) { masa =>
       MasaRepo.setStatus(masa.id, Status.Started) >>-
-      sendTo(masa.id, Reload)
+      sendTo(masa.id, Reload) >>-
+      publish()
     }
   }
 
   def wipe(masa: Masa): Funit =
     MasaRepo.remove(masa).void >>
       PairingRepo.removeByMasa(masa.id) >>
-      PlayerRepo.removeByMasa(masa.id) >>- socketReload(masa.id)
+      PlayerRepo.removeByMasa(masa.id) >>- publish() >>- socketReload(masa.id)
 
   def finish(oldMasa: Masa) {
     Sequencing(oldMasa.id)(MasaRepo.startedById) { masa =>
@@ -120,6 +130,7 @@ private[masa] final class MasaApi(
           _ <- winner.??(p => p.userId.??(MasaRepo.setWinnerId(masa.id, _)))
         } yield {
           sendTo(masa.id, Reload)
+          publish()
         }
       }
     }
@@ -185,6 +196,18 @@ private[masa] final class MasaApi(
 
   private def socketReload(masaId: String) {
     sendTo(masaId, Reload)
+  }
+
+  private object publish {
+    private val debouncer = system.actorOf(Props(new Debouncer(10 seconds, {
+      (_: Debouncer.Nothing) =>
+      MasaRepo.promotable foreach { masas =>
+        renderer ? MasaTable(masas) map {
+          case view: play.twirl.api.Html => ReloadMasas(view.body)
+        } pipeToSelection lobby
+      }
+    })))
+    def apply() { debouncer ! Debouncer.Nothing }
   }
 
   private def sendTo(masaId: String, msg: Any) {

@@ -4,6 +4,9 @@
 
 var oyunkeyf = window.oyunkeyf = window.oyunkeyf || {};
 
+// declare now, populate later in a distinct script.
+var oyunkeyf_translations = oyunkeyf_translations || [];
+
 function withStorage(f) {
   try {
     return !!window.localStorage ? f(window.localStorage) : null;

@@ -28,6 +28,9 @@ private[masa] case object Reload
 private[masa] case class StartGame(game: Game)
 private[masa] case class Connected(enumerator: JsEnumerator, member: Member)
 
+case class RemindMasa(masa: Masa, activeUserIds: List[String])
+case class MasaTable(masas: List[Masa])
+
 // organizer
 private[masa] case object AllCreatedMasas
 private[masa] case object StartedMasas

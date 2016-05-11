@@ -11,7 +11,7 @@ import oyun.app._
 import oyun.common.{ OyunCookie, HTTPRequest }
 import oyun.api.{ PageData, Context, HeaderContext, BodyContext }
 import oyun.security.{ FingerprintedUser }
-import oyun.user.{ UserContext }
+import oyun.user.{ UserContext, User => UserModel }
 
 private[controllers] trait OyunController
     extends Controller
@@ -55,6 +55,18 @@ private[controllers] trait OyunController
 
   protected def OpenBody[A](p: BodyParser[A])(f: BodyContext[_] => Fu[Result]): Action[A] = Action.async(p)(req => reqToCtx(req) flatMap f)
 
+  protected def Auth(f: Context => UserModel => Fu[Result]): Action[Unit] =
+    Auth(BodyParsers.parse.empty)(f)
+
+  protected def Auth[A](p: BodyParser[A])(f: Context => UserModel => Fu[Result]): Action[A] =
+    Action.async(p) { req =>
+      reqToCtx(req) flatMap { implicit ctx =>
+        ctx.me.fold(authenticationFailed) { me =>
+          Env.i18n.requestHandler.forUser(req, ctx.me).fold(f(ctx)(me))(fuccess)
+        }
+      }
+    }
+
   protected def OptionResult[A](fua: Fu[Option[A]])(op: A => Result)(implicit ctx: Context) =
     OptionFuResult(fua) { a => fuccess(op(a)) }
 
@@ -72,6 +84,17 @@ private[controllers] trait OyunController
   }
 
   def jsonError[A: Writes](err: A): JsObject = Json.obj("error" -> err)
+
+  protected def authenticationFailed(implicit ctx: Context): Fu[Result] =
+    negotiate(
+      html = fuccess {
+        implicit val req = ctx.req
+        Redirect(routes.Auth.signup)
+      },
+      api = _ => unauthorizedApiResult.fuccess
+    )
+
+  protected def unauthorizedApiResult = Unauthorized(jsonError("Login required"))
 
   protected def negotiate(html: => Fu[Result], api: Int => Fu[Result])(implicit ctx: Context): Fu[Result] =
     (oyun.api.Mobile.Api.requestVersion(ctx.req) match {
