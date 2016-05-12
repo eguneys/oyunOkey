@@ -7,6 +7,8 @@ import oyun.common.Form._
 
 import oyun.user.UserContext
 
+import oyun.game.Mode
+
 private[setup] final class FormFactory() {
   import Mappings._
   import FormFactory._
@@ -18,11 +20,12 @@ private[setup] final class FormFactory() {
     mapping(
       "rounds" -> numberIn(roundChoices),
       "variant" -> number.verifying(validVariantIds contains _),
+      "mode" -> optional(number.verifying(Mode.all map (_.id) contains _)),
       "ratingRange" -> optional(ratingRange)
     )(MasaConfig.apply)(MasaConfig.unapply)
   )
 
-  def masaConfig(implicit ctx: UserContext): Fu[MasaConfig] = fuccess(MasaConfig(5, 1, None))
+  def masaConfig(implicit ctx: UserContext): Fu[MasaConfig] = fuccess(MasaConfig(5, 1, Mode.Rated.id.some, None))
 
   def hookFilled()(implicit ctx: UserContext): Fu[Form[HookConfig]] =
     hookConfig map hook(ctx).fill

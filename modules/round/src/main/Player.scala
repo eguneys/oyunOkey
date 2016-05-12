@@ -70,7 +70,7 @@ private[round] final class Player(
     lazy val winner = situation.winner
     game.status match {
       case Status.NormalEnd => finisher.other(game, _.NormalEnd, result, winner)
-      case Status.MiddleEnd => finisher.other(game, _.MiddleEnd, result, none)
+      case Status.MiddleEnd => finisher.other(game, _.MiddleEnd, result, winner)
       case _ => fuccess(Nil)
     }
   }

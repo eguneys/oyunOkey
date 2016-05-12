@@ -6,11 +6,13 @@ import oyun.user.User
 case class MasaConfig(
   rounds: Int,
   variant: Int,
+  mode: Option[Int],
   ratingRange: Option[String]) extends HumanConfig {
 
   def masa(): MasaSetup = MasaSetup.make(
     rounds = rounds,
-    variant = variant)
+    variant = variant,
+    mode = mode)
 }
 
 object MasaConfig extends BaseHumanConfig {

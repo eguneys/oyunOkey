@@ -6,6 +6,7 @@ import okey.variant.Variant
 import okey.{ Side, Sides }
 import oyun.db.BSON
 
+import oyun.game.Mode
 import oyun.game.BSONHandlers._
 
 object BSONHandlers {
@@ -28,6 +29,7 @@ object BSONHandlers {
         clock = r.get[MasaClock]("clock"),
         rounds = r int "rounds",
         variant = variant,
+        mode = r.intO("mode") flatMap Mode.apply getOrElse Mode.Rated,
         nbPlayers = r int "nbPlayers",
         nbRounds = r int "nbRounds",
         createdAt = r date "createdAt",
@@ -43,6 +45,7 @@ object BSONHandlers {
       "clock" -> o.clock,
       "rounds" -> o.rounds,
       "variant" -> o.variant.some.filterNot(_.standard).map(_.id),
+      "mode" -> o.mode.some.filterNot(_.rated).map(_.id),
       "nbPlayers" -> o.nbPlayers,
       "nbRounds" -> o.nbRounds,
       "createdAt" -> w.date(o.createdAt),

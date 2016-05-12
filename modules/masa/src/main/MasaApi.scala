@@ -11,7 +11,7 @@ import oyun.common.Debouncer
 import oyun.hub.actorApi.map.{ Tell }
 import oyun.hub.actorApi.lobby.ReloadMasas
 import oyun.hub.Sequencer
-import oyun.game.{ Game }
+import oyun.game.{ Mode, Game }
 
 import okey.Side
 import makeTimeout.short
@@ -30,6 +30,7 @@ private[masa] final class MasaApi(
       createdByUserId = player.userId | player.id,
       clock = MasaClock(30),
       rounds = setup.rounds,
+      mode = setup.mode.fold(Mode.default)(Mode.orDefault),
       system = System.Arena,
       variant = variant)
     logger.info(s"Create $masa")

@@ -104,6 +104,7 @@ object BSON {
     def dateO(k: String) = getO[DateTime](k)
     def bytes(k: String) = get[ByteArray](k)
     def bytesO(k: String) = getO[ByteArray](k)
+    def nInt(k: String) = get[BSONNumberLike](k).toInt
   }
 
   final class Writer {

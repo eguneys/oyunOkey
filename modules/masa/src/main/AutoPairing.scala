@@ -12,6 +12,7 @@ final class AutoPairing {
         )
       },
       players = GamePlayer.allSides,
+      mode = masa.mode,
       variant = masa.variant
     )
     game2 = game1

@@ -1,4 +1,6 @@
 package oyun.game
 package actorApi
 
-case class FinishGame(game: Game)
+import oyun.user.User
+
+case class FinishGame(game: Game, users: okey.Sides[Option[User]])

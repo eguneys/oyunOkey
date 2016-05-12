@@ -20,6 +20,7 @@ case class Game(
   binaryPlayer: ByteArray,
   clock: Option[Clock],
   opensLastMove: OpensLastMove,
+  mode: Mode = Mode.default,
   status: Status,
   turns: Int,
   variant: Variant = Variant.default,
@@ -180,22 +181,28 @@ case class Game(
 
   def start = started.fold(this, copy(
     status = Status.Started,
+    mode = Mode(mode.rated && userIds.distinct.size == 4),
     updatedAt = DateTime.now.some
   ))
 
   def finish(
     status: Status,
     result: Option[Sides[EndScoreSheet]],
+    endStanding: Option[Sides[Int]],
     winner: Option[Side]) = Progress(
     this,
     copy(
       status = status,
       players = players sideMap ((side, p) => p finish (
         score = result map(_.apply(side)),
-        winner = winner == Some(side)))
+        standing = endStanding map(_.apply(side)),
+        winner = winner.exists(_ == side)))
     ),
     List(Event.End(result))
   )
+
+  def rated = mode.rated
+  def casual = !rated
 
   def started = status >= Status.Started
 
@@ -211,6 +218,8 @@ case class Game(
 
   def aiLevel: Option[Int] = players find (_.isAi) flatMap (_.aiLevel)
 
+  def hasAi: Boolean = players exists (_.isAi)
+
   def finished = status >= Status.NormalEnd
 
   def finishedOrAborted = finished || aborted
@@ -220,6 +229,8 @@ case class Game(
   def winner = players find (_.wins)
 
   def winnerSide: Option[Side] = winner map (_.side)
+
+  def endStandingByUser(userId: String) = players find (_.userId exists (userId==)) flatMap (_.standing)
 
   def outoftime: Boolean = outoftimeClock
 
@@ -269,6 +280,7 @@ object Game {
   def make(
     game: OkeyGame,
     players: Sides[Player],
+    mode: Mode,
     variant: Variant): Game = {
     val binaryPieces = game.table.boards map (board => BinaryFormat.piece.write(board.pieceList))
     val binaryDiscards = game.table.discards map BinaryFormat.piece.write
@@ -298,6 +310,7 @@ object Game {
       status = Status.Created,
       turns = game.turns,
       clock = game.clock,
+      mode = mode,
       variant = variant,
       metadata = Metadata(
         masaId = none
@@ -331,6 +344,7 @@ object Game {
     val winnerSide = "w"
     val winnerId = "wid"
     val endScores = "es"
+    val endStanding = "est"
     val createdAt = "ca"
     val updatedAt = "ua"
     val masaId = "mid"

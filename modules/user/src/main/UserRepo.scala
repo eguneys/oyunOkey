@@ -34,6 +34,18 @@ object UserRepo {
   def authenticateByEmail(email: String, password: String): Fu[Option[User]] = fuccess(None)
 
 
+  def incNbGames(id: ID, rated: Boolean, ai: Boolean, result: Int) = {
+    val incs: List[(String, BSONInteger)] = List(
+      "count.game".some,
+      rated option "count.rated",
+      ai option "count.ai",
+      s"count.standing${result}".some
+    ).flatten.map(_ -> BSONInteger(1))
+
+    coll.update($id(id), $inc(incs)) void 
+  }
+
+
   private case class AuthData(password: String, salt: String, enabled: Boolean, sha512: Option[Boolean]) {
     def compare(p: String) = password == (~sha512).fold(hash512(p, salt), hash(p, salt))
   }
@@ -52,7 +64,7 @@ object UserRepo {
     !nameExists(username) flatMap {
       _ ?? {
         coll.insert(newUser(username, password, email)) >>
-          named(normalize(username))
+        named(normalize(username))
       }
     }
 
@@ -70,6 +82,7 @@ object UserRepo {
 
   private def newUser(username: String, password: String, email: Option[String]) = {
 
+    implicit def countHandler = Count.countBSONHandler
     import oyun.db.BSON.BSONJodaDateTimeHandler
 
     val salt = ornicar.scalalib.Random nextStringUppercase 32
@@ -81,6 +94,7 @@ object UserRepo {
       F.mustConfirmEmail -> (email.isDefined).option(DateTime.now),
       "password" -> hash(password, salt),
       "salt" -> salt,
+      F.count -> Count.default,
       F.enabled -> true,
       F.createdAt -> DateTime.now,
       F.seenAt -> DateTime.now)

@@ -72,6 +72,7 @@ object GameRepo {
     id: ID,
     status: Status,
     result: Option[Sides[EndScoreSheet]],
+    standing: Option[Sides[Int]],
     winnerSide: Option[Side],
     winnerId: Option[String]) = {
     import BSONHandlers.scoresBSONHandler
@@ -91,7 +92,8 @@ object GameRepo {
       nonEmptyMod("$set", $doc(
         F.winnerId -> winnerId,
         F.winnerSide -> winnerSide.map(_.letter.toString),
-        F.endScores -> result.map (BSONHandlers.sidesBSONHandler[EndScoreSheet].write _)
+        F.endScores -> result.map (BSONHandlers.sidesBSONHandler[EndScoreSheet].write _),
+        F.endStanding -> standing.map(BSONHandlers.sidesBSONHandler[Int].write _)
       )) ++ $doc("$unset" -> unsets)
     )
   }

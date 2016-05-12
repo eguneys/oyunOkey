@@ -11,10 +11,12 @@ case class Player(
   side: Side,
   aiLevel: Option[Int],
   isWinner: Option[Boolean] = None,
-  endScore: Option[EndScoreSheet] = None) {
+  endScore: Option[EndScoreSheet] = None,
+  standing: Option[Int] = None) {
 
-  def finish(score: Option[EndScoreSheet], winner: Boolean) = copy(
+  def finish(score: Option[EndScoreSheet], standing: Option[Int], winner: Boolean) = copy(
     endScore = endScore,
+    standing = standing,
     isWinner = if (winner) Some(true) else None
   )
 
@@ -65,25 +67,27 @@ object Player {
   type UserId = Option[String]
   type PlayerId = Option[String]
   type EndScore = Option[EndScoreSheet]
+  type EndStanding = Option[Int]
   type Win = Option[Boolean]
 
-  type Builder = Side => Id => PlayerId => UserId => EndScore => Win => Player
+  type Builder = Side => Id => PlayerId => UserId => EndScore => EndStanding => Win => Player
 
   implicit val playerBSONHandler = new BSON[Builder] {
     import BSONFields._
 
-    def reads(r: BSON.Reader) = side => id => playerId => userId => endScore => win => Player(
+    def reads(r: BSON.Reader) = side => id => playerId => userId => endScore => standing => win => Player(
       id = id,
       side = side,
       playerId = playerId,
       userId = userId,
       aiLevel = r intO aiLevel,
       endScore = endScore,
+      standing = standing,
       isWinner = win
     )
 
     def writes(w: BSON.Writer, o: Builder) =
-      o(Side.EastSide)("0000")(none)(none)(none)(none) |> { p =>
+      o(Side.EastSide)("0000")(none)(none)(none)(none)(none) |> { p =>
         BSONDocument(
           aiLevel -> p.aiLevel
         )

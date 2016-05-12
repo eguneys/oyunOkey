@@ -11,6 +11,7 @@ case class Masa(
   clock: MasaClock,
   rounds: Int,
   variant: okey.variant.Variant,
+  mode: oyun.game.Mode,
   nbPlayers: Int,
   nbRounds: Int,
   createdAt: DateTime,
@@ -55,7 +56,8 @@ object Masa {
     clock: MasaClock,
     rounds: Int,
     system: System,
-    variant: okey.variant.Variant) = Masa(
+    variant: okey.variant.Variant,
+    mode: oyun.game.Mode) = Masa(
     id = Random nextStringUppercase 8,
       name = GreatPlayer.randomName,
       status = Status.Created,
@@ -66,5 +68,6 @@ object Masa {
       createdAt = DateTime.now,
       nbPlayers = 0,
       nbRounds = 0,
-      variant = variant)
+      variant = variant,
+      mode = mode)
 }

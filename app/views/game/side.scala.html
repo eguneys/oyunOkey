@@ -8,7 +8,7 @@
       <div class="header">
         <span class="setup">
           @game.variantLink(g.variant, g.variant.name, cssClass = "hint--top")
-          • @trans.rated.str()
+          • @g.rated.fold(trans.rated.str(), trans.casual.str()).toUpperCase
         </span>
         @g.isBeingPlayed.fold(trans.playingRightNow(), Html(s"<span title='${showDateTime(g.createdAt)}'>${momentFormat(g.createdAt)}</span>"))
       </div>

@@ -10,7 +10,7 @@ private[masa] final class ApiActor(api: MasaApi) extends Actor {
   }
 
   def receive = {
-    case FinishGame(game) => api finishGame game
+    case FinishGame(game, _) => api finishGame game
   }
 
 }
