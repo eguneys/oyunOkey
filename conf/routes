@@ -27,8 +27,9 @@ GET      /masa/help                    controllers.Masa.help(system: Option[Stri
 
 # User
 
-GET     /@/:username            controllers.User.show(username: String)
-GET     /player                 controllers.User.list
+GET     /@/:username                    controllers.User.show(username: String)
+GET     /@/:username/:filterName        controllers.User.showFilter(username: String, filterName: String, page: Int ?= 1)
+GET     /player                         controllers.User.list
 
 # Authentication
 

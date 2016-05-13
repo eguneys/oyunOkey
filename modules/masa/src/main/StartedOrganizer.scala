@@ -20,7 +20,7 @@ private[masa] final class StartedOrganizer(
   case object Tick
 
   def scheduleNext =
-    context.system.scheduler.scheduleOnce(3 seconds, self, Tick)
+    context.system.scheduler.scheduleOnce(5 seconds, self, Tick)
 
   def receive = {
     case ReceiveTimeout =>

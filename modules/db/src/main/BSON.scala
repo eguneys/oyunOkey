@@ -3,6 +3,8 @@ package oyun.db
 import org.joda.time.DateTime
 import reactivemongo.bson._
 
+import dsl._
+
 abstract class BSON[T]
     extends BSONHandler[BSONDocument, T]
     with BSONDocumentReader[T]
@@ -128,6 +130,7 @@ object BSON {
     case (k, v) => s"$k: ${debug(v)}"
   }).mkString("{", ", ", "}")
 
+  def hashDoc(doc: Bdoc): String = debugDoc(doc).replace(" ", "")
 
   def asStrings(vs: List[BSONValue]): List[String] = {
     val b = new scala.collection.mutable.ListBuffer[String]

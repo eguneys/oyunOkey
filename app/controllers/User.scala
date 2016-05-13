@@ -4,6 +4,7 @@ import play.api.libs.json._
 import play.api.mvc._, Results._
 
 import oyun.app._
+import oyun.app.mashup.GameFilterMenu
 import oyun.api.{ BodyContext }
 
 import oyun.user.{ User => UserModel, UserRepo }
@@ -14,6 +15,10 @@ object User extends OyunController {
 
   def show(username: String) = OpenBody { implicit ctx =>
     filter(username, none, 1)
+  }
+
+  def showFilter(username: String, filterName: String, page: Int) = OpenBody { implicit ctx =>
+    filter(username, filterName.some, page)
   }
 
   private def filter(
@@ -37,7 +42,8 @@ object User extends OyunController {
 
   private def userShow(u: UserModel, filterOption: Option[String], page: Int)(implicit ctx: BodyContext[_]) = for {
     info <- Env.current.userInfo(u, ctx)
-  } yield html.user.show(u, info)
+    filters = GameFilterMenu(info, ctx.me, filterOption)
+  } yield html.user.show(u, info, filters)
 
 
   private def userGames(u: UserModel, filterOption: Option[String], page: Int)(implicit ctx: BodyContext[_]) = {

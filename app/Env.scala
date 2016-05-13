@@ -16,8 +16,8 @@ final class Env(
     lobbyApi = Env.api.lobbyApi)
 
   lazy val userInfo = mashup.UserInfo(
-    countUsers = () => Env.user.countEnabled
-  ) _
+    countUsers = () => Env.user.countEnabled,
+    gameCached = Env.game.cached) _
 
   system.actorOf(Props(new actor.Renderer), name = RendererName)
 
@@ -50,6 +50,7 @@ object Env {
   def setup = oyun.setup.Env.current
   def lobby = oyun.lobby.Env.current
   def round = oyun.round.Env.current
+  def game = oyun.game.Env.current
   def masa = oyun.masa.Env.current
   // def site = oyun.site.Env.current
   def chat = oyun.chat.Env.current

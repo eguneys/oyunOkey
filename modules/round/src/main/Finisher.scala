@@ -35,12 +35,16 @@ private[round] final class Finisher(
           standing = endStanding,
           winnerSide = winner,
           winnerId = winner flatMap { g.player(_).userId }) >> {
-          val finish = FinishGame(g, Sides[Option[User]])
-          updateCountAndPerfs(finish) inject {
-            GameRepo game g.id foreach { newGame =>
-              bus.publish(finish.copy(game = newGame | g), 'finishGame)
+          UserRepo.pair(g.players map (_.userId)).flatMap {
+            case (users) => {
+              val finish = FinishGame(g, users)
+              updateCountAndPerfs(finish) inject {
+                GameRepo game g.id foreach { newGame =>
+                  bus.publish(finish.copy(game = newGame | g), 'finishGame)
+                }
+                prog.events
+              }
             }
-            prog.events
           }
         }
     }
@@ -53,8 +57,7 @@ private[round] final class Finisher(
       users ?? {
         case (users) =>
           funit
-      } zip
-        (users ?? { _.map(incNbGames(finish.game)).sequenceFu void }) void
+      } zip (users ?? { _.map(incNbGames(finish.game)).sequenceFu void }) void
     }
 
   private def incNbGames(game: Game)(user: User): Funit = game.finished ?? {

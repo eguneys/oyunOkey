@@ -23,6 +23,11 @@ object UserRepo {
   def idByEmail(email: String): Fu[Option[String]] =
     coll.primitiveOne[String]($doc(F.email -> email), "_id")
 
+  def pair(ids: okey.Sides[Option[ID]]): Fu[okey.Sides[Option[User]]] =
+    coll.byIds[User](ids.flatten) map { users =>
+      ids map { _.??(x => users.find(_.id == x)) }
+    }
+
   def named(username: String): Fu[Option[User]] = coll.byId[User](normalize(username))
 
   val enabledSelect = $doc(F.enabled -> true)

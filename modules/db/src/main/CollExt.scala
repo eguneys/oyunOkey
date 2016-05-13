@@ -19,6 +19,13 @@ trait CollExt { self: dsl with QueryBuilderExt =>
     
     def byId[D: BSONDocumentReader](id: Int): Fu[Option[D]] = uno[D]($id(id))
 
+
+    def byIds[D: BSONDocumentReader, I: BSONValueWriter](ids: Iterable[I]): Fu[List[D]] =
+      list[D]($inIds(ids))
+
+    def byIds[D: BSONDocumentReader](ids: Iterable[String]): Fu[List[D]] =
+      byIds[D, String](ids)
+
     def countSel(selector: BSONDocument): Fu[Int] = coll count selector.some
 
     def exists(selector: BSONDocument): Fu[Boolean] = countSel(selector).map(0!=)

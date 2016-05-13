@@ -1,7 +1,7 @@
-@(u: User, info: oyun.app.mashup.UserInfo)(implicit ctx: Context)
+@(u: User, info: oyun.app.mashup.UserInfo, filters: oyun.app.mashup.GameFilterMenu)(implicit ctx: Context)
 
 @user.layout(
-  title = s"${u.username}") {
+  title = s"${u.username} : ${userGameFilterTitleNoTag(info, filters.current)}") {
 <div class="content_box no_padding user_show@if(ctx.is(u)){ myself}">
   <div class="content_box_top">
     <h1 class="oyunkeyf_title"><span@if(isOnline(u.id)) { class="connected" title=@trans.online() } else { title=@trans.offline() } data-icon="r"></span> @u.titleUsername</h1>
@@ -23,13 +23,19 @@
         }
         <br />
         <br />
-        <p>@trans.tpTimeSpentPlaying(10)</p>
+        <p>@trans.tpTimeSpentPlaying(u.count.game)</p>
       </div>
     </div>
   </div>
 
-  <div class="content_box_inter tabs">
-    
-  </div>
+  @if(u.hasGames) {
+    <div class="content_box_inter tabs">
+      @filters.list.map { f =>
+        <a class="intertab@{ (filters.current == f).??(" active") }" href="@routes.User.showFilter(u.username, f.name)">
+        @userGameFilterTitle(info, f)
+        </a>
+      }
+    </div>
+  }
 </div>
 }

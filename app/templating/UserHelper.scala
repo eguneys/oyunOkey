@@ -2,12 +2,13 @@ package oyun.app
 package templating
 
 import controllers.routes
+import mashup._
 import play.twirl.api.Html
 
 import oyun.common.LightUser
-import oyun.user.{ User }
+import oyun.user.{ User, UserContext }
 
-trait UserHelper { self: I18nHelper =>
+trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
   def lightUser(userId: String): Option[LightUser] = Env.user lightUser userId
 
   def usernameOrAnon(userId: Option[String]) = (userId flatMap(lightUser(_))).fold(User.anonymous)(_.name)
@@ -60,4 +61,23 @@ trait UserHelper { self: I18nHelper =>
       withOnline option isOnline(userId).fold("online is-green", "offline")
     ).flatten
   }.mkString("class=\"", " ", "\"")
+
+
+  def userGameFilterTitle(info: UserInfo, filter: GameFilter)(implicit ctx: UserContext) =
+    splitNumber(userGameFilterTitleNoTag(info, filter))
+
+  def userGameFilterTitleNoTag(info: UserInfo, filter: GameFilter)(implicit ctx: UserContext) = Html((filter match {
+    case GameFilter.All => info.user.count.game + " " + trans.gamesPlayed()
+    case GameFilter.Rated => info.nbRated + " " + trans.rated()
+    case GameFilter.Win => trans.nbWins(info.user.count.standing1)
+    case GameFilter.Loss => trans.nbWins(info.user.count.standing4)
+    case GameFilter.Playing => info.nbPlaying + " " + trans.playing()
+  }).toString)
+
+  // def describeUser(user: User) = {
+  //   val name = user.titleUsername
+  //   val nbGames = user.count.game
+  //   val createdAt = 
+
+  // }
 }

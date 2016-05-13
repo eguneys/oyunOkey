@@ -93,6 +93,14 @@
     }
   });
 
+  oyunkeyf.hasToReload = false;
+  oyunkeyf.reload = function() {
+    if ($.redirect.inProgress) return;
+    oyunkeyf.hasToReload = true;
+    if (window.location.hash) location.reload();
+    else location.href = location.href;
+  };
+
   $(function() {
     if (oyunkeyf.lobby) startLobby(document.getElementById('hooks_wrap'), oyunkeyf.lobby);
     else if (oyunkeyf.masa) startMasa(document.getElementById('masa'), oyunkeyf.masa);

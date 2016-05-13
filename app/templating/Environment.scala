@@ -19,6 +19,7 @@ object Environment
     with I18nHelper
     with NotificationHelper
     with DateHelper
+    with NumberHelper
     with StringHelper
     with JsonHelper
     with SetupHelper
