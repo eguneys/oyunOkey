@@ -1,0 +1,34 @@
+@(u: User, active: Option[oyun.rating.PerfType])(implicit ctx: Context)
+
+@import oyun.rating.PerfType
+
+@showPerf(perf: oyun.rating.Perf, perfType: PerfType, name: Option[String] = none) = {
+  <a data-icon="@perfType.iconChar"
+     title = "@perfType.title"
+     @if(oyun.rating.PerfType.isGame(perfType)) {
+       href="@routes.User.perfStat(u.username, perfType.key)"
+       class="game@if(active.contains(perfType)){ active}@if(perf.isEmpty){ empty}"
+     } else {
+       class="@if(perf.isEmpty){empty}"
+     }>
+    <h3>@name.getOrElse(perfType.name).toUpperCase</h3>
+    <span class="rating">
+      <strong>@perf.gliokey.intRating</strong>
+      <span>@perf.nb.localize @trans.games()</span>
+      @showProgress(perf.progress, withTitle = false)
+    </span>
+    @if(oyun.rating.PerfType.isGame(perfType)) {
+      <i data-icon="G"></i>
+    }
+  </a>
+}
+
+@showNonEmptyPerf(perf: oyun.rating.Perf, perfType: PerfType) = {
+  @if(perf.nonEmpty) {@showPerf(perf, perfType)}
+}
+
+<div class="side sub_ratings">
+  @if(!u.lame || ctx.is(u)) {
+    @showPerf(u.perfs.yuzbir, PerfType.Yuzbir)
+  }
+</div>

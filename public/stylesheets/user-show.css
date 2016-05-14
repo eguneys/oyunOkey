@@ -67,3 +67,78 @@ div.content_box_inter a.intertab.active {
 div.content_box_inter a.intertab.active {
   background: #fff;
 }
+
+#oyunkeyf {
+  position: relative;
+}
+
+div.sub_ratings {
+  margin-top: 10px;
+  margin-left: -13px;
+  width: 224px;
+}
+
+div.sub_ratings strong {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+div.sub_ratings>a {
+  position: relative;
+  padding: 10px 0 10px 5px;
+  white-space: nowrap;
+  display: block;
+  transition: 0.13s;
+}
+
+div.sub_ratings>a.game {
+  cursor: pointer;
+}
+
+div.sub_ratings>a.game:hover {
+  background: #fafafa;
+  margin-left: -3px;
+}
+
+div.sub_ratings>a:hover>i {
+  opacity: 0.6;
+}
+
+div.sub_ratings>a.game.active {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-right: 0;
+  margin-left: -10px;
+}
+
+div.sub_ratings>a::before {
+  font-size: 40px;
+  float: left;
+  margin: -2px 5px 0 0;
+  opacity: 0.6;
+}
+
+div.sub_ratings>a>span {
+  display: block;
+  text-transform: lowercase;
+}
+
+div.sub_ratings>a>i {
+  position: absolute;
+  top: calc(50% - 6px);
+  right: 12px;
+  font-size: 8px;
+  opacity: 0.2;
+}
+
+div.sub_ratings>a.active>i {
+  display: none;
+}
+
+div.sub_ratings h3 {
+  font-weight: 100;
+  font-size: 1em;
+  letter-spacing: 2px;
+  margin: 0;
+  display: inline-block;
+}

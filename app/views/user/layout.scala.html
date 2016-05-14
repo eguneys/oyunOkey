@@ -1,8 +1,9 @@
-@(title: String, side: Option[Html] = None)(body: Html)(implicit ctx: Context)
+@(title: String, side: Option[Html] = None, evenMoreCss: Html = Html(""), openGraph: Option[oyun.app.ui.OpenGraph] = None)(body: Html)(implicit ctx: Context)
 
 @moreCss = {
   @cssTag("user-list.css")
   @cssTag("user-show.css")
+  @evenMoreCss
 }
 
 @moreJs = {

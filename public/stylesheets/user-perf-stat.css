@@ -1,0 +1,15 @@
+#perfStat .content_box_top {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+#perfStat .oyunkeyf_title {
+  font-size: 1.8em;
+}
+
+#perfStat .oyunkeyf_title span {
+  color: #909090;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  margin-left: 10px;
+}

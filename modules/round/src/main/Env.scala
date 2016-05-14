@@ -63,6 +63,8 @@ final class Env(
     actor
   }
 
+  lazy val perfsUpdater = new PerfsUpdater()
+
   lazy val socketHandler = new SocketHandler(
     roundMap = roundMap,
     socketHub = socketHub,
@@ -70,6 +72,7 @@ final class Env(
   )
 
   private lazy val finisher = new Finisher(
+    perfsUpdater = perfsUpdater,
     bus = system.oyunBus)
 
   private lazy val player: Player = new Player(

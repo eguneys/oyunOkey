@@ -43,7 +43,7 @@ object ApplicationBuild extends Build {
       // trump sbt-web into not looking at public/
       resourceDirectory in Assets := (sourceDirectory in Compile).value / "assets"))
 
-  lazy val modules = Seq(common, db, user, chat, security, game, setup, lobby, socket, hub, okey, round, masa, i18n)
+  lazy val modules = Seq(common, rating, db, user, chat, security, game, setup, lobby, socket, hub, okey, round, masa, i18n)
 
   lazy val moduleRefs = modules map projectToRef
   lazy val moduleCPDeps = moduleRefs map { new sbt.ClasspathDependency(_, None) }
@@ -53,7 +53,7 @@ object ApplicationBuild extends Build {
       play.api, RM)
   ) aggregate (moduleRefs: _*)
 
-  lazy val user = project("user", Seq(common, memo, hub, db)).settings(
+  lazy val user = project("user", Seq(common, rating, memo, hub, db)).settings(
     libraryDependencies ++= provided(play.api, play.test, RM, hasher)
   )
 
@@ -111,6 +111,10 @@ object ApplicationBuild extends Build {
 
   lazy val common = project("common").settings(
     libraryDependencies ++= provided(play.api, play.test, kamon.core)
+  )
+
+  lazy val rating = project("rating", Seq(common, db, okey)).settings(
+    libraryDependencies ++= provided(play.api, RM)
   )
 
   lazy val okey = project("okey")

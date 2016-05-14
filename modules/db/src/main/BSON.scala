@@ -99,6 +99,7 @@ object BSON {
     def int(k: String) = get[Int](k)
     def intO(k: String) = getO[Int](k)
     def intD(k: String) = intO(k) getOrElse 0
+    def double(k: String) = get[Double](k)
     def bool(k: String) = get[Boolean](k)
     def boolO(k: String) = getO[Boolean](k)
     def boolD(k: String) = boolO(k) getOrElse false
@@ -107,6 +108,7 @@ object BSON {
     def bytes(k: String) = get[ByteArray](k)
     def bytesO(k: String) = getO[ByteArray](k)
     def nInt(k: String) = get[BSONNumberLike](k).toInt
+    def intsD(k: String) = getO[List[Int]](k) getOrElse Nil
   }
 
   final class Writer {
@@ -115,6 +117,10 @@ object BSON {
     def int(i: Int): BSONInteger = BSONInteger(i)
     def intO(i: Int): Option[BSONInteger] = if (i != 0) Some(BSONInteger(i)) else None
     def date(d: DateTime): BSONDateTime = BSONJodaDateTimeHandler write d
+    def listO[A](list: List[A])(implicit writer: BSONWriter[A, _ <: BSONValue]): Option[Barr] =
+      if (list.isEmpty) None
+      else Some(BSONArray(list map writer.write))
+    def double(i: Double): BSONDouble = BSONDouble(i)
   }
 
   val writer = new Writer

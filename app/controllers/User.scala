@@ -61,4 +61,21 @@ object User extends OyunController {
       )
     } yield res
   }
+
+
+  def perfStat(username: String, perfKey: String) = Open { implicit ctx =>
+    OptionFuResult(UserRepo named username) { u =>
+      if ((u.disabled || (u.lame && !ctx.is(u))) && true) notFound
+      else oyun.rating.PerfType(perfKey).fold(notFound) { perfType =>
+        for {
+          // perfStat <- Env.perfStat.get(u, perfType)
+          //data <- Env.perfStat.jsonView(u)
+          data <- fuccess(play.api.libs.json.Json.obj())
+          response <- negotiate(
+            html = Ok(html.user.perfStat(u, perfType, data)).fuccess,
+            api = _ => Ok(data).fuccess)
+        } yield response
+      }
+    }
+  }
 }

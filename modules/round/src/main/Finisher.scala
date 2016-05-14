@@ -7,6 +7,7 @@ import oyun.game.{ GameRepo, Game, Pov, Progress }
 import oyun.user.{ User, UserRepo }
 
 private[round] final class Finisher(
+  perfsUpdater: PerfsUpdater,
   bus: oyun.common.Bus) {
 
   def other(
@@ -56,7 +57,7 @@ private[round] final class Finisher(
       val users = finish.users.sequenceSides
       users ?? {
         case (users) =>
-          funit
+          perfsUpdater.save(finish.game, users)
       } zip (users ?? { _.map(incNbGames(finish.game)).sequenceFu void }) void
     }
 

@@ -1,41 +1,46 @@
 @(u: User, info: oyun.app.mashup.UserInfo, filters: oyun.app.mashup.GameFilterMenu)(implicit ctx: Context)
 
 @user.layout(
-  title = s"${u.username} : ${userGameFilterTitleNoTag(info, filters.current)}") {
-<div class="content_box no_padding user_show@if(ctx.is(u)){ myself}">
-  <div class="content_box_top">
-    <h1 class="oyunkeyf_title"><span@if(isOnline(u.id)) { class="connected" title=@trans.online() } else { title=@trans.offline() } data-icon="r"></span> @u.titleUsername</h1>
-  </div>
+  title = s"${u.username} : ${userGameFilterTitleNoTag(info, filters.current)}",
+  side = side(u, none).some,
+  openGraph = oyun.app.ui.OpenGraph(
+    title = u.titleUsernameWithBestRating,
+    url = s"$netBaseUrl${routes.User.show(u.username).url}",
+    description = describeUser(u)).some) {
+  <div class="content_box no_padding user_show@if(ctx.is(u)){ myself}">
+    <div class="content_box_top">
+      <h1 class="oyunkeyf_title"><span@if(isOnline(u.id)) { class="connected" title=@trans.online() } else { title=@trans.offline() } data-icon="r"></span> @u.titleUsername</h1>
+    </div>
 
-  <div class="social content_box_inter">
-  </div>
+    <div class="social content_box_inter">
+    </div>
 
-  <div class="meat">
-    <div class="user-infos scroll-shadow-hard">
-      <div class="stats">
-        <span class="location">Location</span>
-        @u.lang.flatMap(langName).map { name =>
-          <span data-icon="c"> @name</span>
-        }
-        <p class="thin">@trans.memberSince() @showDate(u.createdAt)</p>
-        @u.seenAt.map { seen =>
-          <p class="thin">@trans.lastSeenActive(momentFromNow(seen))</p>
-        }
-        <br />
-        <br />
-        <p>@trans.tpTimeSpentPlaying(u.count.game)</p>
+    <div class="meat">
+      <div class="user-infos scroll-shadow-hard">
+        <div class="stats">
+          <span class="location">Location</span>
+          @u.lang.flatMap(langName).map { name =>
+            <span data-icon="c"> @name</span>
+          }
+          <p class="thin">@trans.memberSince() @showDate(u.createdAt)</p>
+          @u.seenAt.map { seen =>
+            <p class="thin">@trans.lastSeenActive(momentFromNow(seen))</p>
+          }
+          <br />
+          <br />
+          <p>@trans.tpTimeSpentPlaying(u.count.game)</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  @if(u.hasGames) {
-    <div class="content_box_inter tabs">
-      @filters.list.map { f =>
-        <a class="intertab@{ (filters.current == f).??(" active") }" href="@routes.User.showFilter(u.username, f.name)">
-        @userGameFilterTitle(info, f)
-        </a>
-      }
-    </div>
-  }
-</div>
+    @if(u.hasGames) {
+      <div class="content_box_inter tabs">
+        @filters.list.map { f =>
+          <a class="intertab@{ (filters.current == f).??(" active") }" href="@routes.User.showFilter(u.username, f.name)">
+          @userGameFilterTitle(info, f)
+          </a>
+        }
+      </div>
+    }
+  </div>
 }

@@ -1,0 +1,23 @@
+@(u: User, perfType: oyun.rating.PerfType, data: play.api.libs.json.JsObject)(implicit ctx: Context)
+
+@moreCss = {
+  @cssTag("user-perf-stat.css")
+}
+
+@user.layout(
+title = s"${u.username} ${perfType.name} stats",
+side = side(u, perfType.some).some,
+evenMoreCss = moreCss) {
+  <div class="content_box no_padding @perfType.key" id="perfStat">
+    <div class="content_box_top">
+      @if(u.perfs(perfType).nb > 0) {
+      }
+      <h1 class="oyunkeyf_title">
+        <a href="@routes.User.show(u.username)" data-icon="I" class="text">
+          @u.username <span>@perfType.name stats</span>
+        </a>
+      </h1>
+    </div>
+    <div class="content_box_content" id="perfStatContent"></div>
+  </div>
+}

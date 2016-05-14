@@ -9,6 +9,18 @@ import oyun.common.LightUser
 import oyun.user.{ User, UserContext }
 
 trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
+
+  def showProgress(progress: Int, withTitle: Boolean = true) = Html {
+    val span = progress match {
+      case 0 => ""
+      case p if p > 0 => s"""<span class="positive" data-icon="N">$p</span>"""
+      case p if p < 0 => s"""<span class="negative" data-icon="M">${math.abs(p)}</span>"""
+    }
+    val title = if (withTitle) """data-hint="${trans.ratingProgressionOverTheLastTwelveGames()}"""" else ""
+    val klass = if (withTitle) "progress hint--bottom" else "progress"
+    s"""<span $title class="$klass">$span</span>"""
+  }
+
   def lightUser(userId: String): Option[LightUser] = Env.user lightUser userId
 
   def usernameOrAnon(userId: Option[String]) = (userId flatMap(lightUser(_))).fold(User.anonymous)(_.name)
@@ -74,10 +86,11 @@ trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
     case GameFilter.Playing => info.nbPlaying + " " + trans.playing()
   }).toString)
 
-  // def describeUser(user: User) = {
-  //   val name = user.titleUsername
-  //   val nbGames = user.count.game
-  //   val createdAt = 
-
-  // }
+  def describeUser(user: User) = {
+    val name = user.titleUsername
+    val nbGames = user.count.game
+    val createdAt = org.joda.time.format.DateTimeFormat forStyle "M-" print user.createdAt
+    val currentRating = 1500
+    s"$name played $nbGames games since $createdAt.$currentRating"
+  }
 }

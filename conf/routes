@@ -29,6 +29,7 @@ GET      /masa/help                    controllers.Masa.help(system: Option[Stri
 
 GET     /@/:username                    controllers.User.show(username: String)
 GET     /@/:username/:filterName        controllers.User.showFilter(username: String, filterName: String, page: Int ?= 1)
+GET     /@/:username/perf/:perfKey      controllers.User.perfStat(username: String, perfKey: String)
 GET     /player                         controllers.User.list
 
 # Authentication

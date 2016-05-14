@@ -3,10 +3,12 @@ package oyun.user
 import scala.concurrent.duration._
 
 import org.joda.time.DateTime
+import oyun.rating.PerfType
 
 case class User(
   id: String,
   username: String,
+  perfs: Perfs,
   count: Count,
   troll: Boolean = false,
   enabled: Boolean,
@@ -21,7 +23,16 @@ case class User(
 
   def disabled = !enabled
 
+
+  def lame = false
+
+  // TODO
+  def usernameWithBestRating = s"$username"
+
   def titleUsername = username
+
+  def titleUsernameWithBestRating = usernameWithBestRating
+
 
   def hasGames = count.game > 0
 
@@ -49,6 +60,7 @@ object User {
   object BSONFields {
     val id = "_id"
     val username = "username"
+    val perfs = "perfs"
     val count = "count"
     val email = "email"
     val enabled = "enabled"
@@ -65,10 +77,12 @@ object User {
     import BSONFields._
     import reactivemongo.bson.BSONDocument
     private implicit def countHandler = Count.countBSONHandler
+    private implicit def perfsHandler = Perfs.perfsBSONHandler
 
     def reads(r: BSON.Reader): User = User(
       id = r str id,
       username = r str username,
+      perfs = r.getO[Perfs](perfs) | Perfs.default,
       count = r.get[Count](count),
       enabled = r bool enabled,
       createdAt = r date createdAt,
@@ -78,6 +92,7 @@ object User {
     def writes(w: BSON.Writer, o: User) = BSONDocument(
       id -> o.id,
       username -> o.username,
+      perfs -> o.perfs,
       count -> o.count,
       enabled -> o.enabled,
       createdAt -> o.createdAt,

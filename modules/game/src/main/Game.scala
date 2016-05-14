@@ -216,7 +216,7 @@ case class Game(
 
   def playableByAi: Boolean = playable && player.isAi
 
-  def aiLevel: Option[Int] = players find (_.isAi) flatMap (_.aiLevel)
+  def aiLevel: Option[Int] = players find (_.isAi) flatMap (_.aiLevel) orElse Some(0)
 
   def hasAi: Boolean = players exists (_.isAi)
 
