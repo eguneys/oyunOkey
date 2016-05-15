@@ -7,6 +7,7 @@ case class Count(
   ai: Int,
   game: Int,
   rated: Int,
+  masa: Int,
   standing1: Int,
   standing2: Int,
   standing3: Int,
@@ -21,6 +22,7 @@ object Count {
       ai = r nInt "ai",
       game = r nInt "game",
       rated = r nInt "rated",
+      masa = r nInt "masa",
       standing1 = r nInt "standing1",
       standing2 = r nInt "standing2",
       standing3 = r nInt "standing3",
@@ -30,11 +32,12 @@ object Count {
       "ai" -> w.int(o.ai),
       "game" -> w.int(o.game),
       "rated" -> w.int(o.rated),
+      "masa" -> w.int(o.masa),
       "standing1" -> w.int(o.standing1),
       "standing2" -> w.int(o.standing2),
       "standing3" -> w.int(o.standing3),
       "standing4" -> w.int(o.standing4))
   }
 
-  val default = Count(0, 0, 0, 0, 0, 0, 0)
+  val default = Count(0, 0, 0, 0, 0, 0, 0, 0)
 }

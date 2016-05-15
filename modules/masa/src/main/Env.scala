@@ -50,10 +50,13 @@ final class Env(
     sequencers = sequencerMap,
     socketHub = socketHub,
     autoPairing = autoPairing,
+    perfsUpdater = perfsUpdater,
     renderer = hub.actor.renderer,
     lobby = hub.socket.lobby)
 
   val masa = api masa _
+
+  lazy val perfsUpdater = new PerfsUpdater()
 
   lazy val socketHandler = new SocketHandler(
     hub = hub,

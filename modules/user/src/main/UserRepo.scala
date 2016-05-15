@@ -59,13 +59,21 @@ object UserRepo {
     val incs: List[(String, BSONInteger)] = List(
       "count.game".some,
       rated option "count.rated",
-      ai option "count.ai",
-      s"count.standing${result}".some
+      ai option "count.ai"
+      // s"count.standing${result}".some
     ).flatten.map(_ -> BSONInteger(1))
 
     coll.update($id(id), $inc(incs)) void 
   }
 
+  def incNbMasas(id: ID, result: Int) = {
+    val incs: List[(String, BSONInteger)] = List(
+      "count.masa".some,
+      s"count.standing${result}".some
+    ).flatten.map(_ -> BSONInteger(1))
+
+    coll.update($id(id), $inc(incs)) void 
+  }
 
   private case class AuthData(password: String, salt: String, enabled: Boolean, sha512: Option[Boolean]) {
     def compare(p: String) = password == (~sha512).fold(hash512(p, salt), hash(p, salt))

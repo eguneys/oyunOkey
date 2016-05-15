@@ -22,6 +22,8 @@ case class Masa(
   def isStarted = status == Status.Started
   def isFinished = status == Status.Finished
 
+  def rated = mode.rated
+
   def fullName =
     s"$name $system"
 

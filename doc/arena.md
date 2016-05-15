@@ -8,7 +8,24 @@ Bazı masalar puanlıdır ve reytingi etkiler.
 
 ### Puanlar nasıl hesaplanır?
 
-Bir oyuncunun alacağı puan masanın kaç ellik olduğu ile ilgilidir. Birinci oyuncu el sayısı kadar puan alır. İkinci oyuncu el sayısının yarısı kadar puan alır. Üçüncü oyuncu el sayısının yarısı kadar puan kaybeder. Dördüncü oyuncu el sayısı kadar puan kaybeder.
+Masaya katılımda her oyuncu ortaya el sayısı kadar puanını koyar. Masa sonunda ortadaki puanlar şöyle dağıtılır:
+
+1. %50 puan
+2. %25 puan
+3. %15 puan
+4. %10 puan
+
+Örneğin 10 ellik bir oyunda oyuncuların puanları 1500 olsun.
+
+Masaya katıldıklarında puanları 1490 olur. Ortada toplam 40 puan vardır, ve şöyle dağıtılır:
+
+1. +20 = 1510
+2. +10 = 1500
+3. +6 = 1496
+4. +4 = 1494
+
+Masa bitmeden ayrılan oyuncu puan alamaz.
+
 
 ### Kazanan nasıl belirlenir?
 
@@ -24,7 +41,7 @@ Masada el sayısı kadar oyun oynandığında masa biter.
 
 ### Oyundan ayrılma
 
-Oyun devam ederken oyundan ayrilan oyuncu masadan atilir, ve o el iptal olur. Masa bitmeden masadan ayrilan oyuncu el sayısının 2 katı kadar puan kaybeder.
+Oyun devam ederken oyundan ayrilan oyuncu masadan atilir, ve o el iptal olur. Ayrılan oyuncu puan alamaz.
  
 ### Diğer önemli kurallar
 

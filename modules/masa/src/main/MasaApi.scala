@@ -12,6 +12,7 @@ import oyun.hub.actorApi.map.{ Tell }
 import oyun.hub.actorApi.lobby.ReloadMasas
 import oyun.hub.Sequencer
 import oyun.game.{ Mode, Game }
+import oyun.user.{ User, UserRepo }
 
 import okey.Side
 import makeTimeout.short
@@ -20,6 +21,7 @@ private[masa] final class MasaApi(
   system: ActorSystem,
   sequencers: ActorRef,
   autoPairing: AutoPairing,
+  perfsUpdater: PerfsUpdater,
   socketHub: ActorRef,
   renderer: ActorSelection,
   lobby: ActorSelection) {
@@ -132,9 +134,31 @@ private[masa] final class MasaApi(
         } yield {
           sendTo(masa.id, Reload)
           publish()
+          updateCountAndPerfs(masa)
         }
       }
     }
+  }
+
+  private def updateCountAndPerfs(masa: Masa): Funit =
+    PlayerRepo.bestByMasaWithRank(masa.id).flatMap { players =>
+      UserRepo.pair(players.map(_.player.userId)).flatMap {
+        case (musers) => {
+          val users = musers.sequenceSides
+
+          users ?? {
+            case (users) =>
+              perfsUpdater.save(masa, users zip players)
+          } zip (users ?? { m => (m zip players).map {
+            case(user, player) =>
+              incNbMasas(masa, player.rank)(user)
+          }.sequenceFu void }) void
+        }
+      }
+    }
+
+  private def incNbMasas(masa: Masa, rank: Int)(user: User): Funit = true ?? {
+    UserRepo.incNbMasas(user.id, result = rank)
   }
 
   def finishGame(game: Game) {

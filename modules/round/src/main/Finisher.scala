@@ -57,7 +57,8 @@ private[round] final class Finisher(
       val users = finish.users.sequenceSides
       users ?? {
         case (users) =>
-          perfsUpdater.save(finish.game, users)
+          // perfsUpdater.save(finish.game, users)
+          funit
       } zip (users ?? { _.map(incNbGames(finish.game)).sequenceFu void }) void
     }
 
