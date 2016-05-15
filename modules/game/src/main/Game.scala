@@ -224,6 +224,10 @@ case class Game(
 
   def finishedOrAborted = finished || aborted
 
+  def accountable = playedTurns >= 0
+
+  def ratingVariant = variant
+
   def endScores: Option[Sides[EndScoreSheet]] = players.map(_.endScore).toList.sequence.map (Sides.fromIterable)
 
   def winner = players find (_.wins)
@@ -340,6 +344,7 @@ object Game {
     val status = "s"
     val turns = "t"
     val clock = "c"
+    val rated = "r"
     val variant = "v"
     val winnerSide = "w"
     val winnerId = "wid"

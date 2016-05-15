@@ -13,6 +13,10 @@ object mon {
   }
 
   object round {
+    object error {
+      val gliokey = inc("round.error.gliokey")
+    }
+
     object titivate {
       val game = rec("round.titivate.game") // how many games were processed
       val total = rec("round.titivate.total") // how many games should have been processed
@@ -22,6 +26,10 @@ object mon {
 
   type Rec = Long => Unit
   type Inc = () => Unit
+
+  type IncPath = oyun.mon.type => Inc
+
+  def incPath(f: oyun.mon.type => Inc): Inc = f(this)
 
   private def inc(name: String): Inc = metrics.counter(name).increment _
 

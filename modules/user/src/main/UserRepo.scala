@@ -6,6 +6,7 @@ import reactivemongo.api._
 import reactivemongo.bson._
 
 import oyun.db.dsl._
+import oyun.rating.{ GliOkey, Perf, PerfType }
 
 object UserRepo {
 
@@ -29,6 +30,21 @@ object UserRepo {
     }
 
   def named(username: String): Fu[Option[User]] = coll.byId[User](normalize(username))
+
+  val oyunkeyfId = "oyunkeyf"
+  def oyunkeyf = byId(oyunkeyfId)
+
+  def setPerfs(user: User, perfs: Perfs, prev: Perfs) = {
+    val diff = PerfType.all flatMap { pt =>
+      perfs(pt).nb != prev(pt).nb option {
+        s"perfs.${pt.key}" -> Perf.perfBSONHandler.write(perfs(pt))
+      }
+    }
+    diff.nonEmpty ?? coll.update(
+      $id(user.id),
+      $doc("$set" -> $doc(diff))
+    ).void
+  }
 
   val enabledSelect = $doc(F.enabled -> true)
 

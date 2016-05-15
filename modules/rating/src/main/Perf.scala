@@ -17,9 +17,31 @@ case class Perf(
     recent.lastOption map (head-)
   }
 
+  def add(g: GliOkey, date: DateTime): Perf = copy(
+    gliokey = g,
+    nb = nb + 1,
+    recent =
+      if (nb < 10) recent
+      else (g.intRating :: recent) take Perf.recentMaxSize,
+    latest = date.some)
+
+  def add(r: Rating, date: DateTime): Option[Perf] = {
+    val gliokey = GliOkey(r.rating)
+    gliokey.sanityCheck option add(gliokey, date)
+  }
+
+  def addOrReset(monitor: oyun.mon.IncPath, msg: => String)(r: Rating, date: DateTime): Perf = add(r, date) | {
+    oyun.log("rating").error(s"Crazy GliOkey $msg")
+    oyun.mon.incPath(monitor)()
+    add(GliOkey.default, date)
+  }
+
+  def toRating = new Rating(
+    math.max(GliOkey.minRating, gliokey.rating),
+    nb)
+
   def isEmpty = nb == 0
   def nonEmpty = !isEmpty
-
 }
 
 
@@ -29,6 +51,8 @@ case object Perf {
   type ID = Int
 
   val default = Perf(GliOkey.default, 0, Nil, None)
+
+  val recentMaxSize = 12
 
   implicit val perfBSONHandler = new BSON[Perf] {
     def reads(r: BSON.Reader): Perf = Perf(
