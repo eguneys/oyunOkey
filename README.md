@@ -1,3 +1,15 @@
+## TODO
+
+Fix masa socket version update
+Add rated on masa view
+Add rated/anonymous/bot masa setup
+Add masa perfs
+improve game end reasons add to masa pairings
+Fix round score area
+Add leaderboards
+
+
+
 ## Ôyunkeyf Skor Sistemi
 
 Her oyuncuya başlangıçta 1500 puan verilir. Bir masada oynanan her el oyuncunun puanını etkiler.

@@ -59,6 +59,7 @@ final class JsonView(
     "version" -> socket.version,
     "ai" -> player.aiLevel,
     "user" -> playerUser.map { userJsonView(_) },
+    "rating" -> player.rating,
     "onGame" -> (player.isAi || socket.onGame(player.side)),
     "isGone" -> (!player.isAi || socket.isGone(player.side))
   )
@@ -67,6 +68,7 @@ final class JsonView(
     Json.obj(
       "side" -> opponent.side.name,
       "ai" -> opponent.aiLevel,
+      "rating" -> opponent.rating,
       "user" -> opponentUser.map { userJsonView(_) },
       "onGame" -> (opponent.isAi || socket.onGame(opponent.side)),
       "isGone" -> (!opponent.isAi || socket.isGone(opponent.side))

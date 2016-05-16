@@ -4,6 +4,8 @@ import { game } from 'game';
 module.exports = function(ctrl, player) {
   var d = ctrl.data;
 
+  var rating = player.rating ? player.rating : null;
+
   var playerOnGameIcon = m('span.status.hint--top', {
     'data-hint': ctrl.trans(player.onGame ? 'playerHasJoinedTheGame' : 'playerHasLeftTheGame')
   }, (player.onGame || !ctrl.vm.firstSeconds) ? m('span', {
@@ -17,7 +19,8 @@ module.exports = function(ctrl, player) {
       target: game.isPlayerPlaying(d) ? '_blank' : '_self',
       'data-icon': 'r'
     }, [
-      player.user.username
+      player.user.username,
+      rating ? ` (${rating})` : '',
     ]),
     playerOnGameIcon
   ] : m('span.user_link', [

@@ -20,6 +20,8 @@ object PerfPicker {
 
   def main(game: Game): Option[Perfs => Perf] = main(game.ratingVariant)
 
-  def mainOrDefualt(variant: okey.variant.Variant): Perfs => Perf =
+  def mainOrDefault(game: Game): Perfs => Perf = mainOrDefault(game.ratingVariant)
+
+  def mainOrDefault(variant: okey.variant.Variant): Perfs => Perf =
     main(variant) getOrElse default
 }

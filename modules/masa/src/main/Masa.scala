@@ -41,7 +41,7 @@ case class Masa(
   def ratingVariant = (variant == okey.variant.StandardTest).fold(okey.variant.Standard, variant)
 
   def perfType = PerfPicker.perfType(ratingVariant)
-  def perfLens = PerfPicker.mainOrDefualt(ratingVariant)
+  def perfLens = PerfPicker.mainOrDefault(ratingVariant)
 
   def createPairings(masa: Masa, players: List[String]): Fu[Option[Pairing]] = {
     fuccess(for {

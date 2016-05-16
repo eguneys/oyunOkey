@@ -67,11 +67,12 @@ function podiumStats(p, data) {
   if (p.ratingDiff === 0) ratingDiff = m('span', ' =');
   else if (p.ratingDiff > 0) ratingDiff = m('span.positive[data-icon=N]', p.ratingDiff);
   else if (p.ratingDiff < 0) ratingDiff = m('span.negative[data-icon=M]', -p.ratingDiff);
+
   var nb = p.nb;
   return [
-    m('span.rating.progress', [
+    p.rating ? m('span.rating.progress', [
       p.rating + p.ratingDiff,
-      ratingDiff]),
+      ratingDiff]) : null,
     m('table.stats', [
     ])
   ];

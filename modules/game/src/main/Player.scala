@@ -10,6 +10,7 @@ case class Player(
   userId: Option[String] = None,
   side: Side,
   aiLevel: Option[Int],
+  rating: Option[Int] = None,
   isWinner: Option[Boolean] = None,
   endScore: Option[EndScoreSheet] = None,
   standing: Option[Int] = None) {
@@ -23,8 +24,9 @@ case class Player(
   def withPlayer(id: String): Player = copy(
     playerId = id.some)
 
-  def withUser(id: Option[String]): Player = copy(
-    userId = id)
+  def withUser(id: String, perf: oyun.rating.Perf): Player = copy(
+    userId = id.some,
+    rating = perf.intRating.some)
 
   def withAi(aiLevel: Option[Int]): Player = copy(
     aiLevel = aiLevel)
@@ -57,6 +59,7 @@ object Player {
 
   object BSONFields {
     val aiLevel = "ai"
+    val rating = "e"
   }
 
 
@@ -80,6 +83,7 @@ object Player {
       side = side,
       playerId = playerId,
       userId = userId,
+      rating = r intO rating,
       aiLevel = r intO aiLevel,
       endScore = endScore,
       standing = standing,
@@ -89,7 +93,8 @@ object Player {
     def writes(w: BSON.Writer, o: Builder) =
       o(Side.EastSide)("0000")(none)(none)(none)(none)(none) |> { p =>
         BSONDocument(
-          aiLevel -> p.aiLevel
+          aiLevel -> p.aiLevel,
+          rating -> p.rating
         )
       }
   }
