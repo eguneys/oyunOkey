@@ -771,6 +771,13 @@ div.pagination span.current {
   box-shadow: 0 0 5px 1px #e89000, 0 0 10px 1px #d85000;
 }
 
+span.progress>.positive {
+  color: #759900;
+}
+
+span.progress>.negative {
+  color: #ac524f;
+}
 
 .scroll-shadow-soft {
   background: linear-gradient(#eee 30%, rgba(247, 247, 247, 0)), linear-gradient(rgba(247, 247, 247, 0), #eee 70%) 0 100%, radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)), radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)) 0 100%;

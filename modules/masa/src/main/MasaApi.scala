@@ -66,7 +66,7 @@ private[masa] final class MasaApi(
   def join(masaId: String, player: PlayerRef, side: Option[String] = None): Fu[Unit] = {
     val promise = Promise[Unit]()
     Sequencing(masaId)(MasaRepo.enterableById) { masa =>
-      PlayerRepo.join(masa.id, player.toPlayer(masa.id), side flatMap Side.apply) >> updateNbPlayers(masa.id) >>- {
+      PlayerRepo.join(masa.id, player.toPlayer(masa.id, masa.perfLens), side flatMap Side.apply) >> updateNbPlayers(masa.id) >>- {
         socketReload(masa.id)
         publish()
         promise success(())
@@ -134,11 +134,24 @@ private[masa] final class MasaApi(
         } yield {
           sendTo(masa.id, Reload)
           publish()
-          updateCountAndPerfs(masa)
+          updateCountAndPerfs(masa) >>- {
+            PlayerRepo activePlayers masa.id foreach {
+              _ foreach { updatePlayerRating(masa) }
+            }
+          }
         }
       }
     }
   }
+
+  private def updatePlayerRating(masa: Masa)(player: Player): Funit =
+    (masa.perfType.ifTrue(masa.rated) ?? { perfType => player.userId ?? { UserRepo.perfOf(_, perfType) } }) flatMap { perf =>
+      PlayerRepo.update(masa.id, player.id) { player =>
+        funit inject
+          player.copy(
+            ratingDiff = perf.fold(player.ratingDiff)(_.intRating - (player.rating | 0)))
+      }
+    }
 
   private def updateCountAndPerfs(masa: Masa): Funit =
     PlayerRepo.bestByMasaWithRank(masa.id).flatMap { players =>

@@ -7,10 +7,19 @@ object PerfPicker {
 
   val default = (perfs: Perfs) => perfs.yuzbir
 
+  def perfType(variant: okey.variant.Variant): Option[PerfType] =
+    PerfType(key(variant))
+
+  def key(variant: okey.variant.Variant): String =
+    variant.key
+
   def main(variant: okey.variant.Variant): Option[Perfs => Perf] =
     Some {
       (perfs: Perfs) => perfs.yuzbir
     }
 
   def main(game: Game): Option[Perfs => Perf] = main(game.ratingVariant)
+
+  def mainOrDefualt(variant: okey.variant.Variant): Perfs => Perf =
+    main(variant) getOrElse default
 }

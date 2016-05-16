@@ -54,7 +54,7 @@ object BSONHandlers {
     )
   }
 
-  implicit val playerHandler = new BSON[Player] {
+  implicit val playerBSONHandler = new BSON[Player] {
     def reads(r: BSON.Reader) = {
       Player(
         _id = r str "_id",
@@ -63,6 +63,8 @@ object BSONHandlers {
         active = r boolD "a",
         side = Side(r str "d") err s"No such side:",
         score = r intD "s",
+        rating = r intO "r",
+        ratingDiff = r intD "p",
         aiLevel = r intO "al",
         magicScore = r int "m",
         createdAt = r date "createdAt"
@@ -76,6 +78,8 @@ object BSONHandlers {
       "a" -> w.boolO(o.active),
       "d" -> o.side.letter.toString,
       "s" -> w.intO(o.score),
+      "r" -> w.intO(o.rating | 0),
+      "p" -> w.intO(o.ratingDiff),
       "al" ->  w.intO(o.aiLevel.getOrElse(0)),
       "m" -> o.magicScore,
       "createdAt" -> w.date(o.createdAt)

@@ -3,6 +3,8 @@ package oyun.masa
 import org.joda.time.{ DateTime }
 import ornicar.scalalib.Random
 
+import oyun.game.PerfPicker
+
 case class Masa(
   id: String,
   name: String,
@@ -35,6 +37,11 @@ case class Masa(
   def roundsToFinish = (rounds - nbRounds) max 0
 
   def isAlmostFinished = roundsToFinish == 0
+
+  def ratingVariant = (variant == okey.variant.StandardTest).fold(okey.variant.Standard, variant)
+
+  def perfType = PerfPicker.perfType(ratingVariant)
+  def perfLens = PerfPicker.mainOrDefualt(ratingVariant)
 
   def createPairings(masa: Masa, players: List[String]): Fu[Option[Pairing]] = {
     fuccess(for {

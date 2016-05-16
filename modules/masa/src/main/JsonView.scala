@@ -109,6 +109,8 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
       "id" -> p.id,
       "active" -> p.active.option(true),
       "score" -> p.score,
+      "rating" -> p.rating,
+      "ratingDiff" -> p.ratingDiff,
       "sheet" -> sheet.map(sheetJson)
     ).noNull
   }

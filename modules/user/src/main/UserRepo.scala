@@ -100,6 +100,13 @@ object UserRepo {
   def nameExists(username: String): Fu[Boolean] = idExists(normalize(username))
   def idExists(id: String): Fu[Boolean] = coll exists $id(id)
 
+  def perfOf(id: ID, perfType: PerfType): Fu[Option[Perf]] = coll.find(
+    $id(id),
+    $doc(s"${F.perfs}.${perfType.key}" -> true)
+  ).uno[Bdoc].map {
+    _.flatMap(_.getAs[Bdoc](F.perfs)).flatMap(_.getAs[Perf](perfType.key))
+  }
+
   def setSeenAt(id: ID) {
     coll.updateFieldUnchecked($id(id), "seenAt", DateTime.now)
   }

@@ -83,6 +83,11 @@ object PlayerRepo {
     selectMasaPlayer(masaId, playerId),
     $doc("$set" -> $doc("a" -> false))).void
 
+  def withPoints(masaId: String): Fu[List[Player]] =
+    coll.find(
+      selectMasa(masaId) ++ $doc("m" -> $doc("&gt" -> 0))
+    ).cursor[Player]().gather[List]()
+
   def activePlayerIds(masaId: String): Fu[List[String]] =
     activePlayers(masaId) map { _ map (_.id) }
 

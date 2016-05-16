@@ -27,6 +27,9 @@ function playerTr(ctrl, player) {
 
   var playerName = ai ? ctrl.trans('aiBot', ai) :
       (player.name || 'Anonymous');
+  // ?
+  player.name = playerName;
+
   var playerId = player.id;
   var userId = playerName.toLowerCase();
   return m('tr', {
@@ -41,7 +44,7 @@ function playerTr(ctrl, player) {
           'data-icon': 'b',
           'title': ctrl.trans('withdraw')
         }),
-      util.player(playerName, 'span')
+      util.player(player, 'span')
     ]),
     ctrl.data.isCreated ? m('td') :
       m('td.sheet', player.sheet.scores.map(scoreTag)),
@@ -60,7 +63,17 @@ function podiumUsername(p) {
 }
 
 function podiumStats(p, data) {
+  var ratingDiff;
+  if (p.ratingDiff === 0) ratingDiff = m('span', ' =');
+  else if (p.ratingDiff > 0) ratingDiff = m('span.positive[data-icon=N]', p.ratingDiff);
+  else if (p.ratingDiff < 0) ratingDiff = m('span.negative[data-icon=M]', -p.ratingDiff);
+  var nb = p.nb;
   return [
+    m('span.rating.progress', [
+      p.rating + p.ratingDiff,
+      ratingDiff]),
+    m('table.stats', [
+    ])
   ];
 }
 

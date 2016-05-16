@@ -2,15 +2,20 @@ package oyun.masa
 
 import org.joda.time.{ DateTime }
 
+import oyun.rating.Perf
+import oyun.user.{ User, Perfs }
+
 import okey.Side
 
 case class Player(
   _id: String,
   masaId: String,
   userId: Option[String] = None,
+  rating: Option[Int],
   active: Boolean = false,
   side: Side = Side.EastSide,
   score: Int = 0,
+  ratingDiff: Int = 0,
   aiLevel: Option[Int],
   createdAt: DateTime,
   magicScore: Int = 0) {
@@ -30,7 +35,9 @@ case class Player(
 
   def doActiveSide(side: Side) = copy(side = side, active = true)
 
-  def ref = PlayerRef(id = id, userId = userId)
+  def finalRating = rating ?? (ratingDiff+)
+
+  def ref(user: Option[User]) = PlayerRef(id = id, user = user)
 
   def recomputeMagicScore = copy(magicScore = (active ?? 10000) + (score * -1))
 }
@@ -45,19 +52,23 @@ object Player {
     _id = oyun.game.IdGenerator.game,
     masaId = masaId,
     aiLevel = aiLevel,
+    rating = None,
     createdAt = DateTime.now
   ).recomputeMagicScore
 }
 
 case class PlayerRef(
   id: String = oyun.game.IdGenerator.game,
-  userId: Option[String] = None,
+  user: Option[User] = None,
   aiLevel: Option[Int] = None) {
 
-  def toPlayer(masaId: String) = Player(
+  def userId = user map (_.id)
+
+  def toPlayer(masaId: String, perfLens: Perfs => Perf) = Player(
     _id = id,
     masaId = masaId,
     userId = userId,
+    rating = user map { u => perfLens(u.perfs).intRating }, 
     aiLevel = aiLevel,
     createdAt = DateTime.now)
 
