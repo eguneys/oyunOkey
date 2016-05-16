@@ -108,6 +108,7 @@ computersAreNotAllowedToPlay=Botlar ve bilgisayar yardımı alan kullanıcılar 
 byRegisteringYouAgreeToBeBoundByOur=Kaydolarak %s'nı kabul etmiş sayılırsınız
 weHaveSentYouAnEmailClickTheLink=Size bir email yolladık. Linke tıklarayar hesabınız aktif hale getirin. Eğer emaili bulamıyorsanız, spam klasörüne bakın.
 memberSince=Üyelik tarihi
+membersOnly=Sadece üyeler
 lastSeenActive=Son oturum %s
 tpTimeSpentPlaying=Toplam oynama süresi: %s
 nbConnectedPlayers=%s çevrimiçi oyuncu

@@ -15,4 +15,4 @@ oyunlog "Compiling oyunkeyf.js"
 closure-compiler --js $orig --js_output_file $comp
 
 # compile css
-gulp
+npm install --no-optional && gulp

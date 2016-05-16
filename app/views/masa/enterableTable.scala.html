@@ -11,7 +11,7 @@
     <td class="small">
       <!-- <span class="text" data-icon="p"></span> -->
       @m.variant.shortName
-      <span class="trans_me">@trans.rated.en()</span>
+      <span class="trans_me">@m.rated.fold(trans.rated.en(), trans.casual.en())</span>
     </td>
     <td>@m.roundString</td>
     <td data-icon="r" class="text">@m.nbPlayers</td>

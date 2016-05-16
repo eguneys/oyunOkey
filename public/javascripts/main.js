@@ -389,6 +389,11 @@
 
     function prepareForm() {
       var $form = $('.oyunkeyf_overboard');
+      var $modeChoicesWrap = $form.find('.mode_choice');
+      var $modeChoices = $modeChoicesWrap.find('input');
+      var $casual = $modeChoices.eq(0);
+      var $rated = $modeChoices.eq(1);
+      console.log('kajdf', $modeChoices);
       var $formTag = $form.find('form');
       var $roundInput = $form.find('.round_choice input');
       if (false) {
@@ -429,6 +434,15 @@
           }));
         });
       });
+
+      $modeChoices.add($form.find('.members_only input')).on('change', function() {
+        var rated = $rated.prop('checked');
+        var membersOnly = $form.find('.members_only input').prop('checked');
+        //$form.find('rating_range_config'
+        console.log(rated, $rated[0]);
+        console.log($('.oyunkeyf_overboard').find('.mode_choice').find('input').eq(1), $rated);
+        $form.find('.members_only').toggle(!rated);
+      }).trigger('change');
 
       $form.find('a.close.icon').click(function() {
         $form.remove();

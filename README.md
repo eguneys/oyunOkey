@@ -7,7 +7,10 @@ Add masa perfs
 improve game end reasons add to masa pairings
 Fix round score area
 Add leaderboards
-
+Allow invite friends
+Fix masa reminder spam
+not allow anon rated
+Fix withdraw masa interrupt
 
 
 ## Ôyunkeyf Skor Sistemi

@@ -1,9 +1,15 @@
 package oyun.app
 package templating
 
+import oyun.game.{ Mode }
 import oyun.api.Context
 
 trait SetupHelper { self: I18nHelper =>
+
+  def translatedModeChoices(implicit ctx: Context) = List(
+    (Mode.Casual.id.toString, trans.casual.str(), none),
+    (Mode.Rated.id.toString, trans.rated.str(), none)
+  )
 
   private def variantTuple(variant: okey.variant.Variant)(implicit ctx: Context): (String, String, Option[String]) =
     (variant.id.toString, variant.name, variant.title.some)

@@ -5,6 +5,19 @@
 @fields = {
   @setup.variant(form, isProd.fold(translatedVariantChoicesWithVariants, translatedVariantChoicesWithTestVariants))
   @setup.timeMode(form, oyun.setup.MasaConfig)
+  @if(ctx.isAuth) {
+    <div class="mode_choice buttons">
+      @setup.radios(form("mode"), translatedModeChoices)
+    </div>
+    <div class="range_and_members optional_config">
+      @if(ctx.isAuth) {
+        <div class="members_only">
+          <label class="required pointer" for="@form("membersOnly").name">@trans.membersOnly()</label>
+          @setup.checkbox(form("membersOnly"))
+        </div>
+      }
+    </div>
+  }
 }
 
 @setup.config(form, "masa", trans.createAMasa(), routes.Masa.create(), fields)

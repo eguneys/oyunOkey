@@ -55,6 +55,37 @@ button {
   font-weight: inherit;
 }
 
+group.radio {
+  display: flex;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+
+group.radio div {
+  flex: 1 1 auto;
+  position: relative;
+}
+
+group.radio input {
+  position: absolute;
+  left: -99999px;
+}
+
+group.radio label {
+  box-sizing: border-box;
+  padding: 10px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-right: 1px solid #ccc;
+  transition: background: 0.13s;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
 .none {
   display: none;
 }
@@ -464,7 +495,7 @@ body.offline #reconnecting,
   margin-bottom: 8px;
   border-radius: 2px;
   box-shadow: 0 0 3px 0 #d85000;
-  transition: box-shadow: 1.5s;
+  transition: box-shadow 1.5s;
 }
 
 #notifications a {
@@ -710,6 +741,7 @@ a.button {
 div.side_box div.top,
 div.undertable_top,
 .button,
+group.radio label,
 .ui-slider-handle,
 #notifications>div,
 table.slist thead {
