@@ -161,6 +161,11 @@ div.undertable {
   width: 512px;
 }
 
+/* TODO:hack hide members only masas from anon */
+body[data-user=""] .members {
+  display: none;
+}
+
 #oyunkeyf {
   display: flex;
   flex-flow: column nowrap;
@@ -170,6 +175,11 @@ div.undertable {
   width: 510px;
   min-width: 510px;
   min-height: 510px;
+}
+
+#oyunkeyf .nowplaying_list {
+  height: auto;
+  max-height: 193px;
 }
 
 #oyunkeyf .enterable_list {

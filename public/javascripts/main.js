@@ -393,7 +393,6 @@
       var $modeChoices = $modeChoicesWrap.find('input');
       var $casual = $modeChoices.eq(0);
       var $rated = $modeChoices.eq(1);
-      console.log('kajdf', $modeChoices);
       var $formTag = $form.find('form');
       var $roundInput = $form.find('.round_choice input');
       if (false) {
@@ -439,8 +438,6 @@
         var rated = $rated.prop('checked');
         var membersOnly = $form.find('.members_only input').prop('checked');
         //$form.find('rating_range_config'
-        console.log(rated, $rated[0]);
-        console.log($('.oyunkeyf_overboard').find('.mode_choice').find('input').eq(1), $rated);
         $form.find('.members_only').toggle(!rated);
       }).trigger('change');
 
@@ -473,7 +470,6 @@
       $startButtons
         .find('a.config_' + location.hash.replace('#', ''))
         .each(function() {
-          console.log('ineach');
           $(this).attr("href", $(this).attr("href") + location.search);
         }).click();
     }

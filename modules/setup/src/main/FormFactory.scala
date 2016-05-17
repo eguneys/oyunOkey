@@ -20,12 +20,13 @@ private[setup] final class FormFactory() {
     mapping(
       "rounds" -> numberIn(roundChoices),
       "variant" -> number.verifying(validVariantIds contains _),
-      "mode" -> optional(number.verifying(Mode.all map (_.id) contains _)),
+      "mode" -> mode(ctx.isAuth),
+      "membersOnly" -> boolean,
       "ratingRange" -> optional(ratingRange)
     )(MasaConfig.apply)(MasaConfig.unapply)
   )
 
-  def masaConfig(implicit ctx: UserContext): Fu[MasaConfig] = fuccess(MasaConfig(5, 1, Mode.Rated.id.some, None))
+  def masaConfig(implicit ctx: UserContext): Fu[MasaConfig] = fuccess(MasaConfig(5, 1, Mode.Rated.id.some, false, None))
 
   def hookFilled()(implicit ctx: UserContext): Fu[Form[HookConfig]] =
     hookConfig map hook(ctx).fill

@@ -9,8 +9,15 @@
         @m.roundString
       </span>
       (<a href="@routes.Masa.help(m.system.toString.toLowerCase.some)">?</a>)
+      <br />
+      @m.membersOnly.fold("", trans.allowAnon.str())
     </div>
   </div>
+  @m.spotlight.map { s =>
+    <div class="game_infos spotlight">
+      @markdownLinks(s.description)
+    </div>
+  }
   @trans.by(usernameOrAnon(m.createdBy.some))
   •
   <span title="@showDateTime(m.createdAt)">@momentFormat(m.createdAt)</span>

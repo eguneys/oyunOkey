@@ -16,6 +16,18 @@ trait StringHelper { self: NumberHelper =>
   def escape(text: String) = escapeEvenDoubleQuotes(text).replace("&quot;", "\"")
   def escapeEvenDoubleQuotes(text: String) = escapeHtml4(text)
 
+  def nl2br(text: String) = text.replace("\r\n", "<br />").replace("\n", "<br />")
+
+  private val markdownLinkRegex = """\[([^\[]+)\]\(([^\)]+)\)""".r
+
+  def markdownLinks(text: String) = Html {
+    nl2br {
+      markdownLinkRegex.replaceAllIn(escape(text), m => {
+        s"""<a href="${m group 2}">${m group 1}</a>"""
+      })
+    }
+  }
+
   private val NumberFirstRegex = """^(\d+)\s(.+)$""".r
   private val NumberLastRegex = """^(.+)\s(\d+)$""".r
   def splitNumber(s: String)(implicit ctx: UserContext): Html = Html {

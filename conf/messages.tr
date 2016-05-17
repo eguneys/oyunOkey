@@ -24,6 +24,7 @@ toggleTheChat=Sohbet aç/kapa
 talkInChat=Sohbeti Başlat
 createdBy=Açan
 by=Açan %s
+allowAnon=Herkese açık
 winner=Kazanan
 cancel=İptal
 variant=Tür

@@ -25,6 +25,7 @@ toggleTheChat=Chat on/off
 talkInChat=Start Chat
 createdBy=Created by
 by=by %s
+allowAnon=Allow anonymous
 winner=Winner
 cancel=Cancel
 variant=Variant

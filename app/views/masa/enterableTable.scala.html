@@ -1,7 +1,7 @@
 @(masas: List[Masa])
 
 @masas.map { m =>
-  <tr>
+  <tr class="@m.membersOnly.fold("members", "")">
     <td class="name">
       <a class="text" href="@routes.Masa.show(m.id)">
         <span data-icon="@masaIconChar(m)"></span>

@@ -14,17 +14,21 @@ case class Masa(
   rounds: Int,
   variant: okey.variant.Variant,
   mode: oyun.game.Mode,
+  allowAnon: Boolean,
   nbPlayers: Int,
   nbRounds: Int,
   createdAt: DateTime,
   createdBy: String,
-  winnerId: Option[String] = None) {
+  winnerId: Option[String] = None,
+  spotlight: Option[Spotlight] = None) {
 
   def isCreated = status == Status.Created
   def isStarted = status == Status.Started
   def isFinished = status == Status.Finished
 
   def rated = mode.rated
+
+  def membersOnly = !allowAnon || rated
 
   def fullName =
     s"$name $system"
@@ -66,7 +70,8 @@ object Masa {
     rounds: Int,
     system: System,
     variant: okey.variant.Variant,
-    mode: oyun.game.Mode) = Masa(
+    mode: oyun.game.Mode,
+    allowAnon: Boolean) = Masa(
     id = Random nextStringUppercase 8,
       name = GreatPlayer.randomName,
       status = Status.Created,
@@ -78,5 +83,6 @@ object Masa {
       nbPlayers = 0,
       nbRounds = 0,
       variant = variant,
-      mode = mode)
+      mode = mode,
+      allowAnon = allowAnon)
 }

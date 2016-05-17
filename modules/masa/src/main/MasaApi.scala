@@ -33,6 +33,7 @@ private[masa] final class MasaApi(
       clock = MasaClock(30),
       rounds = setup.rounds,
       mode = setup.mode.fold(Mode.default)(Mode.orDefault),
+      allowAnon = setup.allowAnon,
       system = System.Arena,
       variant = variant)
     logger.info(s"Create $masa")
@@ -64,16 +65,30 @@ private[masa] final class MasaApi(
   }
 
   def join(masaId: String, player: PlayerRef, side: Option[String] = None): Fu[Unit] = {
-    val promise = Promise[Unit]()
-    Sequencing(masaId)(MasaRepo.enterableById) { masa =>
+    def joinApply(masa: Masa, player: PlayerRef) = {
       PlayerRepo.join(masa.id, player.toPlayer(masa.id, masa.perfLens), side flatMap Side.apply) >> updateNbPlayers(masa.id) >>- {
         socketReload(masa.id)
         publish()
-        promise success(())
       }
+    }
+
+    val promise = Promise[Unit]()
+    Sequencing(masaId)(MasaRepo.enterableById) { masa =>
+      canJoin(masa, player).fold(
+        joinApply(masa, player) >>- {
+          promise success(())
+        },
+        fufail(s"$player cannot join masa $masaId")
+      )
     }
     promise.future
   }
+
+  private def canJoin(masa: Masa, player: PlayerRef): Boolean =
+    masa.mode.casual.fold(
+      player.user.isDefined || masa.allowAnon,
+      player.user ?? { _ => true }
+    )
 
   private def updateNbPlayers(masaId: String) =
     PlayerRepo countActive masaId flatMap { MasaRepo.setNbPlayers(masaId, _) }
