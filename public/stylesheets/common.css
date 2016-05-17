@@ -81,7 +81,7 @@ group.radio label {
   justify-content: center;
   cursor: pointer;
   border-right: 1px solid #ccc;
-  transition: background: 0.13s;
+  transition: background 0.13s;
   -moz-user-select: none;
   -webkit-user-select: none;
 }

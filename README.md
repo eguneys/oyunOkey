@@ -1,22 +1,31 @@
 ## TODO
 
+### Player
+Add leaderboards
+
+### Lobby
 not allow more masa create
-match similar masa create / find compatible
+Fix masa reminder spam
++ match similar masa create / find compatible
+
+
+### Masa
 Add masa perfs
 improve game end reasons add to masa pairings
 Fix masa socket version update
-Add rated on masa view
-Add rated/anonymous/bot masa setup
-Fix round score area
-Add leaderboards
-Allow invite friends
-Fix masa reminder spam
-not allow anon create rated mode
-not allow anon/bot enter rated
 Fix withdraw masa interrupt
+Allow invite friends
++ Add rated on masa view
++ Add rated/anonymous/bot masa setup
++ not allow anon create rated mode
++ not allow anon/bot enter rated
+
+### Round
+Add round spinner on buttons
 Add round open group scores
 Add round watcher view
 Fix round initial layout scroll
+Fix round score area
 
 
 ## Ôyunkeyf Skor Sistemi

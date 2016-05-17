@@ -18,8 +18,7 @@
       @markdownLinks(s.description)
     </div>
   }
-  @trans.by(usernameOrAnon(m.createdBy.some))
-  •
+  @trans.by(usernameOrAnon(m.createdBy.some)),
   <span title="@showDateTime(m.createdAt)">@momentFormat(m.createdAt)</span>
   @m.winnerId.map { userId =>
     <br /> <br />

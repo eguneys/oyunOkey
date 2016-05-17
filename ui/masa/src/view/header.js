@@ -23,7 +23,7 @@ function clock(ctrl) {
 function image(d) {
   if (d.isFinished) return;
   return m('i.img', {
-    'data-icon': 'm'
+    'data-icon': '|'
   });
 }
 
@@ -35,7 +35,9 @@ function title(ctrl) {
       m('a', {
         href: d.greatPlayer.url,
         target: '_blank'
-      }, d.greatPlayer.name)
+      }, d.greatPlayer.name),
+      ' ',
+      ctrl.trans('theTable')
     ] : d.fullName
   ]);
 }
