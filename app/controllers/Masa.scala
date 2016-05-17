@@ -136,7 +136,7 @@ object Masa extends OyunController with TheftPrevention {
     Env.setup.forms.masa(ctx).bindFromRequest.fold(
       err => BadRequest(html.masa.form(err)).fuccess,
       setup => {
-        env.api.createMasa(setup.masa(), playerRef) map { masa =>
+        env.api.addMasa(setup.masa(), playerRef) map { masa =>
           Redirect(routes.Masa.show(masa.id))
         } flatMap withMasaAnonCookie(ctx.isAnon, playerRef.id)
       }

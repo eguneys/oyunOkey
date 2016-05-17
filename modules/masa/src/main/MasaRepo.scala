@@ -100,4 +100,10 @@ object MasaRepo {
     publicCreatedSorted map {
       case created => created
     }
+
+
+  def findCompatible(setup: MasaSetup): Fu[List[Masa]] =
+    publicCreatedSorted map (_ filter (_.toSetup compatibleWith setup))
+
+
 }

@@ -26,6 +26,13 @@ private[masa] final class MasaApi(
   renderer: ActorSelection,
   lobby: ActorSelection) {
 
+  def addMasa(setup: MasaSetup, player: PlayerRef): Fu[Masa] = {
+    findCompatible(setup, player) flatMap {
+      case Some(m) => fuccess(m)
+      case None => createMasa(setup, player)
+    }
+  }
+
   def createMasa(setup: MasaSetup, player: PlayerRef): Fu[Masa] = {
     val variant = okey.variant.Variant orDefault setup.variant
     val masa = Masa.make(
@@ -39,6 +46,21 @@ private[masa] final class MasaApi(
     logger.info(s"Create $masa")
 
     MasaRepo.insert(masa) >> join(masa.id, player) inject masa
+  }
+
+  private def findCompatible(setup: MasaSetup, player: PlayerRef): Fu[Option[Masa]] =
+    MasaRepo findCompatible setup flatMap {
+      findCompatibleIn(setup, player, _)
+    }
+
+  private def findCompatibleIn(setup: MasaSetup, player: PlayerRef, in: List[Masa]): Fu[Option[Masa]] = in match {
+    case Nil => fuccess(none)
+    case m +: rest => canJoin(m, player) ?? !{
+      fuccess(false)
+    } flatMap {
+      case true => fuccess(m.some)
+      case false => findCompatibleIn(setup, player, rest)
+    }
   }
 
   def makePairings(oldMasa: Masa, players: List[String]) {

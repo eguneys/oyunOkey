@@ -1,5 +1,7 @@
 ## TODO
 
+not allow more masa create
+match similar masa create / find compatible
 Add masa perfs
 improve game end reasons add to masa pairings
 Fix masa socket version update
@@ -9,8 +11,6 @@ Fix round score area
 Add leaderboards
 Allow invite friends
 Fix masa reminder spam
-not allow more masa create
-match similar masa create
 not allow anon create rated mode
 not allow anon/bot enter rated
 Fix withdraw masa interrupt

@@ -30,6 +30,8 @@ case class Masa(
 
   def membersOnly = !allowAnon || rated
 
+  lazy val toSetup = MasaSetup.make(rounds, variant.id, mode.id.some, allowAnon)
+
   def fullName =
     s"$name $system"
 
