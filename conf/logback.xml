@@ -37,8 +37,16 @@
   <!--   <appender-ref ref="STDOUT" /> -->
   <!-- </logger> -->
 
+
+
+  <logger name="reactivemongo.api.Cursor" level="OFF" />
+  <logger name="reactivemongo.api.Failover" level="OFF" />
   <logger name="reactivemongo" level="INFO">
-    <appender-ref ref="STDOUT" />
+    <appender name="STDOUT_SHORT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>%coloredLevel %logger{2} - %message%n%xException{2}</pattern>
+      </encoder>
+    </appender>
   </logger>
 
   <logger name="masa" level="DEBUG">

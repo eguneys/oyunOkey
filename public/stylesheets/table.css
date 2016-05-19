@@ -522,6 +522,10 @@ div.control.icons .button.move.enabled {
   opacity: 0.5;
 }
 
+#chat a.send:hover {
+  opacity: 1;
+}
+
 #chat.hidden ol.messages,
 #chat.hidden form {
   display: none;
