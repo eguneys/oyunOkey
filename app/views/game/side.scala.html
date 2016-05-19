@@ -4,7 +4,7 @@
 
 <div class="side">
   <div class="side_box padded">
-    <div class="game_infos">
+    <div class="game_infos" data-icon="@gameIcon(g)">
       <div class="header">
         <span class="setup">
           @game.variantLink(g.variant, g.variant.name, cssClass = "hint--top")
@@ -23,7 +23,9 @@
     @if(g.finishedOrAborted) {
       <div class="status">
         @gameEndStatus(g)
-        • @gameEndWinner(g)
+        @if(g.winner.isDefined) {
+          • @gameEndWinner(g)
+        }
       </div>
     }
   </div>

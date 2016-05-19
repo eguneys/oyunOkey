@@ -13,6 +13,9 @@ object PerfPicker {
   def key(variant: okey.variant.Variant): String =
     variant.key
 
+  def key(game: Game): String = key(game.ratingVariant)
+
+
   def main(variant: okey.variant.Variant): Option[Perfs => Perf] =
     Some {
       (perfs: Perfs) => perfs.yuzbir

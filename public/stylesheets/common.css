@@ -617,6 +617,14 @@ div.side_box .top {
   color: #999;
 }
 
+div.side_box .game_infos:before {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  font-size: 30px;
+  opacity: 0.7;
+}
+
 div.side_box .game_infos {
   padding-left: 36px;
   position: relative;

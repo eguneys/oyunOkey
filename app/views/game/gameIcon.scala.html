@@ -1,0 +1,6 @@
+@(g: Game)(implicit ctx: Context)
+
+@g.perfType match {
+  case Some(p) => {@p.iconChar}
+  case _ => {8}
+}

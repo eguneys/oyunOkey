@@ -36,7 +36,6 @@ private[round] final class Round(
     }
 
     case OutOfTime => proxy withGame { game =>
-      println("game outoftime", game.outoftime)
       game.outoftime ?? player.requestFishnet(game)
     }
 

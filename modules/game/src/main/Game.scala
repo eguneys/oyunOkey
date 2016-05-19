@@ -7,6 +7,7 @@ import okey.{ Game => OkeyGame, Player => OkeyPlayer, History => OkeyHistory, Ta
 import okey.format.Uci
 
 import oyun.db.ByteArray
+import oyun.rating.PerfType
 import oyun.user.User
 
 case class Game(
@@ -203,6 +204,9 @@ case class Game(
 
   def rated = mode.rated
   def casual = !rated
+
+  def perfKey = PerfPicker.key(this)
+  def perfType = PerfType(perfKey)
 
   def started = status >= Status.Started
 
