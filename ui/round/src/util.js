@@ -127,16 +127,20 @@ function boardDiff2(oldFen, newFen) {
   return result;
 }
 
+var iBoard = 2;
+
 function persistentFen(fen, oldFen) {
-  var oldBoard = oldFen.split('/', 1)[0];
-  var board = fen.split('/', 1)[0];
+  var oldBoard = oldFen.split('/')[iBoard];
+  var board = fen.split('/')[iBoard];
   var rest = fen.substr(board.length);
 
   var newBoard = board;
 
   var diff = boardDiff(oldBoard, newBoard);
 
-  fen = diff + rest;
+  // fen = diff + rest;
+
+  fen = fen.replace(board, diff);
 
   return fen;
 }
@@ -147,12 +151,14 @@ module.exports = {
     get: function(fen) {
       var oldBoard = oyunkeyf.storage.get(sk);
 
-      var oldFen = oldBoard + "/";
+      // make a hack fen to split
+      var oldFen = "//" + oldBoard + "/";
 
       return persistentFen(fen, oldFen);
     },
     set: function(fen) {
-      var board = fen.split('/', 1)[0];
+      //var board = fen.split('/')[iBoard];
+      var board = fen;
       oyunkeyf.storage.set(sk, board);
     }
   },

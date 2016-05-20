@@ -47,7 +47,7 @@ object FormFactory {
   val roundChoices = options(rounds, "%d round")
 
   val validVariants = oyun.common.PlayApp.isProd.fold(
-    List(Standard), List(StandardTest, Standard))
+    List(), List(StandardTest, DuzOkeyTest)) ::: List(Standard, DuzOkey)
 
   val validVariantIds = validVariants.map(_.id).toSet
 }

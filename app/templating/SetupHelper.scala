@@ -19,11 +19,13 @@ trait SetupHelper { self: I18nHelper =>
   )
 
   def translatedVariantChoicesWithVariants(implicit ctx: Context) =
-    translatedVariantChoices(ctx)
+    translatedVariantChoices(ctx) :+
+      variantTuple(okey.variant.DuzOkey)
 
 
   def translatedVariantChoicesWithTestVariants(implicit ctx: Context) =
     variantTuple(okey.variant.StandardTest) ::
-      translatedVariantChoices(ctx)
+      variantTuple(okey.variant.DuzOkeyTest) ::
+      translatedVariantChoicesWithVariants(ctx)
 
 }

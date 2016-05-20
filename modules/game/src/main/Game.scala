@@ -115,7 +115,8 @@ case class Game(
 
   lazy val toOkeyHistory = OkeyHistory(
     lastMoves = opensLastMove.lastMoves,
-    openStates = opensLastMove.opens)
+    openStates = opensLastMove.opens,
+    turns = turns)
 
   def update(
     game: OkeyGame,

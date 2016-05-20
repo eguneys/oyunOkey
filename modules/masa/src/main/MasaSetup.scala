@@ -13,7 +13,6 @@ case class MasaSetup(
   def membersOnly = !allowAnon || realMode.rated
 
   def compatibleWith(s: MasaSetup) = {
-    println(this, s)
     compatibilityProperties == s.compatibilityProperties &&
       (membersOnly || s.membersOnly).fold(membersOnly && s.membersOnly, true)
   }

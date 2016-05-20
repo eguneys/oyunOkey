@@ -62,6 +62,7 @@ module.exports = function(opts) {
   this.setTitle = partial(title.set, this);
 
   var onUserMove = (key, move) => {
+    console.log(key, move);
     this.sendMove(key, move);
   };
 
