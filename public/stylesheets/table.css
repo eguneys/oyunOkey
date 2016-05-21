@@ -402,7 +402,7 @@ div.table_over {
   flex-flow: row;
   //margin-top: 5px;
 
-  align-items: baseline;
+  // align-items: baseline;
   //border: 1px solid #ccc;
   padding: 2px 0;
 }

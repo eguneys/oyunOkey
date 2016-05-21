@@ -29,7 +29,8 @@ module.exports = function(send, ctrl) {
     end: function(scores) {
       ctrl.data.game.scores = scores;
       ground.end(ctrl.okeyground);
-      // ctrl.set loading?
+      ctrl.saveBoard();
+      ctrl.setLoading(true);
       xhr.reload(ctrl).then(ctrl.reload);
     }
   };

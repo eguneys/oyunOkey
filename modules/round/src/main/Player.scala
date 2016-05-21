@@ -71,6 +71,7 @@ private[round] final class Player(
     game.status match {
       case Status.NormalEnd => finisher.other(game, _.NormalEnd, result, winner)
       case Status.MiddleEnd => finisher.other(game, _.MiddleEnd, result, winner)
+      case Status.VariantEnd => finisher.other(game, _.VariantEnd, result, winner)
       case _ => fuccess(Nil)
     }
   }

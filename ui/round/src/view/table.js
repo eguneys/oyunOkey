@@ -60,7 +60,7 @@ function renderTableEnd(ctrl) {
 function renderTablePlay(ctrl) {
   var d = ctrl.data;
 
-  var buttons = compact();
+  var buttons = compact(spinning(ctrl));
 
   // debug
   // m('button', {

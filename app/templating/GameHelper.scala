@@ -38,7 +38,7 @@ trait GameHelper { self: I18nHelper with UserHelper =>
     case S.Aborted => trans.gameAborted()
     case S.NormalEnd => trans.gameFinished()
     case S.MiddleEnd => trans.gameMiddleFinished()
-    case _ => Html("")
+    case _ => trans.gameFinished()
   }
 
   def gameEndWinner(game: Game)(implicit ctx: UserContext): Html = {

@@ -48,6 +48,8 @@ module.exports = function(opts) {
     // ply: [lastPly, lastStep.moves.length - 1];
     ply: init.startPly(this.data),
     tab: store.tab.get(),
+    loading: false,
+    loadingTimeout: null,
     scoresheetInfo: {},
     autoScroll: null
   };
@@ -186,11 +188,11 @@ module.exports = function(opts) {
     this.vm.ply = round.lastVmPly(cfg);
     var merged = round.merge(this.data, cfg);
     this.data = merged.data;
-
     this.setTitle();
     // move on
     m.endComputation();
     this.vm.autoScroll && this.vm.autoScroll.now();
+    this.setLoading(false);
   };
 
   // this.data.clock = {
@@ -241,6 +243,20 @@ module.exports = function(opts) {
   this.saveBoard = () => {
     var boardFen = this.okeyground.getFen();
     mutil.fenStore.set(boardFen);
+  };
+
+  this.setLoading = (v) => {
+    clearTimeout(this.vm.loadingTimeout);
+    if (v) {
+      this.vm.loading = true;
+      this.vm.loadingTimeout = setTimeout(() => {
+        this.vm.loading = false;
+        m.redraw();
+      }, 1500);
+    } else {
+      this.vm.loading = false;
+    }
+    m.redraw();
   };
 
   this.trans = oyunkeyf.trans(opts.i18n);

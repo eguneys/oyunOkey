@@ -23,10 +23,16 @@ Allow invite friends
 ### Round
 Add round spinner on buttons
 Add round open group scores
-Add round watcher view
+Add round watcher view / improve move events
 Fix round initial layout scroll
 Fix round score area
 
+### Variant
+
+DuzOkey scoring system/game end winner
+DuzOkey perfs
+DuzOkey variant docs
+DuzOkey game end show groups
 
 ## Ôyunkeyf Skor Sistemi
 
