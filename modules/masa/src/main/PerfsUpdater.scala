@@ -18,9 +18,9 @@ final class PerfsUpdater() {
         val ratings = users map { u => mkRatings(u.perfs) }
         masa.variant match {
           case okey.variant.StandardTest =>
-            updateRatings(masa.rounds, ratings map(_.yuzbir), result map GliOkey.Result.apply)
+            masa.rounds map { updateRatings(_, ratings map(_.yuzbir), result map GliOkey.Result.apply) }
           case okey.variant.Standard =>
-            updateRatings(masa.rounds, ratings map(_.yuzbir), result map GliOkey.Result.apply)
+            masa.rounds map { updateRatings(_, ratings map(_.yuzbir), result map GliOkey.Result.apply) }
           case _ => ratings
         }
 

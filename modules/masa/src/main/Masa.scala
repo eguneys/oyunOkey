@@ -11,7 +11,8 @@ case class Masa(
   status: Status,
   system: System,
   clock: MasaClock,
-  rounds: Int,
+  rounds: Option[Int],
+  scores: Option[Int],
   variant: okey.variant.Variant,
   mode: oyun.game.Mode,
   allowAnon: Boolean,
@@ -30,19 +31,29 @@ case class Masa(
 
   def membersOnly = !allowAnon || rated
 
-  lazy val toSetup = MasaSetup.make(rounds, variant.id, mode.id.some, allowAnon)
+  lazy val toSetup = MasaSetup.make(
+    rounds = (rounds orElse scores) | 0,
+    variant = variant.id,
+    mode = mode.id.some,
+    allowAnon = allowAnon)
 
   def fullName =
     s"$name $system"
 
   def roundString =
-    s"$nbRounds/$rounds " + "el"
+    rounds map { r =>
+      s"$nbRounds/$r " + "el"
+    } orElse scores map { s =>
+      s"${s}P"
+    }
 
   def isRecentlyCreated = isCreated && (nowSeconds - createdAt.getSeconds) < 60
 
-  def roundsToFinish = (rounds - nbRounds) max 0
+  def scoreFinish = scores.isDefined
 
-  def isAlmostFinished = roundsToFinish == 0
+  def roundsToFinish = rounds map { r => (r - nbRounds) max 0 }
+
+  def isAlmostFinished = roundsToFinish.exists(0==)
 
   def ratingVariant = (variant == okey.variant.StandardTest).fold(okey.variant.Standard, variant)
 
@@ -69,7 +80,8 @@ object Masa {
   def make(
     createdByUserId: String,
     clock: MasaClock,
-    rounds: Int,
+    rounds: Option[Int],
+    scores: Option[Int],
     system: System,
     variant: okey.variant.Variant,
     mode: oyun.game.Mode,
@@ -80,6 +92,7 @@ object Masa {
       system = system,
       clock = clock,
       rounds = rounds,
+      scores = scores,
       createdBy = createdByUserId,
       createdAt = DateTime.now,
       nbPlayers = 0,

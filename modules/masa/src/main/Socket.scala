@@ -56,6 +56,7 @@ private[oyun] final class Socket(
       val (enumerator, channel) = Concurrent.broadcast[JsValue]
       val member = Member(channel, user, player)
       addMember(uid, member)
+      notifyReload
       sender ! Connected(enumerator, member)
 
     case oyun.chat.actorApi.ChatLine(_, line) => line match {

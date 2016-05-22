@@ -37,8 +37,13 @@ private[masa] final class StartedOrganizer(
             val activeUserIds = activePlayers flatMap (_.userId)
             val nb = activePlayerIds.size
 
+            val masaFinish = masa.scores.fold(
+              masa.roundsToFinish.exists(0==)) { scores =>
+              activePlayers map (p => scores + p.score) exists (_<=0)
+            }
+
             val result: Funit =
-              if (masa.roundsToFinish == 0) {
+              if (masaFinish) {
                 // println("masa finish", masa.rounds, masa.nbRounds)
                 fuccess(api finish masa)
               }

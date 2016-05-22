@@ -35,13 +35,16 @@ private[masa] final class MasaApi(
 
   def createMasa(setup: MasaSetup, player: PlayerRef): Fu[Masa] = {
     val variant = okey.variant.Variant orDefault setup.variant
+    val realRounds = !variant.scoreFinish option setup.rounds
+    val realScores = variant.scoreFinish option setup.rounds
     val masa = Masa.make(
       createdByUserId = player.userId | player.id,
       clock = MasaClock(30),
-      rounds = setup.rounds,
+      rounds = realRounds,
+      scores = realScores,
       mode = setup.mode.fold(Mode.default)(Mode.orDefault),
       allowAnon = setup.allowAnon,
-      system = System.Arena,
+      system = System.default,
       variant = variant)
     logger.info(s"Create $masa")
 
@@ -88,7 +91,7 @@ private[masa] final class MasaApi(
 
   def join(masaId: String, player: PlayerRef, side: Option[String] = None): Fu[Unit] = {
     def joinApply(masa: Masa, player: PlayerRef) = {
-      PlayerRepo.join(masa.id, player.toPlayer(masa.id, masa.perfLens), side flatMap Side.apply) >> updateNbPlayers(masa.id) >>- {
+      PlayerRepo.join(masa.id, player.toPlayer(masa, masa.perfLens), side flatMap Side.apply) >> updateNbPlayers(masa.id) >>- {
         socketReload(masa.id)
         publish()
       }
@@ -225,7 +228,7 @@ private[masa] final class MasaApi(
       PairingRepo.finishedByPlayerChronological(masa.id, playerId) map { pairings =>
         val sheet = masa.system.scoringSystem.sheet(masa, playerId, pairings)
         player.copy(
-          score = sheet.total
+          score = sheet.total + (masa.scores | 0)
         ).recomputeMagicScore
       }
     }

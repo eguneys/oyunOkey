@@ -86,10 +86,10 @@ object BSONHandlers {
     }
   }
 
-  private[game] implicit val scoresBSONHandler = new BSON[EndScoreSheet] {
+  private[game] implicit val scoresBSONHandler = new BSON[Variant => EndScoreSheet] {
     import BSON.MapValue.MapHandler
 
-    def reads(r: BSON.Reader) = {
+    def reads(r: BSON.Reader) = variant => {
       val handSum = r int "h"
       val scoreDocs = r get[Map[String, BSONInteger]]("s")
 
@@ -100,19 +100,21 @@ object BSONHandlers {
         }
       }
 
-      EndScoreSheet(handSum, scores)
+      EndScoreSheet.byVariant(variant)(handSum, scores)
     }
 
-    def writes(w: BSON.Writer, o: EndScoreSheet): BSONDocument = {
-      val scores = o.scores map {
-        case (k, v) => {
-          k.id.toString -> BSONInteger(v.map(_.id) | 0)
+    def writes(w: BSON.Writer, o: Variant => EndScoreSheet): BSONDocument = {
+      o(Standard) |> { sheet =>
+        val scores = sheet.scores map {
+          case (k, v) => {
+            k.id.toString -> BSONInteger(v.map(_.id) | 0)
+          }
         }
+        BSONDocument(
+          "h" -> sheet.handSum,
+          "s" -> scores
+        )
       }
-      BSONDocument(
-        "h" -> o.handSum,
-        "s" -> scores
-      )
     }
   }
 
@@ -122,11 +124,12 @@ object BSONHandlers {
     import Player.playerBSONHandler
 
     def reads(r: BSON.Reader): Game = {
+      val realVariant = Variant(r intD variant) | okey.variant.Standard
       val nbTurns = r int turns
       val winS = r getO[String] winnerSide flatMap Side.apply
       val createdAtValue = r date createdAt
 
-      val oEndScores = r getO[Sides[EndScoreSheet]](endScores)
+      val oEndScores = r getO[Sides[Variant => EndScoreSheet]](endScores)
       val oEndStanding = r intO (endStanding)
 
       val List(eastId, westId, northId, southId) = r str playerIds grouped 4 toList
@@ -140,7 +143,7 @@ object BSONHandlers {
       val players = Sides(eastId, westId, northId, southId) sideMap {
         case (side, id) =>
           val win = winS map (_ == side)
-          builder(side)(side)(id)(sidesPid(side))(sidesUid(side))(oEndScores.map(_(side)))(oEndStanding)(win)
+          builder(side)(side)(id)(sidesPid(side))(sidesUid(side))(oEndScores.map(_(side)(realVariant)))(oEndStanding)(win)
       }
 
       val bPieces = r.get[Sides[ByteArray]](binaryPieces)
@@ -167,8 +170,6 @@ object BSONHandlers {
       }
 
       val bpp = r bytes binaryPlayer
-
-      val realVariant = Variant(r intD variant) | okey.variant.Standard
 
       Game(
         id = r str id,

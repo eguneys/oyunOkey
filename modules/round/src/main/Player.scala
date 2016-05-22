@@ -26,7 +26,8 @@ private[round] final class Player(
                   case _ =>
                     if (progress.game.playableByAi) requestFishnet(progress.game)
                 } inject progress.events
-              }) >>- promiseOption.foreach(_.success(()))
+              }) >>- { promiseOption.foreach(_.success(())) }
+            // promise already completed on failure
         } addFailureEffect { e =>
           promiseOption.foreach(_ failure e)
         }

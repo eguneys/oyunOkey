@@ -32,6 +32,10 @@ function playerTr(ctrl, player) {
 
   var playerId = player.id;
   var userId = playerName.toLowerCase();
+
+  var scores = ctrl.data.scores ? ctrl.data.scores : 0;
+  var scoreTotal = player.sheet.total + scores;
+
   return m('tr', {
     class: classSet({
       'me': ctrl.playerId === playerId,
@@ -49,7 +53,7 @@ function playerTr(ctrl, player) {
     ctrl.data.isCreated ? m('td') :
       m('td.sheet', player.sheet.scores.map(scoreTag)),
     ctrl.data.isCreated ? null :
-      m('td.total', m('strong', player.sheet.total))
+      m('td.total', m('strong', scoreTotal))
   ]);
 }
 

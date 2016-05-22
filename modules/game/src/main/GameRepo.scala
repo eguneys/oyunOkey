@@ -92,7 +92,10 @@ object GameRepo {
       nonEmptyMod("$set", $doc(
         F.winnerId -> winnerId,
         F.winnerSide -> winnerSide.map(_.letter.toString),
-        F.endScores -> result.map (BSONHandlers.sidesBSONHandler[EndScoreSheet].write _),
+        F.endScores -> (result map { sides =>
+          sides.map (sheet => (v: okey.variant.Variant) => sheet) |>
+          (BSONHandlers.sidesBSONHandler[okey.variant.Variant => EndScoreSheet].write(_))
+        }),
         F.endStanding -> standing.map(BSONHandlers.sidesBSONHandler[Int].write _)
       )) ++ $doc("$unset" -> unsets)
     )

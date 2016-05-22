@@ -26,10 +26,12 @@ Add round open group scores
 Add round watcher view / improve move events
 Fix round initial layout scroll
 Fix round score area
+Fix titivate
 
 ### Variant
 
 DuzOkey scoring system/game end winner
+DuzOkey round end by zero score
 DuzOkey perfs
 DuzOkey variant docs
 DuzOkey game end show groups

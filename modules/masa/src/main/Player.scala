@@ -48,10 +48,12 @@ object Player {
 
   private[masa] def make(
     masaId: String,
+    score: Int,
     aiLevel: Option[Int] = None) = new Player(
     _id = oyun.game.IdGenerator.game,
     masaId = masaId,
     aiLevel = aiLevel,
+    score = score,
     rating = None,
     createdAt = DateTime.now
   ).recomputeMagicScore
@@ -64,9 +66,10 @@ case class PlayerRef(
 
   def userId = user map (_.id)
 
-  def toPlayer(masaId: String, perfLens: Perfs => Perf) = Player(
+  def toPlayer(masa: Masa, perfLens: Perfs => Perf) = Player(
     _id = id,
-    masaId = masaId,
+    masaId = masa.id,
+    score = masa.scores | 0,
     userId = userId,
     rating = user map { u => perfLens(u.perfs).intRating }, 
     aiLevel = aiLevel,

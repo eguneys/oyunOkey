@@ -278,10 +278,10 @@ object Game {
   val fullIdSize = 12
 
   val unplayedHours = 2
-  def unplayedDate = DateTime.now minusMinutes unplayedHours
+  def unplayedDate = DateTime.now minusHours unplayedHours
 
   val abandonedDays = 24
-  def abandonedDate = DateTime.now minusSeconds abandonedDays
+  def abandonedDate = DateTime.now minusDays abandonedDays
 
   def takeGameId(fullId: String) = fullId take gameIdSize
   def takePlayerId(fullId: String) = fullId drop gameIdSize

@@ -31,6 +31,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     "nbPlayers" -> masa.nbPlayers,
     "nbRounds" -> masa.nbRounds,
     "rounds" -> masa.rounds,
+    "scores" -> masa.scores,
     "variant" -> masa.variant.key,
     "isStarted" -> masa.isStarted,
     "isFinished" -> masa.isFinished,
