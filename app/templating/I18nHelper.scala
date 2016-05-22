@@ -3,6 +3,8 @@ package templating
 
 import play.api.i18n.{ Lang }
 import play.api.libs.json.JsObject
+import play.twirl.api.Html
+
 import oyun.i18n.Env.{ current => i18nEnv }
 import oyun.i18n.{ LangList, I18nKey }
 import oyun.user.UserContext
@@ -27,4 +29,13 @@ trait I18nHelper {
 
   def langName(lang: Lang): Option[String] = langName(lang.language)
   def langName(lang: String): Option[String] = LangList name lang
+
+  private lazy val langAnnotationsBase: String =
+    pool.names.keySet map { code =>
+      s"""<link rel="alternate" hreflang="$code" href="http://$code.oyunkeyf.net%"/>"""
+    } mkString ""
+
+  def langAnnotations(implicit ctx: UserContext) = Html {
+    langAnnotationsBase.replace("%", ctx.req.uri)
+  }
 }
