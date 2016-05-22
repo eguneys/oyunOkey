@@ -400,10 +400,10 @@ div.table_middle .player_wrap {
 div.table_over {
   display: flex;
   flex-flow: row;
-  //margin-top: 5px;
+  /* margin-top: 5px; */
 
-  // align-items: baseline;
-  //border: 1px solid #ccc;
+  /* align-items: baseline; */
+  /* border: 1px solid #ccc; */
   padding: 2px 0;
 }
 

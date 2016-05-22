@@ -16,6 +16,7 @@ finished=Bitti
 games=Oyunlar
 players=Oyuncular
 gamesPlayed=Oynanılmış oyunlar
+points=Puan
 nbWins=%s Kazanılan
 nbLoss=%s Kaybedilen
 freeOnlineOkey=Ücretsiz Çevrimiçi Okey

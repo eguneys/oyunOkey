@@ -16,6 +16,7 @@ finished=Finished
 players=Players
 games=Games
 gamesPlayed=Games played
+points=Points
 nbWins=%s Wins
 nbLoss=%s Loss
 aiBot=Bot AI%s

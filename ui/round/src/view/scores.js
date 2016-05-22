@@ -88,6 +88,8 @@ function renderTableScoreInfo(ctrl) {
 function renderTableScores(ctrl) {
   var d = ctrl.data;
 
+  if (!d.game.scores) return null;
+
   var scores = Object.keys(d.game.scores).map(k => {
     var s = d.game.scores[k];
     s.side = k;

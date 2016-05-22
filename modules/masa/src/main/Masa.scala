@@ -43,9 +43,9 @@ case class Masa(
   def roundString =
     rounds map { r =>
       s"$nbRounds/$r " + "el"
-    } orElse scores map { s =>
+    } orElse (scores map { s =>
       s"${s}P"
-    }
+    })
 
   def isRecentlyCreated = isCreated && (nowSeconds - createdAt.getSeconds) < 60
 
