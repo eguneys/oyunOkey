@@ -58,7 +58,7 @@ function renderTableScoreInfo(ctrl) {
   var d = ctrl.data;
   var side = ctrl.vm.scoresheetInfo.side;
   var player = d.game.scores[side];
-  var name = player.name || 'Anonymous';
+  var name = (player.user ? player.user.username : 'Anonymous');
 
   var scores = normalizeScores(player.scores);
   var scoreTagNames = ['flag', 'penalty', 'erase', 'double', 'hand'];
@@ -96,6 +96,7 @@ function renderTableScores(ctrl) {
     s.user = game.getPlayer(d, k).user;
     return s;
   });
+
   var tableBody = scores.map(partial(playerTr, ctrl));
 
   return m('div.scores', [

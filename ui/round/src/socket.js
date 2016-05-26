@@ -27,7 +27,7 @@ module.exports = function(send, ctrl) {
       m.redraw();
     },
     end: function(scores) {
-      ctrl.data.game.scores = scores;
+      ctrl.data.game.scores = scores.result;
       ground.end(ctrl.okeyground);
       ctrl.saveBoard();
       ctrl.setLoading(true);

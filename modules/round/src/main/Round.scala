@@ -79,7 +79,11 @@ private[round] final class Round(
   }.void recover errorHandler("publish")
 
   private def errorHandler(name: String): PartialFunction[Throwable, Unit] = {
-    case e: ClientError => println("mon round error", e)
-    case e: Exception => logger.warn(s"$name: ${e.getMessage}")
+    case e: ClientError =>
+      println("mon round error", e)
+      proxy invalidate
+    case e: Exception =>
+      logger.warn(s"$name: ${e.getMessage}")
+      proxy invalidate
   }
 }

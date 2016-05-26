@@ -116,7 +116,7 @@ function visualTable(ctrl) {
   ]);
 }
 
-function renderGameStatus(ctrl) {
+function renderGameStatusWithPanels(ctrl) {
   return [m('div.sideboard_content',
             [m('div.sideboard_panels', [
               renderTabs.panel(ctrl, 'replay_tab',renderReplay(ctrl)),
@@ -124,6 +124,11 @@ function renderGameStatus(ctrl) {
                                (game.playable(ctrl.data)) ? null : renderTableScores(ctrl))]),
              m('div.sideboard_menu', renderTabs.tabs(ctrl))]),
           ctrl.vm.scoresheetInfo.side ? renderTableScoreInfo(ctrl) : null];
+}
+
+function renderGameStatus(ctrl) {
+  return m('div.replay_wrap',
+           renderReplay(ctrl));
 }
 
 module.exports = function(ctrl) {

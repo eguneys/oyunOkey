@@ -171,10 +171,24 @@ div.sideboard_menu > a.active {
 /* } */
 
 .table_right .replay_wrap {
+  height: 260px;
+  border: 1px solid #ccc;
+  border-top: none;
   width: 100%;
-  padding: 10px;
   padding-top: 0px;
   box-sizing: border-box;
+}
+
+.table_right .replay .turns {
+  overflow:auto;
+  height: 260px;
+}
+
+.table_right .replay .result {
+  font-weight: bold;
+  font-size: 1.3em;
+  padding: 4px 0;
+  text-align: center;
 }
 
 .table_right .replay .moves {
@@ -195,6 +209,7 @@ div.sideboard_menu > a.active {
 
 .table_right .replay turn>index,
 .table_right .replay turn .moves>move {
+  padding-left: 10px;
   display: block;
   height: 22px;
   line-height: 22px;
@@ -459,6 +474,106 @@ div.control.icons .button.move.enabled {
 
 .oyunkeyf_table_wrap {
   margin: 10px 0;
+}
+
+div.underboard {
+  margin-left: 210px;
+  display: flex;
+}
+
+div.underboard .center {
+  position: relative;
+  text-align: center;
+  padding-top: 15px;
+  /* same as og-board */
+  width: 608px;
+}
+
+div.crosstable_wrap {
+  display: flex;
+}
+
+.crosstable_wrap .scores_info {
+  flex: 1;
+}
+
+.crosstable_wrap .crosstable {
+  flex: 2;
+}
+
+.crosstable table {
+  width: 100%;
+  margin: 1em 0;
+}
+
+.crosstable .user {
+  padding-left: 7px;
+}
+
+.crosstable th {
+  border: 1px solid #ccc;
+  padding: 3px;
+}
+
+/* .crosstable table .sheet, */
+/* .crosstable table .total { */
+/*   font-family: monospace; */
+/*   letter-spacing: 0; */
+/* } */
+
+.crosstable .score {
+  font-size: 1.3em;
+  text-align: right;
+  padding-right: 7px;
+}
+
+.crosstable td {
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 0;
+  min-width: 15px;
+}
+
+.crosstable tbody tr {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.crosstable tbody tr td {
+  transition: 0.13s;
+}
+
+.crosstable tbody tr:hover td {
+  background: rgba(191, 231, 255, 0.7);
+  cursor: pointer;
+}
+
+/* .crosstable tr.me td:first-child { */
+/*   border-left: 10px solid #d59120; */
+/* } */
+
+.crosstable td>* {
+  line-height: 2em;
+  font-size: 1.1em;
+  padding-right: 7px;
+}
+
+.crosstable td:nth-last-child(3) {
+  border-right: 1px solid #ccc;
+}
+
+.crosstable td penalty {
+  color: #ac524f
+}
+
+.crosstable td erase {
+  color: #759900;
+  font-weight: bold;
+}
+
+.crosstable td double {
+  color: #d59120;
+  font-weight: bold;
 }
 
 #chat div.top {

@@ -3,7 +3,6 @@ import util from '../util';
 import { game, status } from 'game';
 import round from '../round';
 import okeyground from 'okeyground';
-import { renderTableScores, renderTableScoreInfo } from './scores';
 
 const partial = okeyground.util.partial;
 const raf = okeyground.util.requestAnimationFrame;
@@ -96,8 +95,6 @@ function renderTurns(ctrl) {
 
   rows.push(renderResult(ctrl));
 
-  if (!game.playable(ctrl.data)) rows.push(renderTableScores(ctrl));
-
   return rows;
 }
 
@@ -111,6 +108,7 @@ function autoScroll(el, ctrl) {
       var plyEl = el.querySelector('.active') || el.querySelector('turn:first-child');
       if (plyEl) {
         var plyElParent = plyEl.parentElement;
+        console.log(plyEl, plyElParent);
 
         st = plyEl.offsetTop - el.offsetHeight / 2 + plyEl.offsetHeight / 2;
         st += plyElParent.offsetTop;
