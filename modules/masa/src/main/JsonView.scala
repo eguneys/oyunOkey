@@ -140,6 +140,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     "id" -> p.gameId,
     "u" -> JsArray(p.playerIds.toList map (pairingUserJson)),
     "r" -> p.round,
-    "s" -> (if (p.finished) p.winner else 0))
+    "s" -> p.status.id,
+    "w" -> (if (p.finished) p.winner else 0))
 
 }

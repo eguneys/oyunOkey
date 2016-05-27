@@ -22,8 +22,9 @@ object PairingRepo {
 
   private def selectMasaPlayer(masaId: String, playerId: String) = selectMasa(masaId) ++ selectPlayer(playerId)
 
-  private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.NormalEnd.id))
+  private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.MiddleEnd.id))
   private val selectFinished = $doc("s" -> $doc("$gte" -> okey.Status.NormalEnd.id))
+  private val selectFinishedAny = $doc("s" -> $doc("$gte" -> okey.Status.Aborted.id))
   private val recentSort = $doc("d" -> -1)
   private val chronoSort = $doc("d" -> 1)
 
@@ -34,6 +35,9 @@ object PairingRepo {
 
   def count(masaId: String): Fu[Int] =
     coll.count(selectMasa(masaId).some)
+
+  def countFinished(masaId: String): Fu[Int] =
+    coll.count((selectMasa(masaId) ++ selectFinished).some)
 
   def removePlaying(masaId: String) = coll.remove(selectMasa(masaId) ++ selectPlaying).void
 

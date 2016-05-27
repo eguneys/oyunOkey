@@ -1,6 +1,4 @@
 ## TODO
-Fix round score area
-Add round open group scores
 
 ### Player
 Add leaderboards
@@ -13,8 +11,8 @@ Fix masa reminder spam
 
 ### Masa
 Add masa perfs
-improve game end reasons add to masa pairings
 Allow invite friends
++ improve game end reasons add to masa pairings
 +Fix withdraw masa interrupt
 +Fix masa socket version update
 + Add rated on masa view
@@ -23,9 +21,10 @@ Allow invite friends
 + not allow anon/bot enter rated
 
 ### Round
-Fix round score area
-Add round open group scores
-Invalidate cache on pov not found
+Add round ingame penalty scores
++ Invalidate cache on pov not found
++ Fix round score area
++ Add round open group scores
 + Add round spinner on buttons
 ~Fix round initial layout scroll
 ~ Fix titivate
@@ -36,8 +35,8 @@ Invalidate cache on pov not found
 DuzOkey don't show opens / add torr
 DuzOkey scoring system/game end winner
 DuzOkey perfs
-DuzOkey variant docs
 DuzOkey game end show groups
++ DuzOkey variant docs
 +DuzOkey round end by zero score
 
 ## Ôyunkeyf Skor Sistemi

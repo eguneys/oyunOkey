@@ -1,18 +1,20 @@
 import m from 'mithril';
 import { usernameOrAnon } from './util';
+import { statusIds } from '../masa';
 
 function round(ctrl, p) {
+  var tag = (p.s <= statusIds.middleEnd && p.s > statusIds.started) ? 'aborted' : 'span';
   return {
-    tag: 'span',
+    tag: tag,
     children: [ctrl.trans('roundX', p.r + 1)]
   };
 }
 
 function winner(ctrl, p) {
-  if (p.s === 0 || !p.s) return null;
-  var username = usernameOrAnon(ctrl, p.s);
+  if (!p.w) return null;
+  var username = usernameOrAnon(ctrl, p.w);
   return {
-    tag: p.s === 0 ? 'playing' : 'finished',
+    tag: p.s < statusIds.aborted ? 'playing' : 'finished',
     children: [username]
   };
 }

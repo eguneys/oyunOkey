@@ -119,7 +119,7 @@ private[masa] final class MasaApi(
     PlayerRepo countActive masaId flatMap { MasaRepo.setNbPlayers(masaId, _) }
 
   private def updateNbRounds(masaId: String) =
-    PairingRepo count masaId flatMap { MasaRepo.setNbRounds(masaId, _) }
+    PairingRepo countFinished masaId flatMap { MasaRepo.setNbRounds(masaId, _) }
 
   def withdraw(masaId: String, playerId: String): Fu[Unit] = {
     val promise = Promise[Unit]()

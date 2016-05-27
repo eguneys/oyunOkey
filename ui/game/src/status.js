@@ -4,7 +4,9 @@ var ids = {
   created: 10,
   started: 20,
   aborted: 25,
-  end: 30
+  middleEnd: 30,
+  normalEnd: 40,
+  variantEnd: 70
 };
 
 function started(data) {
@@ -12,11 +14,11 @@ function started(data) {
 }
 
 function finished(data) {
-  return data.game.status.id >= ids.end;
+  return data.game.status.id >= ids.middleEnd;
 }
 
 function aborted(data) {
-  return data.game.status.id >= ids.aborted;
+  return data.game.status.id === ids.aborted;
 }
 
 

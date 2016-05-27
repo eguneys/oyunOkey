@@ -23,9 +23,11 @@
     @if(g.finishedOrAborted) {
       <div class="status">
         @gameEndStatus(g)
-        @if(g.winner.isDefined) {
-          • @gameEndWinner(g)
-        }
+        • @if(g.winner.isDefined) {
+            @gameEndWinner(g)
+          } else {
+            @trans.gameAborted()
+          }
       </div>
     }
   </div>

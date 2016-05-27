@@ -403,6 +403,10 @@
   color: #33aa33
 }
 
+#masa_side .all_pairings a aborted {
+  color: #aa3333;
+}
+
 #oyunkeyf,
 #masa,
 div.masa_box {

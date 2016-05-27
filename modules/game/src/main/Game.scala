@@ -229,7 +229,7 @@ case class Game(
 
   def hasAi: Boolean = players exists (_.isAi)
 
-  def finished = status >= Status.NormalEnd
+  def finished = status >= Status.MiddleEnd
 
   def finishedOrAborted = finished || aborted
 
