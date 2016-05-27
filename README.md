@@ -1,5 +1,12 @@
 ## TODO
 
+DuzOkey don't show opens / add torr
+DuzOkey perfs
+
+### Site
+Add icons / logo / images
+Add sounds
+
 ### Player
 Add leaderboards
 
@@ -10,18 +17,21 @@ Fix masa reminder spam
 
 
 ### Masa
+[bug] [rare] game dissapears pairing stays
 Add masa perfs
 Allow invite friends
-+ improve game end reasons add to masa pairings
 +Fix withdraw masa interrupt
 +Fix masa socket version update
++ improve game end reasons add to masa pairings
 + Add rated on masa view
 + Add rated/anonymous/bot masa setup
 + not allow anon create rated mode
 + not allow anon/bot enter rated
 
 ### Round
+Fix Draw middle uci / uci translations
 Add round ingame penalty scores
+Fix chat room position
 + Invalidate cache on pov not found
 + Fix round score area
 + Add round open group scores
@@ -33,11 +43,17 @@ Add round ingame penalty scores
 ### Variant
 
 DuzOkey don't show opens / add torr
-DuzOkey scoring system/game end winner
 DuzOkey perfs
+DuzOkey scoring system/game end winner
+Duz Okey end by series / pairs
 DuzOkey game end show groups
 + DuzOkey variant docs
 +DuzOkey round end by zero score
+
+## Ground
+
+Add animations/fadings
+[bug] force draw vs manual draw mix
 
 ## Ôyunkeyf Skor Sistemi
 

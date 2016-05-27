@@ -228,7 +228,7 @@ private[masa] final class MasaApi(
       PairingRepo.finishedByPlayerChronological(masa.id, playerId) map { pairings =>
         val sheet = masa.system.scoringSystem.sheet(masa, playerId, pairings)
         player.copy(
-          score = sheet.total + (masa.scores | 0)
+          score = sheet.total
         ).recomputeMagicScore
       }
     }
