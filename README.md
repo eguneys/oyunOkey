@@ -1,7 +1,7 @@
 ## TODO
 
-DuzOkey don't show opens / add torr
-DuzOkey perfs
+Fix Draw middle uci / uci translations
+Fix chat room position
 
 ### Site
 Add icons / logo / images
@@ -17,7 +17,9 @@ Fix masa reminder spam
 
 
 ### Masa
+[bug] [rare] extra pairing is done after masa finish
 [bug] [rare] game dissapears pairing stays
+Check masa for removal / masa clock
 Add masa perfs
 Allow invite friends
 +Fix withdraw masa interrupt
@@ -30,8 +32,8 @@ Allow invite friends
 
 ### Round
 Fix Draw middle uci / uci translations
-Add round ingame penalty scores
 Fix chat room position
+Add round ingame penalty scores
 + Invalidate cache on pov not found
 + Fix round score area
 + Add round open group scores
@@ -45,7 +47,7 @@ Fix chat room position
 DuzOkey don't show opens / add torr
 DuzOkey perfs
 DuzOkey scoring system/game end winner
-Duz Okey end by series / pairs
+DuzOkey end by series / pairs
 DuzOkey game end show groups
 + DuzOkey variant docs
 +DuzOkey round end by zero score
@@ -54,6 +56,7 @@ DuzOkey game end show groups
 
 Add animations/fadings
 [bug] force draw vs manual draw mix
+[bug] dont allow twice discard
 
 ## Ôyunkeyf Skor Sistemi
 

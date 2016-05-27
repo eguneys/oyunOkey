@@ -652,7 +652,8 @@ div.side_box div.status {
 div.under_side.bottom {
   /* position: absolute; */
   /* bottom: 0px; */
-  margin-top:auto;
+  margin-top: auto;
+  margin-bottom: 120px;
   /* fix overlap div */
   z-index: 10;
 }
