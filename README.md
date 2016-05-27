@@ -1,8 +1,5 @@
 ## TODO
 
-Fix Draw middle uci / uci translations
-Fix chat room position
-
 ### Site
 Add icons / logo / images
 Add sounds
@@ -31,9 +28,9 @@ Allow invite friends
 + not allow anon/bot enter rated
 
 ### Round
-Fix Draw middle uci / uci translations
-Fix chat room position
 Add round ingame penalty scores
++ Fix Draw middle uci / uci translations
++ Fix chat room position
 + Invalidate cache on pov not found
 + Fix round score area
 + Add round open group scores

@@ -50,6 +50,10 @@ object Event {
       ).noNull
     }
 
+    def hideAction(cond: Boolean, action: Action) = action match {
+      case okey.DrawMiddle(p) if cond => okey.DrawMiddle
+      case x => x
+    }
 
     private def matchDrawMiddle(side1: Side, side2: Side, move: OkeyMove): Option[PieceData] = move.action match {
       case okey.DrawMiddle(p) if side1 == side2 => PieceData(p).some
@@ -91,7 +95,7 @@ object Event {
     def data = Move.data(fen, state, clock, possibleMoves) {
       Json.obj(
         "key" -> action.key,
-        "uci" -> action.toUci.uci,
+        "uci" -> Move.hideAction(side != state.side, action).toUci.uci,
         "drawmiddle" -> drawMiddle.map(_.data),
         "discard" -> discard.map(_.data),
         "opens" -> opens.map(_.data),

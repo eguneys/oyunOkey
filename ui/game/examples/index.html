@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <script src="../build/oyunkeyf.game.min.js"></script>
+    <script>
+
+     var ucis = ['dm', 'dd', 'co', 'dl', 'lt', 'os', 'dos', 'dop'];
+
+     var uciPiece = [
+       'dmPb4', // drawMiddle b4
+       'ddPb1'  // discard b1
+     ];
+
+     var uciGroup = [
+       'osGr10r11r12',
+       'opGr1r1 g13g13 l1l1'
+     ];
+
+     var uciDrop = [
+       'dopPr13@r0',
+       'dosPr1@l1',
+       'dosPr2@p1'
+     ];
+
+     var uciTranskey = OyunkeyfGame.uci.transKey;
+
+     var logUciMap = function(uci) { console.log(uci, uciTranskey(uci)); }
+     var all = [ucis, uciPiece, uciGroup, uciDrop];
+     all.forEach(function(g) {
+       console.log("___");
+       g.forEach(logUciMap);
+     });
+
+     function pieceTranslator(key, args) {
+       return key + 'X' + args;
+     }
+     console.log(uciTranskey("dmPb4", pieceTranslator));
+    </script>
+  </body>
+</html>

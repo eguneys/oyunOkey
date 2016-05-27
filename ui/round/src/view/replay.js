@@ -1,14 +1,15 @@
 import m from 'mithril';
 import util from '../util';
-import { game, status } from 'game';
+import { game, status, uci as gameUci } from 'game';
 import round from '../round';
 import okeyground from 'okeyground';
 
 const partial = okeyground.util.partial;
 const raf = okeyground.util.requestAnimationFrame;
 
-function renderMove(step, ply, curPly) {
-  var children = [step.san];
+function renderMove(ctrl, step, ply, curPly) {
+  var san = ctrl.trans.apply(null, gameUci.transKey(step.san));
+  var children = [san];
 
   return {
     tag: 'move',
@@ -27,7 +28,7 @@ function renderMoves(ctrl, turn) {
   var rows = [];
   for (var i = 0, len = moves.length; i < len; i++) {
     stepPly = [turn.ply, i];
-    rows.push(renderMove(moves[i], stepPly, ctrl.vm.ply));
+    rows.push(renderMove(ctrl, moves[i], stepPly, ctrl.vm.ply));
   }
 
   return rows;
