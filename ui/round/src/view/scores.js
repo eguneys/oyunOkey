@@ -57,6 +57,7 @@ function playerTr(ctrl, player) {
 function renderTableScoreInfo(ctrl) {
   var d = ctrl.data;
   var side = ctrl.vm.scoresheetInfo.side;
+
   var player = d.game.scores[side];
   var name = (player.user ? player.user.username : 'Anonymous');
 

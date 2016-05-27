@@ -19,6 +19,8 @@ sealed trait Event {
 
 object Event {
 
+  import GameJsonView._
+
   object Move {
     def apply(side: Side, move: OkeyMove, situation: Situation, state: State, clock: Option[Event]): Move = Move(
       side = side,
@@ -42,6 +44,7 @@ object Event {
         "fen" -> fen,
         "ply" -> state.turns,
         "status" -> state.status,
+        "oscores" -> state.opens.map(sidesWriter(_)),
         "dests" -> PossibleMoves.json(possibleMoves),
         "clock" -> clock.map(_.data)
       ).noNull
@@ -156,12 +159,14 @@ object Event {
   case class State(
     side: Side,
     turns: Int,
-    status: Option[Status]) extends Event {
+    status: Option[Status],
+    opens: Option[Sides[Option[okey.OpenState]]]) extends Event {
     def typ = "state"
     def data = Json.obj(
       "side" -> side,
       "turns" -> turns,
-      "status" -> status
+      "status" -> status,
+      "oscores" -> opens.map(sidesWriter(_))
     ).noNull
   }
 
@@ -173,8 +178,11 @@ object Event {
       "watchers" -> 0
     )
   }
+}
 
-  private def sidesWriter[A](sides: Sides[A])(implicit writer: Writes[A]) =
+object GameJsonView {
+
+  def sidesWriter[A](sides: Sides[A])(implicit writer: Writes[A]) =
     Json.obj(
       "east" -> sides(Side.EastSide),
       "west" -> sides(Side.WestSide),
@@ -183,17 +191,17 @@ object Event {
     )
 
 
-  private implicit val sideWriter: Writes[okey.Side] = Writes { s =>
+  implicit val sideWriter: Writes[okey.Side] = Writes { s =>
     JsString(s.name)
   }
 
-  private implicit val statusWriter: OWrites[okey.Status] = OWrites { s =>
+  implicit val statusWriter: OWrites[okey.Status] = OWrites { s =>
     Json.obj(
       "id" -> s.id,
       "name" -> s.name)
   }
 
-  private implicit val endScoreSheetWriter: OWrites[okey.EndScoreSheet] = OWrites { s =>
+  implicit val endScoreSheetWriter: OWrites[okey.EndScoreSheet] = OWrites { s =>
     Json.obj(
       "hand" -> s.handSum,
       "total" -> s.total,
@@ -201,5 +209,15 @@ object Event {
         case (k, v) => k.id.toString -> (JsNumber(v.map(_.id) | 0))
       })
     )
+  }  
+
+  implicit val openStateWriter: OWrites[okey.OpenState] = OWrites {
+    case okey.OldOpen(score) => openScoreWriter(score)
+    case okey.NewOpen(score, _, _) => openScoreWriter(score, true)
   }
+
+  def openScoreWriter(score: okey.OpenScore, isNew: Boolean = false): JsObject = (score match {
+    case okey.SerieScore(score) => Json.obj("series" -> score)
+    case okey.PairScore(score) => Json.obj("pairs" -> score)
+  }) ++ Json.obj("new" -> isNew.option(true))
 }

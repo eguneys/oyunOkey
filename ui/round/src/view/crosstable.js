@@ -5,7 +5,7 @@ const { classSet, partial } = okeyground.util;
 import { renderTableScoreInfo } from './scores';
 
 function utilPlayer(p, tag) {
-  var fullName = p.user ? p.user.username : 'Anonymous';
+  var fullName = p.user ? p.user.username : (p.ai ? `Bot AI${p.ai}` : 'Anonymous');
   var attrs = {
     class: 'user_link'
   };
@@ -31,23 +31,36 @@ function arrayPad(arr, length, value) {
   return res;
 }
 
-function playerTr(ctrl, player) {
-  var isLong = player.scores.length > 5;
+function compact(obj) {
+  var res = {};
+  for (var i in obj) {
+    if (obj[i]) res[i] = obj[i];
+  }
+  return res;
+}
+
+function playerTr(ctrl, { player, scores, opens }) {
   var mySide = ctrl.data.player.side;
 
-  var scores = normalizeScores(player.scores).map(_ => _[0]);
+  var normalScores = normalizeScores(scores.scores).map(_ => _[0]);
+
+  var opensHint = opens ? (opens.series ? 'openedSeries' : 'openedPairs'): null;
 
   return m('tr', {
     key: player.side,
     class: classSet({
-      'me': player.side === mySide,
-      'long': isLong
+      'me': player.side === mySide
     }),
     onclick: partial(ctrl.toggleScoresheet, player.side)
   }, [
-    m('td.sheet', scores.map(partial(scoreTd, player.hand))),
-    m('th.score', player.total),
-    m('th.user', utilPlayer(player, 'a'))
+    m('td.sheet', normalScores.map(partial(scoreTd, scores.hand))),
+    m('th.score', scores.total),
+    m('th.user', [
+      utilPlayer(player, 'a'),
+      opens ? (m('div.opens', {
+        'data-hint': ctrl.trans(opensHint)
+      }, opens.series ? opens.series : opens.pairs)) : null
+    ])
   ]);
 }
 
@@ -71,18 +84,20 @@ function scoreTd(hand, score) {
 module.exports = function(ctrl) {
   var d = ctrl.data;
 
-  var gameScores = d.game.scores || {};
+  var sides = ['east', 'west', 'north', 'south'];
 
-  var scores = Object.keys(gameScores).map(k => {
-    var s = d.game.scores[k];
-    s.side = k;
-    s.user = game.getPlayer(d, k).user;
-    return s;
+  var scores = sides.map(side => {
+    return {
+      player: game.getPlayer(d, side),
+      scores: d.game.scores ? d.game.scores[side] : { scores: [] },
+      opens: d.game.oscores ? d.game.oscores[side] : null
+    };
   });
+
   var tableBody = scores.map(partial(playerTr, ctrl));
 
   return m('div.crosstable_wrap', [
-    ctrl.vm.scoresheetInfo.side ? renderTableScoreInfo(ctrl) : m('div.scores_info'),
+    (ctrl.vm.scoresheetInfo.side && ctrl.data.game.scores) ? renderTableScoreInfo(ctrl) : m('div.scores_info'),
     m('div.crosstable',
       m('table', [
         m('thead', m('tr')),

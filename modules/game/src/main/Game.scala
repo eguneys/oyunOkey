@@ -68,27 +68,6 @@ case class Game(
     val middles = BinaryFormat.piece.read(binaryMiddles)
     val sign = BinaryFormat.piece.read(binarySign)
 
-    val opener = binaryOpens map { bo =>
-      import bo._
-
-      val save = bo.save map { case (savePieces, saveOpens) =>
-
-        val board = Board(BinaryFormat.piece.read(savePieces))
-
-        val series = BinaryFormat.opener.readSeries(saveOpens.binarySeries)
-        val pairs = BinaryFormat.opener.readPairs(saveOpens.binaryPairs)
-        val opens = saveOpens.binaryOpenStates map (_ map BinaryFormat.opener.readState(None))
-
-        (board, Opener(series, pairs, opens))
-      }
-
-      val series = BinaryFormat.opener.readSeries(binarySeries)
-      val pairs = BinaryFormat.opener.readPairs(binaryPairs)
-      val opens = binaryOpenStates map(_ map BinaryFormat.opener.readState(save))
-
-      Opener(series, pairs, opens)
-    }
-
     val boards = pieces map Board.apply
 
     val (playerDrawLeft, playerDrawMiddle) = BinaryFormat.player.read(binaryPlayer)
@@ -104,7 +83,7 @@ case class Game(
         boards = boards,
         discards = discards,
         middles = middles,
-        opener = opener,
+        opener = toOkeyOpener,
         sign = sign,
         variant = variant),
       player = player,
@@ -112,6 +91,28 @@ case class Game(
       turns = turns
     )
   }
+
+  lazy val toOkeyOpener = binaryOpens map { bo =>
+    import bo._
+
+    val save = bo.save map { case (savePieces, saveOpens) =>
+
+      val board = Board(BinaryFormat.piece.read(savePieces))
+
+      val series = BinaryFormat.opener.readSeries(saveOpens.binarySeries)
+      val pairs = BinaryFormat.opener.readPairs(saveOpens.binaryPairs)
+      val opens = saveOpens.binaryOpenStates map (_ map BinaryFormat.opener.readState(None))
+
+      (board, Opener(series, pairs, opens))
+    }
+
+    val series = BinaryFormat.opener.readSeries(binarySeries)
+    val pairs = BinaryFormat.opener.readPairs(binaryPairs)
+    val opens = binaryOpenStates map(_ map BinaryFormat.opener.readState(save))
+
+    Opener(series, pairs, opens)
+  }
+
 
   lazy val toOkeyHistory = OkeyHistory(
     lastMoves = opensLastMove.lastMoves,
@@ -163,7 +164,8 @@ case class Game(
     val state = Event.State(
       side = situation.player.side,
       turns = game.turns,
-      status = (status != updated.status) option updated.status
+      status = (status != updated.status) option updated.status,
+      opens = situation.table.opener map(_.opens)
     )
 
     val clockEvent = updated.clock map Event.Clock.apply
@@ -179,6 +181,8 @@ case class Game(
   def updatePlayers[A](as: Sides[Player => Player]) = copy(
     players = (as zip players) map { case (f, p) => f(p) }
   )
+
+  def openStates = toOkeyOpener map(_.opens)
 
 
   def start = started.fold(this, copy(

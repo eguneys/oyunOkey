@@ -507,24 +507,25 @@ div.crosstable_wrap {
 }
 
 .crosstable .user {
-  padding-left: 7px;
+  padding: 3px 7px 3px 7px;
 }
 
 .crosstable th {
+  height: 20px;
+  white-space: nowrap;
   border: 1px solid #ccc;
   padding: 3px;
 }
 
-/* .crosstable table .sheet, */
-/* .crosstable table .total { */
-/*   font-family: monospace; */
-/*   letter-spacing: 0; */
-/* } */
+.crosstable table .sheet {
+  text-align: right;
+  width: 100%;
+}
 
 .crosstable .score {
   font-size: 1.3em;
   text-align: right;
-  padding-right: 7px;
+  min-width: 20px;
 }
 
 .crosstable td {
@@ -574,6 +575,25 @@ div.crosstable_wrap {
 .crosstable td double {
   color: #d59120;
   font-weight: bold;
+}
+
+.crosstable .opens {
+  color: #fff!important;
+  text-shadow: 0 1px 0 #000!important;
+  background: #d85000!important;
+  border-color: #b84400!important;
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.15) inset!important;
+}
+
+.crosstable .opens {
+  position: absolute;
+  right: 0;
+  content: attr(data-pairs);
+  line-height: 14px;
+  padding: 3px 5px 4px 5px;
+  font-weight: bold;
+  border-radius: 2px;
+  font-size: 18px;
 }
 
 #chat div.top {
@@ -766,8 +786,8 @@ div.crosstable_wrap {
   position: absolute;
   width: 75%;
   height: 68.57143%;
-  border-radius: 2px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.6);
   margin: auto;
   bottom: 0;
   top: 0;

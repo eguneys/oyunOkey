@@ -17,6 +17,7 @@ final class JsonView(
   getSocketStatus: String => Fu[SocketStatus]) {
 
   import JsonView._
+  import oyun.game.GameJsonView._
 
   def playerJson(
     pov: Pov,
@@ -80,6 +81,7 @@ final class JsonView(
     "fen" -> (Forsyth >> (pov.game.toOkey, pov.side)),
     "player" -> pov.game.turnSide.name,
     "scores" -> pov.game.endScores.map(sidesWriter(_)),
+    "oscores" -> pov.game.openStates.map(sidesWriter(_)),
     "turns" -> pov.game.turns,
     "status" -> pov.game.status
   )
@@ -100,11 +102,6 @@ final class JsonView(
 }
 
 object JsonView {
-  implicit val statusWriter: OWrites[okey.Status] = OWrites { s =>
-    Json.obj(
-      "id" -> s.id,
-      "name" -> s.name)
-  }
 
   implicit val clockWriter: OWrites[okey.Clock] = OWrites { c =>
     Json.obj(
@@ -113,24 +110,6 @@ object JsonView {
       "sides" -> JsObject(
         okey.Side.all.map(s => s.name -> JsNumber(truncateAt(c.remainingTime(s), 2)))),
       "emerg" -> c.emergTime
-    )
-  }
-
-  private def sidesWriter(sides: okey.Sides[okey.EndScoreSheet]) =
-    Json.obj(
-      "east" -> sides(okey.EastSide),
-      "west" -> sides(okey.WestSide),
-      "north" -> sides(okey.NorthSide),
-      "south" -> sides(okey.SouthSide)
-    )
-
-  private implicit val endScoreSheetWriter: OWrites[okey.EndScoreSheet] = OWrites { s =>
-    Json.obj(
-      "hand" -> s.handSum,
-      "total" -> s.total,
-      "scores" -> JsObject(s.scores map {
-        case (k, v) => k.id.toString -> (JsNumber(v.map(_.id) | 0))
-      })
     )
   }
 }

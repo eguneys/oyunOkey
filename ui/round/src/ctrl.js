@@ -118,6 +118,7 @@ module.exports = function(opts) {
 
     d.game.turns = o.ply;
     d.game.player = game.sideByPly(o.ply);
+    d.game.oscores = o.oscores;
 
     d.possibleMoves = d.player.side === d.game.player ? o.dests : [];
     this.setTitle();
