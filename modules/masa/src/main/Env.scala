@@ -65,7 +65,7 @@ final class Env(
 
   lazy val jsonView = new JsonView(lightUser)
 
-  lazy val scheduleJsonView = new ScheduleJsonView()
+  lazy val scheduleJsonView = new ScheduleJsonView(lightUser)
 
   private val socketHub = system.actorOf(Props(new oyun.socket.SocketHubActor.Default[Socket] {
     def mkActor(masaId: String) = new Socket(

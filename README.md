@@ -1,5 +1,20 @@
 ## TODO
 
+
+## Features
+
+Team
+Q&A
+Forum
+Message
+Follow
+Timeline
+Game stats
+Leaderboard
+Theme
+
+
+
 ### Site
 Add icons / logo / images
 Add sounds
@@ -29,6 +44,7 @@ Allow invite friends
 
 ### Round
 Add round ingame penalty scores
+Add uci piece icons/fonts
 + Fix Draw middle uci / uci translations
 + Fix chat room position
 + Invalidate cache on pov not found
@@ -47,13 +63,14 @@ DuzOkey scoring system/game end winner
 DuzOkey end by series / pairs
 DuzOkey game end show groups
 + DuzOkey variant docs
-+DuzOkey round end by zero score
++ DuzOkey round end by zero score
 
 ## Ground
 
 Add animations/fadings
 [bug] force draw vs manual draw mix
 [bug] dont allow twice discard
+[bug] open series some unsync
 
 ## Ôyunkeyf Skor Sistemi
 
