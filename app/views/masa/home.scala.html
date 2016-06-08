@@ -37,7 +37,11 @@
 @masa.layout(
 title = trans.masas.str(),
 side = side.some,
-moreJs = moreJs) {
+moreJs = moreJs,
+openGraph = oyun.app.ui.OpenGraph(
+  url = s"$netBaseUrl${routes.Masa.home().url}",
+  title = s"${trans.masaHomeTitle()}",
+  description = s"${trans.masaHomeDescription()}").some) {
   <div class="content_box masa_box no_padding">
     <h1>@trans.masas()</h1>
     <div id="masa_schedule">

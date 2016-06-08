@@ -32,7 +32,7 @@ gulp.task('dev', function() {
                  plugins: ['add-module-exports'] })
     .bundle()
     .on('error', onError)
-    .pipe(source('oyunkeyf.round.js'))
+    .pipe(source('oyunkeyf.masa-schedule.js'))
     .pipe(streamify(uglify()))
     .pipe(gulp.dest(destination));
 });

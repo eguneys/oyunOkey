@@ -1,4 +1,4 @@
-// Generated with bin/trans-dump at 2016-05-27 15:11:01 UTC
+// Generated with bin/trans-dump at 2016-06-08 15:44:29 UTC
 package oyun.i18n
 
 import play.twirl.api.Html
@@ -29,6 +29,9 @@ final class I18nKeys(translator: Translator) {
   val `theBestFreeOkeyServer` = new Key("theBestFreeOkeyServer")
   val `freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents` = new Key("freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents")
   val `masaFAQ` = new Key("masaFAQ")
+  val `newMasa` = new Key("newMasa")
+  val `masaHomeTitle` = new Key("masaHomeTitle")
+  val `masaHomeDescription` = new Key("masaHomeDescription")
   val `join` = new Key("join")
   val `invite` = new Key("invite")
   val `withdraw` = new Key("withdraw")
@@ -56,6 +59,8 @@ final class I18nKeys(translator: Translator) {
   val `variant` = new Key("variant")
   val `standard` = new Key("standard")
   val `yuzbirOkey` = new Key("yuzbirOkey")
+  val `duzOkey` = new Key("duzOkey")
+  val `yuzbir` = new Key("yuzbir")
   val `roundsToPlay` = new Key("roundsToPlay")
   val `rounds` = new Key("rounds")
   val `roundX` = new Key("roundX")
@@ -105,8 +110,19 @@ final class I18nKeys(translator: Translator) {
   val `uciDropOpenPairs` = new Key("uciDropOpenPairs")
   val `uciDropOpenSeriesReplace` = new Key("uciDropOpenSeriesReplace")
   val `uciDropOpenPairsReplace` = new Key("uciDropOpenPairsReplace")
+  val `hands` = new Key("hands")
   val `scores` = new Key("scores")
   val `replay` = new Key("replay")
+  val `openTables` = new Key("openTables")
+  val `inProgressTables` = new Key("inProgressTables")
+  val `completed` = new Key("completed")
+  val `home` = new Key("home")
+  val `anonymous` = new Key("anonymous")
+  val `settings` = new Key("settings")
+  val `playOnline` = new Key("playOnline")
+  val `nbPlayers` = new Key("nbPlayers")
+  val `nbRounds` = new Key("nbRounds")
+  val `faq` = new Key("faq")
   val `waitingPlayers` = new Key("waitingPlayers")
   val `gameEndByHand` = new Key("gameEndByHand")
   val `gameEndByPair` = new Key("gameEndByPair")
@@ -160,7 +176,7 @@ final class I18nKeys(translator: Translator) {
   val `isOyunkeyfLagging` = new Key("isOyunkeyfLagging")
   val `playOkeyEverywhere` = new Key("playOkeyEverywhere")
 
-  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `backToMasa`, `theBestFreeOkeyServer`, `freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents`, `masaFAQ`, `join`, `invite`, `withdraw`, `inProgress`, `play`, `playingRightNow`, `playing`, `finished`, `players`, `games`, `gamesPlayed`, `points`, `nbWins`, `nbLoss`, `aiBot`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `allowAnon`, `winner`, `cancel`, `variant`, `standard`, `yuzbirOkey`, `roundsToPlay`, `rounds`, `roundX`, `seeAllMasas`, `openMasas`, `masas`, `theTable`, `more`, `rated`, `casual`, `leaderboard`, `oyunkeyfMasas`, `masaNotFound`, `masaDoesNotExist`, `masaMayHaveBeenCancelled`, `masaTryRefreshingPage`, `returnToLobby`, `returnToMasasHomepage`, `youArePlaying`, `joinTheGame`, `playerHasJoinedTheGame`, `playerHasLeftTheGame`, `thereIsAGameInProgress`, `yourTurn`, `waitingForOpponent`, `gameOver`, `gameEnded`, `gameAborted`, `gameFinished`, `gameMiddleFinished`, `gameEndBy`, `openSeries`, `openPairs`, `openedSeries`, `openedPairs`, `collectOpen`, `leaveTaken`, `uciDrawMiddle`, `uciDrawMiddlePiece`, `uciDiscard`, `uciCollectOpen`, `uciLeaveTaken`, `uciDrawLeft`, `uciOpenSeries`, `uciOpenPairs`, `uciDropOpenSeries`, `uciDropOpenPairs`, `uciDropOpenSeriesReplace`, `uciDropOpenPairsReplace`, `scores`, `replay`, `waitingPlayers`, `gameEndByHand`, `gameEndByPair`, `gameEndByDiscardOkey`, `handZero`, `handOkeyLeft`, `handNotOpened`, `handOpenedPair`, `handOpenedSome`, `reconnecting`, `signIn`, `signUp`, `community`, `contact`, `forum`, `questionsAndAnswers`, `inbox`, `preferences`, `profile`, `logOut`, `online`, `offline`, `networkLagBetweenYouAndOyunkeyf`, `timeToProcessAMoveOnOyunkeyfServer`, `newToOyunkeyf`, `forgotPassword`, `passwordReset`, `email`, `password`, `username`, `usernameOrEmail`, `textIsTooShort`, `textIsTooLong`, `invalidCaptcha`, `haveAnAccount`, `changePassword`, `changeEmail`, `checkYourEmail`, `termsOfService`, `youNeedAnAccountToDoThat`, `computersAreNotAllowedToPlay`, `byRegisteringYouAgreeToBeBoundByOur`, `weHaveSentYouAnEmailClickTheLink`, `ifYouDoNotSeeTheEmailCheckOtherPlaces`, `memberSince`, `membersOnly`, `lastSeenActive`, `tpTimeSpentPlaying`, `nbConnectedPlayers`, `nbGamesInPlay`, `isOyunkeyfLagging`, `playOkeyEverywhere`)
+  def keys = List(`createAGame`, `createAMasa`, `viewMasa`, `backToMasa`, `theBestFreeOkeyServer`, `freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents`, `masaFAQ`, `newMasa`, `masaHomeTitle`, `masaHomeDescription`, `join`, `invite`, `withdraw`, `inProgress`, `play`, `playingRightNow`, `playing`, `finished`, `players`, `games`, `gamesPlayed`, `points`, `nbWins`, `nbLoss`, `aiBot`, `freeOnlineOkey`, `chatRoom`, `toggleTheChat`, `talkInChat`, `createdBy`, `by`, `allowAnon`, `winner`, `cancel`, `variant`, `standard`, `yuzbirOkey`, `duzOkey`, `yuzbir`, `roundsToPlay`, `rounds`, `roundX`, `seeAllMasas`, `openMasas`, `masas`, `theTable`, `more`, `rated`, `casual`, `leaderboard`, `oyunkeyfMasas`, `masaNotFound`, `masaDoesNotExist`, `masaMayHaveBeenCancelled`, `masaTryRefreshingPage`, `returnToLobby`, `returnToMasasHomepage`, `youArePlaying`, `joinTheGame`, `playerHasJoinedTheGame`, `playerHasLeftTheGame`, `thereIsAGameInProgress`, `yourTurn`, `waitingForOpponent`, `gameOver`, `gameEnded`, `gameAborted`, `gameFinished`, `gameMiddleFinished`, `gameEndBy`, `openSeries`, `openPairs`, `openedSeries`, `openedPairs`, `collectOpen`, `leaveTaken`, `uciDrawMiddle`, `uciDrawMiddlePiece`, `uciDiscard`, `uciCollectOpen`, `uciLeaveTaken`, `uciDrawLeft`, `uciOpenSeries`, `uciOpenPairs`, `uciDropOpenSeries`, `uciDropOpenPairs`, `uciDropOpenSeriesReplace`, `uciDropOpenPairsReplace`, `hands`, `scores`, `replay`, `openTables`, `inProgressTables`, `completed`, `home`, `anonymous`, `settings`, `playOnline`, `nbPlayers`, `nbRounds`, `faq`, `waitingPlayers`, `gameEndByHand`, `gameEndByPair`, `gameEndByDiscardOkey`, `handZero`, `handOkeyLeft`, `handNotOpened`, `handOpenedPair`, `handOpenedSome`, `reconnecting`, `signIn`, `signUp`, `community`, `contact`, `forum`, `questionsAndAnswers`, `inbox`, `preferences`, `profile`, `logOut`, `online`, `offline`, `networkLagBetweenYouAndOyunkeyf`, `timeToProcessAMoveOnOyunkeyfServer`, `newToOyunkeyf`, `forgotPassword`, `passwordReset`, `email`, `password`, `username`, `usernameOrEmail`, `textIsTooShort`, `textIsTooLong`, `invalidCaptcha`, `haveAnAccount`, `changePassword`, `changeEmail`, `checkYourEmail`, `termsOfService`, `youNeedAnAccountToDoThat`, `computersAreNotAllowedToPlay`, `byRegisteringYouAgreeToBeBoundByOur`, `weHaveSentYouAnEmailClickTheLink`, `ifYouDoNotSeeTheEmailCheckOtherPlaces`, `memberSince`, `membersOnly`, `lastSeenActive`, `tpTimeSpentPlaying`, `nbConnectedPlayers`, `nbGamesInPlay`, `isOyunkeyfLagging`, `playOkeyEverywhere`)
 
   lazy val count = keys.size
 }
