@@ -4,7 +4,7 @@ import play.api.libs.json._
 import oyun.common.PimpedJson._
 import oyun.common.Maths.truncateAt
 
-import oyun.game.{ Pov, Game, Player => GamePlayer }
+import oyun.game.{ Pov, Game, PerfPicker, Player => GamePlayer }
 import oyun.user.{ User, UserRepo }
 
 import actorApi.SocketStatus
@@ -78,13 +78,17 @@ final class JsonView(
 
   private def povJson(pov: Pov) = Json.obj(
     "id" -> pov.game.id,
+    "variant" -> pov.game.variant,
+    "perf" -> PerfPicker.key(pov.game),
+    "rated" -> pov.game.rated,
     "fen" -> (Forsyth >> (pov.game.toOkey, pov.side)),
     "player" -> pov.game.turnSide.name,
     "scores" -> pov.game.endScores.map(sidesWriter(_)),
     "oscores" -> pov.game.openStates.map(sidesWriter(_)),
     "turns" -> pov.game.turns,
-    "status" -> pov.game.status
-  )
+    "status" -> pov.game.status,
+    "masaId" -> pov.game.masaId,
+    "createdAt" ->pov.game.createdAt).noNull
 
   private def getPlayerChat(game: Game, forUser: Option[User]): Fu[Option[oyun.chat.MixedChat]] =
     game.hasChat optionFu {
@@ -102,6 +106,14 @@ final class JsonView(
 }
 
 object JsonView {
+
+  implicit val variantWriter: OWrites[okey.variant.Variant] = OWrites { v =>
+    Json.obj(
+      "key" -> v.key,
+      "name" -> v.name,
+      "short" -> v.shortName,
+      "title" -> v.title)
+  }
 
   implicit val clockWriter: OWrites[okey.Clock] = OWrites { c =>
     Json.obj(

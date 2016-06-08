@@ -142,11 +142,7 @@ module.exports = function(opts) {
         } else if (o.drop) {
           this.okeyground.apiMove(o.key, wrapDrop(o.drop.piece, o.drop.pos));
         } else if (o.key === okeyground.move.collectOpen) {
-          // this.okeyground.apiMove(o.key, { fen: o.fen });
-          var oldFen = this.okeyground.getFen();
-          this.okeyground.set({
-            fen: mutil.persistentFen(o.fen, oldFen)
-          });
+          this.restoreFen(o.fen);
         } else if (o.key === okeyground.move.leaveTaken) {
           this.restoreFen(o.fen);
         } else {
@@ -235,7 +231,11 @@ module.exports = function(opts) {
   };
 
   this.restoreFen = (fen) => {
-    var oldFen = this.okeyground.getFen();
+    var oldBoard = this.okeyground.getFen();
+
+    // make a hack fen to split
+    var oldFen = "//" + oldBoard + "/";
+
     this.okeyground.set({
       fen: mutil.persistentFen(fen, oldFen)
     });

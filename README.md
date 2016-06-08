@@ -12,6 +12,7 @@ Timeline
 Game stats
 Leaderboard
 Theme
+staging.oyunkeyf
 
 
 
@@ -27,6 +28,8 @@ not allow more masa create
 Fix masa reminder spam
 + match similar masa create / find compatible
 
+## Chat
+fix autolink / strip lang
 
 ### Masa
 [bug] [rare] extra pairing is done after masa finish
@@ -43,6 +46,7 @@ Allow invite friends
 + not allow anon/bot enter rated
 
 ### Round
+Rotate sides each round
 Add round ingame penalty scores
 Add uci piece icons/fonts
 + Fix Draw middle uci / uci translations
@@ -56,17 +60,21 @@ Add uci piece icons/fonts
 ~ Add round watcher view / improve move events
 
 ### Variant
+101 Abort hand on middle end
 
-DuzOkey don't show opens / add torr
 DuzOkey perfs
 DuzOkey scoring system/game end winner
 DuzOkey end by series / pairs
 DuzOkey game end show groups
++ DuzOkey don't show opens / add torr
 + DuzOkey variant docs
 + DuzOkey round end by zero score
 
 ## Ground
 
+Add group drag / visual
+Add last move animation
+Notify duz okey end status
 Add animations/fadings
 [bug] force draw vs manual draw mix
 [bug] dont allow twice discard

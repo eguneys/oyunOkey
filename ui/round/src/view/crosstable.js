@@ -39,6 +39,25 @@ function compact(obj) {
   return res;
 }
 
+function duzPlayerTr(ctrl, { player, scores }) {
+  var mySide = ctrl.data.player.side;
+
+  return m('tr', {
+    key: player.side,
+    class: classSet({
+      'me': player.side === mySide
+    }),
+    onclick: partial(function() {}, player.side)
+  }, [
+    m('td.sheet', []),
+    m('th.score', scores.total),
+    m('th.user', [
+      utilPlayer(player, 'a')
+    ])
+  ]);
+}
+
+
 function playerTr(ctrl, { player, scores, opens }) {
   var mySide = ctrl.data.player.side;
 
@@ -94,7 +113,9 @@ module.exports = function(ctrl) {
     };
   });
 
-  var tableBody = scores.map(partial(playerTr, ctrl));
+  var withOpens = !!d.game.variant.key.match(/yuzbir/);
+
+  var tableBody = scores.map(partial(withOpens ? playerTr : duzPlayerTr, ctrl));
 
   return m('div.crosstable_wrap', [
     (ctrl.vm.scoresheetInfo.side && ctrl.data.game.scores) ? renderTableScoreInfo(ctrl) : m('div.scores_info'),
