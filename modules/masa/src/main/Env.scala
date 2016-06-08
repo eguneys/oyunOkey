@@ -46,12 +46,14 @@ final class Env(
   private def isPlayerOnline(masaId: String)(player: Player) = player.userId.fold(isAnonOnline(masaId, player))(funit inject isOnline(_))
 
   lazy val api = new MasaApi(
+    scheduleJsonView = scheduleJsonView,
     system = system,
     sequencers = sequencerMap,
     socketHub = socketHub,
     autoPairing = autoPairing,
     perfsUpdater = perfsUpdater,
     renderer = hub.actor.renderer,
+    site = hub.socket.site,
     lobby = hub.socket.lobby)
 
   val masa = api masa _

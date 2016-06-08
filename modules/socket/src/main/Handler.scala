@@ -14,6 +14,8 @@ object Handler {
   type Controller = PartialFunction[(String, JsObject), Unit]
   type Connecter = PartialFunction[Any, (Controller, JsEnumerator, SocketMember)]
 
+  val emptyController: Controller = PartialFunction.empty
+
   def apply(
     socket: ActorRef,
     uid: String,

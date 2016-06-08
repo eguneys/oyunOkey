@@ -23,7 +23,7 @@ final class Env(
 
   oyun.log.boot.info("Preloading modules")
   oyun.common.Chronometer.syncEffect(List(Env.socket,
-    // Env.site,
+    Env.site,
     Env.masa,
     Env.lobby,
     Env.round,
@@ -48,6 +48,7 @@ object Env {
   def fishnet = oyun.fishnet.Env.current
   def socket = oyun.socket.Env.current
   def setup = oyun.setup.Env.current
+  def site = oyun.site.Env.current
   def lobby = oyun.lobby.Env.current
   def round = oyun.round.Env.current
   def game = oyun.game.Env.current

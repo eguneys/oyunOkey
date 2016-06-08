@@ -24,4 +24,10 @@ object Main extends OyunController {
     }
   }
 
+  def websocket = SocketOption { implicit ctx =>
+    get("sri") ?? { uid =>
+      Env.site.socketHandler(uid, ctx.userId, get("flag")) map some
+    }
+  }
+
 }

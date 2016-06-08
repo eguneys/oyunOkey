@@ -2,6 +2,7 @@ package oyun.masa
 
 import scala.concurrent.duration._
 import scala.concurrent.Promise
+import play.api.libs.json._
 
 import akka.actor._
 import akka.pattern.{ ask, pipe }
@@ -11,6 +12,7 @@ import oyun.common.Debouncer
 import oyun.hub.actorApi.map.{ Tell }
 import oyun.hub.actorApi.lobby.ReloadMasas
 import oyun.hub.Sequencer
+import oyun.socket.actorApi.SendToFlag
 import oyun.game.{ Mode, Game }
 import oyun.user.{ User, UserRepo }
 
@@ -18,12 +20,14 @@ import okey.Side
 import makeTimeout.short
 
 private[masa] final class MasaApi(
+  scheduleJsonView: ScheduleJsonView,
   system: ActorSystem,
   sequencers: ActorRef,
   autoPairing: AutoPairing,
   perfsUpdater: PerfsUpdater,
   socketHub: ActorRef,
   renderer: ActorSelection,
+  site: ActorSelection,
   lobby: ActorSelection) {
 
   def addMasa(setup: MasaSetup, player: PlayerRef): Fu[Masa] = {
@@ -279,6 +283,12 @@ private[masa] final class MasaApi(
   private object publish {
     private val debouncer = system.actorOf(Props(new Debouncer(10 seconds, {
       (_: Debouncer.Nothing) =>
+      fetchVisibleMasas foreach { vis =>
+        site ! SendToFlag("masa", Json.obj(
+          "t" -> "reload",
+          "d" -> scheduleJsonView(vis)
+        ))
+      }
       MasaRepo.promotable foreach { masas =>
         renderer ? MasaTable(masas) map {
           case view: play.twirl.api.Html => ReloadMasas(view.body)

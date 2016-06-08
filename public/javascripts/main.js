@@ -53,6 +53,7 @@
   };
 
   oyunkeyf.socket = null;
+  oyunkeyf.idleTime = 20 * 60 * 1000;
   $.extend(true, oyunkeyf.StrongSocket.defaults, {
     events: {
       message: function(msg) {
@@ -126,6 +127,13 @@
       setMomentFromNow();
       $('body').on('oyunkeyf.content_loaded', setMomentFromNow);
       setInterval(setMomentFromNow, 2000);
+
+      setTimeout(function() {
+        if (oyunkeyf.socket === null) {
+          oyunkeyf.socket = oyunkeyf.StrongSocket("/socket", 0);
+        }
+        $.idleTimer(oyunkeyf.idleTime, oyunkeyf.socket.destroy, oyunkeyf.socket.connect);
+      }, 200);
 
       // Zoom
       var getZoom = function() {
@@ -496,4 +504,38 @@
 
     masa = OyunkeyfMasa(element, cfg);
   }
+
+  /////
+
+  $.idleTimer = function(delay, onIdle, onWakeUp) {
+    var eventType = 'mousemove';
+    var listening = false;
+    var active = true;
+    var lastSeenActive = new Date();
+    var onActivity = function() {
+      if (!active) onWakeUp();
+      active = true;
+      lastSeenActive = new Date();
+      stopListening();
+    };
+    var startListening = function() {
+      if (!listening) {
+        document.addEventListener(eventType, onActivity);
+        listening = true;
+      }
+    };
+    var stopListening = function() {
+      if (listening) {
+        document.removeEventListener(eventType, onActivity);
+        listening = false;
+      }
+    };
+    setInterval(function() {
+      if (active && new Date() - lastSeenActive > delay) {
+        onIdle();
+        active = false;
+      }
+      startListening();
+    }, 5000);
+  };
 })();

@@ -1,6 +1,17 @@
 @(created: List[Masa], playing: Paginator[Masa], json: play.api.libs.json.JsObject)(implicit ctx: Context)
 
 @moreJs = {
+  @jsAt(s"compiled/oyunkeyf.masa-schedule.js")
+  @jsAt(s"javascripts/vendor/dragscroll.js")
+  @embedJs {
+    var app = OyunkeyfMasaSchedule(document.getElementById('masa_schedule'), {
+      data: @Html(J.stringify(json)),
+      i18n: @jsI18n(),
+      userId: @Html(ctx.userId.fold("null")(id => s""""$id""""))
+    });
+    oyunkeyf.StrongSocket.defaults.params.flag = "masa";
+    oyunkeyf.StrongSocket.defaults.events.reload = app.update;
+  }
 }
 
 @side = {
@@ -29,6 +40,9 @@ side = side.some,
 moreJs = moreJs) {
   <div class="content_box masa_box no_padding">
     <h1>@trans.masas()</h1>
+    <div id="masa_schedule">
+      @base.spinner()
+    </div>
     <div id="masa_list">
       <table class="slist">
         <thead>

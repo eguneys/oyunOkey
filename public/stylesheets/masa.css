@@ -443,3 +443,101 @@ ol.created_masas li:hover::before {
 ol.created_masas a {
   font-weight: bold;
 }
+
+#masa_schedule {
+  min-height: 400px;
+  position: relative;
+}
+
+#masa_schedule .spinner {
+  width: 120px;
+  height: 120px;
+  padding-top: 120px;
+  opacity: 0.7;
+}
+
+#masa_schedule .schedule {
+  position: relative;
+  overflow-x: scroll;
+  padding-top: 30px;
+  border-top: 1px solid #d4d4d4;
+  cursor: move;
+}
+
+#masa_schedule .timeline {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+#masa_schedule .timeheader {
+  position: absolute;
+  display: inline;
+  box-sizing: border-box;
+  height: 100%;
+  border-left: 1px dashed #bbb;
+  padding: 2px 5px;
+}
+
+#masa_schedule .timeheader.hour {
+  font-weight: bold;
+  border-left-style: solid;
+}
+
+#masa_schedule .timeheader.now {
+  top: 1.7em;
+  height: calc(100% - 1.7em);
+  margin-left: 1px;
+  border-left: 2px dashed #d85000!important;
+}
+
+#masa_schedule .masaline {
+  position: relative;
+  height: 5em;
+}
+
+#masa_schedule .masa {
+  position: absolute;
+  box-sizing: border-box;
+  padding: 4px 0;
+  background-color: #303E43;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  border-radius: 2px;
+  transition: -webkit-filter 0.13s, filter 0.13s;
+  color: #fff;
+}
+
+#masa_schedule .masa.finished {
+  opacity: 0.7;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3) inset;
+}
+
+#masa_schedule .masa.joinable:hover {
+  -webkit-filter: brightness(1.07);
+  filter: brightness(1.07);
+}
+
+
+#masa_schedule .masa span {
+  margin-right: 4px;
+}
+
+#masa_schedule .icon {
+  float: left;
+  font-size: 2.4em;
+  margin: -6px 2px 0 2px;
+}
+
+#masa_schedule .name {
+  color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+}
+
+#masa_schedule .nb-players {
+  float: right;
+}
