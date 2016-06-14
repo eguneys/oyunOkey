@@ -23,8 +23,9 @@ object PairingRepo {
   private def selectMasaPlayer(masaId: String, playerId: String) = selectMasa(masaId) ++ selectPlayer(playerId)
 
   private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.MiddleEnd.id))
-  private val selectFinished = $doc("s" -> $doc("$gte" -> okey.Status.NormalEnd.id))
-  private val selectFinishedAny = $doc("s" -> $doc("$gte" -> okey.Status.Aborted.id))
+  //private val selectFinished = $doc("s" -> $doc("$gte" -> okey.Status.NormalEnd.id))
+  private val selectFinished = $doc("ec" -> true)
+
   private val recentSort = $doc("d" -> -1)
   private val chronoSort = $doc("d" -> 1)
 
@@ -53,6 +54,7 @@ object PairingRepo {
   def finish(g: oyun.game.Game) = coll.update(
     selectId(g.id),
     $doc("$set" -> $doc(
+      "ec" -> g.finishedCounts,
       "s" -> g.status.id,
       "ss" -> g.endScores.map(_.map(_.total)),
       "w" -> g.winnerSide.flatMap(g.player(_).playerId),

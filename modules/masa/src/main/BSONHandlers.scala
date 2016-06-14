@@ -100,6 +100,7 @@ object BSONHandlers {
         playerIds = pids,
         round = r.get[Int]("mr"),
         scores = r.get[List[Int]]("ss"),
+        endCounts = r boolD "ec",
         winner = r getO[String] "w"
       )
     }
@@ -111,7 +112,8 @@ object BSONHandlers {
       "pids" -> o.playerIds,
       "mr" -> o.round,
       "ss" -> o.scores.toList,
-      "w" -> o.winner
+      "w" -> o.winner,
+      "ec" -> o.endCounts
     )
   }
 }

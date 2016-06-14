@@ -233,6 +233,8 @@ case class Game(
 
   def finishedOrAborted = finished || aborted
 
+  def finishedCounts = (status == Status.MiddleEnd).fold(variant.middleEndCounts, finished)
+
   def accountable = playedTurns >= 0
 
   def ratingVariant = variant

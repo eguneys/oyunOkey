@@ -10,11 +10,12 @@ case class Pairing(
   playerIds: Sides[String],
   round: Int,
   scores: Sides[Int],
+  endCounts: Boolean,
   winner: Option[String]) {
 
   def gameId = id
 
-  def finished = status >= okey.Status.NormalEnd
+  def finished = status >= okey.Status.MiddleEnd
   def playing = !finished
 
   def scoreOf(playerId: String): Option[Int] = (playerIds zip scores find {
@@ -30,7 +31,8 @@ private[masa] object Pairing {
     playerIds = playerIds,
     round = round,
     scores = Sides[Int],
-    winner = none)
+    winner = none,
+    endCounts = false)
 
   case class Prep(masaId: String, round: Int, player1: String, player2: String, player3: String, player4: String) {
     def toPairing =

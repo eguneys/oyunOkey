@@ -35,9 +35,11 @@ differantiate anonymous users
 ### Masa
 [bug] [rare] extra pairing is done after masa finish
 [bug] [rare] game dissapears pairing stays
+[bug] [rate] ai doesn't auto play
 Check masa for removal / masa clock
 Add masa perfs
 Allow invite friends
+Remove player with 3 consecutive outoftime
 +Fix withdraw masa interrupt
 +Fix masa socket version update
 + improve game end reasons add to masa pairings
@@ -61,7 +63,7 @@ Add uci piece icons/fonts
 ~ Add round watcher view / improve move events
 
 ### Variant
-101 Abort hand on middle end
+101 dont Abort hand on middle end
 
 DuzOkey perfs
 DuzOkey scoring system/game end winner

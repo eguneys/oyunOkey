@@ -39,7 +39,7 @@ private[masa] final class StartedOrganizer(
 
             val masaFinish = masa.scores.fold(
               masa.roundsToFinish.exists(0==)) { scores =>
-              activePlayers map (p => scores + p.score) exists (_<=0)
+              activePlayers map (p => p.score) exists (_<=0)
             }
 
             val result: Funit =
