@@ -1,0 +1,17 @@
+#!/bin/sh
+
+REMOTE="anand"
+REMOTE_DIR="/home/ubuntu/oyun"
+
+echo "Notify oyunkeyf of pre deploy"
+bin/cli-prod deploy pre
+
+sleep 30
+
+echo "Notify oyunkeyf of post deploy"
+bin/cli-prod deploy post
+
+echo "Restart oyunkeyf"
+ssh $REMOTE "sudo service oyunkeyf restart"
+
+echo "Deploy complete"

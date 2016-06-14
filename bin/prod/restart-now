@@ -1,0 +1,13 @@
+#!/bin/sh
+
+DIR="/home/ubuntu/oyun"
+
+echo "Notify oyunkeyf of post deploy"
+$DIR/bin/cli-prod deploy post
+
+sleep 3
+
+echo "Restart oyunkeyf"
+sudo service oyunkeyf restart
+
+echo "Restart complete"

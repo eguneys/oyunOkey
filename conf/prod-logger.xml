@@ -68,6 +68,8 @@
   </logger>
 
   <!--  <logger name="java.nio.channels.ClosedChannelException" level="OFF" /> -->
+  <logger name="reactivemongo.api.Cursor" level="OFF" />
+  <logger name="reactivemongo.api.Failover" level="OFF" />
 
   <!-- Set a specific actor to DEBUG -->
   <!-- <logger name="actors.MyActor" level="DEBUG" /> -->
