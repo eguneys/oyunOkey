@@ -7,6 +7,9 @@ case class SendTo(userId: String, message: JsObject)
 
 case class SendTos(userIds: Set[String], message: JsObject)
 
+sealed abstract class Deploy(val key: String)
+case object DeployPre extends Deploy("deployPre")
+case object DeployPost extends Deploy("deployPost")
 
 package map {
   case class Get(id: String)

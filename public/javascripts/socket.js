@@ -187,7 +187,7 @@ oyunkeyf.StrongSocket = function(murl, mversion, msettings) {
     ws = null;
   };
 
-  var disconnect = function() {
+  var disconnect = function(onNextConnect) {
     if (ws) {
       debug("Disconnect", true);
       autoReconnect = false;
@@ -197,6 +197,7 @@ oyunkeyf.StrongSocket = function(murl, mversion, msettings) {
       ws.onmessage = $.noop;
       ws.close();
     }
+    if (onNextConnect) options.onNextConnect = onNextConnect;
   };
 
   var onError = function(e) {
@@ -218,6 +219,10 @@ oyunkeyf.StrongSocket = function(murl, mversion, msettings) {
     $('#network_error').remove();
     nbConnects = (nbConnects || 0) + 1;
     if (nbConnects === 1) options.onFirstConnect();
+    if (options.onNextConnect) {
+      options.onNextConnect();
+      delete options.onNextConnect;
+    }
   };
 
   var baseUrl = function() {

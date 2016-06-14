@@ -10,9 +10,11 @@ if [ -z $mode ]; then
 elif [ $mode = "main" ]; then
    REMOTE="anand"
    REMOTE_DIR="/home/ubuntu/oyun"
+   CLI="bin/cli-prod"
 elif [ $mode = "local" ]; then
    REMOTE="localhost"
    REMOTE_DIR="/tmp/oyun5"
+   CLI="bin/cli"
 else
    echo "Unknown deploy target $mode"
    exit 1
@@ -24,6 +26,8 @@ if [ "$2" = "asset" ]; then
   bin/prod/compile-client
 fi
 
+oyunlog "Notify users of pre deploy"
+$CLI deploy pre
 
 bin/dev ";stage;exit"
 if [ $? != 0 ]; then
@@ -65,6 +69,9 @@ if [ $mode = "main" ]; then
 fi
 
 # read -n 1 -p "Press [Enter] to complete deployment to $mode server $REMOTE:$REMOTE_DIR"
+
+oyunlog "Notify users of post deploy"
+$CLI deploy post
 
 if [ $mode = "main" ]; then
   oyunlog "Restart oyunkeyf"

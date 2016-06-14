@@ -123,6 +123,10 @@ group.radio label {
   color: #759900;
 }
 
+[data-icon].is3::before {
+  font-size: 22px;
+}
+
 html {
   min-height: 100%;
 }

@@ -4,11 +4,11 @@ import scala.concurrent.duration._
 import scala.concurrent.Future
 import scala.util.Random
 
-import akka.actor._
+import akka.actor.{ Deploy => _, _ }
 import play.api.libs.json._
 
 import actorApi._
-import oyun.hub.actorApi.{ GetUids, SocketUids }
+import oyun.hub.actorApi.{ Deploy, GetUids, SocketUids }
 
 abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
 
@@ -45,6 +45,8 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
     case Quit(uid) => quit(uid)
 
     case GetUids => sender ! SocketUids(members.keySet.toSet)
+
+    case d: Deploy => onDeploy(d)
   }
 
   def receive = receiveSpecific orElse receiveGeneric
@@ -95,6 +97,10 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
       members -= uid
       oyunBus.publish(SocketLeave(uid, member), 'socketDoor)
     }
+  }
+
+  def onDeploy(d: Deploy) {
+    notifyAll(makeMessage(d.key))
   }
 
   private val resyncMessage = makeMessage("resync")

@@ -7,7 +7,7 @@ final class SocketHub extends Actor {
   private val sockets = collection.mutable.Set[ActorRef]()
 
   override def preStart() {
-    context.system.oyunBus.subscribe(self, 'socket)
+    context.system.oyunBus.subscribe(self, 'deploy, 'socket)
   }
 
   override def postStop() {

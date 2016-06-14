@@ -36,6 +36,10 @@ object PimpedFuture {
       fua
     }
 
+    def logFailure(logger: => oyun.log.Logger, msg: Exception => String): Fu[A] =
+      addFailureEffect { e => logger.warn(msg(e), e) }
+    def logFailure(logger: => oyun.log.Logger): Fu[A] = logFailure(logger, _.toString)
+
     def addEffect(effect: A => Unit) = {
       fua foreach effect
       fua

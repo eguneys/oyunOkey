@@ -28,8 +28,9 @@ not allow more masa create
 Fix masa reminder spam
 + match similar masa create / find compatible
 
-## Chat
+## Extra
 fix autolink / strip lang
+differantiate anonymous users
 
 ### Masa
 [bug] [rare] extra pairing is done after masa finish

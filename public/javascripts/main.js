@@ -76,6 +76,24 @@
           $.redirect(o);
         }, 300);
       },
+      deployPost: function(html) {
+        $('#notifications').append(
+          '<div id="deploy_post" class="notification">' +
+            '<div class="inner"><p data-icon="j" class="is3 text">' +
+            $.trans('Site update in progress') + '...</p></div>' +
+            '</div>');
+        oyunkeyf.socket.disconnect(function() {
+          $('#deploy_post').remove();
+          $('#notifications').append(
+            '<div id="deploy_done" class="notification">' +
+              '<div class="inner"><p data-icon="E" class="is3 is-green text">' +
+              $.trans('Site update complete') + '.</p></div>' +
+              '</div>');
+          setTimeout(function() {
+            $('#deploy_done').fadeOut(1000).remove();
+          }, 6000);
+        });
+      },
       masaReminder: function(data) {
         if (!$('#masa_reminder').length && !$('body').data('masa-id')) {
           $('#notifications').append(data.html).find('a.withdraw').click(function() {

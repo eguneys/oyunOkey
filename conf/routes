@@ -55,6 +55,7 @@ GET     /variant                controllers.Page.variantHome
 GET     /variant/:key           controllers.Page.variant(key)
 
 # Misc
+POST    /cli            controllers.Cli.command
 GET     /mobile         controllers.Main.mobile
 GET     /lag            controllers.Main.lag
 

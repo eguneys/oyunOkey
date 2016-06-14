@@ -39,6 +39,13 @@ final class Env(
     pool = pool,
     keys = keys
   )
+
+  def cli = new oyun.common.Cli {
+    def process = {
+      case "i18n" :: "js" :: "dump" :: Nil =>
+        jsDump.apply inject "Dumped JavaScript translations"
+    }
+  }
 }
 
 object Env {
