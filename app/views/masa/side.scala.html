@@ -10,7 +10,9 @@
       </span>
       (<a href="@routes.Masa.help(m.system.toString.toLowerCase.some)">?</a>)
       <br />
-      @m.membersOnly.fold("", trans.allowAnon.str())
+      @if(!m.rated && m.membersOnly) {
+        @trans.membersOnly.str()
+      }
     </div>
   </div>
   @m.spotlight.map { s =>

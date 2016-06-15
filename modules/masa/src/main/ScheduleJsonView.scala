@@ -21,6 +21,7 @@ final class ScheduleJsonView(
     "createdBy" -> masa.createdBy,
     "system" -> masa.system.toString.toLowerCase,
     "rated" -> masa.mode.rated,
+    "mOnly" -> masa.membersOnly,
     "fullName" -> masa.fullName,
     "nbPlayers" -> masa.nbPlayers,
     "nbRounds" -> masa.nbRounds,
