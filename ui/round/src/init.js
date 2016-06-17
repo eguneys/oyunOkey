@@ -17,7 +17,7 @@ module.exports = {
 
     if (game.isPlayerPlaying(d)) {
       window.addEventListener('beforeunload', function(e) {
-        if (game.playable(ctrl.data)) {
+        if (!oyunkeyf.hasToReload && game.playable(ctrl.data) && ctrl.data.clock) {
           ctrl.saveBoard();
           ctrl.socket.send('bye');
           var msg = ctrl.trans('thereIsAGameInProgress');

@@ -40,6 +40,7 @@ object Work {
         date = DateTime.now).some
     )
 
+    def similar(to: Move) = game.id == to.game.id && game.game.turns == to.game.game.turns
   }
 
   def makeId = Id(scala.util.Random.alphanumeric take 8 mkString)

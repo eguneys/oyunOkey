@@ -46,6 +46,8 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
 
     case GetUids => sender ! SocketUids(members.keySet.toSet)
 
+    case Resync(uid) => resync(uid)
+
     case d: Deploy => onDeploy(d)
   }
 
@@ -110,6 +112,10 @@ abstract class SocketActor[M <: SocketMember] extends Socket with Actor {
     context.system.scheduler.scheduleOnce((Random nextInt 2000).milliseconds) {
       resyncNow(member)
     }
+  }
+
+  protected def resync(uid: String) {
+    withMember(uid)(resync)
   }
 
   protected def resyncNow(member: M) {
