@@ -40,6 +40,7 @@
 [ ] Add masa perfs
 [ ] Allow invite friends
 [ ] Remove player with 3 consecutive outoftime
+[ ] Out of time on first turn
 [ ] +Fix withdraw masa interrupt
 [ ] +Fix masa socket version update
 [x] improve game end reasons add to masa pairings
@@ -49,12 +50,13 @@
 [x] not allow anon/bot enter rated
 
 ### Round
+[ ] Add next round link
 [ ] Rotate sides each round
 [ ] Add round ingame penalty scores
 [ ] Add uci piece icons/fonts
-[] [bug] force draw vs manual draw mix
-[] [bug] dont allow twice discard
-[] [bug] open series some unsync
+[x] [bug] force draw vs manual draw mix // fixed by ! Resync
+[x] [bug] dont allow twice discard // fixed by ! Resync
+[x] [bug] open series some unsync // fixed by ! Resync
 [x] Fix Draw middle uci / uci translations
 [x] Fix chat room position
 [x] Invalidate cache on pov not found
@@ -66,7 +68,7 @@
 [~] Add round watcher view / improve move events
 
 ### Variant
-[ ] 101 dont Abort hand on middle end
+[x] 101 dont Abort hand on middle end
 
 [ ] DuzOkey perfs
 [ ] DuzOkey scoring system/game end winner
@@ -78,7 +80,7 @@
 
 ## Ground
 
-[] Add group drag / visual
+[x] Add group drag / visual
 [] Add last move animation
 [] Notify duz okey end status
 [] Add animations/fadings

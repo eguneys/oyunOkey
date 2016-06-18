@@ -41,7 +41,7 @@ private[i18n] final class JsDump(
       case (code, name) => s"""["$code","$name"]"""
     }.mkString("[", ",", "]")
     val file = new File("%s/refs.json".format(pathFile.getCanonicalPath))
-    val out = new PrintWriter(file)
+    val out = new PrintWriter(file, "UTF-8")
     try { out.print(code) }
     finally { out.close }
   }
@@ -50,7 +50,7 @@ private[i18n] final class JsDump(
     pool.langs foreach { lang =>
       val code = dumpFromKey(keys.keys, lang)
       val file = new File("%s/%s.all.json".format(pathFile.getCanonicalPath, lang.language))
-      val out = new PrintWriter(file)
+      val out = new PrintWriter(file, "UTF-8")
       try { out.print(code) }
       finally { out.close }
     }
