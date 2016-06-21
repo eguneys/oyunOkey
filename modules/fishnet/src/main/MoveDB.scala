@@ -39,7 +39,7 @@ private final class MoveDB(
     def receive = {
 
       case Add(move) if !coll.exists(_._2 similar move) =>
-        println(move.id, move.game.id, move.game.game.turns)
+        // println(move.id, move.game.id, move.game.game.turns)
         coll += (move.id -> move)
 
       // case Add(move) =>
@@ -65,7 +65,7 @@ private final class MoveDB(
           case Some(move) if move isAcquiredBy client => data match {
             case Some(uci) =>
               coll -= move.id
-              println("removed", uci, move.id)
+              // println("removed", uci, move.id)
               roundMap ! hubApi.map.Tell(move.game.id, hubApi.round.FishnetPlay(uci))
             case _ =>
               println(s"move invalid ${moveId}")

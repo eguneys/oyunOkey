@@ -889,11 +889,11 @@ piece.dragging.group {
 }
 
 .move-dest {
-  box-shadow: radial-gradient(transparent 0%, transparent 70%, rgba(216, 85, 0, 0.5) 80%);
+  box-shadow: inset 0 0 10px rgba(216, 85, 0, 0.9) !important;
 }
 
 .og-top piece.move-dest {
-  box-shadow: 0 0 10px rgba(216, 85, 0, 0.9) !important;
+  box-shadow: inset 0 0 10px rgba(216, 85, 0, 0.9) !important;
 }
 
 .og-board .drag-over,
