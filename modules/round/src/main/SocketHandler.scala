@@ -59,6 +59,15 @@ private[round] final class SocketHandler(
     }
   }
 
+  def watcher(
+    gameId: String,
+    sideName: String,
+    uid: String,
+    user: Option[User]): Fu[Option[JsSocketHandler]] =
+    GameRepo.pov(gameId, sideName) flatMap {
+      _ ?? { join(_, none, uid, user) map some }
+    }
+
   def player(
     pov: Pov,
     uid: String,

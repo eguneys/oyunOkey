@@ -32,7 +32,7 @@ final class JsonView(
           Json.obj(
             "game" -> povJson(pov),
             "clock" -> game.clock.map(clockJson),
-            "player" -> playerJson(socket, player, playerUser),
+            "player" -> (playerJson(socket, player, playerUser) ++ Json.obj("spectator" -> false)),
             "opponentLeft" -> opponentJson(socket, opponentLeft, opponentLeftUser),
             "opponentRight" -> opponentJson(socket, opponentRight, opponentRightUser),
             "opponentUp" -> opponentJson(socket, opponentUp, opponentUpUser),
@@ -51,6 +51,41 @@ final class JsonView(
               })
             },
             "possibleMoves" -> possibleMoves(pov)
+          ).noNull
+      }
+  }
+
+  def watcherJson(
+    pov: Pov,
+    user: Option[User]): Fu[JsObject] = {
+    val playerIds = List(pov.player, pov.opponentLeft, pov.opponentRight, pov.opponentUp) map (_.userId)
+
+    getSocketStatus(pov.game.id) zip
+    (UserRepo.pair(playerIds) map(_.toList)) zip
+      getPlayerChat(pov.game, user) map {
+        case ((socket, List(playerUser, opponentLeftUser, opponentRightUser, opponentUpUser)), chat) =>
+          import pov._
+          Json.obj(
+            "game" -> povJson(pov),
+            "clock" -> game.clock.map(clockJson),
+            "player" -> (playerJson(socket, player, playerUser) ++ Json.obj("spectator" -> true)),
+            "opponentLeft" -> opponentJson(socket, opponentLeft, opponentLeftUser),
+            "opponentRight" -> opponentJson(socket, opponentRight, opponentRightUser),
+            "opponentUp" -> opponentJson(socket, opponentUp, opponentUpUser),
+            "url" -> Json.obj(
+              "socket" -> s"/$gameId/${side.name}/socket",
+              "round" -> s"/$gameId/${side.name}"
+            ),
+            "chat" -> chat.map { c =>
+              JsArray(c.lines map {
+                case oyun.chat.UserLine(username, text, _) => Json.obj(
+                  "u" -> username,
+                  "t" -> text)
+                case oyun.chat.PlayerLine(side, text) => Json.obj(
+                  "s" -> side.name,
+                  "t" -> text)
+              })
+            }
           ).noNull
       }
   }

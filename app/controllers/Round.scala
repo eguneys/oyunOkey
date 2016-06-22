@@ -13,6 +13,16 @@ object Round extends OyunController with TheftPrevention {
 
   private def env = Env.round
 
+  def websocketWatcher(gameId: String, side: String) = SocketOption[JsValue] { implicit ctx =>
+    get("sri") ?? { uid =>
+      env.socketHandler.watcher(
+        gameId = gameId,
+        sideName = side,
+        uid = uid,
+        user = ctx.me)
+    }
+  }
+
   def websocketPlayer(fullId: String) = SocketEither[JsValue] { implicit ctx =>
     GameRepo pov fullId flatMap {
       case Some(pov) =>
@@ -60,7 +70,16 @@ object Round extends OyunController with TheftPrevention {
   def watch(pov: Pov)(implicit ctx: Context): Fu[Result] =
     playablePovForReq(pov.game) match {
       case Some(player) => renderPlayer(pov withSide player.side)
-      case _ => Ok("watcher").fuccess
+      case _ => negotiate(
+        html = {
+          myMasa(pov.game.masaId, false) zip
+            Env.api.roundApi.watcher(pov) map {
+              case (masa, data) =>
+                Ok(html.round.watcher(pov, data, masa))
+            }
+        },
+        api = apiVersion => Env.api.roundApi.watcher(pov) map { Ok(_) }
+      )
     }
 
   private def myMasa(masaId: Option[String], withStanding: Boolean)(implicit ctx: Context): Fu[Option[MiniStanding]] =

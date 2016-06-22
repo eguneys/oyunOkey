@@ -5,7 +5,7 @@ import play.twirl.api.Html
 
 import okey.{ Status => S }
 
-import oyun.game.{ Game, Player, Pov }
+import oyun.game.{ Game, Player, Pov, Namer }
 import oyun.user.{ User, UserContext }
 
 trait GameHelper { self: I18nHelper with UserHelper =>
@@ -20,6 +20,9 @@ trait GameHelper { self: I18nHelper with UserHelper =>
   //   import pov._
   //   // val p1 = playerText(player,
   // }
+
+  def gameVsText(game: Game): String =
+    Namer.gameVsText(game)(lightUser)
 
   def playerLink(
     player: Player,

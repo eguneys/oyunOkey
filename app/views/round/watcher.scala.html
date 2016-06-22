@@ -1,0 +1,26 @@
+@(pov: Pov, data: play.api.libs.json.JsObject, m: Option[oyun.masa.MiniStanding])(implicit ctx: Context)
+
+@title = @{ s"${gameVsText(pov.game)} in ${pov.gameId}" }
+
+@moreJs = {
+  @jsAt(s"compiled/oyunkeyf.round.js")
+  @embedJs {
+    $(function() {
+      oyunkeyf.startRound(document.getElementById('oyunkeyf'), {
+        data: @Html(J.stringify(data)),
+        i18n: @jsI18n()
+      });
+    });
+  }
+}
+
+
+@round.layout(
+  title = title,
+  side = views.html.game.side(pov, m),
+  chat = ctx.isAuth.option(base.chatDom(trans.spectatorRoom.str())),
+  moreJs = moreJs,
+  openGraph = povOpenGraph(pov).some) {
+  <div class="round og-512"></div>
+  @game.sideMasa(pov, m)
+}

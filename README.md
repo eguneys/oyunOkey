@@ -33,6 +33,7 @@
 - [ ] differantiate anonymous users
 
 ### Masa
+- [ ] titivate pairing vs game
 - [ ] [bug] [rare] extra pairing is done after masa finish
 - [ ] [bug] [rare] game dissapears pairing stays
 - [ ] [bug] [rare] ai doesn't auto play
@@ -51,11 +52,11 @@
 
 ### Round
 - [ ] add spectator
-- [ ] [bug rare] clock stuck sometimes leavetaken
 - [ ] Add next round link
 - [ ] Rotate sides each round
 - [ ] Add round ingame penalty scores
 - [ ] Add uci piece icons/fonts
+- [ ] [bug rare] clock stuck sometimes leavetaken
 - [x] [bug] force draw vs manual draw mix // fixed by ! Resync
 - [x] [bug] dont allow twice discard // fixed by ! Resync
 - [x] [bug] open series some unsync // fixed by ! Resync

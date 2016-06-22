@@ -21,6 +21,15 @@ private[api] final class RoundApi(
         )(json)
       }
 
+  def watcher(pov: Pov)(implicit ctx: Context): Fu[JsObject] =
+    jsonView.watcherJson(pov, ctx.me) zip
+      getMasa(pov.game) map {
+        case ((json, masaOption)) => (
+          withMasa(pov, masaOption)_ compose
+            withSteps(pov)_
+        )(json)
+      }
+
   private def withSteps(pov: Pov)(obj: JsObject) =
     obj + ("steps" -> oyun.round.StepBuilder(
       id = pov.game.id,

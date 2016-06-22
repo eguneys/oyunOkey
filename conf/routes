@@ -8,10 +8,12 @@ POST    /setup/hook/:uid        controllers.Setup.hook(uid: String)
 
 # Round
 
-GET     /$gameId<\w{8}>         controllers.Round.watcher(gameId: String, side: String = "east")
-GET     /$fullId<\w{12}>        controllers.Round.player(fullId: String)
-GET     /$fullId<\w{12}>/socket controllers.Round.websocketPlayer(fullId: String)
-GET     /$gameId<\w{8}>/$side<east|west|north|south>/sides/player         controllers.Round.sidesPlayer(gameId: String, side: String)
+GET     /$gameId<\w{8}>                                                 controllers.Round.watcher(gameId: String, side: String = "east")
+GET     /$gameId<\w{8}>/$side<east|west|north|south>                    controllers.Round.watcher(gameId: String, side)
+GET     /$fullId<\w{12}>                                                controllers.Round.player(fullId: String)
+GET     /$gameId<\w{8}>/$side<east|west|north|south>/socket             controllers.Round.websocketWatcher(gameId: String, side: String)
+GET     /$fullId<\w{12}>/socket                                         controllers.Round.websocketPlayer(fullId: String)
+GET     /$gameId<\w{8}>/$side<east|west|north|south>/sides/player       controllers.Round.sidesPlayer(gameId: String, side: String)
 
 # Masa
 

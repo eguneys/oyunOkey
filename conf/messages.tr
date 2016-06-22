@@ -25,6 +25,7 @@ nbLoss=%s Kaybedilen
 freeOnlineOkey=Ücretsiz Çevrimiçi Okey
 chat=Sohbet
 chatRoom=Sohbet Odası
+spectatorRoom=Seyirci Odası
 toggleTheChat=Sohbet aç/kapa
 talkInChat=Sohbeti Başlat
 createdBy=Açan

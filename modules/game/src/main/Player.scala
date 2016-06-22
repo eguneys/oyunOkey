@@ -13,7 +13,8 @@ case class Player(
   rating: Option[Int] = None,
   isWinner: Option[Boolean] = None,
   endScore: Option[EndScoreSheet] = None,
-  standing: Option[Int] = None) {
+  standing: Option[Int] = None,
+  name: Option[String] = None) {
 
   def finish(score: Option[EndScoreSheet], standing: Option[Int], winner: Boolean) = copy(
     endScore = endScore,
@@ -60,6 +61,7 @@ object Player {
   object BSONFields {
     val aiLevel = "ai"
     val rating = "e"
+    val name = "n"
   }
 
 
@@ -87,14 +89,15 @@ object Player {
       aiLevel = r intO aiLevel,
       endScore = endScore,
       standing = standing,
-      isWinner = win
-    )
+      isWinner = win,
+      name = r strO name)
 
     def writes(w: BSON.Writer, o: Builder) =
       o(Side.EastSide)("0000")(none)(none)(none)(none)(none) |> { p =>
         BSONDocument(
           aiLevel -> p.aiLevel,
-          rating -> p.rating
+          rating -> p.rating,
+          name -> p.name
         )
       }
   }
