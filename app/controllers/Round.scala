@@ -72,7 +72,8 @@ object Round extends OyunController with TheftPrevention {
       case Some(player) => renderPlayer(pov withSide player.side)
       case _ => negotiate(
         html = {
-          myMasa(pov.game.masaId, false) zip
+          // why withStanding false?
+          myMasa(pov.game.masaId, true) zip
             Env.api.roundApi.watcher(pov) map {
               case (masa, data) =>
                 Ok(html.round.watcher(pov, data, masa))

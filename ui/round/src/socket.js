@@ -18,6 +18,7 @@ module.exports = function(send, ctrl) {
   var handlers = {
     move: function(o) {
       o.isMove = true;
+      var data = ctrl.data;
       ctrl.apiMove(o);
     },
     crowd: function(o) {

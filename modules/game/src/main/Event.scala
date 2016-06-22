@@ -27,6 +27,7 @@ object Event {
       action = move.action,
       drawMiddle = matchDrawMiddle(side, state.side, move),
       discard = matchDiscard(move),
+      leaveTaken = matchLeaveTaken(move),
       opens = matchOpens(move),
       drop = matchDrop(move),
       fen = okey.format.Forsyth.exportTable(situation.table, side),
@@ -34,6 +35,20 @@ object Event {
       clock = clock,
       possibleMoves = situation.actions
     )
+
+    def watcher(side: Side, move: OkeyMove, situation: Situation, state: State, clock: Option[Event]): WatcherMove = Move(
+      side = side,
+      action = move.action,
+      drawMiddle = none,
+      discard = matchDiscard(move),
+      leaveTaken = matchLeaveTaken(move),
+      opens = matchOpens(move),
+      drop = matchDrop(move),
+      fen = okey.format.Forsyth.exportTableWatcher(situation.table, side),
+      state = state,
+      clock = clock,
+      possibleMoves = situation.actions
+    ).forWatcher
 
     def data(
       fen: String,
@@ -64,6 +79,11 @@ object Event {
       case _ => None
     }
 
+    private def matchLeaveTaken(move: OkeyMove): Option[PieceData] = move.action match {
+      case okey.LeaveTaken(p) => PieceData(p).some
+      case _ => None
+    }
+
     private def matchOpens(move: OkeyMove): Option[PieceGroupData] = move.action match {
       case okey.OpenSeries(g) => PieceGroupData(g).some
       case okey.OpenPairs(g) => PieceGroupData(g).some
@@ -77,10 +97,29 @@ object Event {
     }
   }
 
+  case class PlayerMove(side: Side, move: Move) extends Event {
+    def typ = "move"
+    override def only = Some(side)
+    override def owner = true
+
+    def data = move.data
+  }
+
+  case class WatcherMove(move: Move) extends Event {
+    def typ = "move"
+    override def watcher = true
+
+    def data = (move.data ++ Json.obj(
+      "uci" -> Move.hideAction(true, move.action).toUci.uci,
+      "drawmiddle" -> JsNull
+    )).noNull
+  }
+
   case class Move(
     side: Side,
     action: Action,
     drawMiddle: Option[PieceData],
+    leaveTaken: Option[PieceData],
     discard: Option[PieceData],
     opens: Option[PieceGroupData],
     drop: Option[DropData],
@@ -88,15 +127,18 @@ object Event {
     state: State,
     clock: Option[Event],
     possibleMoves: List[Action]) extends Event {
-    def typ = "move"
 
-    override def only = Some(side)
+    def forPlayer = PlayerMove(side, this)
+    def forWatcher = WatcherMove(this)
+
+    def typ = "move"
 
     def data = Move.data(fen, state, clock, possibleMoves) {
       Json.obj(
         "key" -> action.key,
         "uci" -> Move.hideAction(side != state.side, action).toUci.uci,
         "drawmiddle" -> drawMiddle.map(_.data),
+        "leavetaken" -> leaveTaken.map(_.data),
         "discard" -> discard.map(_.data),
         "opens" -> opens.map(_.data),
         "drop" -> drop.map(_.data)

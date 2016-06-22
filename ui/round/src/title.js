@@ -6,6 +6,7 @@ var init = function(ctrl) {
 };
 
 var set = function(ctrl, text) {
+  if (ctrl.data.player.spectator) return;
   if (!text) {
     if (status.finished(ctrl.data)) {
       text = ctrl.trans('gameOver');

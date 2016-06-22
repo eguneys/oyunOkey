@@ -144,7 +144,8 @@ module.exports = function(opts) {
         } else if (o.key === okeyground.move.collectOpen) {
           this.restoreFen(o.fen);
         } else if (o.key === okeyground.move.leaveTaken) {
-          this.restoreFen(o.fen);
+          //this.restoreFen(o.fen);
+          this.okeyground.apiMove(o.key, wrapPiece(o.leavetaken.piece));
         } else {
           this.okeyground.apiMove(o.key);
         }

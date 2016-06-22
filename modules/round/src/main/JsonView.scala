@@ -66,7 +66,9 @@ final class JsonView(
         case ((socket, List(playerUser, opponentLeftUser, opponentRightUser, opponentUpUser)), chat) =>
           import pov._
           Json.obj(
-            "game" -> povJson(pov),
+            "game" -> (povJson(pov) ++ Json.obj(
+              "fen" -> (Forsyth >>| (pov.game.toOkey, pov.side))
+            )),
             "clock" -> game.clock.map(clockJson),
             "player" -> (playerJson(socket, player, playerUser) ++ Json.obj("spectator" -> true)),
             "opponentLeft" -> opponentJson(socket, opponentLeft, opponentLeftUser),

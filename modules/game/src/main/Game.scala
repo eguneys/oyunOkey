@@ -170,10 +170,13 @@ case class Game(
 
     val clockEvent = updated.clock map Event.Clock.apply
 
-    val events = Event.Move(Side.EastSide, move, situation, state, clockEvent) ::
-    Event.Move(Side.WestSide, move, situation, state, clockEvent) ::
-    Event.Move(Side.NorthSide, move, situation, state, clockEvent) ::
-    Event.Move(Side.SouthSide, move, situation, state, clockEvent) :: Nil
+    val events =
+      Event.Move(Side.EastSide, move, situation, state, clockEvent).forPlayer ::
+    Event.Move(Side.WestSide, move, situation, state, clockEvent).forPlayer ::
+    Event.Move(Side.NorthSide, move, situation, state, clockEvent).forPlayer ::
+    Event.Move(Side.SouthSide, move, situation, state, clockEvent).forPlayer ::
+    Event.Move.watcher(Side.SouthSide, move, situation, state, clockEvent) :: Nil
+
 
     Progress(this, updated, events)
   }
