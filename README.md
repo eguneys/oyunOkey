@@ -51,10 +51,11 @@
 - [x] not allow anon/bot enter rated
 
 ### Round
-- [ ] add spectator
-- [ ] Add next round link
 - [ ] Rotate sides each round
 - [ ] Add round ingame penalty scores
+- [x] add spectator
+- [ ] fix spectator chat
+- [ ] Add next round link
 - [ ] Add uci piece icons/fonts
 - [ ] [bug rare] clock stuck sometimes leavetaken
 - [x] [bug] force draw vs manual draw mix // fixed by ! Resync
@@ -71,7 +72,7 @@
 - [~] Add round watcher view / improve move events
 
 ### Okey
-- [ ] Leave taken doesn't collect open
+- [x] Leave taken doesn't collect open
 
 ### Variant
 - [x] 101 dont Abort hand on middle end

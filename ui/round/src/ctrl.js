@@ -64,7 +64,11 @@ module.exports = function(opts) {
   this.setTitle = partial(title.set, this);
 
   var onUserMove = (key, move) => {
-    console.log(key, move);
+
+    if (key === okeyground.move.leaveTaken) {
+      return;
+    }
+
     this.sendMove(key, move);
   };
 
@@ -94,6 +98,7 @@ module.exports = function(opts) {
 
   this.leaveTaken = () => {
     this.sendMove(okeyground.move.leaveTaken);
+    // this.okeyground.playLeaveTaken();
   };
 
   this.collectOpen = () => {
@@ -142,9 +147,8 @@ module.exports = function(opts) {
         } else if (o.drop) {
           this.okeyground.apiMove(o.key, wrapDrop(o.drop.piece, o.drop.pos));
         } else if (o.key === okeyground.move.collectOpen) {
-          this.restoreFen(o.fen);
+          this.restoreFen(o.fen, okeyground.move.collectOpen);
         } else if (o.key === okeyground.move.leaveTaken) {
-          //this.restoreFen(o.fen);
           this.okeyground.apiMove(o.key, wrapPiece(o.leavetaken.piece));
         } else {
           this.okeyground.apiMove(o.key);
@@ -231,14 +235,15 @@ module.exports = function(opts) {
     m.redraw();
   };
 
-  this.restoreFen = (fen) => {
+  this.restoreFen = (fen, hint) => {
     var oldBoard = this.okeyground.getFen();
 
     // make a hack fen to split
     var oldFen = "//" + oldBoard + "/";
 
     this.okeyground.set({
-      fen: mutil.persistentFen(fen, oldFen)
+      fen: mutil.persistentFen(fen, oldFen),
+      animationHint: hint
     });
   };
 
