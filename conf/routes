@@ -44,6 +44,8 @@ POST    /signup                         controllers.Auth.signupPost
 GET     /signup/check-your-email/:name  controllers.Auth.checkYourEmail(name: String)
 GET     /password/reset                 controllers.Auth.passwordReset
  
+# Account
+GET     /account/info   controllers.Account.info
 
 # Site
 GET     /socket         controllers.Main.websocket

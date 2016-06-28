@@ -24,6 +24,7 @@
 - [ ] Add leaderboards
 
 ### Lobby
+- [ ] ensure session id
 - [ ] not allow more masa create
 - [ ] Fix masa reminder spam
 - [x] match similar masa create / find compatible
@@ -51,8 +52,8 @@
 - [x] not allow anon/bot enter rated
 
 ### Round
-- [ ] Rotate sides each round
 - [ ] Add round ingame penalty scores
+- [ ] Rotate sides each round
 - [x] add spectator
 - [ ] fix spectator chat
 - [ ] Add next round link

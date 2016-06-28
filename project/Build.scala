@@ -43,7 +43,7 @@ object ApplicationBuild extends Build {
       // trump sbt-web into not looking at public/
       resourceDirectory in Assets := (sourceDirectory in Compile).value / "assets"))
 
-  lazy val modules = Seq(common, rating, db, user, chat, security, game, setup, site, lobby, socket, hub, okey, round, masa, i18n)
+  lazy val modules = Seq(common, rating, db, user, chat, pref, security, game, setup, site, lobby, socket, hub, okey, round, masa, i18n)
 
   lazy val moduleRefs = modules map projectToRef
   lazy val moduleCPDeps = moduleRefs map { new sbt.ClasspathDependency(_, None) }
@@ -104,6 +104,11 @@ object ApplicationBuild extends Build {
   lazy val chat = project("chat", Seq(common, db, user, security, i18n)).settings(
     libraryDependencies ++= Seq(spray.caching) ++ provided(play.api, RM)
   )
+
+  lazy val pref = project("pref", Seq(common, db, user)).settings(
+    libraryDependencies ++= provided(play.api, RM)
+  )
+
 
   lazy val site = project("site", Seq(common, socket)).settings(
     libraryDependencies ++= provided(play.api)

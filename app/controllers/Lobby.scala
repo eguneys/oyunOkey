@@ -10,11 +10,21 @@ import views._
 
 object Lobby extends OyunController {
   def home = Open { implicit ctx =>
-    renderHome(Results.Ok)
+    negotiate(
+      html = renderHome(Results.Ok).map(NoCache),
+      api = _ => fuccess {
+        Ok(Json.obj(
+          "lobby" -> Json.obj(
+            "version" -> Env.lobby.history.version)
+        ))
+      }
+    )
   }
 
   def renderHome(status: Results.Status)(implicit ctx: Context): Fu[Result] = {
-    Env.current.preloader(masas = Env.masa.cached promotable true) map (html.lobby.home.apply _).tupled map { status(_) }
+    Env.current.preloader(
+      masas = Env.masa.cached promotable true
+    ) map (html.lobby.home.apply _).tupled map { status(_) }
   }
 
   def socket(apiVersion: Int) = SocketOption[JsValue] { implicit ctx =>

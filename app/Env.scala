@@ -27,6 +27,7 @@ final class Env(
     Env.masa,
     Env.lobby,
     Env.round,
+    Env.pref,
     Env.chat,
     Env.fishnet
   )) { lap =>
@@ -54,6 +55,7 @@ object Env {
   def game = oyun.game.Env.current
   def masa = oyun.masa.Env.current
   // def site = oyun.site.Env.current
+  def pref = oyun.pref.Env.current
   def chat = oyun.chat.Env.current
 }
 
