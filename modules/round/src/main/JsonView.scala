@@ -125,6 +125,7 @@ final class JsonView(
     "turns" -> pov.game.turns,
     "status" -> pov.game.status,
     "masaId" -> pov.game.masaId,
+    "roundAt" -> pov.game.roundAt,
     "createdAt" ->pov.game.createdAt).noNull
 
   private def getPlayerChat(game: Game, forUser: Option[User]): Fu[Option[oyun.chat.MixedChat]] =

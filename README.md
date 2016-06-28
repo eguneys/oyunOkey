@@ -34,6 +34,7 @@
 - [ ] differantiate anonymous users
 
 ### Masa
+- [ ] [error] cannot read ai of undefined
 - [ ] titivate pairing vs game
 - [ ] [bug] [rare] extra pairing is done after masa finish
 - [ ] [bug] [rare] game dissapears pairing stays

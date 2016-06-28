@@ -16,8 +16,7 @@ final class AutoPairing {
       },
       players = GamePlayer.allSides,
       mode = masa.mode,
-      variant = masa.variant
-    )
+      variant = masa.variant)
     game2 = game1
     .updatePlayers(players.map { p => (gp: GamePlayer) =>
       val gp2 = gp.withPlayer(p.id).withAi(p.aiLevel)
@@ -27,6 +26,7 @@ final class AutoPairing {
       }
     })
     .withMasaId(masa.id)
+    .withRoundAt(masa.nbRounds)
     .withId(pairing.gameId)
     .start
     _ <- (GameRepo insertDenormalized game2)

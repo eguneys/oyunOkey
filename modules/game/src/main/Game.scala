@@ -56,6 +56,7 @@ case class Game(
   def fullIdOf(side: Side): String = s"$id${player(side).id}"
 
   def masaId = metadata.masaId
+  def roundAt = metadata.roundAt
 
   def hasChat = true
 
@@ -275,6 +276,10 @@ case class Game(
     metadata = metadata.copy(masaId = id.some)
   )
 
+  def withRoundAt(at: Int) = this.copy(
+    metadata = metadata.copy(roundAt = at)
+  )
+
   def withId(newId: String) = this.copy(id = newId)
 
   private def playerMaps[A](f: Player => Option[A]): List[A] = players flatMap { f(_) } toList
@@ -331,8 +336,8 @@ object Game {
       mode = mode,
       variant = variant,
       metadata = Metadata(
-        masaId = none
-      ),
+        masaId = none,
+        roundAt = 0),
       createdAt= DateTime.now)
   }
 
@@ -357,6 +362,7 @@ object Game {
     val opensLastMove = "ol"
     val status = "s"
     val turns = "t"
+    val roundAt = "ra"
     val clock = "c"
     val rated = "r"
     val variant = "v"

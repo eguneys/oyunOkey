@@ -189,7 +189,8 @@ object BSONHandlers {
         createdAt = createdAtValue,
         updatedAt = r dateO updatedAt,
         metadata = Metadata(
-          masaId = r strO masaId
+          masaId = r strO masaId,
+          roundAt = r int roundAt
         )
       )
     }
@@ -216,8 +217,8 @@ object BSONHandlers {
       variant -> o.variant.exotic.option(o.variant.id).map(w.int),
       createdAt -> w.date(o.createdAt),
       updatedAt -> o.updatedAt.map(w.date),
-      masaId -> o.metadata.masaId
-    )
+      masaId -> o.metadata.masaId,
+      roundAt -> o.metadata.roundAt)
   }
 
   import oyun.db.ByteArray.ByteArrayBSONHandler
