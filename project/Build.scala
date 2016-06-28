@@ -90,11 +90,11 @@ object ApplicationBuild extends Build {
   )
 
   lazy val lobby = project("lobby", Seq(common, user, game, okey, socket, hub)).settings(
-    libraryDependencies ++= provided(play.api, play.test)
+    libraryDependencies ++= provided(play.api, RM)
   )
 
   lazy val i18n = project("i18n", Seq(common, user)).settings(
-    libraryDependencies ++= provided(play.api)
+    libraryDependencies ++= provided(play.api, RM)
   )
 
   lazy val memo = project("memo", Seq(common, db)).settings(

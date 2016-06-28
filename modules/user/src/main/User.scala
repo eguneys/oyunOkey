@@ -2,6 +2,8 @@ package oyun.user
 
 import scala.concurrent.duration._
 
+import oyun.common.LightUser
+
 import org.joda.time.DateTime
 import oyun.rating.PerfType
 
@@ -19,12 +21,20 @@ case class User(
   override def toString =
     s"User $username(games:${count.game})${troll ?? " troll"}"
 
+  def light = LightUser(id = id, name = username, title = none)
+
   def noTroll = !troll
 
   def disabled = !enabled
 
 
   def lame = false
+
+  def lightPerf(key: String) = perfs(key) map { perf =>
+    User.LightPerf(light, key, perf.intRating, perf.progress)
+  }
+
+  def lightCount = User.LightCount(light, count.game)
 
   // TODO
   def usernameWithBestRating = s"$username"
@@ -50,6 +60,9 @@ object User {
   type ID = String
 
   val anonymous = "Anonymous"
+
+  case class LightPerf(user: LightUser, perfKey: String, rating: Int, progress: Int)
+  case class LightCount(user: LightUser, count: Int)
 
   case class Active(user: User)
 

@@ -9,6 +9,8 @@ case class Pref(
   import Pref._
 
   def id = _id
+
+
 }
 
 object Pref {

@@ -16,6 +16,7 @@ final class Env(
   config: Config,
   system: ActorSystem,
   db: oyun.db.Env,
+  mongoCache: oyun.memo.MongoCache.Builder,
   hub: oyun.hub.Env,
   lightUser: String => Option[oyun.common.LightUser],
   isOnline: String => Boolean,
@@ -27,6 +28,7 @@ final class Env(
     val CollectionPlayer = config getString "collection.player"
     val HistoryMessageTtl = config duration "history.message.ttl"
     val CreatedCacheTtl = config duration "created.cache.ttl"
+    val LeaderboardCacheTtl = config duration "leaderboard.cache.ttl"
     val SocketTimeout = config duration "socket.timeout"
     val SocketName = config getString "socket.name"
     val ApiActorName = config getString "api_actor.name"
@@ -64,6 +66,10 @@ final class Env(
     hub = hub,
     socketHub = socketHub,
     chat = hub.actor.chat)
+
+  lazy val winners = new Winners(
+    mongoCache = mongoCache,
+    ttl = LeaderboardCacheTtl)
 
   lazy val jsonView = new JsonView(lightUser)
 
@@ -120,6 +126,7 @@ object Env {
   lazy val current = new Env(
     config = oyun.common.PlayApp loadConfig "masa",
     system = oyun.common.PlayApp.system,
+    mongoCache = oyun.memo.Env.current.mongoCache,
     db = oyun.db.Env.current,
     hub = oyun.hub.Env.current,
     lightUser = oyun.user.Env.current.lightUser,

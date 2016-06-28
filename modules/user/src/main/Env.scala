@@ -17,6 +17,7 @@ final class Env(
     val CachedNbTtl = config duration "cached.nb.ttl"
     val OnlineTtl = config duration "online.ttl"
     val CollectionUser = config getString "collection.user"
+    val CollectionRanking = config getString "collection.ranking"
   }
   import settings._
 
@@ -25,6 +26,8 @@ final class Env(
   lazy val lightUserApi = new LightUserApi(userColl)
 
   lazy val onlineUserIdMemo = new ExpireSetMemo(ttl = OnlineTtl)
+
+  lazy val rankingApi = new RankingApi(db(CollectionRanking), mongoCache, lightUser)
 
   lazy val jsonView = new JsonView(isOnline)
 
@@ -54,7 +57,9 @@ final class Env(
   lazy val cached = new Cached(
     userColl = userColl,
     nbTtl = CachedNbTtl,
-    mongoCache = mongoCache)
+    onlineUserIdMemo = onlineUserIdMemo,
+    mongoCache = mongoCache,
+    rankingApi = rankingApi)
 }
 
 

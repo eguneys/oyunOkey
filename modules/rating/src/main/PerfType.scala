@@ -30,6 +30,8 @@ object PerfType {
 
   def apply(id: Perf.ID): Option[PerfType] = byId get id
 
+  def id2key(id: Perf.ID): Option[Perf.Key] = byId get id map (_.key)
+
   val nonGame: List[PerfType] = List.empty
 
   def isGame(pt: PerfType) = !nonGame.contains(pt)

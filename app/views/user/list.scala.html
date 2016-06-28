@@ -1,11 +1,66 @@
-@()(implicit ctx: Context)
+@(online: List[User], leaderboards: oyun.user.Perfs.Leaderboards, nbDay: List[User.LightCount], nbAllTime: List[User.LightCount])(implicit ctx: Context)
+
+@import oyun.rating.PerfType
+
+@userTopPerf(users: List[User.LightPerf], perfType: PerfType) = {
+  <div class="user_top">
+    <h2 class="text" data-icon="@perfType.iconChar">
+      <a href="#">@perfType.name</a>
+    </h2>
+    <table>
+      <tbody>
+        @users.map { l =>
+          <tr>
+            <td>@lightUserLink(l.user)</td>
+            <td>@l.rating</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@userTopActive(users: List[User.LightCount], title: Any, icon: Option[Char] = None) = {
+  <div class="user_top">
+    <h2 class="text"@icon.map { i => data-icon="@i" }>@title</h2>
+    <table>
+      <tbody>
+        @users.map { u =>
+          <tr>
+            <td>@lightUserLink(u.user)</td>
+            <td title="@trans.gamesPlayed()">@u.count.localize</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@side = {
+  <div class="side">
+    <form class="search public">
+      <input placeholder="@trans.search()" class="search_user user-autocomplete-jump" autofocus />
+    </form>
+  </div>
+}
 
 @user.layout(
-trans.players.str()) {
+trans.players.str(),
+side = side.some,
+openGraph = oyun.app.ui.OpenGraph(
+title = trans.okeyPlayersAndLeaderboards.str(),
+url = s"$netBaseUrl${routes.User.list.url}",
+description = trans.bestOkeyPlayersInYuzbir.str()).some) {
   <div class="content_box">
     <div class="user_lists">
       <div class="group">
+        @userTopPerf(leaderboards.yuzbir, PerfType.Yuzbir)
       </div>
+
+      <div class="group">
+        @userTopActive(nbAllTime, trans.activePlayers(), icon='U'.some)
+      </div>
+
     </div>
   </div>
 }

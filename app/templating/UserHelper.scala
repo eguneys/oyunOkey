@@ -38,6 +38,18 @@ trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
     }
   }
 
+  def lightUserLink(
+    user: LightUser,
+    cssClass: Option[String] = None,
+    withOnline: Boolean = true,
+    truncate: Option[Int] = None,
+    params: String = ""): Html = Html {
+    userIdNameLink(
+      userId = user.id,
+      username = user.name,
+      withOnline = withOnline)
+  }
+
   def userIdLink(
     userId: String,
     cssClass: Option[String]): Html = userIdLink(userId.some)

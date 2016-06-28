@@ -19,6 +19,9 @@ object UserRepo {
 
   val normalize = User normalize _
 
+  def topNbGame(nb: Int): Fu[List[User]] =
+    coll.find(enabledSelect).sort($sort desc "count.game").cursor[User]().gather[List](nb)
+
   def byId(id: ID): Fu[Option[User]] = coll.byId[User](id)
 
   def idByEmail(email: String): Fu[Option[String]] =
@@ -30,6 +33,13 @@ object UserRepo {
     }
 
   def named(username: String): Fu[Option[User]] = coll.byId[User](normalize(username))
+
+  // expensive, send to secondary
+  def byIdsSortRating(ids: Iterable[ID], nb: Int) =
+    coll.find($inIds(ids) ++ goodLadSelectBson)
+      .sort($sort desc "perfs.yuzbir.gl.r")
+      .cursor[User](ReadPreference.secondaryPreferred)
+      .gather[List](nb)
 
   val oyunkeyfId = "oyunkeyf"
   def oyunkeyf = byId(oyunkeyfId)
@@ -47,6 +57,9 @@ object UserRepo {
   }
 
   val enabledSelect = $doc(F.enabled -> true)
+  val goodLadSelect = enabledSelect
+  val goodLadSelectBson = enabledSelect
+  
 
   def authenticateById(id: ID, password: String): Fu[Option[User]] =
     checkPasswordById(id, password) flatMap { _ ?? coll.byId[User](id) }

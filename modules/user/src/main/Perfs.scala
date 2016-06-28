@@ -47,4 +47,8 @@ case object Perfs {
       "yuzbir" -> notNew(o.yuzbir)
     )
   }
+
+  case class Leaderboards(
+    yuzbir: List[User.LightPerf])
+
 }

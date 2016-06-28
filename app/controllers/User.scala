@@ -13,6 +13,8 @@ import views._
 
 object User extends OyunController {
 
+  private def env = Env.user
+
   def show(username: String) = OpenBody { implicit ctx =>
     filter(username, none, 1)
   }
@@ -53,12 +55,23 @@ object User extends OyunController {
   def list = Open { implicit ctx =>
     val nb = 10
     for {
+      leaderboards <- env.cached.leaderboards
+      nbAllTime <- env.cached topNbGame nb
+      nbDay <- fuccess(Nil)
+      // masaWinners <- Env.masa.winners scheduled nb
+      online <- env.cached top50Online true
       res <- negotiate(
-        html = fuccess(Ok(html.user.list())),
+        html = fuccess(Ok(html.user.list(
+          //masaWinners = masaWinners,
+          online = online,
+          leaderboards = leaderboards,
+          nbDay = nbDay,
+          nbAllTime = nbAllTime))),
         api = _ =>  fuccess {
-          Ok(Json.obj())
-        }
-      )
+          implicit val lpWrites = OWrites[UserModel.LightPerf](env.jsonView.lightPerfIsOnline)
+          Ok(Json.obj(
+            "yuzbir" -> leaderboards.yuzbir))
+        })
     } yield res
   }
 
