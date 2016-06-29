@@ -11,6 +11,17 @@ case class Perfs(
   def perfs = List(
     "yuzbir" -> yuzbir)
 
+  def bestPerf: Option[(PerfType, Perf)] = {
+    val ps = PerfType.all map { pt => pt -> apply(pt) }
+    val minNb = math.max(1, ps.foldLeft(0)(_ + _._2.nb) / 10)
+    ps.foldLeft(none[(PerfType, Perf)]) {
+      case (ro, p) if p._2.nb >= minNb => ro.fold(p.some) { r =>
+        Some(if (p._2.intRating > r._2.intRating) p else r)
+      }
+      case (ro, _) => ro
+    }
+  }
+
   lazy val perfsMap: Map[String, Perf] = Map(
     "yuzbir" -> yuzbir
   )

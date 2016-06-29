@@ -28,7 +28,7 @@
         @users.map { u =>
           <tr>
             <td>@lightUserLink(u.user)</td>
-            <td title="@trans.gamesPlayed()">@u.count.localize</td>
+            <td title="@trans.gamesPlayed()">#@u.count.localize</td>
           </tr>
         }
       </tbody>
@@ -41,6 +41,19 @@
     <form class="search public">
       <input placeholder="@trans.search()" class="search_user user-autocomplete-jump" autofocus />
     </form>
+    <div class="user_lists">
+      <div class="user_top">
+        <h2>@trans.onlinePlayers()</h2>
+        <table><tbody>
+          @online.map { u =>
+            <tr>
+              <td>@userLink(u)</td>
+              <td>@showBestPerf(u)</td>
+            </tr>
+          }
+        </tbody></table>
+      </div>
+    </div>
   </div>
 }
 
