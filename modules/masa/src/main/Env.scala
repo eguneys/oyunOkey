@@ -19,6 +19,7 @@ final class Env(
   mongoCache: oyun.memo.MongoCache.Builder,
   hub: oyun.hub.Env,
   lightUser: String => Option[oyun.common.LightUser],
+  rankingApi: oyun.user.RankingApi,
   isOnline: String => Boolean,
   scheduler: oyun.common.Scheduler) {
 
@@ -60,7 +61,7 @@ final class Env(
 
   val masa = api masa _
 
-  lazy val perfsUpdater = new PerfsUpdater()
+  lazy val perfsUpdater = new PerfsUpdater(rankingApi)
 
   lazy val socketHandler = new SocketHandler(
     hub = hub,
@@ -130,6 +131,7 @@ object Env {
     db = oyun.db.Env.current,
     hub = oyun.hub.Env.current,
     lightUser = oyun.user.Env.current.lightUser,
+    rankingApi = oyun.user.Env.current.rankingApi,
     isOnline = oyun.user.Env.current.isOnline,
     scheduler = oyun.common.PlayApp.scheduler
   )

@@ -1,4 +1,4 @@
-// Generated with bin/trans-dump at 2016-06-29 06:56:32 UTC
+// Generated with bin/trans-dump at 2016-06-29 09:11:24 UTC
 package oyun.i18n
 
 import play.twirl.api.Html

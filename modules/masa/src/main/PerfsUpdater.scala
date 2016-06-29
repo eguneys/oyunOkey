@@ -2,13 +2,12 @@ package oyun.masa
 
 import oyun.game.PerfPicker
 
-import oyun.user.{ UserRepo, User, Perfs }
-
 import oyun.rating.{ GliOkey, Perf, PerfType => PT, Rating, RatingCalculator }
+import oyun.user.{ UserRepo, User, Perfs, RankingApi }
 
 import okey.{ Sides }
 
-final class PerfsUpdater() {
+final class PerfsUpdater(rankingApi: RankingApi) {
 
   def save(masa: Masa, userPlayers: okey.Sides[(User, RankedPlayer)]): Funit =
     PerfPicker.main(masa.variant) ?? { mainPerf =>
@@ -30,6 +29,7 @@ final class PerfsUpdater() {
         {
           (users zip perfs).map { case (user, perfs) =>
             UserRepo.setPerfs(user, perfs, user.perfs)
+            rankingApi.save(user.id, masa.perfType, perfs)
           }.sequenceFu
         }
       }.void
