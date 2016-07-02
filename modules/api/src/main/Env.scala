@@ -6,6 +6,7 @@ import com.typesafe.config.Config
 final class Env(
   config: Config,
   system: ActorSystem,
+  userEnv: oyun.user.Env,
   lobbyEnv: oyun.lobby.Env,
   roundJsonView: oyun.round.JsonView,
   getMasa: oyun.game.Game => Fu[Option[oyun.masa.Masa]],
@@ -25,6 +26,10 @@ final class Env(
     def get = Net.AssetVersion
   }
 
+  val userApi = new UserApi(
+    jsonView = userEnv.jsonView,
+    makeUrl = makeUrl)
+
   val roundApi = new RoundApi(
     jsonView = roundJsonView,
     getMasa = getMasa
@@ -32,7 +37,10 @@ final class Env(
 
   val lobbyApi = new LobbyApi(
     lobby = lobbyEnv.lobby,
-    lobbyVersion = () => lobbyEnv.history.version)
+    lobbyVersion = () => lobbyEnv.history.version,
+    lightUser = userEnv.lightUser)
+
+  private def makeUrl(path: String): String = s"${Net.BaseUrl}/$path"
 
   lazy val cli = new Cli(system.oyunBus)
 }
@@ -40,6 +48,7 @@ final class Env(
 object Env {
   lazy val current = new Env(
     config = oyun.common.PlayApp.loadConfig,
+    userEnv = oyun.user.Env.current,
     lobbyEnv = oyun.lobby.Env.current,
     roundJsonView = oyun.round.Env.current.jsonView,
     getMasa = oyun.masa.Env.current.masa,

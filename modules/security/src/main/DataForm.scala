@@ -38,6 +38,12 @@ final class DataForm(emailAddress: EmailAddress) {
       //.verifying(captchaFailMessage, validateCaptcha _)
     )
 
+    val mobile = Form(mapping(
+      "username" -> username,
+      "password" -> text(minLength = 4),
+      "email" -> optional(acceptableUniqueEmail(none))
+    )(MobileSignupData.apply)(_ => None))
+
     // def websiteWithCaptcha = website
 
   }
@@ -52,4 +58,9 @@ object DataForm {
     `g-recaptcha-response`: String) {
     def recaptchaResponse = `g-recaptcha-response`
   }
+
+  case class MobileSignupData(
+    username: String,
+    password: String,
+    email: Option[String])
 }

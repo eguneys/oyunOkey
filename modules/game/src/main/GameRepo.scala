@@ -64,6 +64,9 @@ object GameRepo {
       // }
     }
 
+  // gets most urgent game to play
+  def mostUrgentGame(user: User): Fu[Option[Pov]] = urgentGames(user) map(_.headOption)
+
   private def nonEmptyMod(mod: String, doc: Bdoc) =
     if (doc.isEmpty) $empty else $doc(mod -> doc)
 

@@ -98,7 +98,14 @@ object Auth extends OyunController {
               }
             }
         }),
-      api = apiVersion => NotFound("asdf").fuccess
+      api = apiVersion => forms.signup.mobile.bindFromRequest.fold(
+        err => fuccess(BadRequest(jsonError(errorsAsJson(err)))),
+        data => {
+          val email = data.email flatMap env.emailAddress.validate
+          UserRepo.create(data.username, data.password, email, apiVersion.some)
+            .flatten(s"No user could be created for ${data.username}") flatMap authenticateUser
+        }
+      )
     )
   }
 

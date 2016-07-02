@@ -58,6 +58,10 @@ DELETE /notification/$id<\w{8}>         controllers.Notification.remove(id)
 GET     /variant                controllers.Page.variantHome
 GET     /variant/:key           controllers.Page.variant(key)
 
+# API
+
+GET     /api/user/:name controllers.Api.user(name: String)
+
 # Misc
 POST    /cli            controllers.Cli.command
 GET     /mobile         controllers.Main.mobile

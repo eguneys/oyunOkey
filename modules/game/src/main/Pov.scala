@@ -14,6 +14,8 @@ case class Pov(game: Game, side: Side) {
 
   def withSide(s: Side) = copy(side = s)
 
+  lazy val isMyTurn = game.started && game.playable && game.turnSide == side
+
   def opponentLeft = game player side.previous
   def opponentRight = game player side.next
   def opponentUp = game player side.next.next
