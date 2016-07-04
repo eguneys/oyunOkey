@@ -75,6 +75,11 @@ object MasaRepo {
     $doc("$set" -> $doc("nbRounds" -> nb))
   ).void
 
+  def setFeaturedGameId(masaId: String, gameId: String) = coll.update(
+    $id(masaId),
+    $doc("$set" -> $doc("featured" -> gameId))
+  ).void
+
   def setWinnerId(masaId: String, userId: String) = coll.update(
     $id(masaId),
     $doc("$set" -> $doc("winner" -> userId))

@@ -2,8 +2,10 @@ package oyun.masa
 
 import play.api.libs.json._
 import oyun.common.PimpedJson._
+import scala.concurrent.duration._
 
 import oyun.common.LightUser
+import oyun.game.{ Game, GameRepo }
 
 final class JsonView(getLightUser: String => Option[LightUser]) {
 
@@ -12,6 +14,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     actives: JsObject,
     users: JsObject,
     players: JsObject,
+    featured: Option[JsObject],
     podium: Option[JsArray])
 
   def apply(masa: Masa,
@@ -41,12 +44,26 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     "pairings" -> data.pairings,
     "standing" -> stand,
     "me" -> myInfo.map(myInfoJson),
+    "featured" -> data.featured,
     "podium" -> data.podium,
     "socketVersion" -> socketVersion
   ).noNull
 
   def standing(masa: Masa): Fu[JsObject] =
     computeStanding(masa)
+
+  private def fetchFeaturedGame(masa: Masa): Fu[Option[FeaturedGame]] =
+    masa.featuredId.ifTrue(masa.isStarted) ?? PairingRepo.byId flatMap {
+      _ ?? { pairing =>
+          GameRepo game pairing.gameId flatMap {
+            // TODO ?? make it work
+            _ match { case Some(game) =>
+              fuccess(Some(FeaturedGame(game)))
+              case _ => fuccess(None)
+            }
+          }
+      }
+    }
 
   private def computeStanding(masa: Masa): Fu[JsObject] = for {
     rankedPlayers <- PlayerRepo.bestByMasaWithRank(masa.id)
@@ -60,18 +77,31 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     "players" -> rankedPlayers.map(playerJson(sheets, masa))
   )
 
-  private val cachableData = ((id: String) => for {
-    pairings <- PairingRepo.recentByMasa(id, 40)
-    actives <- PlayerRepo.activePlayers(id)
-    users <- PlayerRepo.allUserPlayers(id)
-    players <- PlayerRepo.allByMasa(id)
-    podium <- podiumJson(id)
-  } yield CachableData(
-    pairings = JsArray(pairings map pairingJson),
-    actives = JsObject(actives map activeJson),
-    users = JsObject(users flatMap playerUserMap),
-    players = JsObject(players map (p => p.id -> playerInfoJson(p))),
-    podium))
+  private val cachableData = oyun.memo.AsyncCache[String, CachableData](id =>
+    for {
+      pairings <- PairingRepo.recentByMasa(id, 40)
+      masa <- MasaRepo byId id
+      actives <- PlayerRepo.activePlayers(id)
+      users <- PlayerRepo.allUserPlayers(id)
+      players <- PlayerRepo.allByMasa(id)
+      featured <- masa ?? fetchFeaturedGame
+      podium <- podiumJson(id)
+    } yield CachableData(
+      pairings = JsArray(pairings map pairingJson),
+      actives = JsObject(actives map activeJson),
+      users = JsObject(users flatMap playerUserMap),
+      players = JsObject(players map (p => p.id -> playerInfoJson(p))),
+      featured = featured map featuredJson,
+      podium),
+    timeToLive = 1 second)
+
+  private def featuredJson(featured: FeaturedGame) = {
+    val game = featured.game
+    Json.obj(
+      "id" -> game.id,
+      "fen" -> (okey.format.Forsyth >>| (game.toOkey, okey.Side.EastSide))
+    )
+  }
 
   private def myInfoJson(i: PlayerInfo) = Json.obj(
     "side" -> i.side.letter.toString,

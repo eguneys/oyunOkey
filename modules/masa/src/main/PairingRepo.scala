@@ -29,6 +29,8 @@ object PairingRepo {
   private val recentSort = $doc("d" -> -1)
   private val chronoSort = $doc("d" -> 1)
 
+  def byId(id: String): Fu[Option[Pairing]] = coll.find(selectId(id)).uno[Pairing]
+
   def recentByMasa(masaId: String, nb: Int): Fu[Pairings] =
     coll.find(selectMasa(masaId)).sort(recentSort).cursor[Pairing]().gather[List](nb)
 

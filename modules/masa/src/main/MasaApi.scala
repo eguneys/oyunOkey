@@ -80,13 +80,19 @@ private[masa] final class MasaApi(
             autoPairing(masa, pairing) addEffect { game =>
               sendTo(masa.id, StartGame(game))
             }
-        } >> funit >>- {
+        } >> funit >> featureOneOf(masa, pairing) >>- {
           oyun.mon.masa.pairing.create()
           pairingLogger.debug(s"${masa.id} ${pairing}")
         }
       }
     }
   }
+
+  private def featureOneOf(masa: Masa, pairing: Pairing): Funit =
+    masa.featuredId ?? PairingRepo.byId flatMap { curOption =>
+      def switch = MasaRepo.setFeaturedGameId(masa.id, pairing.gameId)
+      switch
+    }
 
   def invite(masaId: String, side: Option[String] = None): Fu[Unit] = {
     val ref = PlayerRef(aiLevel = 1.some)

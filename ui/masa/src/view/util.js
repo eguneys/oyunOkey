@@ -1,5 +1,21 @@
 import m from 'mithril';
 
+var boardContent = m('div.og-table-wrap', m('div.og-table'));
+
+function miniBoard(game) {
+  var gameSide = game.side ? '/' + game.side : '';
+  return m('a', {
+    key: game.id,
+    href: '/' + game.id + gameSide,
+    class: 'mini_board live_' + game.id + ' parse_fen is2d',
+    'data-side': game.side,
+    'data-fen': game.fen,
+    config: function(el, isUpdate) {
+      if (!isUpdate) oyunkeyf.parseFen($(el));
+    }
+  }, boardContent);
+}
+
 module.exports = {
   usernameOrAnon: function(ctrl, pid) {
     var data = ctrl.data;
@@ -24,5 +40,6 @@ module.exports = {
         m('span.progress', [rating, ratingDiff])
       ]
     };
-  }
+  },
+  miniBoard: miniBoard
 };

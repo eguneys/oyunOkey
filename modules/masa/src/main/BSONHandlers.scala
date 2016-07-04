@@ -36,7 +36,8 @@ object BSONHandlers {
         nbRounds = r int "nbRounds",
         createdAt = r date "createdAt",
         createdBy = r str "createdBy",
-        winnerId = r strO "winner"
+        winnerId = r strO "winner",
+        featuredId = r strO "featured"
       )
     }
 
@@ -54,7 +55,8 @@ object BSONHandlers {
       "nbRounds" -> o.nbRounds,
       "createdAt" -> w.date(o.createdAt),
       "createdBy" -> w.str(o.createdBy),
-      "winner" -> o.winnerId
+      "winner" -> o.winnerId,
+      "featured" -> o.featuredId
     )
   }
 

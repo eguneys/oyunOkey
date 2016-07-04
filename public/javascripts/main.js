@@ -4,6 +4,10 @@
 
 ;(function() {
 
+  $.ajaxSetup({
+    cache: false
+  });
+
   $.userLink = function(u) {
     return $.userLinkLimit(u, false);
   };
@@ -118,6 +122,26 @@
     oyunkeyf.hasToReload = true;
     if (window.location.hash) location.reload();
     else location.href = location.href;
+  };
+
+  oyunkeyf.parseFen = function($elem) {
+    if (!$elem || !$elem.jquery) {
+      $elem = $('.parse_fen');
+    }
+
+    $elem.each(function() {
+      var $this = $(this).removeClass('parse_fen');
+      var side = $this.data('side') || 'east';
+      var ground = $this.data('okeyground');
+      var playable = $this.data('playable');
+      var config = {
+        viewOnly: !playable,
+        fen: $this.data('fen')
+      };
+      if (side) config.povSide = side;
+      if (ground) ground.set(config);
+      else $this.data('okeyground', Okeyground($this[0], config));
+    });
   };
 
   $(function() {

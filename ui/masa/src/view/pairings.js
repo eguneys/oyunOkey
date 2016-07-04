@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { usernameOrAnon } from './util';
+import { usernameOrAnon, miniBoard } from './util';
 import { statusIds } from '../masa';
 
 function round(ctrl, p) {
@@ -19,6 +19,12 @@ function winner(ctrl, p) {
   };
 }
 
+function featured(f) {
+  return m('div.featured', [
+    miniBoard(f)
+  ]);
+}
+
 module.exports = function(ctrl) {
   var pairing = function(p) {
     return {
@@ -34,6 +40,7 @@ module.exports = function(ctrl) {
     };
   };
   return [
+    ctrl.data.featured ? featured(ctrl.data.featured) : null,
     m('div.box.all_pairings.scroll-shadow-soft', {
     }, ctrl.data.pairings.map(pairing))
   ];

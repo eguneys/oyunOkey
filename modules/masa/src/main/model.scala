@@ -23,3 +23,6 @@ object RankedPlayer {
   //     RankedPlayer(rank + 1, player)
   //   }
 }
+
+case class FeaturedGame(
+  game: oyun.game.Game)

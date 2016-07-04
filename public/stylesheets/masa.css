@@ -541,3 +541,13 @@ ol.created_masas a {
 #masa_schedule .nb-players {
   float: right;
 }
+
+#masa_side .featured {
+  margin-bottom: 10px;
+  line-height: 0;
+}
+
+#masa_side .cg-board-wrap {
+  width: 252px;
+  height: 252px;
+}

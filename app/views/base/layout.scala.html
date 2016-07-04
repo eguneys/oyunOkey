@@ -10,6 +10,7 @@
   zen: Boolean = false,
   playing: Boolean = false,
   openGraph: Option[oyun.app.ui.OpenGraph] = None,
+  okeyground: Boolean = true,
   withLangAnnotations: Boolean = true)(body: Html)(implicit ctx: Context)
 <!doctype html>
 <html lang="@lang.language">
@@ -74,6 +75,7 @@
     </div>
 
     @jQueryTag
+    @if(okeyground) {@jsTag("vendor/okeyground.min.js")}
     @momentjsTag
     @if(isProd) {
       @jsTagCompiled("oyunkeyf.js")

@@ -21,6 +21,7 @@ case class Masa(
   createdAt: DateTime,
   createdBy: String,
   winnerId: Option[String] = None,
+  featuredId: Option[String] = None,
   spotlight: Option[Spotlight] = None) {
 
   def isCreated = status == Status.Created

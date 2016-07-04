@@ -35,6 +35,8 @@
 - [ ] differantiate anonymous users
 
 ### Masa
+- [ ] add mini table players
+- [ ] add fen event socket
 - [ ] add no time control masa
 - [ ] add masa timer
 - [ ] [error] cannot read ai of undefined
@@ -92,6 +94,7 @@
 
 ## Ground
 
+- [ ] fix box-shadows for mini board
 - [ ] Add move guides
 - [x] Add group drag / visual
 - [ ] Add last move animation

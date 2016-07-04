@@ -578,6 +578,17 @@ div.side h2 {
   font-size: 1.5em;
 }
 
+a.mini_board {
+  display: block;
+}
+
+.mini_board .og-table-wrap {
+  margin: auto;
+  width: 224px;
+  height: 168px;
+  position: relative;
+}
+
 table.slist {
   width: 100%;
   border-bottom: 1px solid #d4d4d4;
