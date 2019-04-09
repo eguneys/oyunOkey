@@ -6,9 +6,9 @@ import ornicar.scalalib.Zero
 trait Steroids
     extends scalalib.Validation
     with scalalib.Common
-    with scalalib.OrnicarMonoid.Instances
+    // with scalalib.OrnicarMonoid.Instances
     with scalalib.Zero.Syntax
-    with scalalib.Zero.Instances
+    with scalalib.Zeros
     with scalalib.OrnicarOption
 
     with scalaz.std.StringInstances

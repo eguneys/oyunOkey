@@ -28,7 +28,7 @@ object Hook {
     uid: String,
     sid: Option[String],
     user: Option[User]) = new Hook(
-      id = Random nextStringUppercase idSize,
+      id = Random nextString idSize,
       uid = uid,
       sid = sid,
       user = user map { LobbyUser.make },

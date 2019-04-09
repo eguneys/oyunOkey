@@ -124,7 +124,7 @@ trait dsl {
   }
 
   def $unset(field: String, fields: String*): BSONDocument = {
-    $doc("$unset" -> $doc((Seq(field) ++ fields).map(_ -> BSONString(""))))
+    $doc("$unset" -> $doc((Seq(field) ++ fields).map(k => BSONElement(k, BSONString("")))))
   }
 
   def $min(item: Producer[BSONElement]): BSONDocument = {
@@ -180,7 +180,7 @@ trait dsl {
   }
 
   def $currentDate(items: (String, CurrentDateValueProducer[_])*): BSONDocument = {
-    $doc("$currentDate" -> $doc(items.map(item => item._1 -> item._2.produce)))
+    $doc("$currentDate" -> $doc(items.map(item => BSONElement(item._1, item._2.produce))))
   }
   // End of Top Level Field Update Operators
   //**********************************************************************************************//
@@ -367,9 +367,9 @@ trait dsl {
     with LogicalOperators
     with ArrayOperators
 
-  implicit def toBSONElement[V <: BSONValue](expression: Expression[V])(implicit writer: BSONWriter[V, _ <: BSONValue]): Producer[BSONElement] = {
-    expression.field -> expression.value
-  }
+  // implicit def toBSONElement[V <: BSONValue](expression: Expression[V])(implicit writer: BSONWriter[V, _ <: BSONValue]): Producer[BSONElement] = {
+  //   expression.field -> expression.value
+  // }
 
   implicit def toBSONDocument[V <: BSONValue](expression: Expression[V])(implicit writer: BSONWriter[V, _ <: BSONValue]): BSONDocument =
     $doc(expression.field -> expression.value)

@@ -11,7 +11,7 @@ object Environment
     extends scalaz.syntax.std.ToOptionIdOps
     with scalaz.std.OptionFunctions
     with scalaz.std.StringInstances
-    with scalalib.Zero.Instances
+    with scalalib.Zeros
     with oyun.BooleanSteroids
     with oyun.OptionSteroids
     with AssetHelper

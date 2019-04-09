@@ -4,7 +4,7 @@ package mashup
 import oyun.game.{ Game }
 import oyun.user.User
 
-import scalaz.NonEmptyList
+import scalaz.{ NonEmptyList, IList }
 
 sealed abstract class GameFilter(val name: String)
 
@@ -27,7 +27,7 @@ object GameFilterMenu {
 
   import GameFilter._
 
-  val all = NonEmptyList.nel(All, List(Rated, Win, Loss, Playing))
+  val all = NonEmptyList.nel(All, IList(Rated, Win, Loss, Playing))
 
   def apply(
     info: UserInfo,
@@ -36,7 +36,7 @@ object GameFilterMenu {
 
     val user = info.user
 
-    val filters = NonEmptyList.nel(All, List(
+    val filters: NonEmptyList[GameFilter] = NonEmptyList.nel(All, IList fromList List(
       (info.nbRated > 0) option Rated,
       (info.user.count.standing1 > 0) option Win,
       (info.user.count.standing4 > 0) option Loss,

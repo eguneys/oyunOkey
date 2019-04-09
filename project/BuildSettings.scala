@@ -3,9 +3,9 @@ import sbt._, Keys._
 object BuildSettings {
   import Dependencies._
 
-  val globalScalaVersion = "2.11.8"
+  val globalScalaVersion = "2.11.12"
 
-  def buildSettings = Defaults.defaultSettings ++ Seq(
+  def buildSettings = Defaults.coreDefaultSettings ++ Seq(
     scalaVersion := globalScalaVersion,
     resolvers ++= Dependencies.Resolvers.commons,
     scalacOptions := compilerOptions,
@@ -18,11 +18,11 @@ object BuildSettings {
     publishArtifact in (Compile, packageSrc) := false
   )
 
-  def defaultDeps = Seq(scalaz, scalalib, spray.util)
+  def defaultDeps = Seq(scalaz, okey, scalalib)
 
   def provided(deps: ModuleID*): Seq[ModuleID] = deps map (_ % "provided")
 
-  def project(name: String, deps: Seq[sbt.ClasspathDep[sbt.ProjectReference]] = Seq.empty) =
+  def module(name: String, deps: Seq[sbt.ClasspathDep[sbt.ProjectReference]] = Seq.empty) =
     Project(
       name,
       file("modules/" + name),
@@ -35,11 +35,14 @@ object BuildSettings {
 
   val compilerOptions = Seq(
     "-deprecation", "-unchecked", "-feature", "-language:_",
-    "-Ybackend:GenBCode", "-Ydelambdafy:method", "-target:jvm-1.8")
+    "-Xfatal-warnings",
+    "-Ywarn-dead-code",
+    "-Ybackend:GenBCode",
+    "-Ydelambdafy:method", "-target:jvm-1.8")
 
   val srcMain = Seq(
-    scalaSource in Compile <<= (sourceDirectory in Compile)(identity),
-    scalaSource in Test <<= (sourceDirectory in Test)(identity)
+    scalaSource in Compile := (sourceDirectory in Compile).value,
+    scalaSource in Test := (sourceDirectory in Test).value
   )
 
   def projectToRef(p: Project): ProjectReference = LocalProject(p.id)

@@ -135,7 +135,7 @@ object BSON {
 
   def debugArr(doc: BSONArray): String = doc.values.toList.map(debug).mkString("[", ", ", "]")
   def debugDoc(doc: BSONDocument): String = (doc.elements.toList map {
-    case (k, v) => s"$k: ${debug(v)}"
+    case BSONElement(k, v) => s"$k: ${debug(v)}"
   }).mkString("{", ", ", "}")
 
   def hashDoc(doc: Bdoc): String = debugDoc(doc).replace(" ", "")

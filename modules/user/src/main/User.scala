@@ -66,6 +66,10 @@ object User {
 
   case class Active(user: User)
 
+  case class ClearPassword(value: String) extends AnyVal {
+    override def toString = "ClearPassword(****)";
+  }
+
   import oyun.db.BSON.BSONJodaDateTimeHandler
 
   def normalize(username: String) = username.toLowerCase
@@ -81,6 +85,7 @@ object User {
     val seenAt = "seenAt"
     val lang = "lang"
     val mustConfirmEmail = "mustConfirmEmail"
+    val bpass = "bpass"
   }
 
   import oyun.db.BSON

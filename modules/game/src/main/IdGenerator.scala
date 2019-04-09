@@ -3,7 +3,7 @@ package oyun.game
 import ornicar.scalalib.Random
 
 object IdGenerator {
-  def game = Random nextStringUppercase Game.gameIdSize
+  def game = Random nextString Game.gameIdSize
 
-  def player = Random nextStringUppercase Game.playerIdSize
+  def player = Random nextString Game.playerIdSize
 }

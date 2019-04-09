@@ -39,7 +39,7 @@ final class Env(
 
 
   lazy val cached = new Cached(
-    createdTtl = CreatedCacheTtl)
+    createdTtl = CreatedCacheTtl)(system)
 
   private def isAnonOnline(masaId: String, player: Player) =
     player.isRecentlyCreated.fold(fuccess(true), {

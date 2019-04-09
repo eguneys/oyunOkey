@@ -69,23 +69,23 @@ object UserRepo {
 
 
   def incNbGames(id: ID, rated: Boolean, ai: Boolean, result: Int) = {
-    val incs: List[(String, BSONInteger)] = List(
+    val incs: List[BSONElement] = List(
       "count.game".some,
       rated option "count.rated",
       ai option "count.ai"
       // s"count.standing${result}".some
-    ).flatten.map(_ -> BSONInteger(1))
+    ).flatten.map(k => BSONElement(k, BSONInteger(1)))
 
     coll.update($id(id), $inc(incs)) void 
   }
 
   def incNbMasas(id: ID, result: Int) = {
-    val incs: List[(String, BSONInteger)] = List(
+    val incs: List[BSONElement] = List(
       "count.masa".some,
       s"count.standing${result}".some
-    ).flatten.map(_ -> BSONInteger(1))
+    ).flatten.map(k => BSONElement(k, BSONInteger(1)))
 
-    coll.update($id(id), $inc(incs)) void 
+    coll.update($id(id), $inc(incs)) void
   }
 
   private case class AuthData(password: String, salt: String, enabled: Boolean, sha512: Option[Boolean]) {
@@ -129,12 +129,14 @@ object UserRepo {
 
   def setEmailConfirmed(id: String): Funit = coll.update($id(id), $unset(F.mustConfirmEmail)).void
 
+  import Authenticator._
+
   private def newUser(username: String, password: String, email: Option[String]) = {
 
     implicit def countHandler = Count.countBSONHandler
     import oyun.db.BSON.BSONJodaDateTimeHandler
 
-    val salt = ornicar.scalalib.Random nextStringUppercase 32
+    val salt = ornicar.scalalib.Random nextString 32
 
     $doc(
       F.id -> normalize(username),
@@ -143,6 +145,7 @@ object UserRepo {
       F.mustConfirmEmail -> (email.isDefined).option(DateTime.now),
       "password" -> hash(password, salt),
       "salt" -> salt,
+      // F.bpass -> passwordHash,
       F.count -> Count.default,
       F.enabled -> true,
       F.createdAt -> DateTime.now,

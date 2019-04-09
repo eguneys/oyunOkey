@@ -87,7 +87,7 @@ object BSONHandlers {
   }
 
   private[game] implicit val scoresBSONHandler = new BSON[Variant => EndScoreSheet] {
-    import BSON.MapValue.MapHandler
+    // import BSON.MapValue.MapHandler
 
     def reads(r: BSON.Reader) = variant => {
       val handSum = r int "h"

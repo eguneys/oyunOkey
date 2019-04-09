@@ -87,7 +87,7 @@ object Masa {
     variant: okey.variant.Variant,
     mode: oyun.game.Mode,
     allowAnon: Boolean) = Masa(
-    id = Random nextStringUppercase 8,
+    id = Random nextString 8,
       name = GreatPlayer.randomName,
       status = Status.Created,
       system = system,

@@ -23,7 +23,7 @@ final class Env(
 
   lazy val userColl = db(CollectionUser)
 
-  lazy val lightUserApi = new LightUserApi(userColl)
+  lazy val lightUserApi = new LightUserApi(userColl)(system)
 
   lazy val onlineUserIdMemo = new ExpireSetMemo(ttl = OnlineTtl)
 

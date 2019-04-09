@@ -103,7 +103,7 @@ object Auth extends OyunController {
         data => {
           val email = data.email flatMap env.emailAddress.validate
           UserRepo.create(data.username, data.password, email, apiVersion.some)
-            .flatten(s"No user could be created for ${data.username}") flatMap authenticateUser
+            .flatten(s"No user could be created for ${data.username}") flatMap (authenticateUser _)
         }
       )
     )
