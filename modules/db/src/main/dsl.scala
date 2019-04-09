@@ -112,7 +112,9 @@ trait dsl {
   }
 
   def $rename(item: (String, String), items: (String, String)*)(implicit writer: BSONWriter[String, _ <: BSONValue]): BSONDocument = {
-    $doc("$rename" -> $doc((Seq(item) ++ items).map(Producer.nameValue2Producer[String]): _*))
+    $doc("$rename" -> $doc((Seq(item) ++ items).map {
+      case (k, v) => BSONElement(k, BSONString(v))
+    }))
   }
 
   def $setOnInsert(item: Producer[BSONElement], items: Producer[BSONElement]*): BSONDocument = {

@@ -12,38 +12,42 @@ lazy val root = Project("oyun", file("."))
   .enablePlugins(_root_.play.sbt.PlayScala)
   .dependsOn(api)
   .aggregate(api)
-  .settings(Seq(
-    scalaVersion := globalScalaVersion,
-    resolvers ++= Dependencies.Resolvers.commons,
-    scalacOptions := compilerOptions,
-    // disable publishing the main API jar
-    publishArtifact in (Compile, packageDoc) := false,
-    // disable publishing the main sources jar
-    publishArtifact in (Compile, packageSrc) := false,
-    // don't stage the conf dir
-    externalizeResources := false,
-    // shorter prod classpath
-    scriptClasspath := Seq("*"),
-    libraryDependencies ++= Seq(
-      scalaz, scalalib, hasher, typesafeConfig,
-      reactivemongo.driver, reactivemongo.iteratees,
-      okey,
-      prismic,
-      netty,
-      kamon.core, java8compat, scaffeine),
-    TwirlKeys.templateImports ++= Seq(
-      "oyun.game.{ Game, Player, Pov }",
-      "oyun.masa.Masa",
-      "oyun.user.{ User, UserContext }",
-      "oyun.api.Context",
-      "oyun.app.templating.Environment._",
-      "oyun.common.paginator.Paginator"
-    ),
-    // watchSources <<= sourceDirectory in Compile map { sources =>
-    //   (sources ** "*").get
-    // },
-    // trump sbt-web into not looking at public/
-    resourceDirectory in Assets := (sourceDirectory in Compile).value / "assets"))
+
+scalaVersion := globalScalaVersion
+resolvers ++= Dependencies.Resolvers.commons
+scalacOptions := compilerOptions
+sources in doc in Compile := List()
+
+// disable publishing the main API jar
+publishArtifact in (Compile, packageDoc) := false
+// disable publishing the main sources jar
+publishArtifact in (Compile, packageSrc) := false
+// don't stage the conf dir
+externalizeResources := false
+// shorter prod classpath
+scriptClasspath := Seq("*")
+libraryDependencies ++= Seq(
+  scalaz, scalalib, hasher, typesafeConfig,
+  reactivemongo.driver, reactivemongo.iteratees,
+  okey,
+  prismic,
+  netty,
+  kamon.core, java8compat, scaffeine)
+TwirlKeys.templateImports ++= Seq(
+  "oyun.game.{ Game, Player, Pov }",
+  "oyun.masa.Masa",
+  "oyun.user.{ User, UserContext }",
+  "oyun.api.Context",
+  "oyun.app.templating.Environment._",
+  "oyun.common.paginator.Paginator"
+)
+// watchSources <<= sourceDirectory in Compile map { sources =>
+//   (sources ** "*").get
+// },
+
+// trump sbt-web into not looking at public/
+// resourceDirectory in Assets := (sourceDirectory in Compile).value / "assets"
+unmanagedResourceDirectories in Assets ++= (if (scala.sys.env.get("SERVE_ASSETS").exists(_ == "1")) Seq(baseDirectory.value / "public") else Nil)
 
 lazy val modules = Seq(common, rating, db, user, chat, pref, security, game, setup, site, lobby, socket, hub, round, masa, i18n)
 
@@ -88,7 +92,7 @@ lazy val fishnet = module("fishnet", Seq(common, game, db)).settings(
 )
 
 lazy val round = module("round", Seq(common, user, chat, game, socket, hub, fishnet)).settings(
-  libraryDependencies ++= provided(play.api, play.test, reactivemongo.driver)
+  libraryDependencies ++= provided(play.api, play.test, reactivemongo.driver, reactivemongo.iteratees)
 )
 
 lazy val lobby = module("lobby", Seq(common, user, game, socket, hub)).settings(

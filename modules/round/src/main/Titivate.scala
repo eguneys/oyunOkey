@@ -3,6 +3,7 @@ package oyun.round
 import akka.actor._
 import org.joda.time.DateTime
 import play.api.libs.iteratee._
+import reactivemongo.api._
 import scala.concurrent.duration._
 
 import oyun.game.{ Query, Game, GameRepo }
@@ -25,6 +26,8 @@ private[round] final class Titivate(
 
   def scheduleNext = scheduler.scheduleOnce(10 seconds, self, Run)
 
+  import reactivemongo.play.iteratees.cursorProducer
+
   def receive = {
 
     case ReceiveTimeout =>
@@ -34,7 +37,8 @@ private[round] final class Titivate(
 
     case Run => GameRepo.count(_.checkable).flatMap { total =>
       GameRepo.cursor(Query.checkable)
-        .enumerate(5000, stopOnError = false)
+        // .enumerate(5000, stopOnError = false)
+        .enumerator(5000, Cursor.ContOnError())
         .|>>>(Iteratee.foldM[Game, Int](0) {
           case (count, game) => {
 

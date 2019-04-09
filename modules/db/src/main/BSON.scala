@@ -28,7 +28,7 @@ object BSON {
         val b = collection.immutable.Map.newBuilder[String, V]
         for (tuple <- bson.elements)
           // assume that all values in the document are BSONDocuments
-          b += (tuple._1 -> vr.read(tuple._2.asInstanceOf[BSONDocument]))
+          b += (tuple.name -> vr.read(tuple.value.asInstanceOf[BSONDocument]))
         b.result
       }
     }
@@ -55,7 +55,7 @@ object BSON {
         val valueReader = vr.asInstanceOf[BSONReader[BSONValue, V]]
         // mutable optimized implementation
         val b = collection.immutable.Map.newBuilder[String, V]
-        for (tuple <- bson.elements) b += (tuple._1 -> valueReader.read(tuple._2))
+        for (tuple <- bson.elements) b += (tuple.name -> valueReader.read(tuple.value))
         b.result
       }
     }
@@ -84,7 +84,7 @@ object BSON {
   final class Reader(val doc: BSONDocument) {
     val map = {
       val b = collection.immutable.Map.newBuilder[String, BSONValue]
-      for (tuple <- doc.stream if tuple.isSuccess) b += (tuple.get._1 -> tuple.get._2)
+      for (tuple <- doc.stream if tuple.isSuccess) b += (tuple.get.name -> tuple.get.value)
       b.result
     }
 

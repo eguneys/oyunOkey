@@ -3,7 +3,7 @@ package oyun.game
 import okey.{ Side, Sides, Status, EndScoreSheet }
 
 import org.joda.time.DateTime
-import reactivemongo.api.ReadPreference
+import reactivemongo.api.{ CursorProducer, Cursor, ReadPreference }
 
 import oyun.db.dsl._
 
@@ -39,7 +39,8 @@ object GameRepo {
 
   def cursor(
     selector: Bdoc,
-    readPreference: ReadPreference = ReadPreference.secondaryPreferred) =
+    readPreference: ReadPreference = ReadPreference.secondaryPreferred)
+    (implicit cp: CursorProducer[Game]) =
     coll.find(selector).cursor[Game](readPreference)
 
   def save(progress: Progress): Funit =

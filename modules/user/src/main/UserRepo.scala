@@ -47,7 +47,7 @@ object UserRepo {
   def setPerfs(user: User, perfs: Perfs, prev: Perfs) = {
     val diff = PerfType.all flatMap { pt =>
       perfs(pt).nb != prev(pt).nb option {
-        s"perfs.${pt.key}" -> Perf.perfBSONHandler.write(perfs(pt))
+        BSONElement(s"perfs.${pt.key}", Perf.perfBSONHandler.write(perfs(pt)))
       }
     }
     diff.nonEmpty ?? coll.update(

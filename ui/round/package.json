@@ -4,9 +4,9 @@
   "description": "oyunkeyf.org round",
   "main": "src/main.js",
   "dependencies": {
-    "game": "file:///home/ubuntu/fp/scala/oyun/ui/game",
+    "game": "1.0.0",
     "mithril": "^0.2.0",
-    "okeyground": "file:///home/ubuntu/gamedev/okeyground"
+    "okeyground": "1.0.12"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.1.1",

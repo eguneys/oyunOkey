@@ -1,9 +1,37 @@
-#!/bin/sh
+#!/bin/bash -ea
+
+target=${1-dev}
+mode=${2-build}
+echo "building ui modules with target=$target and mode=$mode"
+
+echo "node: $(node --version)"
+echo "yarn: $(yarn --version)"
 
 mkdir -p public/compiled
 
-for app in game lobby masa masaSchedule round; do
-  cd ui/$app
-  npm install --no-optional && gulp dev
-  cd -
-done
+apps="game lobby masa masaSchedule round"
+
+if [ $mode == "upgrade" ]; then
+    yarn upgrade --non-interactive
+else
+    yarn install --non-interactive
+fi
+
+build() {
+    echo "build" "$@"
+    set -ev
+    cd ui/$1
+    gulp $target
+}
+
+if type -p parallel; then # parallel execution
+    if [ -z "$P_OPTS" -a ! -e ~/.parallel/config]; then
+        P_OPTS="-j+4 --halt 2"
+        ["$TRAVIS" = "true"] || P_OPTS+=" --bar"
+    fi
+    set -x
+    parallel --gnu $P_OPTS build ::: $apps
+else
+    echo "For faster builds, install GNU parallel."
+    for app in $apps; do (build $app); done
+fi

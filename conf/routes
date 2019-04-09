@@ -72,4 +72,6 @@ GET     /lag            controllers.Main.lag
 GET     /terms-of-service       controllers.Page.tos
 
 # Assets
+#GET     /assets/*file           controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/$version<_\w{6}>/*file           controllers.Main.versionedAsset(version: String, file: String)
 GET     /assets/*file           controllers.Assets.at(path="/public", file)

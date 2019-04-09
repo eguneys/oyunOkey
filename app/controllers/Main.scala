@@ -30,4 +30,10 @@ object Main extends OyunController {
     }
   }
 
+
+  def versionedAsset(version: String, file: String) = {
+    // println(file)
+    // println (Assets.at(path = "/public", file))
+    Assets.at(path = "/public", file)
+  }
 }

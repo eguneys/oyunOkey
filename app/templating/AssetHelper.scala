@@ -14,11 +14,14 @@ trait AssetHelper { self: I18nHelper =>
   val assetBaseUrl = s"http://$assetDomain"
 
   def staticUrl(path: String) = s"$assetBaseUrl${routes.Assets.at(path)}"
+  // def staticUrl(path: String) = s"$assetBaseUrl${routes.Assets.versioned(path)}"
+
 
   def cssTag(name: String, staticDomain: Boolean = true) = cssAt("stylesheets/" + name, staticDomain)
 
   def cssAt(path: String, staticDomain: Boolean = true) = Html {
     val href = if (staticDomain) staticUrl(path) else routes.Assets.at(path)
+    // val href = if (staticDomain) staticUrl(path) else routes.Assets.versioned(path)
     s"""<link href="$href?v=$assetVersion" type="text/css" rel="stylesheet"/>"""
   }
 

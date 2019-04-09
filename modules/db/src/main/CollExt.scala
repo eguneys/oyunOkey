@@ -46,7 +46,7 @@ trait CollExt { self: dsl with QueryBuilderExt =>
       }
 
     def updateFieldUnchecked[V: BSONValueWriter](selector: BSONDocument, field: String, value: V) =
-      coll.uncheckedUpdate(selector, $set(field -> value))
+      coll.update(selector, $set(field -> value))
 
   }
 }
