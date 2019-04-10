@@ -1,7 +1,8 @@
 #!/bin/sh
 
 mid=$1
-url=192.168.56.103/masa/$mid/join
+host=localhost:8080
+url=$host/masa/$mid/join
 params=--silent
 
 curl -X POST $url $params | head
