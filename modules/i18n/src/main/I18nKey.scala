@@ -21,4 +21,5 @@ case class Untranslated(key: String) extends I18nKey {
 
 object I18nKey {
   val en = Lang("en")
+  val tr = Lang("tr")
 }

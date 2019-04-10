@@ -22,11 +22,12 @@ private[i18n] final class Translator(messages: Messages, pool: I18nPool) {
       formatTranslation(key, pattern, args)
     }
 
-  private def translate(key: String, args: Seq[Any])(lang: Lang): Option[String] =
+  private def translate(key: String, args: Seq[Any])(lang: Lang): Option[String] = {
     if (lang.language == pool.default.language) defaultTranslation(key, args)
     else messages get lang.code flatMap (_ get key) flatMap { pattern =>
       formatTranslation(key, pattern, args)
     } orElse defaultTranslation(key, args)
+  }
 
   private def formatTranslation(key: String, pattern: String, args: Seq[Any]) = try {
     Some(if (args.isEmpty) pattern else pattern.format(args: _*))

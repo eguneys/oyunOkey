@@ -18,7 +18,8 @@ object Global extends GlobalSettings {
   }
 
   override def onRouteRequest(req: RequestHeader): Option[Handler] = {
-    Env.i18n.requestHandler(req) orElse super.onRouteRequest(req)
+    // Env.i18n.requestHandler(req) orElse
+    super.onRouteRequest(req)
   }
 
   private def niceError(req: RequestHeader): Boolean =
