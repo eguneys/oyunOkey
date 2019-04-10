@@ -7,7 +7,7 @@
 # ./bin/dev
 
 # Yes it needs tons of memory. Go for 2048M if you have them.
-export SBT_OPTS="-Xms512M -Xmx1536M -XX:ReservedCodeCacheSize=64m -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -Dkamon.auto-start=true"
+export SBT_OPTS="-Xms1028M -Xmx1536M -XX:ReservedCodeCacheSize=64m -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -Dkamon.auto-start=true"
 
 # Hide pesky reboot exceptions
 sbt -Dhttp.port=9663 -Dconfig.file=conf/devapp.conf "$@" 2> /dev/null
