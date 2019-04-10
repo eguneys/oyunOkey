@@ -4,7 +4,6 @@
   "description": "oyunkeyf.org round",
   "main": "src/main.js",
   "dependencies": {
-    "game": "1.0.0",
     "mithril": "^0.2.0",
     "okeyground": "1.0.12"
   },
