@@ -22,7 +22,8 @@ object PairingRepo {
 
   private def selectMasaPlayer(masaId: String, playerId: String) = selectMasa(masaId) ++ selectPlayer(playerId)
 
-  private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.MiddleEnd.id))
+  private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.Aborted.id))
+  //private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.MiddleEnd.id))
   //private val selectFinished = $doc("s" -> $doc("$gte" -> okey.Status.NormalEnd.id))
   private val selectFinished = $doc("ec" -> true)
 

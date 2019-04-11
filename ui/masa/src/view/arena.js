@@ -34,7 +34,8 @@ function playerTr(ctrl, player) {
   var userId = playerName.toLowerCase();
 
   var scores = ctrl.data.scores ? ctrl.data.scores : 0;
-  var scoreTotal = player.sheet.total + scores;
+  // var scoreTotal = player.sheet.total + scores;
+  var scoreTotal = player.score;
 
   return m('tr', {
     class: classSet({

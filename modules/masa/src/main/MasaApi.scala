@@ -236,7 +236,8 @@ private[masa] final class MasaApi(
   private def updatePlayer(masa: Masa)(playerId: String): Funit =
     PlayerRepo.update(masa.id, playerId) { player =>
       PairingRepo.finishedByPlayerChronological(masa.id, playerId) map { pairings =>
-        val sheet = masa.system.scoringSystem.sheet(masa, playerId, pairings)
+        val sheet = masa.system.scoringSystem.sheet(masa, playerId, pairings, player.score)
+        println(player, sheet, sheet.total)
         player.copy(
           score = sheet.total + (masa.scores | 0)
         ).recomputeMagicScore

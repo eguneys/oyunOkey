@@ -69,7 +69,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     rankedPlayers <- PlayerRepo.bestByMasaWithRank(masa.id)
     sheets <- rankedPlayers.map { p =>
       PairingRepo.finishedByPlayerChronological(masa.id, p.player.id) map { pairings =>
-        p.player.id -> masa.system.scoringSystem.sheet(masa, p.player.id, pairings)
+        p.player.id -> masa.system.scoringSystem.sheet(masa, p.player.id, pairings, 0)
       }
     }.sequenceFu.map(_.toMap)
   } yield Json.obj(
@@ -157,7 +157,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
           _.map {
             case rp@RankedPlayer(_, player) => for {
               pairings <- PairingRepo.finishedByPlayerChronological(masa.id, player.id)
-              sheet = masa.system.scoringSystem.sheet(masa, player.id, pairings)
+              sheet = masa.system.scoringSystem.sheet(masa, player.id, pairings, player.score)
             } yield playerJson(sheet.some, masa, rp)
           }.sequenceFu
         } map { l => JsArray(l).some }

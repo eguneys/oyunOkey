@@ -50,6 +50,8 @@ private[game] object GameDiff {
       dOpt(s"$binaryOpensSave.$binaryOpenStates.${side.letter}", _.binaryOpens flatMap { _.save map(_._2) }, (o: Option[BinaryOpens]) => o flatMap { opens =>
         opens.binaryOpenStates(side) map ByteArray.ByteArrayBSONHandler.write
       })
+
+      d(s"$outOfTimes.${side.letter}", _.outOfTimes(side), w.int)
     }
 
     dOpt(s"$binaryOpens.$binarySeries", _.binaryOpens, (o: Option[BinaryOpens]) => o map { opens =>

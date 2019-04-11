@@ -92,7 +92,7 @@ final class Env(
 
   system.oyunBus.subscribe(
     system.actorOf(Props(new ApiActor(api = api)), name = ApiActorName),
-    'finishGame)
+    'finishGame, 'withdrawMasa)
 
 
   system.actorOf(Props(new CreatedOrganizer(

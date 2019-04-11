@@ -24,6 +24,7 @@ case class Game(
   mode: Mode = Mode.default,
   status: Status,
   turns: Int,
+  outOfTimes: Sides[Int] = Sides(0, 0, 0, 0),
   variant: Variant = Variant.default,
   createdAt: DateTime = DateTime.now,
   updatedAt: Option[DateTime] = None,
@@ -52,6 +53,8 @@ case class Game(
   def turnOf(s: Side): Boolean = s == turnSide
 
   def playedTurns = turns
+
+  def nbOutOfTime = outOfTimes(turnSide)
 
   def fullIdOf(side: Side): String = s"$id${player(side).id}"
 
@@ -180,6 +183,18 @@ case class Game(
 
 
     Progress(this, updated, events)
+  }
+
+  def updateOutOfTime(): Progress = {
+    val side = turnSide
+
+    val times = outOfTimes.withSide(side, outOfTimes(side) + 1)
+
+    val updated = copy(
+      outOfTimes = times
+    )
+
+    Progress(this, updated, Nil)
   }
 
   def updatePlayers[A](as: Sides[Player => Player]) = copy(
@@ -362,6 +377,7 @@ object Game {
     val opensLastMove = "ol"
     val status = "s"
     val turns = "t"
+    val outOfTimes = "oot"
     val roundAt = "ra"
     val clock = "c"
     val rated = "r"

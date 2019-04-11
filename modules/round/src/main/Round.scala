@@ -6,6 +6,8 @@ import akka.actor._
 
 import actorApi._, round._
 import oyun.game.{ GameRepo, Game, Pov, PlayerRef, Event }
+import oyun.game.actorApi.{ WithdrawMasa }
+
 import oyun.hub.actorApi.map._
 import oyun.hub.actorApi.round.FishnetPlay
 import oyun.hub.SequentialActor
@@ -15,7 +17,8 @@ private[round] final class Round(
   finisher: Finisher,
   player: Player,
   socketHub: ActorRef,
-  activeTtl: Duration) extends SequentialActor {
+  activeTtl: Duration,
+  bus: oyun.common.Bus) extends SequentialActor {
 
   context setReceiveTimeout activeTtl
 
@@ -35,8 +38,34 @@ private[round] final class Round(
       player.fishnet(game, uci)
     }
 
-    case OutOfTime => proxy withGame { game =>
-      game.outoftime ?? player.requestFishnet(game)
+    // case OutOfTime => proxy withGame { game =>
+    //   game.outoftime ?? {
+    //     proxy withGame { game =>
+    //         self ! PoisonPill
+    //         //if (game.abortable) finisher.other(game, _.Aborted)
+    //         finisher.other(game, _.Aborted)
+    //     }
+    //     player.requestFishnet(game)
+    //   }
+    // }
+    case OutOfTime => handle { game =>
+      game.outoftime ?? {
+        player.requestFishnet(game)
+        player.incNbOutOfTime(game)
+      }
+      if (game.nbOutOfTime > 1) {
+        self ! PoisonPill
+
+        game.masaId ?? { masaId =>
+          game.player.playerId ?? { playerId =>
+            println("outoftime", masaId, playerId)
+            bus.publish(WithdrawMasa(masaId, playerId), 'withdrawMasa)
+          }
+        }
+
+
+        finisher.other(game, _.Aborted)
+      } else fuccess(Nil)
     }
 
     // exceptionally we don't block nor publish events

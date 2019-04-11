@@ -12,6 +12,7 @@ object PlayerRepo {
   private lazy val coll = Env.current.playerColl
 
   private def selectId(id: String) = $doc("_id" -> id)
+  private def selectUser(uid: String) = $doc("uid" -> uid)
   private def selectMasa(masaId: String) = $doc("mid" -> masaId)
   private def selectMasaPlayer(masaId: String, playerId: String) = $doc(
     "mid" -> masaId,
@@ -46,6 +47,9 @@ object PlayerRepo {
   def find(masaId: String, playerId: String): Fu[Option[Player]] =
     coll.find(selectMasaPlayer(masaId, playerId)).uno[Player]
 
+  def find(masaId: String, side: Side): Fu[Option[Player]] =
+    coll.find(selectMasa(masaId) ++ selectSide(side)).uno[Player]
+
   def update(masaId: String, playerId: String)(f: Player => Fu[Player]) =
     find(masaId, playerId) flatten s"No such player: $masaId/$playerId" flatMap f flatMap { player =>
       coll.update(selectId(player._id), player).void
@@ -69,11 +73,14 @@ object PlayerRepo {
     freeSides(masaId) flatMap { l =>
       l.find(s => (oside | s) == s) match {
         case Some(side) =>
-          find(masaId, player.id) flatMap {
+          // new player
+          find(masaId, side) flatMap {
             case Some(p) =>
-              coll.update(selectId(p._id),
-                $doc("$set" -> selectActiveSide(side)))
-            case None => coll.insert(player.doActiveSide(side))
+              p.active.fold(funit,
+                coll.insert(player.doActiveSideWithScores(side, p)))
+
+            case None =>
+              coll.insert(player.doActiveSide(side))
           } void
         case None => funit
       }

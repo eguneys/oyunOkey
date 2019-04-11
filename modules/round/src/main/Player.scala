@@ -37,6 +37,11 @@ private[round] final class Player(
     }
   }
 
+  def incNbOutOfTime(game: Game)(implicit proxy: GameProxy) = {
+      val progress = game.updateOutOfTime()
+      proxy.save(progress)
+  }
+
   def requestFishnet(game: Game) = (game.playableByAi || game.outoftime) ?? fishnetPlayer(game)
 
   def fishnet(game: Game, uci: Uci)(implicit proxy: GameProxy): Fu[Events] =

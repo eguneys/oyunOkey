@@ -35,6 +35,8 @@ case class Player(
 
   def doActiveSide(side: Side) = copy(side = side, active = true)
 
+  def doActiveSideWithScores(side: Side, p: Player) = copy(side = side, active = true, score = p.score, magicScore = p.magicScore)
+
   def finalRating = rating ?? (ratingDiff+)
 
   def ref(user: Option[User]) = PlayerRef(id = id, user = user)

@@ -26,5 +26,5 @@ trait ScoringSystem {
 
   def emptySheet: Sheet
 
-  def sheet(masa: Masa, playerId: String, pairings: Pairings): Sheet
+  def sheet(masa: Masa, playerId: String, pairings: Pairings, oldScore: Int): Sheet
 }
