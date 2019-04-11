@@ -52,8 +52,12 @@ private[masa] final class MasaApi(
       variant = variant)
     logger.info(s"Create $masa")
 
-    MasaRepo.insert(masa) >> join(masa.id, player) inject masa
-  }
+    MasaRepo.insert(masa) >>
+      join(masa.id, player) >>
+      join(masa.id, PlayerRef()) >>
+      join(masa.id, PlayerRef()) >>
+      join(masa.id, PlayerRef()) inject masa
+}
 
   private def findCompatible(setup: MasaSetup, player: PlayerRef): Fu[Option[Masa]] =
     MasaRepo findCompatible setup flatMap {
@@ -143,7 +147,8 @@ private[masa] final class MasaApi(
         }
       case masa if masa.isStarted =>
         PlayerRepo.withdraw(masa.id, playerId) >> updateNbPlayers(masa.id) >>- {
-          funit >>-
+          (PairingRepo removePlaying masa.id) >>-
+          // funit >>-
           socketReload(masa.id) >>-
           publish()
           promise success(())
@@ -236,8 +241,7 @@ private[masa] final class MasaApi(
   private def updatePlayer(masa: Masa)(playerId: String): Funit =
     PlayerRepo.update(masa.id, playerId) { player =>
       PairingRepo.finishedByPlayerChronological(masa.id, playerId) map { pairings =>
-        val sheet = masa.system.scoringSystem.sheet(masa, playerId, pairings, player.score)
-        println(player, sheet, sheet.total)
+        val sheet = masa.system.scoringSystem.sheet(masa, playerId, pairings)
         player.copy(
           score = sheet.total + (masa.scores | 0)
         ).recomputeMagicScore

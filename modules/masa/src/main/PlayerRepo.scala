@@ -13,10 +13,11 @@ object PlayerRepo {
 
   private def selectId(id: String) = $doc("_id" -> id)
   private def selectUser(uid: String) = $doc("uid" -> uid)
+  private def selectPlayer(pid: String) = $doc("pid" -> pid)
   private def selectMasa(masaId: String) = $doc("mid" -> masaId)
   private def selectMasaPlayer(masaId: String, playerId: String) = $doc(
     "mid" -> masaId,
-    "_id" -> playerId)
+    "pid" -> playerId)
 
   private def selectMasaUser(masaId: String, userId: String) = $doc(
     "mid" -> masaId,
@@ -28,11 +29,16 @@ object PlayerRepo {
     "d" -> side.letter.toString,
     "a" -> true)
 
+  private def selectScores(p: Player) = 
+    $doc("s" -> p.score) ++ $doc("m" -> p.magicScore)
+
   private def selectUser = $doc("uid" -> $doc("$exists" -> true))
 
   private val bestSort = $doc("m" -> -1)
 
   def byId(id: String): Fu[Option[Player]] = coll.uno[Player](selectId(id))
+
+  def byPlayerId(playerId: String): Fu[Option[Player]] = coll.uno[Player](selectPlayer(playerId))
 
   def bestByMasa(masaId: String): Fu[List[Player]] =
     coll.find(selectMasa(masaId)).sort(bestSort).cursor[Player]().gather[List]()
@@ -69,19 +75,64 @@ object PlayerRepo {
   def remove(masaId: String, playerId: String) =
     coll.remove(selectMasaPlayer(masaId, playerId)).void
 
+  def removePlayer(player: Player) =
+    coll.update(selectId(player.id),
+      $doc("$unset" -> (
+        $doc("pid" -> player.playerId)
+      )) ++
+        $doc("$set" -> $doc("a" -> false))
+    )
+
   def join(masaId: String, player: Player, oside: Option[Side]) =
     freeSides(masaId) flatMap { l =>
       l.find(s => (oside | s) == s) match {
         case Some(side) =>
-          // new player
+          println("join side", side)
           find(masaId, side) flatMap {
-            case Some(p) =>
-              p.active.fold(funit,
-                coll.insert(player.doActiveSideWithScores(side, p)))
-
+            case Some(sidePlayer) =>
+              find(masaId, player.playerId) flatMap {
+                case Some(p) => removePlayer(p)
+                case None => funit
+              }
+              coll.update(selectSide(side),
+                $doc("$set" -> (
+                  $doc("pid" -> player.playerId) ++
+                    $doc("a" -> true))))
             case None =>
+              find(masaId, player.playerId) flatMap {
+                case Some(p) => removePlayer(p)
+                case None => funit
+              }
+              println("col insert", side)
               coll.insert(player.doActiveSide(side))
-          } void
+          }
+
+
+          // find(masaId, player.id) flatMap {
+          //   case Some(p) =>
+          //     find(masaId, side) flatMap {
+          //       case Some(p) =>
+          //         println("found same side", p.id, player.id, p.active)
+          //         p.active.fold(funit,
+          //           coll.update(selectMasaPlayer(masaId, player.id),
+          //             $doc("$set" -> ($doc("a" -> true) ++ selectScores(player)))))
+
+          //       case None =>
+          //         println("no found same side", side)
+          //         coll.update(selectMasaPlayer(masaId, player.id),
+          //           $doc("$set" -> $doc("a" -> true)))
+          //     } void
+          //   case None =>
+          //     // new player
+          //     find(masaId, side) flatMap {
+          //       case Some(p) =>
+          //         p.active.fold(funit,
+          //           coll.insert(player.doActiveSideWithScores(side, p)))
+
+          //       case None =>
+          //         coll.insert(player.doActiveSide(side))
+          //     } void
+          // }
         case None => funit
       }
     }

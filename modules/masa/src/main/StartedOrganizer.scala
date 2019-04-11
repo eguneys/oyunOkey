@@ -63,9 +63,9 @@ private[masa] final class StartedOrganizer(
   private def startPairing(masa: Masa, activePlayerIds: List[String]): Funit = {
     fuccess(activePlayerIds) zip PairingRepo.playingPlayerIds(masa) map {
       case (activePlayers, playingPlayers) =>
-        val users = activePlayerIds filter { k => !playingPlayers.contains(k) }
-        users.headOption map { _ => pairingLogger.debug(s"start ${masa.id}") }
-        api.makePairings(masa, users)
+        val players = activePlayerIds filter { k => !playingPlayers.contains(k) }
+        players.headOption map { _ => pairingLogger.debug(s"start ${masa.id}") }
+        api.makePairings(masa, players)
     }
   }
 }
