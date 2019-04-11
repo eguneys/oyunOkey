@@ -53,10 +53,12 @@ private[masa] final class MasaApi(
     logger.info(s"Create $masa")
 
     MasaRepo.insert(masa) >>
-      join(masa.id, player) >>
-      join(masa.id, PlayerRef()) >>
-      join(masa.id, PlayerRef()) >>
-      join(masa.id, PlayerRef()) inject masa
+      //join(masa.id, player) >>
+      //join(masa.id, PlayerRef(false)) >>
+      insertPlayer(masa.id, player, Side.EastSide) >>
+      insertPlayer(masa.id, PlayerRef(false), Side.WestSide) >>
+      insertPlayer(masa.id, PlayerRef(false), Side.NorthSide) >>
+      insertPlayer(masa.id, PlayerRef(false), Side.SouthSide) inject masa
 }
 
   private def findCompatible(setup: MasaSetup, player: PlayerRef): Fu[Option[Masa]] =
@@ -123,11 +125,31 @@ private[masa] final class MasaApi(
     promise.future
   }
 
+  def insertPlayer(masaId: String, player: PlayerRef, side: Side): Fu[Unit] = {
+    def insertApply(masa: Masa, player: PlayerRef) = {
+      PlayerRepo.insertPlayer(masa.id, player.toPlayer(masa, masa.perfLens), side) >> updateNbPlayers(masa.id) >>- {
+        socketReload(masa.id)
+        publish()
+      }
+    }
+
+    val promise = Promise[Unit]()
+    Sequencing(masaId)(MasaRepo.enterableById) { masa =>
+      canJoin(masa, player).fold(
+        insertApply(masa, player) >>- {
+          promise success(())
+        },
+        fufail(s"$player cannot join masa $masaId")
+      )
+    }
+    promise.future
+  }
+
   private def canJoin(masa: Masa, player: PlayerRef): Boolean =
     masa.mode.casual.fold(
       player.user.isDefined || masa.allowAnon,
       player.user ?? { _ => true }
-    )
+    ) || !player.active
 
   private def updateNbPlayers(masaId: String) =
     PlayerRepo countActive masaId flatMap { MasaRepo.setNbPlayers(masaId, _) }

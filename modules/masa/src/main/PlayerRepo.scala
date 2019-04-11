@@ -76,66 +76,44 @@ object PlayerRepo {
     coll.remove(selectMasaPlayer(masaId, playerId)).void
 
   def removePlayer(player: Player) =
-    coll.update(selectId(player.id),
+    coll.update(selectPlayer(player.playerId),
       $doc("$unset" -> (
-        $doc("pid" -> player.playerId)
+//        $doc("pid" -> true) ++
+        $doc("uid" -> true)
       )) ++
-        $doc("$set" -> $doc("a" -> false))
+        $doc("$set" -> ($doc("a" -> false) ++
+          $doc("pid" -> player.randomPid)))
     )
 
-  def join(masaId: String, player: Player, oside: Option[Side]) =
+  def insertPlayer(masaId: String, player: Player, side: Side) = {
+    println("insert player", player.playerId)
+    coll.insert(player.doSide(side))
+  }
+
+  def join(masaId: String, player: Player, oside: Option[Side]) = {
     freeSides(masaId) flatMap { l =>
       l.find(s => (oside | s) == s) match {
         case Some(side) =>
-          println("join side", side)
-          find(masaId, side) flatMap {
-            case Some(sidePlayer) =>
-              find(masaId, player.playerId) flatMap {
-                case Some(p) => removePlayer(p)
-                case None => funit
-              }
-              coll.update(selectSide(side),
-                $doc("$set" -> (
-                  $doc("pid" -> player.playerId) ++
-                    $doc("a" -> true))))
-            case None =>
-              find(masaId, player.playerId) flatMap {
-                case Some(p) => removePlayer(p)
-                case None => funit
-              }
-              println("col insert", side)
-              coll.insert(player.doActiveSide(side))
-          }
+          println("join ", side)
+          (find(masaId, player.playerId) flatMap {
+            case Some(p) => {
+              println("found playerid remove", player.playerId)
+              removePlayer(p)
+            }
+            case None => funit
+          }) >> (find(masaId, side) flatMap {
+            case Some(basePlayer) => {
+              println("found base update", basePlayer.id, basePlayer.playerId)
+              coll.update(selectId(basePlayer.id),
+                basePlayer.doActivePlayer(player))
+            }
+            case None => funit
+          }) inject funit
 
-
-          // find(masaId, player.id) flatMap {
-          //   case Some(p) =>
-          //     find(masaId, side) flatMap {
-          //       case Some(p) =>
-          //         println("found same side", p.id, player.id, p.active)
-          //         p.active.fold(funit,
-          //           coll.update(selectMasaPlayer(masaId, player.id),
-          //             $doc("$set" -> ($doc("a" -> true) ++ selectScores(player)))))
-
-          //       case None =>
-          //         println("no found same side", side)
-          //         coll.update(selectMasaPlayer(masaId, player.id),
-          //           $doc("$set" -> $doc("a" -> true)))
-          //     } void
-          //   case None =>
-          //     // new player
-          //     find(masaId, side) flatMap {
-          //       case Some(p) =>
-          //         p.active.fold(funit,
-          //           coll.insert(player.doActiveSideWithScores(side, p)))
-
-          //       case None =>
-          //         coll.insert(player.doActiveSide(side))
-          //     } void
-          // }
         case None => funit
       }
     }
+  }
 
   def withdraw(masaId: String, playerId: String) = coll.update(
     selectMasaPlayer(masaId, playerId),

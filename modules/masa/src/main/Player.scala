@@ -34,9 +34,21 @@ case class Player(
 
   def isAi = aiLevel.isDefined
 
+  def randomPid = oyun.game.IdGenerator.game
+
+  def doSide(side: Side) = copy(side = side)
+
   def doActiveSide(side: Side) = copy(side = side, active = true)
 
-  def doActiveSideWithScores(side: Side, p: Player) = copy(side = side, active = true, score = p.score, magicScore = p.magicScore)
+  def doActivePlayer(player: Player) = copy(playerId = player.playerId,
+    userId = player.userId,
+    rating = player.rating,
+    score = player.score,
+    ratingDiff = player.ratingDiff,
+    aiLevel = player.aiLevel,
+    createdAt = player.createdAt,
+    magicScore = player.magicScore,
+    active = true)
 
   def finalRating = rating ?? (ratingDiff+)
 
@@ -64,6 +76,7 @@ object Player {
 }
 
 case class PlayerRef(
+  active: Boolean = true,
   id: String = oyun.game.IdGenerator.game,
   playerId: String = oyun.game.IdGenerator.game,
   user: Option[User] = None,
@@ -79,6 +92,7 @@ case class PlayerRef(
     userId = userId,
     rating = user map { u => perfLens(u.perfs).intRating }, 
     aiLevel = aiLevel,
+    active = active,
     createdAt = DateTime.now)
 
 }

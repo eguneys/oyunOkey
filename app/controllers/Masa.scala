@@ -110,7 +110,7 @@ object Masa extends OyunController with TheftPrevention {
           env.api.join(masa.id, ref, side) inject
             Json.obj("ok" -> true)
         }
-      ) flatMap withMasaAnonCookie(ctx.isAnon, ref.id)
+      ) flatMap withMasaAnonCookie(ctx.isAnon, ref.playerId)
     }
   }
 
@@ -138,7 +138,7 @@ object Masa extends OyunController with TheftPrevention {
       setup => {
         env.api.addMasa(setup.masa(), playerRef) map { masa =>
           Redirect(routes.Masa.show(masa.id))
-        } flatMap withMasaAnonCookie(ctx.isAnon, playerRef.id)
+        } flatMap withMasaAnonCookie(ctx.isAnon, playerRef.playerId)
       }
     )
   }
