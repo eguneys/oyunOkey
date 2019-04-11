@@ -143,7 +143,8 @@ private[masa] final class MasaApi(
         }
       case masa if masa.isStarted =>
         PlayerRepo.withdraw(masa.id, playerId) >> updateNbPlayers(masa.id) >>- {
-          funit >>-
+          (PairingRepo removePlaying masa.id) >>-
+          // funit >>-
           socketReload(masa.id) >>-
           publish()
           promise success(())

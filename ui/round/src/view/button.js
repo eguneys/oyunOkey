@@ -17,6 +17,15 @@ module.exports = {
       'data-icon': icon
     }));
   },
+  sortPairs: function(ctrl, icon, hint, onclick) {
+    return m('button', {
+      class: 'button hint--bottom',
+      'data-hint': hint,
+      onclick: onclick
+    }, m('span', {
+      'data-icon': icon
+    }));
+  },
   move: function(ctrl, condition, icon, hint, onclick) {
     return m('button', {
       class: 'button hint--bottom move ' + util.classSet({

@@ -113,6 +113,10 @@ module.exports = function(opts) {
     this.okeyground.playOpenPairs();
   };
 
+  this.sortPairs = () => {
+    this.okeyground.sortPairs();
+  };
+
   this.apiMove = (o) => {
     console.log(o);
     m.startComputation();

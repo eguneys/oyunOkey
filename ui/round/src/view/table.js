@@ -59,15 +59,18 @@ function renderTableEnd(ctrl) {
 
 function renderTablePlay(ctrl) {
   var d = ctrl.data;
+  var trans = ctrl.trans;
 
-  var buttons = compact(spinning(ctrl));
+  var buttons = compact(spinning(ctrl) || [
+    button.sortPairs(ctrl, 'K', trans('sortPairs'), ctrl.sortPairs)
+  ]);
 
   // debug
   // m('button', {
   //   onclick: function() { ctrl.saveBoard(); }
   // }, 'save'),
 
-  var trans = ctrl.trans;
+
   var icons = [
     button.move(ctrl, ctrl.okeyground.canCollectOpen, 'C', trans('collectOpen'), ctrl.collectOpen),
     button.move(ctrl, ctrl.okeyground.canLeaveTaken, 'L', trans('leaveTaken'), ctrl.leaveTaken),
