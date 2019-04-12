@@ -43,7 +43,7 @@ object Masa extends OyunController with TheftPrevention {
 
   def show(id: String) = Open { implicit ctx =>
     playerForReq(id) flatMap { playerOption =>
-      val playerId = playerOption map(_.id)
+      val playerId = playerOption map(_.playerId)
       negotiate(
         html = repo byId id flatMap {
           _.fold(masaNotFound.fuccess) { masa =>
@@ -90,7 +90,7 @@ object Masa extends OyunController with TheftPrevention {
 
   private def withEnterableMasaOwner(id: String)(withMasa: Option[oyun.masa.Masa] => Fu[Result])(implicit ctx: Context): Fu[Result] =
     playerForReq(id) zip (repo enterableById id) flatMap {
-      case (Some(player), omasa@Some(masa)) if (masa.createdBy == (player.userId | player.id)) => withMasa(omasa)
+      case (Some(player), omasa@Some(masa)) if (masa.createdBy == (player.userId | player.playerId)) => withMasa(omasa)
       case _ => withMasa(none)
     }
 
@@ -117,7 +117,7 @@ object Masa extends OyunController with TheftPrevention {
   def withdraw(id: String) = Open { implicit ctx =>
     OptionFuResult(repo byId id) { masa =>
       OptionFuResult(playerForReq(masa.id)) { player =>
-        env.api.withdraw(masa.id, player.id) inject {
+        env.api.withdraw(masa.id, player.playerId) inject {
           if (HTTPRequest.isXhr(ctx.req)) Ok(Json.obj("ok" -> true)) as JSON
           else Redirect(routes.Masa.show(masa.id))
         }

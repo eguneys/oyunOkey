@@ -72,18 +72,25 @@ object PlayerRepo {
 
   def removeByMasa(masaId: String) = coll.remove(selectMasa(masaId)).void
 
-  def remove(masaId: String, playerId: String) =
-    coll.remove(selectMasaPlayer(masaId, playerId)).void
-
-  def removePlayer(player: Player) =
-    coll.update(selectPlayer(player.playerId),
+  private def removePlayerWithId(playerId: String) =
+    coll.update(selectPlayer(playerId),
       $doc("$unset" -> (
 //        $doc("pid" -> true) ++
-        $doc("uid" -> true)
+        $doc("uid" -> true) ++
+        $doc("r" -> true)
       )) ++
         $doc("$set" -> ($doc("a" -> false) ++
-          $doc("pid" -> player.randomPid)))
+          $doc("pid" -> Player.randomPid)))
     )
+
+  def remove(masaId: String, playerId: String) =
+    // coll.remove(selectMasaPlayer(masaId, playerId)).void
+    // coll.update(selectMasaPlayer(masaId, playerId),
+    //   $doc("$set" -> $doc("a" -> false))).void
+    removePlayerWithId(playerId)
+
+  def removePlayer(player: Player) =
+    removePlayerWithId(player.playerId)
 
   def insertPlayer(masaId: String, player: Player, side: Side) = {
     println("insert player", player.playerId)
@@ -115,9 +122,18 @@ object PlayerRepo {
     }
   }
 
-  def withdraw(masaId: String, playerId: String) = coll.update(
-    selectMasaPlayer(masaId, playerId),
-    $doc("$set" -> $doc("a" -> false))).void
+  def withdraw(masaId: String, playerId: String) =
+    // coll.update(
+    //   selectMasaPlayer(masaId, playerId),
+    //   $doc("$set" -> $doc("a" -> false))).void
+    // coll.update(selectMasaPlayer(masaId, playerId),
+    //   $doc("$unset" -> (
+    //     $doc("uid" -> true)
+    //   )) ++
+    //     $doc("$set" -> ($doc("a" -> false) ++
+    //       $doc("pid" -> Player.randomPid)))
+    // )
+    removePlayerWithId(playerId)
 
   def withPoints(masaId: String): Fu[List[Player]] =
     coll.find(
@@ -143,9 +159,10 @@ object PlayerRepo {
   def allUserPlayers(masaId: String): Fu[List[Player]] =
     coll.find(selectMasa(masaId) ++ selectUser).cursor[Player]().gather[List]()
 
-  def playerInfo(masaId: String, playerId: String): Fu[Option[PlayerInfo]] = find(masaId, playerId) map {
-    _ map { player =>
-      PlayerInfo(player.side, player.active)
+  def playerInfo(masaId: String, playerId: String): Fu[Option[PlayerInfo]] =
+    find(masaId, playerId) map {
+      _ map { player =>
+        PlayerInfo(player.side, player.active)
+      }
     }
-  }
 }

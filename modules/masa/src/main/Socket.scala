@@ -75,7 +75,7 @@ private[oyun] final class Socket(
       delayedReloadNotification = true
       // keep the delay low for immediate response to join/withdraw
       // but still debounce to avoid masa start message rush
-      context.system.scheduler.scheduleOnce(300 millis, self, NotifyReload)
+      context.system.scheduler.scheduleOnce(1 second, self, NotifyReload)
     }
   }
 

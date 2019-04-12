@@ -24,9 +24,13 @@ function playerTr(ctrl, player) {
   var isLong = player.sheet.scores.length > 40;
 
   var ai = ctrl.data.players[player.id].ai;
+  var active = ctrl.data.players[player.id].active;
 
   var playerName = ai ? ctrl.trans('aiBot', ai) :
       (player.name || 'Anonymous');
+  playerName = active ? playerName : ctrl.trans('emptySeat');
+
+
   // ?
   player.name = playerName;
 

@@ -73,6 +73,8 @@ object Player {
       rating = None,
       createdAt = DateTime.now
   ).recomputeMagicScore
+
+  def randomPid = oyun.game.IdGenerator.game
 }
 
 case class PlayerRef(
