@@ -37,7 +37,8 @@ final class Env(
       finisher = finisher,
       player = player,
       socketHub,
-      activeTtl = ActiveTtl)
+      activeTtl = ActiveTtl,
+      bus = system.oyunBus)
     def receive: Receive = ({
       case actorApi.GetNbRounds =>
         nbRounds = size

@@ -52,8 +52,14 @@ private[masa] final class MasaApi(
       variant = variant)
     logger.info(s"Create $masa")
 
-    MasaRepo.insert(masa) >> join(masa.id, player) inject masa
-  }
+    MasaRepo.insert(masa) >>
+      //join(masa.id, player) >>
+      //join(masa.id, PlayerRef(false)) >>
+      insertPlayer(masa.id, player, Side.EastSide) >>
+      insertPlayer(masa.id, PlayerRef(false), Side.WestSide) >>
+      insertPlayer(masa.id, PlayerRef(false), Side.NorthSide) >>
+      insertPlayer(masa.id, PlayerRef(false), Side.SouthSide) inject masa
+}
 
   private def findCompatible(setup: MasaSetup, player: PlayerRef): Fu[Option[Masa]] =
     MasaRepo findCompatible setup flatMap {
@@ -70,17 +76,18 @@ private[masa] final class MasaApi(
     }
   }
 
-  def makePairings(oldMasa: Masa, players: List[String]) {
+  def makePairings(oldMasa: Masa, seats: List[String]) {
     Sequencing(oldMasa.id)(MasaRepo.startedById) { masa =>
-      masa.createPairings(masa, players).flatMap {
+      masa.createPairings(masa, seats).flatMap {
         case None => funit
         case Some(pairing) => {
           //PairingRepo.insert(pairing) >> updateNbRounds(masa.id) >>
           PairingRepo.insert(pairing) >>
-            autoPairing(masa, pairing) addEffect { game =>
-              sendTo(masa.id, StartGame(game))
-            }
+          autoPairing(masa, pairing) addEffect { game =>
+            sendTo(masa.id, StartGame(game))
+          }
         } >> funit >> featureOneOf(masa, pairing) >>- {
+          socketReload(masa.id)
           oyun.mon.masa.pairing.create()
           pairingLogger.debug(s"${masa.id} ${pairing}")
         }
@@ -119,11 +126,31 @@ private[masa] final class MasaApi(
     promise.future
   }
 
+  def insertPlayer(masaId: String, player: PlayerRef, side: Side): Fu[Unit] = {
+    def insertApply(masa: Masa, player: PlayerRef) = {
+      PlayerRepo.insertPlayer(masa.id, player.toPlayer(masa, masa.perfLens), side) >> updateNbPlayers(masa.id) >>- {
+        socketReload(masa.id)
+        publish()
+      }
+    }
+
+    val promise = Promise[Unit]()
+    Sequencing(masaId)(MasaRepo.enterableById) { masa =>
+      canJoin(masa, player).fold(
+        insertApply(masa, player) >>- {
+          promise success(())
+        },
+        fufail(s"$player cannot join masa $masaId")
+      )
+    }
+    promise.future
+  }
+
   private def canJoin(masa: Masa, player: PlayerRef): Boolean =
     masa.mode.casual.fold(
       player.user.isDefined || masa.allowAnon,
       player.user ?? { _ => true }
-    )
+    ) || !player.active
 
   private def updateNbPlayers(masaId: String) =
     PlayerRepo countActive masaId flatMap { MasaRepo.setNbPlayers(masaId, _) }
@@ -229,15 +256,15 @@ private[masa] final class MasaApi(
     game.masaId foreach { masaId =>
       Sequencing(masaId)(MasaRepo.startedById) { masa =>
         PairingRepo.finish(game) >> updateNbRounds(masa.id) >>
-        game.playerIds.map(updatePlayer(masa)).sequenceFu.void
+        game.seatIds.map(updatePlayer(masa)).sequenceFu.void
       }
     }
   }
 
-  private def updatePlayer(masa: Masa)(playerId: String): Funit =
-    PlayerRepo.update(masa.id, playerId) { player =>
-      PairingRepo.finishedByPlayerChronological(masa.id, playerId) map { pairings =>
-        val sheet = masa.system.scoringSystem.sheet(masa, playerId, pairings)
+  private def updatePlayer(masa: Masa)(seatId: String): Funit =
+    PlayerRepo.update(masa.id, seatId) { player =>
+      PairingRepo.finishedBySeatChronological(masa.id, seatId) map { pairings =>
+        val sheet = masa.system.scoringSystem.sheet(masa, seatId, pairings)
         player.copy(
           score = sheet.total + (masa.scores | 0)
         ).recomputeMagicScore

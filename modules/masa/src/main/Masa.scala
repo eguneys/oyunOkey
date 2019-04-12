@@ -61,16 +61,16 @@ case class Masa(
   def perfType = PerfPicker.perfType(ratingVariant)
   def perfLens = PerfPicker.mainOrDefault(ratingVariant)
 
-  def createPairings(masa: Masa, players: List[String]): Fu[Option[Pairing]] = {
+  def createPairings(masa: Masa, seats: List[String]): Fu[Option[Pairing]] = {
     fuccess(for {
-      prep <- makePrep(masa, players)
+      prep <- makePrep(masa, seats)
       pairing = prep.toPairing
     } yield pairing)
   }
 
-  private def makePrep(masa: Masa, players: List[String]): Option[Pairing.Prep] = {
-    players match {
-      case List(p1, p2, p3, p4) => Some(Pairing.prep(masa, p1, p2, p3, p4))
+  private def makePrep(masa: Masa, seats: List[String]): Option[Pairing.Prep] = {
+    seats match {
+      case List(s1, s2, s3, s4) => Some(Pairing.prep(masa, s1, s2, s3, s4))
       case _ => None
     }
   }

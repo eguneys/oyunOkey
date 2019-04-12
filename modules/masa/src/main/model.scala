@@ -6,7 +6,7 @@ case class MiniStanding(
   masa: Masa,
   standing: Option[RankedPlayers])
 
-case class PlayerInfo(side: Side, active: Boolean)
+case class PlayerInfo(seatId: String, side: Side, active: Boolean)
 
 case class VisibleMasas(
   created: List[Masa],

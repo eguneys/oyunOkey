@@ -10,6 +10,7 @@ import okey.Side
 case class Player(
   _id: String,
   masaId: String,
+  playerId: String,
   userId: Option[String] = None,
   rating: Option[Int],
   active: Boolean = false,
@@ -33,11 +34,21 @@ case class Player(
 
   def isAi = aiLevel.isDefined
 
+  def randomPid = oyun.game.IdGenerator.game
+
+  def doSide(side: Side) = copy(side = side)
+
   def doActiveSide(side: Side) = copy(side = side, active = true)
+
+  def doActivePlayer(player: Player) = copy(playerId = player.playerId,
+    userId = player.userId,
+    rating = player.rating,
+    aiLevel = player.aiLevel,
+    active = true)
 
   def finalRating = rating ?? (ratingDiff+)
 
-  def ref(user: Option[User]) = PlayerRef(id = id, user = user)
+  def ref(user: Option[User]) = PlayerRef(playerId = playerId, user = user)
 
   def recomputeMagicScore = copy(magicScore = (active ?? 10000) + (score * -1))
 }
@@ -51,16 +62,21 @@ object Player {
     score: Int,
     aiLevel: Option[Int] = None) = new Player(
     _id = oyun.game.IdGenerator.game,
-    masaId = masaId,
-    aiLevel = aiLevel,
-    score = score,
-    rating = None,
-    createdAt = DateTime.now
+      playerId = oyun.game.IdGenerator.game,
+      masaId = masaId,
+      aiLevel = aiLevel,
+      score = score,
+      rating = None,
+      createdAt = DateTime.now
   ).recomputeMagicScore
+
+  def randomPid = oyun.game.IdGenerator.game
 }
 
 case class PlayerRef(
+  active: Boolean = true,
   id: String = oyun.game.IdGenerator.game,
+  playerId: String = oyun.game.IdGenerator.game,
   user: Option[User] = None,
   aiLevel: Option[Int] = None) {
 
@@ -68,11 +84,13 @@ case class PlayerRef(
 
   def toPlayer(masa: Masa, perfLens: Perfs => Perf) = Player(
     _id = id,
+    playerId = playerId,
     masaId = masa.id,
     score = masa.scores | 0,
     userId = userId,
     rating = user map { u => perfLens(u.perfs).intRating }, 
     aiLevel = aiLevel,
+    active = active,
     createdAt = DateTime.now)
 
 }

@@ -105,6 +105,7 @@ west=Batı
 north=Kuzey
 south=Güney
 aiBot=Bot AI%s
+emptySeat=Boş Koltuk
 settings=Ayarlar
 playOnline=Çevrimiçi oyna
 nbPlayers=%s Oyuncu

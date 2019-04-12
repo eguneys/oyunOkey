@@ -7,7 +7,7 @@ case class Pairing(
   id: String, // game id
   masaId: String,
   status: okey.Status,
-  playerIds: Sides[String],
+  seatIds: Sides[String],
   round: Int,
   scores: Sides[Int],
   endCounts: Boolean,
@@ -18,26 +18,26 @@ case class Pairing(
   def finished = status >= okey.Status.MiddleEnd
   def playing = !finished
 
-  def scoreOf(playerId: String): Option[Int] = (playerIds zip scores find {
-    _._1 == playerId
+  def scoreOf(seatId: String): Option[Int] = (seatIds zip scores find {
+    _._1 == seatId
   }) map (_._2)
 }
 
 private[masa] object Pairing {
-  def apply(masaId: String, playerIds: Sides[String], round: Int): Pairing = new Pairing(
+  def apply(masaId: String, seatIds: Sides[String], round: Int): Pairing = new Pairing(
     id = IdGenerator.game,
     masaId = masaId,
     status = okey.Status.Created,
-    playerIds = playerIds,
+    seatIds = seatIds,
     round = round,
     scores = Sides[Int],
     winner = none,
     endCounts = false)
 
-  case class Prep(masaId: String, round: Int, player1: String, player2: String, player3: String, player4: String) {
+  case class Prep(masaId: String, round: Int, seat1: String, seat2: String, seat3: String, seat4: String) {
     def toPairing =
-      Pairing(masaId, Sides(player1, player2, player3, player4), round)
+      Pairing(masaId, Sides(seat1, seat2, seat3, seat4), round)
   }
 
-  def prep(masa: Masa, p1: String, p2: String, p3: String, p4: String) = Pairing.Prep(masa.id, masa.nbRounds, p1, p2, p3, p4)
+  def prep(masa: Masa, s1: String, s2: String, s3: String, s4: String) = Pairing.Prep(masa.id, masa.nbRounds, s1, s2, s3, s4)
 }

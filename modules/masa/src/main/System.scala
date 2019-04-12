@@ -19,6 +19,7 @@ trait Score {
 trait ScoreSheet {
   def scores: List[Score]
   def total: Int
+  def latest: Option[Int]
 }
 
 trait ScoringSystem {
@@ -26,5 +27,5 @@ trait ScoringSystem {
 
   def emptySheet: Sheet
 
-  def sheet(masa: Masa, playerId: String, pairings: Pairings): Sheet
+  def sheet(masa: Masa, seatId: String, pairings: Pairings): Sheet
 }

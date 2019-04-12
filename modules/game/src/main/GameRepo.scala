@@ -71,7 +71,6 @@ object GameRepo {
   private def nonEmptyMod(mod: String, doc: Bdoc) =
     if (doc.isEmpty) $empty else $doc(mod -> doc)
 
-
   def finish(
     id: ID,
     status: Status,
