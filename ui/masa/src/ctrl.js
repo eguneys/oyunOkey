@@ -21,6 +21,7 @@ module.exports = function(env) {
     //if (this.data.isStarted !== data.isStarted) m.redraw.strategy('all');
     this.data = data;
     this.playerId = data.playerId;
+    this.seatId = data.seatId;
     this.loadPage(data.standing);
     this.vm.joinSpinner = false;
     redirectToMyGame();

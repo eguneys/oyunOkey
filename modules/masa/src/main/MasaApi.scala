@@ -87,6 +87,7 @@ private[masa] final class MasaApi(
             sendTo(masa.id, StartGame(game))
           }
         } >> funit >> featureOneOf(masa, pairing) >>- {
+          socketReload(masa.id)
           oyun.mon.masa.pairing.create()
           pairingLogger.debug(s"${masa.id} ${pairing}")
         }
