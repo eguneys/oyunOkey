@@ -138,12 +138,14 @@ object BSONHandlers {
 
       val sidesUid = r.get[Sides[Option[String]]](playerUids)
 
+      val sidesSid = r.get[Sides[Option[String]]](playerSids)
+
       val builder = r.get[Sides[Player.Builder]](sidesPlayer)
 
       val players = Sides(eastId, westId, northId, southId) sideMap {
         case (side, id) =>
           val win = winS map (_ == side)
-          builder(side)(side)(id)(sidesPid(side))(sidesUid(side))(oEndScores.map(_(side)(realVariant)))(oEndStanding)(win)
+          builder(side)(side)(id)(sidesPid(side))(sidesUid(side))(sidesSid(side))(oEndScores.map(_(side)(realVariant)))(oEndStanding)(win)
       }
 
       val bPieces = r.get[Sides[ByteArray]](binaryPieces)
@@ -201,7 +203,8 @@ object BSONHandlers {
       playerIds -> (o.players.map(_.id) mkString),
       playerPids -> o.players.mapt(_.playerId),
       playerUids -> o.players.mapt(_.userId),
-      sidesPlayer -> o.players.mapt(p => playerBSONHandler write ((_: Side) => (_: Player.Id) => (_: Player.PlayerId) => (_: Player.UserId) => (_: Player.EndScore) => (_: Player.EndStanding) => (_: Player.Win) => p)),
+      playerSids -> o.players.mapt(_.seatId),
+      sidesPlayer -> o.players.mapt(p => playerBSONHandler write ((_: Side) => (_: Player.Id) => (_: Player.PlayerId) => (_: Player.UserId) => (_: Player.SeatId) => (_: Player.EndScore) => (_: Player.EndStanding) => (_: Player.Win) => p)),
       binaryPieces -> o.binaryPieces,
       binaryDiscards -> o.binaryDiscards,
       binaryMiddles -> o.binaryMiddles,

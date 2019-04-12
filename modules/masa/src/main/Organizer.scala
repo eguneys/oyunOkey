@@ -36,7 +36,7 @@ private[masa] final class Organizer(
 
 
   private def startPairing(masa: Masa, activePlayerIds: List[String]) = {
-    fuccess(activePlayerIds) zip PairingRepo.playingPlayerIds(masa) foreach {
+    fuccess(activePlayerIds) zip PairingRepo.playingSeatIds(masa) foreach {
       case (activePlayers, playingUsers) =>
         val users = activePlayerIds filter { k => !playingUsers.contains(k) }
         api.makePairings(masa, users)

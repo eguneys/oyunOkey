@@ -15,9 +15,9 @@ object ScoringSystem extends AbstractScoringSystem {
 
   val emptySheet = Sheet(Nil)
 
-  def sheet(masa: Masa, playerId: String, pairings: Pairings): Sheet = Sheet {
+  def sheet(masa: Masa, seatId: String, pairings: Pairings): Sheet = Sheet {
     pairings.foldLeft(List[Score]()) {
-      case (scores, p) => Score(p.scoreOf(playerId) | 0) :: scores
+      case (scores, p) => Score(p.scoreOf(seatId) | 0) :: scores
     }
   }
 }

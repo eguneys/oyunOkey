@@ -76,9 +76,9 @@ private[masa] final class MasaApi(
     }
   }
 
-  def makePairings(oldMasa: Masa, players: List[String]) {
+  def makePairings(oldMasa: Masa, seats: List[String]) {
     Sequencing(oldMasa.id)(MasaRepo.startedById) { masa =>
-      masa.createPairings(masa, players).flatMap {
+      masa.createPairings(masa, seats).flatMap {
         case None => funit
         case Some(pairing) => {
           //PairingRepo.insert(pairing) >> updateNbRounds(masa.id) >>
@@ -255,15 +255,15 @@ private[masa] final class MasaApi(
     game.masaId foreach { masaId =>
       Sequencing(masaId)(MasaRepo.startedById) { masa =>
         PairingRepo.finish(game) >> updateNbRounds(masa.id) >>
-        game.playerIds.map(updatePlayer(masa)).sequenceFu.void
+        game.seatIds.map(updatePlayer(masa)).sequenceFu.void
       }
     }
   }
 
-  private def updatePlayer(masa: Masa)(playerId: String): Funit =
-    PlayerRepo.update(masa.id, playerId) { player =>
-      PairingRepo.finishedByPlayerChronological(masa.id, playerId) map { pairings =>
-        val sheet = masa.system.scoringSystem.sheet(masa, playerId, pairings)
+  private def updatePlayer(masa: Masa)(seatId: String): Funit =
+    PlayerRepo.update(masa.id, seatId) { player =>
+      PairingRepo.finishedBySeatChronological(masa.id, seatId) map { pairings =>
+        val sheet = masa.system.scoringSystem.sheet(masa, seatId, pairings)
         player.copy(
           score = sheet.total + (masa.scores | 0)
         ).recomputeMagicScore

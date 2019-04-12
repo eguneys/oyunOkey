@@ -27,6 +27,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     "id" -> masa.id,
     "createdBy" -> masa.createdBy,
     "playerId" -> me,
+    "seatId" -> myInfo.map(_.seatId),
     "fullName" -> masa.fullName,
     "greatPlayer" -> GreatPlayer.wikiUrl(masa.name).map { url =>
       Json.obj("name" -> masa.name, "url" -> url)
@@ -68,8 +69,8 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
   private def computeStanding(masa: Masa): Fu[JsObject] = for {
     rankedPlayers <- PlayerRepo.bestByMasaWithRank(masa.id)
     sheets <- rankedPlayers.map { p =>
-      PairingRepo.finishedByPlayerChronological(masa.id, p.player.playerId) map { pairings =>
-        p.player.playerId -> masa.system.scoringSystem.sheet(masa, p.player.playerId, pairings)
+      PairingRepo.finishedBySeatChronological(masa.id, p.player.id) map { pairings =>
+        p.player.playerId -> masa.system.scoringSystem.sheet(masa, p.player.id, pairings)
       }
     }.sequenceFu.map(_.toMap)
   } yield Json.obj(
@@ -157,7 +158,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
         PlayerRepo.bestByMasaWithRank(id).flatMap {
           _.map {
             case rp@RankedPlayer(_, player) => for {
-              pairings <- PairingRepo.finishedByPlayerChronological(masa.id, player.playerId)
+              pairings <- PairingRepo.finishedBySeatChronological(masa.id, player.id)
               sheet = masa.system.scoringSystem.sheet(masa, player.playerId, pairings)
             } yield playerJson(sheet.some, masa, rp)
           }.sequenceFu
@@ -165,11 +166,11 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
       }
     }
 
-  private def pairingUserJson(playerId: String) = JsString(playerId)
+  private def pairingUserJson(seatId: String) = JsString(seatId)
 
   private def pairingJson(p: Pairing) = Json.obj(
     "id" -> p.gameId,
-    "u" -> JsArray(p.playerIds.toList map (pairingUserJson)),
+    "u" -> JsArray(p.seatIds.toList map (pairingUserJson)),
     "r" -> p.round,
     "s" -> p.status.id,
     "w" -> (if (p.finished) p.winner else 0))

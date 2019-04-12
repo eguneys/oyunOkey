@@ -287,6 +287,8 @@ case class Game(
 
   def playerIds = playerMaps(_.playerId)
 
+  def seatIds = playerMaps(_.seatId)
+
   def withMasaId(id: String) = this.copy(
     metadata = metadata.copy(masaId = id.some)
   )
@@ -361,6 +363,7 @@ object Game {
     val playerIds = "is"
     val playerUids = "uis"
     val playerPids = "pis"
+    val playerSids = "sis"
     val playingUids = "plis"
     val sidesPlayer = "sip"
     val binaryPieces = "ps"

@@ -43,11 +43,7 @@ case class Player(
   def doActivePlayer(player: Player) = copy(playerId = player.playerId,
     userId = player.userId,
     rating = player.rating,
-    score = player.score,
-    ratingDiff = player.ratingDiff,
     aiLevel = player.aiLevel,
-    createdAt = player.createdAt,
-    magicScore = player.magicScore,
     active = true)
 
   def finalRating = rating ?? (ratingDiff+)

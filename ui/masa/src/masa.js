@@ -10,11 +10,11 @@ var ids = {
 module.exports = {
   statusIds: ids,
   myCurrentGameId: function(ctrl) {
-    var playerId = ctrl.playerId;
-    if (!playerId) return null;
+    var seatId = ctrl.seatId;
+    if (!seatId) return null;
     var pairing = ctrl.data.pairings.filter(function(p) {
       return p.s < ids.aborted && (
-        p.u.filter((id) => id.toLowerCase() === playerId.toLowerCase())[0]
+        p.u.filter((id) => id.toLowerCase() === seatId.toLowerCase())[0]
       );
     })[0];
     return pairing ? pairing.id : null;

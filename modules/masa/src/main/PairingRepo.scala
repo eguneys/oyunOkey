@@ -15,10 +15,10 @@ object PairingRepo {
   private def selectId(id: String) = $doc("_id" -> id)
   def selectMasa(masaId: String) = $doc("mid" -> masaId)
   def selectSeat(seatId: String) = $doc("$or" -> List(
-    $doc("pids.e" -> playerId),
-    $doc("pids.w" -> playerId),
-    $doc("pids.n" -> playerId),
-    $doc("pids.s" -> playerId)))
+    $doc("sids.e" -> seatId),
+    $doc("sids.w" -> seatId),
+    $doc("sids.n" -> seatId),
+    $doc("sids.s" -> seatId)))
 
   private def selectMasaSeat(masaId: String, seatId: String) = selectMasa(masaId) ++ selectSeat(seatId)
 
@@ -45,7 +45,7 @@ object PairingRepo {
 
   def removePlaying(masaId: String) = coll.remove(selectMasa(masaId) ++ selectPlaying).void
 
-  def finishedByPlayerChronological(masaId: String, seatId: String): Fu[Pairings] =
+  def finishedBySeatChronological(masaId: String, seatId: String): Fu[Pairings] =
     coll.find(
       selectMasaSeat(masaId, seatId) ++ selectFinished
     ).sort(chronoSort).cursor[Pairing]().gather[List]()
@@ -63,8 +63,12 @@ object PairingRepo {
       "w" -> g.winnerSide.flatMap(g.player(_).playerId),
       "t" -> g.turns))).void
 
-  def playingPlayerIds(masa: Masa): Fu[Set[String]] =
+  // def playingPlayerIds(masa: Masa): Fu[Set[String]] =
+  //   coll.find(selectMasa(masa.id) ++ selectPlaying).one[Pairing] map {
+  //     _ map { _.playerIds.toSet } getOrElse Set.empty
+  //   }
+  def playingSeatIds(masa: Masa): Fu[Set[String]] =
     coll.find(selectMasa(masa.id) ++ selectPlaying).one[Pairing] map {
-      _ map { _.playerIds.toSet } getOrElse Set.empty
+      _ map { _.seatIds.toSet } getOrElse Set.empty
     }
 }

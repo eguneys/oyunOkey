@@ -6,6 +6,7 @@ import oyun.user.User
 
 case class Player(
   id: String,
+  seatId: Option[String] = None,
   playerId: Option[String] = None,
   userId: Option[String] = None,
   side: Side,
@@ -21,6 +22,9 @@ case class Player(
     standing = standing,
     isWinner = if (winner) Some(true) else None
   )
+
+  def withSeat(seatId: String): Player = copy(
+    seatId = seatId.some)
 
   def withPlayer(id: String): Player = copy(
     playerId = id.some)
@@ -70,21 +74,23 @@ object Player {
 
   type Id = String
   type UserId = Option[String]
+  type SeatId = Option[String]
   type PlayerId = Option[String]
   type EndScore = Option[EndScoreSheet]
   type EndStanding = Option[Int]
   type Win = Option[Boolean]
 
-  type Builder = Side => Id => PlayerId => UserId => EndScore => EndStanding => Win => Player
+  type Builder = Side => Id => PlayerId => UserId => SeatId => EndScore => EndStanding => Win => Player
 
   implicit val playerBSONHandler = new BSON[Builder] {
     import BSONFields._
 
-    def reads(r: BSON.Reader) = side => id => playerId => userId => endScore => standing => win => Player(
+    def reads(r: BSON.Reader) = side => id => playerId => userId => seatId => endScore => standing => win => Player(
       id = id,
       side = side,
       playerId = playerId,
       userId = userId,
+      seatId = seatId,
       rating = r intO rating,
       aiLevel = r intO aiLevel,
       endScore = endScore,
@@ -93,7 +99,7 @@ object Player {
       name = r strO name)
 
     def writes(w: BSON.Writer, o: Builder) =
-      o(Side.EastSide)("0000")(none)(none)(none)(none)(none) |> { p =>
+      o(Side.EastSide)("0000")(none)(none)(none)(none)(none)(none) |> { p =>
         BSONDocument(
           aiLevel -> p.aiLevel,
           rating -> p.rating,

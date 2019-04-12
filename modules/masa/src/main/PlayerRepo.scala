@@ -43,6 +43,8 @@ object PlayerRepo {
 
   def byPlayerId(playerId: String): Fu[Option[Player]] = coll.uno[Player](selectPlayer(playerId))
 
+  def bySeatId(seatId: String): Fu[Option[Player]] = byId(seatId)
+
   def bestByMasa(masaId: String): Fu[List[Player]] =
     coll.find(selectMasa(masaId)).sort(bestSort).cursor[Player]().gather[List]()
 
@@ -63,7 +65,7 @@ object PlayerRepo {
     coll.find(selectMasa(masaId) ++ selectSide(side)).uno[Player]
 
   def update(masaId: String, seatId: String)(f: Player => Fu[Player]) =
-    findBySeatId(masaId, seatId) flatten s"No such player: $masaId/$playerId" flatMap f flatMap { player =>
+    findBySeatId(masaId, seatId) flatten s"No such player: $masaId/$seatId" flatMap f flatMap { player =>
       coll.update(selectId(player._id), player).void
     }
 
@@ -99,7 +101,6 @@ object PlayerRepo {
     removePlayerWithId(player.playerId)
 
   def insertPlayer(masaId: String, player: Player, side: Side) = {
-    println("insert player", player.playerId)
     coll.insert(player.doSide(side))
   }
 
@@ -107,22 +108,18 @@ object PlayerRepo {
     freeSides(masaId) flatMap { l =>
       l.find(s => (oside | s) == s) match {
         case Some(side) =>
-          println("join ", side)
           (find(masaId, player.playerId) flatMap {
             case Some(p) => {
-              println("found playerid remove", player.playerId)
               removePlayer(p)
             }
             case None => funit
           }) >> (find(masaId, side) flatMap {
             case Some(basePlayer) => {
-              println("found base update", basePlayer.id, basePlayer.playerId)
               coll.update(selectId(basePlayer.id),
                 basePlayer.doActivePlayer(player))
             }
             case None => funit
           }) inject funit
-
         case None => funit
       }
     }
@@ -168,7 +165,7 @@ object PlayerRepo {
   def playerInfo(masaId: String, playerId: String): Fu[Option[PlayerInfo]] =
     find(masaId, playerId) map {
       _ map { player =>
-        PlayerInfo(player.side, player.active)
+        PlayerInfo(player.id, player.side, player.active)
       }
     }
 }

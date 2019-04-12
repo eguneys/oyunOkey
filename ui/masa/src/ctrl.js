@@ -8,6 +8,7 @@ module.exports = function(env) {
   this.userId = env.userId;
 
   this.playerId = env.data.playerId;
+  this.seatId = env.data.seatId;
 
   this.socket = new socket(env.socketSend, this);
 

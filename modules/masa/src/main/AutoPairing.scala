@@ -7,7 +7,7 @@ import oyun.user.{ User, UserRepo }
 final class AutoPairing {
   def apply(masa: Masa, pairing: Pairing): Fu[Game] =
     for {
-      players <- (pairing.playerIds map getPlayer).sequenceFu
+      players <- (pairing.seatIds map getPlayer).sequenceFu
       users <- players.map(_.userId ?? { getUser(_).map(_.some) }).sequenceFu
       game1 = Game.make(
         game = okey.Game(masa.variant) |>{ g =>
@@ -20,7 +20,7 @@ final class AutoPairing {
         variant = masa.variant)
       game2 = game1
       .updatePlayers(players.map { p => (gp: GamePlayer) =>
-        val gp2 = gp.withPlayer(p.playerId).withAi(p.aiLevel)
+        val gp2 = gp.withPlayer(p.playerId).withSeat(p.id).withAi(p.aiLevel)
 
         users.flatten.find(u => p.userId.exists(u.id==)).fold(gp2) { user =>
           gp2.withUser(user.id, PerfPicker.mainOrDefault(game1)(user.perfs))
@@ -32,9 +32,10 @@ final class AutoPairing {
       .start
       _ <- (GameRepo insertDenormalized game2)
     } yield game2
-  private def getPlayer(playerId: String): Fu[Player] =
-    PlayerRepo byPlayerId playerId flatMap {
-      _.fold(fufail[Player]("No player id " + playerId))(fuccess)
+
+  private def getPlayer(seatId: String): Fu[Player] =
+    PlayerRepo bySeatId seatId flatMap {
+      _.fold(fufail[Player]("No player seat id " + seatId))(fuccess)
     }
 
   private def getUser(username: String): Fu[User] =
