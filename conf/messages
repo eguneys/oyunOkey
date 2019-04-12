@@ -105,6 +105,7 @@ west=West
 north=North
 south=South
 aiBot=Bot AI%s
+emptySeat=Empty Seat
 settings=Settings
 playOnline=Play online
 nbPlayers=%s Players

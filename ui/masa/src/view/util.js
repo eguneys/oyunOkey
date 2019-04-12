@@ -20,7 +20,9 @@ module.exports = {
   usernameOrAnon: function(ctrl, pid) {
     var data = ctrl.data;
     var p = data.players[pid];
-    return p.ai ? ctrl.trans('aiBot', p.ai) : (p.name || 'Anonymous');
+    if (!p) return 'Anonymous';
+
+    return  p.ai ? ctrl.trans('aiBot', p.ai) : (p.name || 'Anonymous');
   },
   player: function(p, tag) {
     var ratingDiff;

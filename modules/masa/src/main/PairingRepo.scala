@@ -14,13 +14,13 @@ object PairingRepo {
 
   private def selectId(id: String) = $doc("_id" -> id)
   def selectMasa(masaId: String) = $doc("mid" -> masaId)
-  def selectPlayer(playerId: String) = $doc("$or" -> List(
+  def selectSeat(seatId: String) = $doc("$or" -> List(
     $doc("pids.e" -> playerId),
     $doc("pids.w" -> playerId),
     $doc("pids.n" -> playerId),
     $doc("pids.s" -> playerId)))
 
-  private def selectMasaPlayer(masaId: String, playerId: String) = selectMasa(masaId) ++ selectPlayer(playerId)
+  private def selectMasaSeat(masaId: String, seatId: String) = selectMasa(masaId) ++ selectSeat(seatId)
 
   private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.Aborted.id))
   //private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.MiddleEnd.id))
@@ -45,9 +45,9 @@ object PairingRepo {
 
   def removePlaying(masaId: String) = coll.remove(selectMasa(masaId) ++ selectPlaying).void
 
-  def finishedByPlayerChronological(masaId: String, playerId: String): Fu[Pairings] =
+  def finishedByPlayerChronological(masaId: String, seatId: String): Fu[Pairings] =
     coll.find(
-      selectMasaPlayer(masaId, playerId) ++ selectFinished
+      selectMasaSeat(masaId, seatId) ++ selectFinished
     ).sort(chronoSort).cursor[Pairing]().gather[List]()
 
   def insert(pairing: Pairing) = coll.insert {

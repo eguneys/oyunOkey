@@ -33,7 +33,7 @@ private[masa] final class StartedOrganizer(
       MasaRepo.started map { started =>
         oyun.common.Future.traverseSequentially(started) { masa =>
           PlayerRepo activePlayers masa.id flatMap { activePlayers =>
-            val activePlayerIds = activePlayers map (_.id)
+            val activePlayerIds = activePlayers map (_.playerId)
             val activeUserIds = activePlayers flatMap (_.userId)
             val nb = activePlayerIds.size
 

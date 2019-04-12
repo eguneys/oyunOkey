@@ -15,6 +15,9 @@ object PlayerRepo {
   private def selectUser(uid: String) = $doc("uid" -> uid)
   private def selectPlayer(pid: String) = $doc("pid" -> pid)
   private def selectMasa(masaId: String) = $doc("mid" -> masaId)
+  private def selectMasaSeat(masaId: String, seatId: String) = $doc(
+    "mid" -> masaId,
+    "_id" -> seatId)
   private def selectMasaPlayer(masaId: String, playerId: String) = $doc(
     "mid" -> masaId,
     "pid" -> playerId)
@@ -50,14 +53,17 @@ object PlayerRepo {
       }._1
     }
 
+  def findBySeatId(masaId: String, seatId: String): Fu[Option[Player]] =
+    coll.find(selectMasaSeat(masaId, seatId)).uno[Player]
+
   def find(masaId: String, playerId: String): Fu[Option[Player]] =
     coll.find(selectMasaPlayer(masaId, playerId)).uno[Player]
 
   def find(masaId: String, side: Side): Fu[Option[Player]] =
     coll.find(selectMasa(masaId) ++ selectSide(side)).uno[Player]
 
-  def update(masaId: String, playerId: String)(f: Player => Fu[Player]) =
-    find(masaId, playerId) flatten s"No such player: $masaId/$playerId" flatMap f flatMap { player =>
+  def update(masaId: String, seatId: String)(f: Player => Fu[Player]) =
+    findBySeatId(masaId, seatId) flatten s"No such player: $masaId/$playerId" flatMap f flatMap { player =>
       coll.update(selectId(player._id), player).void
     }
 

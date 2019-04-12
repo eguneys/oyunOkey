@@ -83,9 +83,9 @@ private[masa] final class MasaApi(
         case Some(pairing) => {
           //PairingRepo.insert(pairing) >> updateNbRounds(masa.id) >>
           PairingRepo.insert(pairing) >>
-            autoPairing(masa, pairing) addEffect { game =>
-              sendTo(masa.id, StartGame(game))
-            }
+          autoPairing(masa, pairing) addEffect { game =>
+            sendTo(masa.id, StartGame(game))
+          }
         } >> funit >> featureOneOf(masa, pairing) >>- {
           oyun.mon.masa.pairing.create()
           pairingLogger.debug(s"${masa.id} ${pairing}")
