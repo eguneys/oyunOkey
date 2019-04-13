@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+shopt -s expand_aliases
+source ~/.bashrc
 
 . bin/lilarc
 
@@ -12,7 +14,8 @@ mkdir -p public/compiled
 orig="$SRC/util.js $SRC/socket.js $SRC/main.js"
 comp=$TARGET/oyunkeyf.js
 oyunlog "Compiling oyunkeyf.js"
+
 closure-compiler --js $orig --js_output_file $comp
 
 # compile css
-npm install --no-optional && gulp
+yarn install --no-optional && gulp

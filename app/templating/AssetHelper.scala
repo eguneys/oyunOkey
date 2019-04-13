@@ -11,7 +11,7 @@ trait AssetHelper { self: I18nHelper =>
 
   val assetDomain = oyun.api.Env.current.Net.AssetDomain
 
-  val assetBaseUrl = s"http://$assetDomain"
+  val assetBaseUrl = s"//$assetDomain"
 
   def staticUrl(path: String) = s"$assetBaseUrl${routes.Assets.at(path)}"
   // def staticUrl(path: String) = s"$assetBaseUrl${routes.Assets.versioned(path)}"

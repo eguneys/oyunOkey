@@ -27,7 +27,7 @@ oyunkeyf.StrongSocket = function(murl, mversion, msettings) {
     destroy();
     autoReconnect = true;
 
-    var fullUrl = "ws://" + baseUrl() + url + "?" + $.param(settings.params);
+    var fullUrl = options.protocol + "//" + baseUrl() + url + "?" + $.param(settings.params);
     debug("connection attempt to " + fullUrl, true);
     try {
       if (window.WebSocket) ws = new WebSocket(fullUrl);
@@ -272,7 +272,8 @@ oyunkeyf.StrongSocket.defaults = {
     pingMaxLag: 8000, // time to wait for pong before resetting the connection
     pingDelay: 1500, // time between pong and ping
     autoReconnectDelay: 2000,
-    lagTag: false, // jQuery object showing ping lag
+    lagTag: false, // jQuery object showing ping lag,
+    protocol: location.protocol === 'https:' ? 'wss:' : 'ws:',
     baseUrls: [document.domain + ':9021'].concat(
       //[9021, 9022, 9023, 9024]
       [9022].map(function(port) {

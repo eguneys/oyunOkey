@@ -3,4 +3,4 @@
 COMMAND=$*
 PASSWORD=$OYUN_CLI_PASSWORD
 
-curl -d "password=$PASSWORD&command=$COMMAND" http://192.168.56.103/cli
+curl -d "password=$PASSWORD&command=$COMMAND" http://localhost:9663/cli
