@@ -1,0 +1,21 @@
+include "base"
+
+net {
+  domain = "o.com:8080"
+  asset {
+    domain = ${net.domain}
+  }
+}
+
+mongodb {
+  uri = "mongodb://oyun:1234@ds013310.mlab.com:13310/oyunkeyfdev?authMode=scram-sha1"
+
+  mongo-async-driver = {}
+}
+
+recaptcha {
+  endpoint = "https://www.google.com/recaptcha/api/siteverify"
+  public_key = "6LdDeR8TAAAAAM89-aiouwGDrVaZHbzuahzjJRJJ"
+  private_key = ""
+  enabled = false
+}

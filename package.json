@@ -22,5 +22,15 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-csso": "^2.0.0"
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.7.0",
+    "gulp-jshint": "^2.1.0",
+    "gulp-streamify": "^1.0.2",
+    "gulp-tap": "^1.0.1",
+    "gulp-uglify": "^3.0.2",
+    "jshint": "^2.10.2",
+    "vinyl-source-stream": "^2.0.0",
+    "watchify": "^3.11.1"
   }
 }
