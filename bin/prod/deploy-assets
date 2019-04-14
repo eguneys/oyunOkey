@@ -9,7 +9,7 @@ if [ -z $mode ]; then
    exit 1
 elif [ $mode = "main" ]; then
    REMOTE="anand"
-   REMOTE_DIR="/home/ubuntu/oyun"
+   REMOTE_DIR="/home/eguneys/oyun"
 elif [ $mode = "local" ]; then
    REMOTE="localhost"
    REMOTE_DIR="/tmp/oyun5"
