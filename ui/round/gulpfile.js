@@ -28,8 +28,8 @@ gulp.task('dev', function() {
   return browserify('./src/main.js', {
     standalone: standalone
   }).transform('babelify',
-               { presets: ["es2015"],
-                 plugins: ['add-module-exports'] })
+               { presets: ["@babel/preset-env"],
+                 plugins: [] })
     .bundle()
     .on('error', onError)
     .pipe(source('oyunkeyf.round.js'))
@@ -43,8 +43,8 @@ gulp.task('watch', function() {
   opts.standalone = standalone;
   var bundleStream = watchify(browserify(sources, opts))
     .transform('babelify',
-               { presets: ["es2015"],
-                 plugins: ['add-module-exports'] })
+               { presets: ["@babel/preset-env"],
+                 plugins: [] })
     .on('update', rebundle)
     .on('log', log);
 

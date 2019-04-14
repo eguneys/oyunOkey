@@ -64,7 +64,6 @@ module.exports = function(opts) {
   this.setTitle = partial(title.set, this);
 
   var onUserMove = (key, move) => {
-
     if (key === okeyground.move.leaveTaken) {
       return;
     }
@@ -117,8 +116,12 @@ module.exports = function(opts) {
     this.okeyground.sortPairs();
   };
 
+  this.sortSeries = () => {
+    this.okeyground.sortSeries();
+  };
+
   this.apiMove = (o) => {
-    console.log(o);
+    console.log('api move', o);
     m.startComputation();
     var d = this.data,
         playing = game.isPlayerPlaying(d);

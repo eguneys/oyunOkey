@@ -9,7 +9,7 @@ if [ -z $mode ]; then
    exit 1
 elif [ $mode = "main" ]; then
    REMOTE="anand"
-   REMOTE_DIR="/home/ubuntu/oyun"
+   REMOTE_DIR="/home/eguneys/oyun"
    CLI="bin/cli-prod"
 elif [ $mode = "local" ]; then
    REMOTE="localhost"
@@ -75,7 +75,7 @@ $CLI deploy post
 
 if [ $mode = "main" ]; then
   oyunlog "Restart oyunkeyf"
-  ssh $REMOTE "sudo chown -R ubuntu:ubuntu $REMOTE_DIR && sudo service oyunkeyf restart"
+  ssh $REMOTE "sudo chown -R eguneys:eguneys $REMOTE_DIR && sudo service oyunkeyf restart"
 fi
 
 oyunlog "Deploy complete"

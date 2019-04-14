@@ -41,8 +41,13 @@ final class Cached(
 
   val topNbGame= mongoCache[Int, List[User.LightCount]](
     prefix = "user:top:nbGame",
-    f = nb => UserRepo topNbGame nb map { _ map (_.lightCount) },
+    f = nb => {
+      val l = UserRepo topNbGame nb map { _ map (_.lightCount) }
+      println("topnbgame", l)
+      l
+    },
     timeToLive = 34 minutes,
+    // timeToLive = 1 seconds,
     keyToString = _.toString)
 
   val top50Online = oyun.memo.AsyncCache.single[List[User]](

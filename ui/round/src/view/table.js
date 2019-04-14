@@ -62,6 +62,7 @@ function renderTablePlay(ctrl) {
   var trans = ctrl.trans;
 
   var buttons = compact(spinning(ctrl) || [
+    button.sortPairs(ctrl, 'N', trans('sortSeries'), ctrl.sortSeries),
     button.sortPairs(ctrl, 'K', trans('sortPairs'), ctrl.sortPairs)
   ]);
 
