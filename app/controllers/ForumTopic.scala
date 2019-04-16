@@ -10,7 +10,10 @@ object ForumTopic extends OyunController with ForumController {
 
   def form(categSlug: String) = Open { implicit ctx =>
     OptionFuOk(CategRepo bySlug categSlug) { categ =>
-      forms.anyCaptcha map { html.forum.topic.form(categ, forms.topic, _) }
+      // forms.anyCaptcha map {
+      fuccess {
+        html.forum.topic.form(categ, forms.topic)
+      }
     }
   }
 
@@ -18,8 +21,8 @@ object ForumTopic extends OyunController with ForumController {
     implicit val req = ctx.body
     OptionFuResult(CategRepo bySlug categSlug) { categ =>
       forms.topic.bindFromRequest.fold(
-        err => forms.anyCaptcha.map { captcha =>
-          BadRequest(html.forum.topic.form(categ, err, captcha))
+        err => fuccess {
+          BadRequest(html.forum.topic.form(categ, err))
         },
         data => topicApi.makeTopic(categ, data) map { topic =>
           Redirect(routes.ForumTopic.show(categSlug, topic.slug, 1))
@@ -31,7 +34,7 @@ object ForumTopic extends OyunController with ForumController {
   def show(categSlug: String, slug: String, page: Int) = Open { implicit ctx =>
     OptionFuOk(topicApi.show(categSlug, slug, page)) {
       case (categ, topic, posts) => for {
-        form <- (!posts.hasNextPage) ?? forms.postWithCaptcha.map(_.some)
+        form <- (!posts.hasNextPage) ?? fuccess(forms.post.some)
       } yield html.forum.topic.show(categ, topic, posts, form)
     }
   }

@@ -137,6 +137,8 @@
   <string name="topics">Konular</string>
   <string name="views">Görüntüleme</string>
   <string name="replies">Yanıtlar</string>
+  <string name="reply">Yanıt ver</string>
+  <string name="replyToThisTopic">Bu konuya yanıt ver</string>
   <string name="createANewTopic">Yeni konu oluştur</string>
   <string name="subject">Konu</string>
   <string name="message">Mesaj</string>

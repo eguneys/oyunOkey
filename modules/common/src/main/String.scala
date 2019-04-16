@@ -6,6 +6,7 @@ import java.util.regex.Matcher.quoteReplacement
 import play.twirl.api.Html
 import scalatags.Text.RawFrag
 
+import oyun.base.RawHtml
 import oyun.common.base.StringUtils.{ escapeHtml => escapeHtmlRaw }
 
 object String {
@@ -34,6 +35,11 @@ object String {
   }
 
   object html {
+
+    def richText(rawText: String, nl2br: Boolean = true) = Html {
+      val withLinks = rawText // RawHtml.addLinks(rawText)
+      if (nl2br) RawHtml.nl2br(withLinks) else withLinks
+    }
 
     def escapeHtml(s: String) = Html {
       escapeHtmlRaw(s)

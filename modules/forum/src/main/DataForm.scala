@@ -8,11 +8,9 @@ private[forum] final class DataForm(val captcher: akka.actor.ActorSelection) ext
   import DataForm._
 
   val postMapping = mapping(
-    "text" -> text(minLength = 3),
-    "id" -> text,
-    "move" -> text
+    "text" -> text(minLength = 3)
   )(PostData.apply)(PostData.unapply)
-    .verifying(captchaFailMessage, validateCaptcha _)
+    // .verifying(captchaFailMessage, validateCaptcha _)
 
   val post = Form(postMapping)
 
@@ -28,9 +26,7 @@ private[forum] final class DataForm(val captcher: akka.actor.ActorSelection) ext
 object DataForm {
 
   case class PostData(
-    text: String,
-    id: String,
-    move: String
+    text: String
   )
 
   case class TopicData(

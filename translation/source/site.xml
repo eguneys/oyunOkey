@@ -137,6 +137,8 @@
   <string name="topics">Topics</string>
   <string name="views">Views</string>
   <string name="replies">Replies</string>
+  <string name="reply">Reply</string>
+  <string name="replyToThisTopic">Reply to this topic</string>
   <string name="createANewTopic">Create a new topic</string>
   <string name="subject">Subject</string>
   <string name="message">Message</string>

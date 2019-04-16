@@ -1,4 +1,5 @@
-@(categ: oyun.forum.Categ, topic: oyun.forum.Topic, posts: Paginator[oyun.forum.Post], formWithCaptcha: Option[FormWithCaptcha])(implicit ctx: Context)
+@(categ: oyun.forum.Categ, topic: oyun.forum.Topic, posts: Paginator[oyun.forum.Post], form: Option[Form[_]])(implicit ctx: Context)
+@import oyun.app.ui.ScalatagsTwirlForm._
 
 @moreJs = {
   @jsTag("forum-post.js")
@@ -14,7 +15,7 @@
     title = topic.name,
     url = s"$netBaseUrl${routes.ForumTopic.show(categ.slug, topic.slug, posts.currentPage).url}",
     description = shorten(posts.currentPageResults.headOption.??(_.text), 152)).some,
-  formCss = formWithCaptcha.isDefined) {
+  formCss = form.isDefined) {
 
   <div class="topic">
     <ol class="crumbs">
@@ -22,7 +23,55 @@
       <li><a href="@routes.ForumCateg.show(categ.slug)">@categ.name</a></li>
       <li><h1>@topic.name</h1></li>
     </ol>
-  </div>
 
-  
-}
+    <div class="bar top clearfix">
+      @forum.pagination(routes.ForumTopic.show(categ.slug, topic.slug, 1), posts, showPost = true)
+    </div>
+    <div class="forum_posts_list">
+      @posts.currentPageResults.map { post =>
+        <div class="post" id="@post.number">
+        <div class="metas clearfix">
+        @defining(routes.ForumTopic.show(categ.slug, topic.slug, posts.currentPage) + s"#${post.number}") { url =>
+          @authorLink(post=post, cssClass="author".some)
+          <a href="@url">
+          @post.updatedAt.map { updatedAt =>
+            <span class="post-edited">düzenlendi</span>
+            @momentFromNow(updatedAt)
+          }.getOrElse {
+            @momentFromNow(post.createdAt)
+          }
+          </a>
+
+          <a class="anchor" href="@url">#@post.number</a>
+        }
+        </div>
+        <p class="message">@post.text</p>
+        </div>
+      }
+    </div>
+
+    <div class="topicReply">
+      @form.map {
+        case form => {
+          <h2 class="postNewTitle" id="reply">@trans.replyToThisTopic()</h2>
+          <form class="form3 reply" action="@routes.ForumPost.create(categ.slug, topic.slug, posts.currentPage)#reply" method="POST" novalidate>
+          @form3.group(form("text"), trans.message.frag()) { f =>
+            @form3.textarea(f, klass = "post-text-area")(*.rows := 10, *.attr("data-topic") := topic.id)
+          }
+          Captcha
+          @form3.actionsHtml {
+            <a href="@routes.ForumCateg.show(categ.slug)">@trans.cancel()</a>
+            @form3.submit(trans.reply.frag())
+          }
+          </form>
+        }
+      }.getOrElse {
+        
+      }
+    </div>
+    
+    <div class="bar bottom clearfix">
+      @forum.pagination(routes.ForumTopic.show(categ.slug, topic.slug, 1), posts, showPost = true)
+    </div>
+    }
+  </div>

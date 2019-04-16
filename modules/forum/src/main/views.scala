@@ -34,3 +34,5 @@ case class TopicView(
   def views = topic.views
   def createdAt = topic.createdAt
 }
+
+case class PostUrlData(categ: String, topic: String, page: Int, number: Int)
