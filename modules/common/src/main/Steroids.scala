@@ -3,8 +3,11 @@ package oyun
 import ornicar.scalalib
 import ornicar.scalalib.Zero
 
+import oyun.base._
+
 trait Steroids
-    extends scalalib.Validation
+    extends OyunTypes
+    with scalalib.Validation
     with scalalib.Common
     // with scalalib.OrnicarMonoid.Instances
     with scalalib.Zero.Syntax
@@ -27,7 +30,18 @@ trait Steroids
     with BooleanSteroids
     with OptionSteroids
 
-    with JodaTimeSteroids
+    with JodaTimeSteroids {
+
+      // @inline implicit def toPimpedActorSystem(a: akka.actor.ActorSystem) = new PimpedActorSystem(a)
+
+      @inline implicit def toPimpedString(s: String) = new PimpedString(s)
+
+    }
+
+
+final class PimpedActorSystem(private val a: akka.actor.ActorSystem) extends AnyVal {
+  def oyunBus = oyun.common.Bus(a)
+}
 
 trait JodaTimeSteroids {
   import org.joda.time.DateTime
@@ -64,5 +78,7 @@ trait OptionSteroids {
     def unary_~(implicit z: Zero[A]): A = self getOrElse z.zero
 
     def err(message: => String): A = self.getOrElse(sys.error(message))
+
+    def has(a: A) = self contains a
   }
 }

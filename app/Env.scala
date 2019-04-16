@@ -54,6 +54,7 @@ object Env {
   def round = oyun.round.Env.current
   def game = oyun.game.Env.current
   def masa = oyun.masa.Env.current
+  def forum = oyun.forum.Env.current
   // def site = oyun.site.Env.current
   def pref = oyun.pref.Env.current
   def chat = oyun.chat.Env.current

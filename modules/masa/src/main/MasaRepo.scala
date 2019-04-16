@@ -50,7 +50,7 @@ object MasaRepo {
       .sort($doc("createdAt" -> -1))
       .list[Masa](limit)
 
-  def finishedPaginator(maxPerPage: Int, page: Int) = Paginator(
+  def finishedPaginator(maxPerPage: oyun.common.MaxPerPage, page: Int) = Paginator(
     adapter = new Adapter[Masa](
       collection = coll,
       selector = startedSelect,

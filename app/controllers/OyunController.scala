@@ -61,9 +61,10 @@ private[controllers] trait OyunController
   protected def Auth[A](p: BodyParser[A])(f: Context => UserModel => Fu[Result]): Action[A] =
     Action.async(p) { req =>
       reqToCtx(req) flatMap { implicit ctx =>
-        ctx.me.fold(authenticationFailed) { me =>
-          Env.i18n.requestHandler.forUser(req, ctx.me).fold(f(ctx)(me))(fuccess)
-        }
+        // ctx.me.fold(authenticationFailed) { me =>
+        //   Env.i18n.requestHandler.forUser(req, ctx.me).fold(f(ctx)(me))(fuccess)
+        // }
+        ctx.me.fold(authenticationFailed(ctx))(f(ctx))
       }
     }
 
@@ -105,7 +106,7 @@ private[controllers] trait OyunController
   protected def reqToCtx(req: RequestHeader): Fu[HeaderContext] =
   {
     restoreUser(req) flatMap { d =>
-      val ctx = UserContext(req, d.map(_.user))
+      val ctx = UserContext(req, d.map(_.user), oyun.i18n.I18nLangPicker(req, d.map(_.user)))
       pageDataBuilder(ctx) map { Context(ctx, _) }
     }
   }
@@ -113,7 +114,7 @@ private[controllers] trait OyunController
   protected def reqToCtx[A](req: Request[A]): Fu[BodyContext[A]] =
   {
     restoreUser(req) flatMap { d =>
-      val ctx = UserContext(req, d.map(_.user))
+      val ctx = UserContext(req, d.map(_.user), oyun.i18n.I18nLangPicker(req, d.map(_.user)))
       pageDataBuilder(ctx) map { Context(ctx, _) }
     }
   }
@@ -127,6 +128,9 @@ private[controllers] trait OyunController
         Env.current.bus.publish(oyun.user.User.Active(d.user), 'userActive)
       }
     }
+
+  protected def Reasonable(page: Int, max: Int = 40, errorPage: => Fu[Result] = BadRequest("resource too old").fuccess)(result: => Fu[Result]): Fu[Result] =
+    if (page < max) result else errorPage
 
   protected def errorsAsJson(form: play.api.data.Form[_])(implicit lang: play.api.i18n.Messages) =
     oyun.common.Form errorsAsJson form

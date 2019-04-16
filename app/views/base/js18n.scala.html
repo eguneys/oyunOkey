@@ -1,5 +1,5 @@
 @()(implicit ctx: Context)
-@Html(J.stringify(i18nJsObjectMessage(List(
+@Html(J.stringify(i18nJsObject(List(
   ctx.isAnon option trans.youNeedAnAccountToDoThat,
   trans.withdraw.some,
   trans.join.some,

@@ -7,6 +7,7 @@ import okey.{ Status => S }
 
 import oyun.game.{ Game, Player, Pov, Namer }
 import oyun.user.{ User, UserContext }
+import oyun.i18n.{ I18nKeys }
 
 trait GameHelper { self: I18nHelper with UserHelper =>
 
@@ -38,15 +39,15 @@ trait GameHelper { self: I18nHelper with UserHelper =>
   }
 
   def gameEndStatus(game: Game)(implicit ctx: UserContext): Html = game.status match {
-    case S.Aborted => trans.gameAborted()
-    case S.NormalEnd => trans.gameFinished()
-    case S.MiddleEnd => trans.gameMiddleFinished()
-    case _ => trans.gameFinished()
+    case S.Aborted => I18nKeys.gameAborted()
+    case S.NormalEnd => I18nKeys.gameFinished()
+    case S.MiddleEnd => I18nKeys.gameMiddleFinished()
+    case _ => I18nKeys.gameFinished()
   }
 
   def gameEndWinner(game: Game)(implicit ctx: UserContext): Html = {
     val winner = usernameOrAnon(game.winner flatMap (_.userId))
 
-    trans.gameEndBy(winner)
+    I18nKeys.gameEndBy(winner)
   }
 }

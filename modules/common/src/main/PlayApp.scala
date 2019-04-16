@@ -1,7 +1,7 @@
 package oyun.common
 
 import com.typesafe.config.Config
-import play.api.i18n.{ Lang, Messages }
+// import play.api.i18n.{ Lang => PlayLang, Messages }
 import play.api.{ Play, Application, Mode }
 import scala.collection.JavaConversions._
 
@@ -17,24 +17,24 @@ object PlayApp {
     play.api.libs.concurrent.Akka.system
   }
 
-  lazy val langs = loadConfig.getStringList("play.i18n.langs").toList map Lang.apply
+  // lazy val langs = loadConfig.getStringList("play.i18n.langs").toList map PlayLang.apply
 
-  protected def loadMessages(file: String): Map[String, String] = withApp { app =>
-    import scala.collection.JavaConverters._
-    import play.utils.Resources
-    app.classloader.getResources(file).asScala.toList
-      .filterNot(url => Resources.isDirectory(app.classloader, url)).reverse
-      .map { messageFile =>
-      Messages.parse(Messages.UrlMessageSource(messageFile), messageFile.toString).fold(e => throw e, identity)
-    }.foldLeft(Map.empty[String, String]) { _ ++ _ }
-  }
+  // protected def loadMessages(file: String): Map[String, String] = withApp { app =>
+  //   import scala.collection.JavaConverters._
+  //   import play.utils.Resources
+  //   app.classloader.getResources(file).asScala.toList
+  //     .filterNot(url => Resources.isDirectory(app.classloader, url)).reverse
+  //     .map { messageFile =>
+  //     Messages.parse(Messages.UrlMessageSource(messageFile), messageFile.toString).fold(e => throw e, identity)
+  //   }.foldLeft(Map.empty[String, String]) { _ ++ _ }
+  // }
 
-  lazy val messages: Map[String, Map[String, String]] =
-    langs.map(_.code).map { lang =>
-      (lang, loadMessages("messages." + lang))
-    }.toMap
-      .+("default" -> loadMessages("messages"))
-      .+("default.play" -> loadMessages("messages.default"))
+  // lazy val messages: Map[PlayLang, Map[String, Translation]] =
+  //   langs.map(_.code).map { lang =>
+  //     (lang, loadMessages("messages." + lang))
+  //   }.toMap
+  //     .+("default" -> loadMessages("messages"))
+  //     .+("default.play" -> loadMessages("messages.default"))
 
   def scheduler = new Scheduler(system.scheduler,
     enabled = true,

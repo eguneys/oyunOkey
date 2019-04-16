@@ -13,7 +13,7 @@
   okeyground: Boolean = true,
   withLangAnnotations: Boolean = true)(body: Html)(implicit ctx: Context)
 <!doctype html>
-<html lang="@lang.language">
+<html lang="@ctx.lang.language">
   <head>
     <meta charset="utf-8">
     <title>@if(!isProd) { [dev] }@fullTitle.getOrElse{@title • oyunkeyf.net}</title>
@@ -25,7 +25,7 @@
     <meta content="@openGraph.fold(trans.freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents())(o => Html(escapeEvenDoubleQuotes(o.description))))" name="description">
     <meta name="google" content="notranslate"/>
     @openGraph.map(_.html)
-    @if(withLangAnnotations){@langAnnotations}
+
   </head>
   <body class="preload base"
         data-user="@ctx.userId"
@@ -35,7 +35,7 @@
     <div id="top">
       @topmenu()
       <div class="oyunkeyf_language fright">
-        <a class="toggle link" href="#">@langName(lang)</a>
+        <a class="toggle link" href="#">@langName(ctx.lang)</a>
       </div>
       @ctx.me.map { me =>
         <div class="auth fright">
@@ -85,7 +85,7 @@
       @jsTag("main.js")
     }
     @moreJs
-    @if(lang.language != "en") {
+    @if(ctx.lang.language != "en") {
       @embedJs {
         oyunkeyf_translations = @js18n()
       }

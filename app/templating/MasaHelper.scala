@@ -7,6 +7,7 @@ import oyun.api.Context
 import oyun.masa.Env.{ current => masaEnv }
 import oyun.masa.{ Masa }
 import oyun.user.{ UserContext }
+import oyun.i18n.I18nKeys
 
 trait MasaHelper { self: I18nHelper with DateHelper with UserHelper => 
 
@@ -14,7 +15,7 @@ trait MasaHelper { self: I18nHelper with DateHelper with UserHelper =>
 
   def masaIconChar(masa: Masa): Char = 'g'
 
-  def masaRoundString(masa: Masa)(implicit ctx: UserContext) = s"${masa.roundString}${trans.rounds().toString.head}"
+  def masaRoundString(masa: Masa)(implicit ctx: UserContext) = s"${masa.roundString}${I18nKeys.rounds().toString.head}"
 
   def masaIdToName(id: String) = masaEnv.cached name id getOrElse "Masa"
 

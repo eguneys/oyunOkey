@@ -15,6 +15,8 @@ object PageData {
 sealed trait Context extends oyun.user.UserContextWrapper {
   val userContext: UserContext
   val pageData: PageData
+
+  def lang = userContext.lang
 }
 
 sealed abstract class BaseContext(

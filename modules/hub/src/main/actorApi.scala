@@ -28,6 +28,12 @@ case class WithUserIds(f: Iterable[String] => Unit)
 case object GetUids
 case class SocketUids(uids: Set[String])
 
+package captcha {
+  case object AnyCaptcha
+  case class GetCaptcha(id: String)
+  case class ValidCaptcha(id: String, solution: String)
+}
+
 package lobby {
   case class ReloadMasas(html: String)
 }

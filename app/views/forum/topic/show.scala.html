@@ -1,0 +1,28 @@
+@(categ: oyun.forum.Categ, topic: oyun.forum.Topic, posts: Paginator[oyun.forum.Post], formWithCaptcha: Option[FormWithCaptcha])(implicit ctx: Context)
+
+@moreJs = {
+  @jsTag("forum-post.js")
+}
+
+@title = @{ s"${topic.name} • sayfa ${posts.currentPage}/${posts.nbPages} • ${categ.name}" }
+
+
+@forum.layout(
+  title = title,
+  moreJs = moreJs,
+  openGraph = oyun.app.ui.OpenGraph(
+    title = topic.name,
+    url = s"$netBaseUrl${routes.ForumTopic.show(categ.slug, topic.slug, posts.currentPage).url}",
+    description = shorten(posts.currentPageResults.headOption.??(_.text), 152)).some,
+  formCss = formWithCaptcha.isDefined) {
+
+  <div class="topic">
+    <ol class="crumbs">
+      <li><a style="text-decoration:none" data-icon="d" class="is4 text" href="@routes.ForumCateg.index">Forum</a></li>
+      <li><a href="@routes.ForumCateg.show(categ.slug)">@categ.name</a></li>
+      <li><h1>@topic.name</h1></li>
+    </ol>
+  </div>
+
+  
+}

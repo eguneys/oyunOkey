@@ -4,6 +4,9 @@ import akka.actor._
 import com.typesafe.config.Config
 
 final class Env(config: Config, system: ActorSystem) {
+
+  val captcher = select("actor.captcher")
+
   object actor {
     val renderer = select("actor.renderer")
     val lobby = select("actor.lobby")
