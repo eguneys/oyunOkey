@@ -1,0 +1,71 @@
+.form3 {
+  margin: 10px;
+}
+
+.form3 * {
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form3 .form-group {
+  margin-bottom: 1rem;
+}
+
+.form3 .form-split {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form3 .form-label {
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: .5rem;
+}
+
+.form3 .form-control {
+  display: block;
+  width: 100%;
+  height: calc(2.24rem + 2px);
+  padding: 0.3rem 0.74rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form3 textarea.form-control {
+  overflow: auto;
+  resize: vertical;
+  height: auto;
+}
+
+.form3 .error {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #d33545;
+}
+
+.form3 .form-actions {
+  margin: 1rem 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form3 .form-actions.single {
+  justify-content: flex-end;
+}
+
+.form3 hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
