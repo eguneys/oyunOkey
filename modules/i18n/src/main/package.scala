@@ -12,6 +12,6 @@ package object i18n extends PackageObject with WithPlay {
 
   private[i18n] def logger = oyun.log("i18n")
 
-  val trLang = Lang("tr")
+  val trLang = Lang("tr", "TR")
   val defaultLang = trLang
 }

@@ -16,7 +16,8 @@ import oyun.user.{ UserContext, User => UserModel }
 private[controllers] trait OyunController
     extends Controller
     with ContentTypes
-    with RequestGetter {
+    with RequestGetter 
+    with ResponseWriter {
 
   protected implicit def OyunHtmlToResult(content: Html): Result = Ok(content)
 

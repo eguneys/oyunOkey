@@ -9,6 +9,6 @@ object LangList {
   def nameByStr(str: String): String = I18nLangPicker.byStr(str).fold(str)(name)
 
   val all = Map(
-    Lang("en") -> "English",
-    Lang("tr") -> "Türkçe")
+    Lang("en", "GB") -> "English",
+    Lang("tr", "TR") -> "Türkçe")
 }

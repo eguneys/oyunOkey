@@ -1,5 +1,6 @@
 package controllers
 
+import akka.pattern.ask
 import play.api.mvc._
 
 import oyun.app._

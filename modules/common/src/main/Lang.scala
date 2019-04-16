@@ -13,7 +13,10 @@ case class Lang(value: PlayLang) extends AnyVal {
 object Lang {
 
   def apply(language: String): Lang = Lang(PlayLang(language))
+  def apply(language: String, country: String): Lang = Lang(PlayLang(language, country))
 
-  def get(code: String): Option[Lang] = PlayLang get code map apply
+  def get(code: String): Option[Lang] = {
+    PlayLang get code map apply
+  }
   
 }

@@ -89,7 +89,8 @@ private[i18n] object Registry {
         val safe = escape(e.text)
         val translation = escapeHtmlOption(safe) match {
           case None => s"""new Simple(\"\"\"$safe\"\"\")"""
-          case Some(escaped) => s"""new Escaped(\"\"\"$safe\"\"\",\"\"\"$escaped\"\"\")"""
+          // case Some(escaped) => s"""new Escaped(\"\"\"$safe\"\"\",\"\"\"$escaped\"\"\")"""
+          case Some(escaped) => s"""new Simple(\"\"\"$safe\"\"\")"""
         }
         s"""m.put(${toKey(e)},$translation)"""
       case e if e.label == "plurals" =>
