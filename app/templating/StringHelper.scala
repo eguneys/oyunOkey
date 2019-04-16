@@ -10,6 +10,8 @@ trait StringHelper { self: NumberHelper =>
 
   def netDomain: String
 
+  def shorten(text: String, length: Int, sep: String ="…") = oyun.common.String.shorten(text, length, sep)
+
   // the replace quot; -> " is required
   // to avoid issues caused by addLinks
   // when an url is surrounded by quotes

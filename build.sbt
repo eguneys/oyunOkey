@@ -32,12 +32,13 @@ libraryDependencies ++= Seq(
   okey,
   prismic,
   netty,
-  kamon.core, java8compat, scaffeine)
+  kamon.core, scalatags, java8compat, scaffeine)
 TwirlKeys.templateImports ++= Seq(
   "oyun.game.{ Game, Player, Pov }",
   "oyun.masa.Masa",
   "oyun.user.{ User, UserContext }",
   "oyun.api.Context",
+  "oyun.i18n.{ I18nKeys => trans }",
   "oyun.app.templating.Environment._",
   "oyun.common.paginator.Paginator"
 )
@@ -49,7 +50,7 @@ TwirlKeys.templateImports ++= Seq(
 // resourceDirectory in Assets := (sourceDirectory in Compile).value / "assets"
 unmanagedResourceDirectories in Assets ++= (if (scala.sys.env.get("SERVE_ASSETS").exists(_ == "1")) Seq(baseDirectory.value / "public") else Nil)
 
-lazy val modules = Seq(common, rating, db, user, chat, pref, security, game, setup, site, lobby, socket, hub, round, masa, i18n)
+lazy val modules = Seq(common, rating, db, forum, user, chat, pref, security, game, setup, site, lobby, socket, hub, round, masa, i18n)
 
 lazy val moduleRefs = modules map projectToRef
 lazy val moduleCPDeps = moduleRefs map { new sbt.ClasspathDependency(_, None) }
@@ -100,7 +101,15 @@ lazy val lobby = module("lobby", Seq(common, user, game, socket, hub)).settings(
 )
 
 lazy val i18n = module("i18n", Seq(common, user)).settings(
-  libraryDependencies ++= provided(play.api, reactivemongo.driver)
+  sourceGenerators in Compile += Def.task {
+    MessageCompiler(
+      sourceDir = new File("translation/source"),
+      destDir = new File("translation/dest"),
+      dbs = List("site"),
+      compileTo = (sourceManaged in Compile).value / "messages"
+    )
+  }.taskValue,
+  libraryDependencies ++= provided(play.api, reactivemongo.driver, scalatags)
 )
 
 lazy val memo = module("memo", Seq(common, db)).settings(
@@ -120,12 +129,16 @@ lazy val site = module("site", Seq(common, socket)).settings(
   libraryDependencies ++= provided(play.api)
 )
 
+lazy val forum = module("forum", Seq(common, db, user, security, hub)).settings(
+  libraryDependencies ++= provided(play.api, play.test, reactivemongo.driver)
+)
+
 lazy val socket = module("socket", Seq(common, memo, hub)).settings(
   libraryDependencies ++= provided(play.api, play.test)
 )
 
 lazy val common = module("common").settings(
-  libraryDependencies ++= provided(play.api, play.test, kamon.core)
+  libraryDependencies ++= provided(play.api, play.test, kamon.core, scalatags)
 )
 
 lazy val rating = module("rating", Seq(common, db)).settings(

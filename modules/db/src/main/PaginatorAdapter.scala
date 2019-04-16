@@ -8,6 +8,15 @@ import reactivemongo.bson._
 
 import oyun.common.paginator.AdapterLike
 
+final class CachedAdapter[A](
+  adapter: AdapterLike[A],
+  val nbResults: Fu[Int]) extends AdapterLike[A] {
+
+  def slice(offset: Int, length: Int): Fu[Seq[A]] =
+    adapter.slice(offset, length)
+  
+}
+
 final class Adapter[A: BSONDocumentReader](
   collection: BSONCollection,
   selector: BSONDocument,

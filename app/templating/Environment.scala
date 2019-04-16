@@ -14,6 +14,7 @@ object Environment
     with scalalib.Zeros
     with oyun.BooleanSteroids
     with oyun.OptionSteroids
+    with HtmlHelper
     with AssetHelper
     with RequestHelper
     with I18nHelper
@@ -26,8 +27,14 @@ object Environment
     with FormHelper
     with AiHelper
     with UserHelper
+    with ForumHelper
+    with PaginatorHelper
     with MasaHelper
-    with GameHelper {
+    with GameHelper
+    with ui.ScalatagsTwirl {
+
+  type FormWithCaptcha = (play.api.data.Form[_], oyun.common.Captcha)
+
   implicit val OyunHtmlMonoid = scalaz.Monoid.instance[Html](
     (a, b) => Html(a.body + b.body),
     Html(""))

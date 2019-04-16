@@ -2,8 +2,14 @@ package oyun.common
 
 import play.api.data.format.Formats._
 import play.api.data.Forms._
+import play.api.data.{ FormError, Field }
 
 object Form {
+
+  type FormLike = {
+    def apply(key: String): Field
+    def errors: Seq[FormError]
+  }
 
   def options(it: Iterable[Int], pattern: String) = it map { d =>
     d -> (pattern format d)

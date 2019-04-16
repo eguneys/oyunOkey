@@ -19,7 +19,7 @@
       <div class="user-infos scroll-shadow-hard">
         <div class="stats">
           <span class="location">Location</span>
-          @u.lang.flatMap(langName).map { name =>
+          @u.lang.map(langNameByStr).map { name =>
             <span data-icon="c"> @name</span>
           }
           <p class="thin">@trans.memberSince() @showDate(u.createdAt)</p>

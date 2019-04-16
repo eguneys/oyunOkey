@@ -1,12 +1,14 @@
 package oyun.i18n
 
+import oyun.common.Lang
+
 object LangList {
 
-  def name(code: String) = all get code
+  def name(lang: Lang): String = all.getOrElse(lang, lang.code)
 
-  def nameOrCode(code: String) = name(code) | code
+  def nameByStr(str: String): String = I18nLangPicker.byStr(str).fold(str)(name)
 
   val all = Map(
-    "en" -> "English",
-    "tr" -> "Türkçe")
+    Lang("en", "GB") -> "English",
+    Lang("tr", "TR") -> "Türkçe")
 }

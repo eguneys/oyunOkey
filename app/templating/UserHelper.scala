@@ -7,6 +7,7 @@ import play.twirl.api.Html
 
 import oyun.api.Context
 import oyun.common.LightUser
+import oyun.i18n.I18nKeys
 import oyun.rating.{ PerfType, Perf }
 import oyun.user.{ User, UserContext, Perfs }
 
@@ -18,13 +19,13 @@ trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
       case p if p > 0 => s"""<span class="positive" data-icon="N">$p</span>"""
       case p if p < 0 => s"""<span class="negative" data-icon="M">${math.abs(p)}</span>"""
     }
-    val title = if (withTitle) """data-hint="${trans.ratingProgressionOverTheLastTwelveGames()}"""" else ""
+    val title = if (withTitle) """data-hint="${}"""" else ""
     val klass = if (withTitle) "progress hint--bottom" else "progress"
     s"""<span $title class="$klass">$span</span>"""
   }
 
   def showPerfRating(rating: Int, name: String, nb: Int, icon: Char, klass: String)(implicit ctx: Context) = Html {
-    val title = trans.ratingOverNbGames(name, nb.localize)
+    val title = s"${nb.localize} oyun içinden $name"
     val attr = if (klass == "title") "title" else "data-hint"
     val number = if (nb > 0) rating else "&nbsp;&nbsp;&nbsp;-"
     s"""<span $attr="$title" class="$klass"><span data-icon="$icon">$number</span></span>"""
@@ -53,12 +54,14 @@ trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
 
   def userIdLink(
     userIdOption: Option[String],
+    cssClass: Option[String] = None,
     withOnline: Boolean = true): Html = Html {
     userIdOption.flatMap(lightUser).fold(User.anonymous) { user =>
       userIdNameLink(
         userId = user.id,
         username = user.name,
-        withOnline = withOnline)
+        withOnline = withOnline,
+        cssClass = cssClass)
     }
   }
 
@@ -144,15 +147,26 @@ trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
   }.mkString("class=\"", " ", "\"")
 
 
+  def userIdSpanMini(userId: String, withOnline: Boolean = false) = Html {
+    val user = lightUser(userId)
+    val name = user.fold(userId)(_.name)
+    val content = user.fold(userId)(_.name)
+    val klass = userClass(userId, none, withOnline)
+    val href = s"data-${userHref(name)}"
+    val icon = withOnline ?? lineIcon(user)
+    s"""<span $klass $href>$icon$content</span>"""
+  }
+
+
   def userGameFilterTitle(info: UserInfo, filter: GameFilter)(implicit ctx: UserContext) =
     splitNumber(userGameFilterTitleNoTag(info, filter))
 
   def userGameFilterTitleNoTag(info: UserInfo, filter: GameFilter)(implicit ctx: UserContext) = Html((filter match {
-    case GameFilter.All => info.user.count.game + " " + trans.gamesPlayed()
-    case GameFilter.Rated => info.nbRated + " " + trans.rated()
-    case GameFilter.Win => trans.nbWins(info.user.count.standing1)
-    case GameFilter.Loss => trans.nbWins(info.user.count.standing4)
-    case GameFilter.Playing => info.nbPlaying + " " + trans.playing()
+    case GameFilter.All => I18nKeys.gamesPlayed(info.user.count.game)
+    case GameFilter.Rated => I18nKeys.rated(info.nbRated)
+    case GameFilter.Win => I18nKeys.nbWins(info.user.count.standing1)
+    case GameFilter.Loss => I18nKeys.nbWins(info.user.count.standing4)
+    case GameFilter.Playing => I18nKeys.playing(info.nbPlaying)
   }).toString)
 
   def describeUser(user: User) = {
@@ -162,4 +176,7 @@ trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
     val currentRating = 1500
     s"$name played $nbGames games since $createdAt.$currentRating"
   }
+
+  val lineIcon: String = """<i class="line"></i>"""
+  private def lineIcon(user: Option[LightUser]): String = lineIcon
 }

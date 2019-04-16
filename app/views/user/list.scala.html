@@ -58,12 +58,12 @@
 }
 
 @user.layout(
-trans.players.str(),
+trans.players.txt(),
 side = side.some,
 openGraph = oyun.app.ui.OpenGraph(
-title = trans.okeyPlayersAndLeaderboards.str(),
+title = trans.okeyPlayersAndLeaderboards.txt(),
 url = s"$netBaseUrl${routes.User.list.url}",
-description = trans.bestOkeyPlayersInYuzbir.str()).some) {
+description = trans.bestOkeyPlayersInYuzbir.txt()).some) {
   <div class="content_box">
     <div class="user_lists">
       <div class="group">

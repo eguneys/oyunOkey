@@ -15,7 +15,7 @@
 @masa.layout(
   title = s"${m.fullName} #${m.id}",
   side = masa.side(m).some,
-  chat = chat.map(c => base.chat(c, trans.chatRoom.str())),
+  chat = chat.map(c => base.chat(c, trans.chatRoom.txt())),
   moreJs = moreJs,
   openGraph = masaOpenGraph(m).some) {
     <div id="masa"></div>

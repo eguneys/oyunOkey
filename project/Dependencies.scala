@@ -27,6 +27,7 @@ object Dependencies {
   val java8compat = "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0"
   val scaffeine = "com.github.blemale" %% "scaffeine" % "2.5.0" % "compile"
   val netty = "io.netty" % "netty" % "3.10.6.Final"
+  val scalatags = "com.lihaoyi" %% "scalatags" % "0.6.7"
 
   object reactivemongo {
     val version = "0.12.4"

@@ -5,13 +5,13 @@
     <div class="header">
       <span class="setup">
         @game.variantLink(m.variant, m.variant.name, cssClass = "hint--top") •
-        @m.rated.fold(trans.rated.str(), trans.casual.str()).toUpperCase •
+        @m.rated.fold(trans.rated.txt(), trans.casual.txt()).toUpperCase •
         @m.roundString
       </span>
       (<a href="@routes.Masa.help(m.system.toString.toLowerCase.some)">?</a>)
       <br />
       @if(!m.rated && m.membersOnly) {
-        @trans.membersOnly.str()
+        @trans.membersOnly.txt()
       }
     </div>
   </div>

@@ -1,9 +1,11 @@
 package controllers
 
+import akka.pattern.ask
 import play.api.mvc._
 
 import oyun.app._
-
+import oyun.hub.actorApi.captcha.ValidCaptcha
+import makeTimeout.large
 import views._
 
 object Main extends OyunController {
@@ -11,6 +13,12 @@ object Main extends OyunController {
     reqToCtx(req) map { implicit ctx =>
       NotFound(html.base.notFound())
     }
+
+  def captchaCheck(id: String) = Open { implicit ctx =>
+    Env.hub.captcher ? ValidCaptcha(id, ~get("solution")) map {
+      case valid: Boolean => Ok(if (valid) 1 else 0)
+    }
+  }
 
   def lag = Open { implicit ctx =>
     fuccess {

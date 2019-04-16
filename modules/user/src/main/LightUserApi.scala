@@ -14,6 +14,8 @@ final class LightUserApi(coll: Coll)(implicit system: akka.actor.ActorSystem) {
 
   def invalidate = cache invalidate _
 
+  def preloadMany = cache preloadMany _
+
   private implicit val lightUserReader = new BSONDocumentReader[LightUser] {
     def read(doc: BSONDocument) = LightUser(
       id = doc.getAs[String](F.id) err "LightUser id missing",

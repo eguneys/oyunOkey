@@ -18,7 +18,7 @@
 @round.layout(
   title = title,
   side = views.html.game.side(pov, m),
-  chat = ctx.isAuth.option(base.chatDom(trans.spectatorRoom.str())),
+  chat = ctx.isAuth.option(base.chatDom(trans.spectatorRoom.txt())),
   moreJs = moreJs,
   openGraph = povOpenGraph(pov).some) {
   <div class="round og-512"></div>

@@ -16,8 +16,16 @@ trait AssetHelper { self: I18nHelper =>
   def staticUrl(path: String) = s"$assetBaseUrl${routes.Assets.at(path)}"
   // def staticUrl(path: String) = s"$assetBaseUrl${routes.Assets.versioned(path)}"
 
-
   def cssTag(name: String, staticDomain: Boolean = true) = cssAt("stylesheets/" + name, staticDomain)
+
+  def cssTags(names: String*): Html = Html {
+    names.map { name =>
+      cssTag(name).body
+    } mkString ""
+  }
+
+  def cssTags(names: List[(String, Boolean)]): Html =
+    cssTags(names.collect { case (k, true) => k }: _*)
 
   def cssAt(path: String, staticDomain: Boolean = true) = Html {
     val href = if (staticDomain) staticUrl(path) else routes.Assets.at(path)
@@ -39,7 +47,7 @@ trait AssetHelper { self: I18nHelper =>
     test = "window.moment",
     local = staticUrl("vendor/moment/min/moment.min.js"))
 
-  def momentLangTag(implicit ctx: oyun.api.Context) = (lang(ctx).language match {
+  def momentLangTag(implicit ctx: oyun.api.Context) = (ctxLang(ctx).language match {
     case "en" => none
     case l => l.some
   }).fold(Html("")) { l =>

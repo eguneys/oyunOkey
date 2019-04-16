@@ -23,13 +23,13 @@ trait DateHelper { self: I18nHelper =>
 
   private def dateTimeFormatter(ctx: Context): DateTimeFormatter =
     dateTimeFormatters.getOrElseUpdate(
-      lang(ctx).language,
-      DateTimeFormat forStyle dateTimeStyle withLocale new Locale(lang(ctx).language))
+      ctxLang(ctx).language,
+      DateTimeFormat forStyle dateTimeStyle withLocale new Locale(ctxLang(ctx).language))
 
   private def dateFormatter(ctx: Context): DateTimeFormatter =
     dateFormatters.getOrElseUpdate(
-      lang(ctx).language,
-      DateTimeFormat forStyle dateStyle withLocale new Locale(lang(ctx).language))
+      ctxLang(ctx).language,
+      DateTimeFormat forStyle dateStyle withLocale new Locale(ctxLang(ctx).language))
 
 
   // private def dateFormatter(ctx: Context): DateTimeFormatter =

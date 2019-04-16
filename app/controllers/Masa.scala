@@ -19,7 +19,7 @@ object Masa extends OyunController with TheftPrevention {
   def home(page: Int) = Open { implicit ctx =>
     negotiate(
       html = {
-        val playingPaginator = repo.finishedPaginator(maxPerPage = 30, page = page)
+        val playingPaginator = repo.finishedPaginator(maxPerPage = oyun.common.MaxPerPage(30), page = page)
         env.api.fetchVisibleMasas zip
           repo.publicCreatedSorted zip
           playingPaginator map({
