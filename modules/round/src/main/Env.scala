@@ -5,6 +5,7 @@ import akka.pattern.{ ask }
 import com.typesafe.config.Config
 import scala.concurrent.duration._
 
+import oyun.game.{ Game }
 import actorApi.{ GetSocketStatus, SocketStatus }
 import oyun.common.PimpedConfig._
 import oyun.hub.actorApi.map.{ Ask, Tell }
@@ -16,8 +17,7 @@ final class Env(
   hub: oyun.hub.Env,
   fishnetPlayer: oyun.fishnet.Player,
   userJsonView: oyun.user.JsonView,
-  chatApi: oyun.chat.ChatApi,
-  scheduler: oyun.common.Scheduler) {
+  chatApi: oyun.chat.ChatApi) {
 
   private val settings = new {
     val PlayerDisconnectTimeout = config duration "player.disconnect.timeout"
@@ -31,20 +31,30 @@ final class Env(
 
   lazy val eventHistory = History() _
 
-  val roundMap = system.actorOf(Props(new oyun.hub.ActorMap {
-    def mkActor(id: String) = new Round(
-      gameId = id,
-      finisher = finisher,
-      player = player,
-      socketHub,
-      activeTtl = ActiveTtl,
-      bus = system.oyunBus)
-    def receive: Receive = ({
-      case actorApi.GetNbRounds =>
-        nbRounds = size
-        system.oyunBus.publish(oyun.hub.actorApi.round.NbRounds(nbRounds), 'nbRounds)
-    }: Receive) orElse actorMapReceive
-  }), name = ActorMapName)
+  def roundProxyGame(gameId: Game.ID): Fu[Option[Game]] =
+    roundMap.getOrMake(gameId).getGame addEffect { g =>
+      if (!g.isDefined) roundMap kill gameId
+    }
+
+  private def scheduleExpiration(game: Game): Unit = game.timeBeforeExpiration foreach { centis =>
+    system.scheduler.scheduleOnce((centis.millis + 1000).millis) {
+      roundMap.tell(game.id, actorApi.round.NoStart)
+    }
+  }
+
+  val roundMap = new oyun.hub.DuctMap[Round](
+    mkDuct = id => {
+      val duct = new Round(gameId = id,
+        finisher = finisher,
+        player = player,
+        socketHub,
+        activeTtl = ActiveTtl,
+        bus = system.oyunBus)
+      duct.getGame foreach { _ foreach scheduleExpiration }
+      duct
+    },
+    accessTimeout = ActiveTtl
+  )
 
   private var nbRounds = 0
   def count() = nbRounds
@@ -94,7 +104,10 @@ final class Env(
     userJsonView = userJsonView,
     getSocketStatus = getSocketStatus)
 
-  scheduler.message(2.1 seconds)(roundMap -> actorApi.GetNbRounds)
+  system.scheduler.schedule(5 seconds, 2 seconds) {
+    nbRounds = roundMap.size
+    system.oyunBus.publish(oyun.hub.actorApi.round.NbRounds(nbRounds), 'nbRounds)
+  }
 
   // WIP
   // system.actorOf(
@@ -109,6 +122,5 @@ object Env {
     hub = oyun.hub.Env.current,
     fishnetPlayer = oyun.fishnet.Env.current.player,
     userJsonView = oyun.user.Env.current.jsonView,
-    chatApi = oyun.chat.Env.current.api,
-    scheduler = oyun.common.PlayApp.scheduler)
+    chatApi = oyun.chat.Env.current.api)
 }

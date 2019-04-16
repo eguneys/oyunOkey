@@ -7,6 +7,8 @@ import actorApi.map._
 
 trait ActorMap extends Actor {
 
+  def tell(id: String, msg: Any): Unit = getOrMake(id) ! msg
+
   private val actors = scala.collection.mutable.Map.empty[String, ActorRef]
 
   def mkActor(id: String): Actor
@@ -26,7 +28,7 @@ trait ActorMap extends Actor {
       }
   }
 
-  protected def size = actors.size
+  def size = actors.size
 
   private def getOrMake(id: String) = actors get id getOrElse {
     context.actorOf(Props(mkActor(id)), name = id) ~ { actor =>

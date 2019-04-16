@@ -56,7 +56,7 @@ object GameRepo {
   def urgentGames(user: User): Fu[List[Pov]] =
     coll.list[Game](Query nowPlaying user.id, 100) map { games =>
       val povs = games flatMap { Pov(_, user) }
-        povs sortBy (-_.game.updatedAtOrCreatedAt.getSeconds)
+        povs sortBy (-_.game.movedAt.getSeconds)
       // try {
       //povs sortWith Pov.priority
       // } catch {

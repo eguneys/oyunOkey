@@ -11,6 +11,7 @@ import okey.format.Uci
 
 import actorApi._, round._
 import oyun.hub.actorApi.map._
+import oyun.hub.DuctMap
 import oyun.socket.actorApi.{ Connected => _, _ }
 import oyun.socket.Handler
 import oyun.user.User
@@ -18,7 +19,7 @@ import oyun.game.{ Game, Pov, GameRepo }
 import makeTimeout.short
 
 private[round] final class SocketHandler(
-  roundMap: ActorRef,
+  roundMap: DuctMap[Round],
   socketHub: ActorRef,
   messenger: Messenger
 ) {
@@ -29,7 +30,7 @@ private[round] final class SocketHandler(
     uid: String,
     member: Member): Handler.Controller = {
 
-    def send(msg: Any) { roundMap ! Tell(gameId, msg) }
+    def send(msg: Any) { roundMap.tell(gameId, msg) }
 
     member.playerIdOption.fold[Handler.Controller]({
       case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }

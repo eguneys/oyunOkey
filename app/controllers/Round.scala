@@ -5,7 +5,7 @@ import play.api.libs.json._
 
 import oyun.api.Context
 import oyun.app._
-import oyun.game.{ Pov, GameRepo }
+import oyun.game.{ Pov, GameRepo, Game => GameModel, PlayerRef }
 import oyun.masa.{ MiniStanding }
 import views._
 
@@ -24,7 +24,7 @@ object Round extends OyunController with TheftPrevention {
   }
 
   def websocketPlayer(fullId: String) = SocketEither[JsValue] { implicit ctx =>
-    GameRepo pov fullId flatMap {
+    proxyPov(fullId) flatMap {
       case Some(pov) =>
         get("sri") match {
           case Some(uid) => requestAiMove(pov) >> env.socketHandler.player(
@@ -54,16 +54,27 @@ object Round extends OyunController with TheftPrevention {
   }
 
   def player(fullId: String) = Open { implicit ctx =>
-    OptionFuResult(GameRepo pov fullId) { pov =>
+    OptionFuResult(proxyPov(fullId)) { pov =>
       renderPlayer(pov)
     }
   }
 
   def watcher(gameId: String, side: String) = Open { implicit ctx =>
-    GameRepo.pov(gameId, side) flatMap {
+    proxyPov(gameId, side) flatMap {
       case Some(pov) =>
         watch(pov)
       case None => notFound
+    }
+  }
+
+  private def proxyPov(gameId: String, side: String): Fu[Option[Pov]] = okey.Side(side) ?? { c =>
+    env.roundProxyGame(gameId) map2 { (g: GameModel) => g pov c }
+  }
+
+  private def proxyPov(fullId: String): Fu[Option[Pov]] = {
+    val ref = PlayerRef(fullId)
+    env.roundProxyGame(ref.gameId) map {
+      _ flatMap { _ playerIdPov ref.playerId }
     }
   }
 

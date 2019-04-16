@@ -73,7 +73,7 @@ lazy val game = module("game", Seq(common, db, user, chat)).settings(
 )
 
 lazy val hub = module("hub", Seq(common)).settings(
-  libraryDependencies ++= provided(play.api, play.test)
+  libraryDependencies ++= Seq(scaffeine) ++ provided(play.api, play.test)
 )
 
 lazy val db = module("db", Seq(common)).settings(

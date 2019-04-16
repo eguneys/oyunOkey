@@ -58,7 +58,7 @@ final class PerfsUpdater() {
   }
 
   private def mkPerfs(ratings: Ratings, perfs: Perfs, game: Game): Perfs = {
-    val date = game.updatedAt | game.createdAt
+    val date = game.movedAt
 
     def addRatingIf(cond: Boolean, perf: Perf, rating: Rating) =
       if (cond) perf.addOrReset(_.round.error.gliokey, s"game ${game.id}")(rating, date)

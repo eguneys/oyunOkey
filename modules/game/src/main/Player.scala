@@ -47,6 +47,8 @@ case class Player(
 
 object Player {
 
+  type ID = String
+
   def make(
     side: Side,
     aiLevel: Option[Int] = None): Player = Player(

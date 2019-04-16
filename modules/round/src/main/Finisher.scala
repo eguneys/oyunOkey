@@ -10,6 +10,11 @@ private[round] final class Finisher(
   perfsUpdater: PerfsUpdater,
   bus: oyun.common.Bus) {
 
+  def noStart(game: Game)(implicit proxy: GameProxy): Fu[Events] =
+    game.playerWhoDidNotMove ?? { culprit =>
+      apply(game, _.Aborted, None, None)
+    }
+
   def other(
     game: Game,
     status: Status.type => Status, // why?

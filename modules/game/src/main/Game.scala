@@ -3,7 +3,7 @@ package oyun.game
 import org.joda.time.DateTime
 
 import okey.variant.Variant
-import okey.{ Game => OkeyGame, Player => OkeyPlayer, History => OkeyHistory, Table, Board, Sides, Side, Opener, Status, Move, EndScoreSheet, Opens, Clock }
+import okey.{ Centis, Game => OkeyGame, Player => OkeyPlayer, History => OkeyHistory, Table, Board, Sides, Side, Opener, Status, Move, EndScoreSheet, Opens, Clock }
 import okey.format.Uci
 
 import oyun.db.ByteArray
@@ -27,7 +27,7 @@ case class Game(
   outOfTimes: Sides[Int] = Sides(0, 0, 0, 0),
   variant: Variant = Variant.default,
   createdAt: DateTime = DateTime.now,
-  updatedAt: Option[DateTime] = None,
+  movedAt: DateTime = DateTime.now,
   metadata: Metadata) {
 
   val playerList = players.toList
@@ -63,7 +63,7 @@ case class Game(
 
   def hasChat = true
 
-  def updatedAtOrCreatedAt = updatedAt | createdAt
+  // def updatedAtOrCreatedAt = updatedAt | createdAt
 
   lazy val toOkey: OkeyGame = {
     val pieces = binaryPieces map BinaryFormat.piece.read
@@ -162,7 +162,8 @@ case class Game(
         turn = turns),
       turns = game.turns,
       status = situation.status | status,
-      clock = game.clock
+      clock = game.clock,
+      movedAt = DateTime.now
     )
 
     val state = Event.State(
@@ -206,8 +207,7 @@ case class Game(
 
   def start = started.fold(this, copy(
     status = Status.Started,
-    mode = Mode(mode.rated && userIds.distinct.size == 4),
-    updatedAt = DateTime.now.some
+    mode = Mode(mode.rated && userIds.distinct.size == 4)
   ))
 
   def finish(
@@ -235,6 +235,8 @@ case class Game(
   def started = status >= Status.Started
 
   def aborted = status == Status.Aborted
+
+  def abortable = status == Status.Started && playedTurns < 2
 
   def playable = status < Status.Aborted
 
@@ -281,7 +283,26 @@ case class Game(
 
   def unplayed = !allPlayersHaveMoved && (createdAt isBefore Game.unplayedDate)
 
-  def abandoned = (status <= Status.Started) && ((updatedAt | createdAt) isBefore Game.abandonedDate)
+  def abandoned = (status <= Status.Started) && (movedAt isBefore Game.abandonedDate)
+
+  def expirable =
+    !allPlayersHaveMoved && playable
+
+  def timeBeforeExpiration: Option[Centis] = expirable option {
+    Centis.ofMillis(movedAt.getMillis - nowMillis + timeForFirstMove.millis).nonNeg
+  }
+
+  def playerWhoDidNotMove: Option[Player] = playedTurns match {
+    case 0 => player(startSide).some
+    case 1 => player(startSide.next).some
+    case 2 => player(startSide.next.next).some
+    case 3 => player(startSide.next.next.next).some
+    case _ => none
+  }
+
+  def startSide = Side(0)
+
+  def timeForFirstMove: Centis = Centis ofSeconds 15
 
   def userIds = playerMaps(_.userId)
 
@@ -300,10 +321,16 @@ case class Game(
   def withId(newId: String) = this.copy(id = newId)
 
   private def playerMaps[A](f: Player => Option[A]): List[A] = players flatMap { f(_) } toList
+
+  def pov(s: Side) = Pov(this, s)
+  def playerIdPov(playerId: Player.ID): Option[Pov] = player(playerId) map { Pov(this, _) }
 }
 
 
 object Game {
+
+  type ID = String
+
   val gameIdSize = 8
   val playerIdSize = 4
   val fullIdSize = 12
@@ -311,7 +338,7 @@ object Game {
   val unplayedHours = 2
   def unplayedDate = DateTime.now minusHours unplayedHours
 
-  val abandonedDays = 24
+  val abandonedDays = 1
   def abandonedDate = DateTime.now minusDays abandonedDays
 
   def takeGameId(fullId: String) = fullId take gameIdSize
@@ -337,6 +364,8 @@ object Game {
 
     val binaryPlayer = BinaryFormat.player write game.player
 
+    val createdAt = DateTime.now
+
     Game(
       id = IdGenerator.game,
       players = players,
@@ -355,7 +384,8 @@ object Game {
       metadata = Metadata(
         masaId = none,
         roundAt = 0),
-      createdAt= DateTime.now)
+      createdAt= createdAt,
+      movedAt = createdAt)
   }
 
   object BSONFields {
@@ -390,7 +420,7 @@ object Game {
     val endScores = "es"
     val endStanding = "est"
     val createdAt = "ca"
-    val updatedAt = "ua"
+    val movedAt = "ua"
     val masaId = "mid"
     val checkAt = "ck"
   }

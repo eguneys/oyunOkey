@@ -13,7 +13,7 @@ private[round] final class Player(
   fishnetPlayer: oyun.fishnet.Player,
   finisher: Finisher) {
 
-  def human(play: HumanPlay, round: ActorRef)(pov: Pov)(implicit proxy: GameProxy): Fu[Events] = play match {
+  def human(play: HumanPlay, round: Round)(pov: Pov)(implicit proxy: GameProxy): Fu[Events] = play match {
     case HumanPlay(playerId, uci, promiseOption) => pov match {
       case Pov(game, side) if game playableBy side =>
         applyUci(game, side, uci).prefixFailuresWith(s"$pov")

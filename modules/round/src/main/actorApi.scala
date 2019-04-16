@@ -74,6 +74,7 @@ package round {
 
   case object OutOfTime
   case object Abandon
+  case object NoStart
 }
 
 private[round] case object GetNbRounds

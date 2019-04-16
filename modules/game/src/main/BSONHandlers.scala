@@ -120,27 +120,27 @@ object BSONHandlers {
 
   implicit val gameBSONHandler = new BSON[Game] {
 
-    import Game.BSONFields._
+    import Game.{ BSONFields => F }
     import Player.playerBSONHandler
 
     def reads(r: BSON.Reader): Game = {
-      val realVariant = Variant(r intD variant) | okey.variant.Standard
-      val nbTurns = r int turns
-      val winS = r getO[String] winnerSide flatMap Side.apply
-      val createdAtValue = r date createdAt
+      val realVariant = Variant(r intD F.variant) | okey.variant.Standard
+      val nbTurns = r int F.turns
+      val winS = r getO[String] F.winnerSide flatMap Side.apply
+      val createdAt = r date F.createdAt
 
-      val oEndScores = r getO[Sides[Variant => EndScoreSheet]](endScores)
-      val oEndStanding = r intO (endStanding)
+      val oEndScores = r getO[Sides[Variant => EndScoreSheet]](F.endScores)
+      val oEndStanding = r intO (F.endStanding)
 
-      val List(eastId, westId, northId, southId) = r str playerIds grouped 4 toList
+      val List(eastId, westId, northId, southId) = r str F.playerIds grouped 4 toList
 
-      val sidesPid = r.get[Sides[Option[String]]](playerPids)
+      val sidesPid = r.get[Sides[Option[String]]](F.playerPids)
 
-      val sidesUid = r.get[Sides[Option[String]]](playerUids)
+      val sidesUid = r.get[Sides[Option[String]]](F.playerUids)
 
-      val sidesSid = r.get[Sides[Option[String]]](playerSids)
+      val sidesSid = r.get[Sides[Option[String]]](F.playerSids)
 
-      val builder = r.get[Sides[Player.Builder]](sidesPlayer)
+      val builder = r.get[Sides[Player.Builder]](F.sidesPlayer)
 
       val players = Sides(eastId, westId, northId, southId) sideMap {
         case (side, id) =>
@@ -148,20 +148,20 @@ object BSONHandlers {
           builder(side)(side)(id)(sidesPid(side))(sidesUid(side))(sidesSid(side))(oEndScores.map(_(side)(realVariant)))(oEndStanding)(win)
       }
 
-      val bPieces = r.get[Sides[ByteArray]](binaryPieces)
+      val bPieces = r.get[Sides[ByteArray]](F.binaryPieces)
 
-      val bDiscards = r.get[Sides[ByteArray]](binaryDiscards)
+      val bDiscards = r.get[Sides[ByteArray]](F.binaryDiscards)
 
-      val bOpens = r.getO[BinaryOpens](binaryOpens)
+      val bOpens = r.getO[BinaryOpens](F.binaryOpens)
 
 
-      val saveOpens = r.getO[BinaryOpens](binaryOpensSave)
-      val saveBoard = r bytesO binaryPiecesSave
+      val saveOpens = r.getO[BinaryOpens](F.binaryOpensSave)
+      val saveBoard = r bytesO F.binaryPiecesSave
 
       val bOpens2 = bOpens map { opens =>
 
-        val saveP = r bytesO binaryPiecesSave
-        val saveO = r.getO[BinaryOpens](binaryOpensSave)
+        val saveP = r bytesO F.binaryPiecesSave
+        val saveO = r.getO[BinaryOpens](F.binaryOpensSave)
 
         val save = (saveP, saveO) match {
           case (Some(p), Some(o)) => Some(p, o)
@@ -171,59 +171,59 @@ object BSONHandlers {
         opens.copy(save = save)
       }
 
-      val bpp = r bytes binaryPlayer
+      val bpp = r bytes F.binaryPlayer
 
       Game(
-        id = r str id,
+        id = r str F.id,
         players = players,
         binaryPieces = bPieces,
         binaryDiscards = bDiscards,
-        binaryMiddles = r bytes binaryMiddles,
-        binarySign = r int binarySign toByte,
+        binaryMiddles = r bytes F.binaryMiddles,
+        binarySign = r int F.binarySign toByte,
         binaryOpens = bOpens2,
-        binaryPlayer = r bytes binaryPlayer,
-        clock = r.getO[Side => Clock](clock)(clockBSONReader(createdAtValue)) map (_(Side(nbTurns))),
-        opensLastMove = r.get[OpensLastMove](opensLastMove)(OpensLastMove.opensLastMoveBSONHandler),
-        mode = Mode(r boolD rated),
-        status = r.get[Status](status),
+        binaryPlayer = r bytes F.binaryPlayer,
+        clock = r.getO[Side => Clock](F.clock)(clockBSONReader(createdAt)) map (_(Side(nbTurns))),
+        opensLastMove = r.get[OpensLastMove](F.opensLastMove)(OpensLastMove.opensLastMoveBSONHandler),
+        mode = Mode(r boolD F.rated),
+        status = r.get[Status](F.status),
         turns = nbTurns,
-        outOfTimes = r.get[Sides[Int]](outOfTimes),
+        outOfTimes = r.get[Sides[Int]](F.outOfTimes),
         variant = realVariant,
-        createdAt = createdAtValue,
-        updatedAt = r dateO updatedAt,
+        createdAt = createdAt,
+        movedAt = r dateD (F.movedAt, createdAt),
         metadata = Metadata(
-          masaId = r strO masaId,
-          roundAt = r int roundAt
+          masaId = r strO F.masaId,
+          roundAt = r int F.roundAt
         )
       )
     }
 
     def writes(w: BSON.Writer, o: Game) = BSONDocument(
-      id -> o.id,
-      playerIds -> (o.players.map(_.id) mkString),
-      playerPids -> o.players.mapt(_.playerId),
-      playerUids -> o.players.mapt(_.userId),
-      playerSids -> o.players.mapt(_.seatId),
-      sidesPlayer -> o.players.mapt(p => playerBSONHandler write ((_: Side) => (_: Player.Id) => (_: Player.PlayerId) => (_: Player.UserId) => (_: Player.SeatId) => (_: Player.EndScore) => (_: Player.EndStanding) => (_: Player.Win) => p)),
-      binaryPieces -> o.binaryPieces,
-      binaryDiscards -> o.binaryDiscards,
-      binaryMiddles -> o.binaryMiddles,
-      binarySign -> o.binarySign,
-      binaryOpens -> o.binaryOpens,
-      binaryPiecesSave -> o.binaryOpens.flatMap { _.save map(t => t._1) },
-      binaryOpensSave -> o.binaryOpens.flatMap { _.save map(t => t._2) },
-      binaryPlayer -> o.binaryPlayer,
-      opensLastMove -> OpensLastMove.opensLastMoveBSONHandler.write(o.opensLastMove),
-      rated -> w.boolO(o.mode.rated),
-      status -> o.status,
-      turns -> o.turns,
-      outOfTimes -> o.outOfTimes,
-      clock -> (o.clock map { c => clockBSONWrite(o.createdAt, c)}),
-      variant -> o.variant.exotic.option(o.variant.id).map(w.int),
-      createdAt -> w.date(o.createdAt),
-      updatedAt -> o.updatedAt.map(w.date),
-      masaId -> o.metadata.masaId,
-      roundAt -> o.metadata.roundAt)
+      F.id -> o.id,
+      F.playerIds -> (o.players.map(_.id) mkString),
+      F.playerPids -> o.players.mapt(_.playerId),
+      F.playerUids -> o.players.mapt(_.userId),
+      F.playerSids -> o.players.mapt(_.seatId),
+      F.sidesPlayer -> o.players.mapt(p => playerBSONHandler write ((_: Side) => (_: Player.Id) => (_: Player.PlayerId) => (_: Player.UserId) => (_: Player.SeatId) => (_: Player.EndScore) => (_: Player.EndStanding) => (_: Player.Win) => p)),
+      F.binaryPieces -> o.binaryPieces,
+      F.binaryDiscards -> o.binaryDiscards,
+      F.binaryMiddles -> o.binaryMiddles,
+      F.binarySign -> o.binarySign,
+      F.binaryOpens -> o.binaryOpens,
+      F.binaryPiecesSave -> o.binaryOpens.flatMap { _.save map(t => t._1) },
+      F.binaryOpensSave -> o.binaryOpens.flatMap { _.save map(t => t._2) },
+      F.binaryPlayer -> o.binaryPlayer,
+      F.opensLastMove -> OpensLastMove.opensLastMoveBSONHandler.write(o.opensLastMove),
+      F.rated -> w.boolO(o.mode.rated),
+      F.status -> o.status,
+      F.turns -> o.turns,
+      F.outOfTimes -> o.outOfTimes,
+      F.clock -> (o.clock map { c => clockBSONWrite(o.createdAt, c)}),
+      F.variant -> o.variant.exotic.option(o.variant.id).map(w.int),
+      F.createdAt -> w.date(o.createdAt),
+      F.movedAt -> w.date(o.movedAt),
+      F.masaId -> o.metadata.masaId,
+      F.roundAt -> o.metadata.roundAt)
   }
 
   import oyun.db.ByteArray.ByteArrayBSONHandler

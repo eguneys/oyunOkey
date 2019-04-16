@@ -10,7 +10,7 @@ import oyun.game.actorApi.{ WithdrawMasa }
 
 import oyun.hub.actorApi.map._
 import oyun.hub.actorApi.round.FishnetPlay
-import oyun.hub.SequentialActor
+import oyun.hub.Duct
 
 private[round] final class Round(
   gameId: String,
@@ -18,20 +18,16 @@ private[round] final class Round(
   player: Player,
   socketHub: ActorRef,
   activeTtl: Duration,
-  bus: oyun.common.Bus) extends SequentialActor {
+  bus: oyun.common.Bus) extends Duct {
 
-  context setReceiveTimeout activeTtl
+  private[this] implicit val proxy = new GameProxy(gameId)
 
-  implicit val proxy = new GameProxy(gameId)
+  def getGame: Fu[Option[Game]] = proxy.game
 
-  def process = {
-    case ReceiveTimeout => fuccess {
-      self ! SequentialActor.Terminate
-    }
-
+  val process: Duct.ReceiveAsync = {
     case p: HumanPlay =>
       handleHumanPlay(p) { pov =>
-        player.human(p, self)(pov)
+        player.human(p, this)(pov)
       }
 
     case FishnetPlay(uci) => handle { game =>
@@ -54,8 +50,6 @@ private[round] final class Round(
         player.incNbOutOfTime(game)
       }
       if (game.nbOutOfTime > 1) {
-        self ! PoisonPill
-
         game.masaId ?? { masaId =>
           game.player.playerId ?? { playerId =>
             println("outoftime", masaId, playerId)
@@ -74,11 +68,14 @@ private[round] final class Round(
     case Abandon => fuccess {
       proxy withGame { game =>
         game.abandoned ?? {
-          self ! PoisonPill
           //if (game.abortable) finisher.other(game, _.Aborted)
           finisher.other(game, _.Aborted)
         }
       }
+    }
+
+    case NoStart => handle { game =>
+      game.timeBeforeExpiration.exists(_.centis == 0) ?? finisher.noStart(game)
     }
   }
 
