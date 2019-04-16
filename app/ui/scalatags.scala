@@ -9,6 +9,8 @@ import scalatags.Text.{ Frag, RawFrag, Attr, AttrValue, Cap, Aggregate, Attrs, S
 trait ScalatagsAttrs {
   lazy val minlength = attr("minlength")
   lazy val dataIcon = attr("data-icon")
+  lazy val dataHint = attr("data-hint")
+  lazy val dataHref = attr("data-href")
 }
 
 trait ScalatagsBundle extends Cap
@@ -26,6 +28,7 @@ trait ScalatagsTemplate extends Styles
     with ScalatagsExtensions
     with ScalatagsPrefix {
 
+  val trans = oyun.i18n.I18nKeys
   
 }
 
