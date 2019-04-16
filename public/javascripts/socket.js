@@ -230,6 +230,8 @@ oyunkeyf.StrongSocket = function(murl, mversion, msettings) {
     var urls = options.baseUrls;
     var url = oyunkeyf.storage.get(key);
 
+    console.log("base url" + url);
+
     if (!url) {
       url = urls[0];
       oyunkeyf.storage.set(key, url);
@@ -274,11 +276,11 @@ oyunkeyf.StrongSocket.defaults = {
     autoReconnectDelay: 2000,
     lagTag: false, // jQuery object showing ping lag,
     protocol: location.protocol === 'https:' ? 'wss:' : 'ws:',
-    baseUrls: [document.domain + ':9021'].concat(
+    baseUrls: ['socket.' + document.domain + ':9021'].concat(
       //[9021, 9022, 9023, 9024]
       [9022].map(function(port) {
-        //return 'socket.' + document.domain + ':' + port;
-        return document.domain + ':' + port;
+        return 'socket.' + document.domain + ':' + port;
+        // return document.domain + ':' + port;
       })),
     onFirstConnect: $.noop,
     baseUrlKey: 'surl3'
