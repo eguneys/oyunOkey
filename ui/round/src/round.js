@@ -25,6 +25,11 @@ function plyCompare(ply1, ply2) {
   }
 }
 
+function massage(d) {
+  if (d.expiration) d.expiration.movedAt = Date.now() - d.expiration.idleMillis;
+  console.log('massage', d.expiration);
+}
+
 module.exports = {
   merge: function(old, cfg) {
     var data = cfg;
@@ -33,6 +38,7 @@ module.exports = {
       changes: {}
     };
   },
+  massage: massage,
   lastVmPly: lastVmPly,
   lastPly: lastPly,
   lastStep: lastStep,

@@ -6,6 +6,7 @@ import { game, status } from 'game';
 import clockView from '../clock/view';
 import button from './button';
 import renderTabs from './tabs';
+import renderExpiration from './expiration';
 import { renderTableScores, renderTableScoreInfo } from './scores';
 
 const { classSet, partial } = okeyground.util;
@@ -57,7 +58,7 @@ function renderTableEnd(ctrl) {
   ];
 }
 
-function renderTablePlay(ctrl) {
+function renderTablePlay(ctrl, expiration) {
   var d = ctrl.data;
   var trans = ctrl.trans;
 
@@ -83,7 +84,10 @@ function renderTablePlay(ctrl) {
     (
       m('div.control.icons', icons)
     ),
-    renderSeat(ctrl, d.player, 'bottom'),
+    m('div.seat_wrap', [
+      renderSeat(ctrl, d.player, 'bottom'),
+      expiration && expiration[1] === 'player' ? expiration[0] : null
+    ]),
     m('div.control.buttons', buttons)
   ];
 }
@@ -137,17 +141,22 @@ function renderGameStatus(ctrl) {
 
 module.exports = function(ctrl) {
   var d = ctrl.data;
+
+  var expiration = game.playable(ctrl.data) && renderExpiration(ctrl);
+
   return [
     m('div.table_wrap', [
       m('div.table_side.table_left', [
+        expiration && expiration[1] === 'opponentLeft' ? expiration[0] : null,
         renderSeat(ctrl, d.opponentLeft),
       ]),
       m('div.table_middle', [
-        m('div.table_over',
-          renderSeat(ctrl, d.opponentUp)),
+        m('div.table_over', [
+          expiration && expiration[1] === 'opponentUp' ? expiration[0] : null,
+          renderSeat(ctrl, d.opponentUp)]),
         visualTable(ctrl),
         m('div.table_over',
-          game.playable(ctrl.data) ? renderTablePlay(ctrl) : renderTableEnd(ctrl))
+          game.playable(ctrl.data) ? renderTablePlay(ctrl, expiration) : renderTableEnd(ctrl))
       ]),
       m('div.table_side.table_right',[
         m('div', {
@@ -155,6 +164,7 @@ module.exports = function(ctrl) {
             if (!isUpdate) $(el).html($('.game_masa').show());
           }
         }),
+        expiration && expiration[1] === 'opponentRight' ? expiration[0] : null,
         renderSeat(ctrl, d.opponentRight),
         renderGameStatus(ctrl)
       ])

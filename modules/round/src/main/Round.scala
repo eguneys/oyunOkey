@@ -13,12 +13,12 @@ import oyun.hub.actorApi.round.FishnetPlay
 import oyun.hub.Duct
 
 private[round] final class Round(
-  gameId: String,
-  finisher: Finisher,
-  player: Player,
-  socketHub: ActorRef,
+  gameId: Game.ID,
+  dependencies: Round.Dependencies,
   activeTtl: Duration,
   bus: oyun.common.Bus) extends Duct {
+
+  import dependencies._
 
   private[this] implicit val proxy = new GameProxy(gameId)
 
@@ -31,6 +31,7 @@ private[round] final class Round(
       }
 
     case FishnetPlay(uci) => handle { game =>
+      println("here", game)
       player.fishnet(game, uci)
     }
 
@@ -75,7 +76,9 @@ private[round] final class Round(
     }
 
     case NoStart => handle { game =>
-      game.timeBeforeExpiration.exists(_.centis == 0) ?? finisher.noStart(game)
+      game.timeBeforeExpiration.exists(_.centis == 0) ?? {
+        finisher.noStart(game)
+      }
     }
   }
 
@@ -101,7 +104,7 @@ private[round] final class Round(
   } recover errorHandler("handleGame")
 
   private def publish[A](op: Fu[Events]) = op.addEffect { events =>
-    if (events.nonEmpty) socketHub ! Tell(gameId, EventList(events))
+    if (events.nonEmpty) socketMap.tell(gameId, EventList(events))
   }.void recover errorHandler("publish")
 
   private def errorHandler(name: String): PartialFunction[Throwable, Unit] = {
@@ -112,4 +115,12 @@ private[round] final class Round(
       logger.warn(s"$name: ${e.getMessage}")
       proxy invalidate
   }
+}
+
+object Round {
+  private[round] case class Dependencies(
+    finisher: Finisher,
+    player: Player,
+    socketMap: SocketMap
+  )
 }

@@ -11,7 +11,6 @@ final class Env(
   private val repo = new FishnetRepo()
 
   private val moveDb = new MoveDB(
-    roundMap = hub.actor.roundMap,
     system = system
   )
 

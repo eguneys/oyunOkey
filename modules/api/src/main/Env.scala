@@ -36,7 +36,6 @@ final class Env(
   )
 
   val lobbyApi = new LobbyApi(
-    lobby = lobbyEnv.lobby,
     lobbyVersion = () => lobbyEnv.history.version,
     lightUser = userEnv.lightUser)
 

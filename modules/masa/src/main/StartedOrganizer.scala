@@ -8,8 +8,8 @@ import actorApi._
 private[masa] final class StartedOrganizer(
   api: MasaApi,
   reminder: ActorRef,
-  isOnline: String => Player => Fu[Boolean],
-  socketHub: ActorRef) extends Actor {
+  isOnline: String => Boolean,
+  socketMap: SocketMap) extends Actor {
 
   override def preStart {
     pairingLogger.info("Start StartedOrganizer")

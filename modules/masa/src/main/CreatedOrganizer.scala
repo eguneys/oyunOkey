@@ -7,7 +7,7 @@ import actorApi._
 
 private[masa] final class CreatedOrganizer(
   api: MasaApi,
-  isOnline: String => Player => Fu[Boolean]) extends Actor {
+  isOnline: String => Boolean) extends Actor {
 
   override def preStart {
     pairingLogger.info("Start CreatedOrganizer")
@@ -33,7 +33,7 @@ private[masa] final class CreatedOrganizer(
           PlayerRepo countActive masa.id foreach {
             case 0 if !masa.isRecentlyCreated => api wipe masa
             case 4 => api start masa
-            case _ if !masa.isRecentlyCreated => ejectLeavers(masa)
+            // case _ if !masa.isRecentlyCreated => ejectLeavers(masa)
             case _ => funit
           }
         }
@@ -41,10 +41,10 @@ private[masa] final class CreatedOrganizer(
       } andThenAnyway scheduleNext
   }
 
-  private def ejectLeavers(masa: Masa) =
-    PlayerRepo allByMasa masa.id foreach {
-      _ foreach { p => isOnline(masa.id)(p) map {
-        !_ ! api.withdraw(masa.id, p.id)
-      } }
-    }
+  // private def ejectLeavers(masa: Masa) =
+  //   PlayerRepo allByMasa masa.id foreach {
+  //     _ foreach { p => isOnline(masa.id)(p) map {
+  //       !_ ! api.withdraw(masa.id, p.id)
+  //     } }
+  //   }
 }

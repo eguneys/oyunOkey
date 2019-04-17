@@ -1,8 +1,8 @@
 package oyun.lobby
 
-import scala.concurrent.Future
+import scala.concurrent.duration._
 
-import akka.pattern.ask
+import akka.actor.ActorSystem
 import play.api.libs.json._
 import play.api.libs.iteratee._
 import play.twirl.api.Html
@@ -11,48 +11,41 @@ import actorApi._
 import oyun.common.PimpedJson._
 import oyun.hub.actorApi.lobby._
 import oyun.socket.actorApi.{ Connected => _, _ }
-import oyun.socket.{ SocketActor, History, Historical }
+import oyun.socket.{ SocketTrouper }
 
-private[lobby] final class Socket(
-  val history: History) extends SocketActor[Member] with Historical[Member] {
+private[lobby] final class LobbySocket(
+  system: ActorSystem,
+  uidTtl: FiniteDuration) extends SocketTrouper[Member](system, uidTtl) {
 
-  override val startsOnApplicationBoot = true
-
-  override def preStart() {
-    super.preStart()
-    context.system.oyunBus.subscribe(self, 'nbMembers, 'nbRounds)
-  }
-
-  override def postStop() {
-    super.postStop()
-    context.system.oyunBus.unsubscribe(self)
-  }
+  system.oyunBus.subscribe(this, 'nbMembers, 'nbRounds)
 
   def receiveSpecific = {
 
-    case PingVersion(uid, v) => Future {
-      ping(uid)
-      withMember(uid) { m =>
-        history.since(v).fold {
-          resync(m)
-        }(_ foreach sendMessage(m))
-      }
-    }
+    // case PingVersion(uid, v) => Future {
+    //   ping(uid)
+    //   withMember(uid) { m =>
+    //     history.since(v).fold {
+    //       resync(m)
+    //     }(_ foreach sendMessage(m))
+    //   }
+    // }
 
-    case Join(uid, user) =>
+    case Join(uid, user, promise) =>
       val (enumerator, channel) = Concurrent.broadcast[JsValue]
       val member = Member(channel, user, uid)
       addMember(uid, member)
-      sender ! Connected(enumerator, member)
+      promise success Connected(enumerator, member)
 
     case ReloadMasas(html) => notifyAllAsync(makeMessage("masas", html))
 
     case AddHook(hook) =>
-      notifyVersion("had", hook.render)
+      // notifyVersion("had", hook.render)
 
-    case RemoveHook(hookId) => notifyVersion("hrm", hookId)
+    case RemoveHook(hookId) =>
+      // notifyVersion("hrm", hookId)
 
-    case UpdateHook(hook) => notifyVersion("hup", hook.render)
+    case UpdateHook(hook) => 
+      // notifyVersion("hup", hook.render)
 
     case JoinHook(uid, challengeId, side) =>
       withMember(uid)(notifyPlayerJoin(challengeId, side))

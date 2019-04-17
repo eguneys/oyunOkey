@@ -1,6 +1,9 @@
 package oyun.masa
 package actorApi
 
+import scala.concurrent.Promise
+
+import oyun.socket.Socket.Uid
 import oyun.socket.SocketMember
 import oyun.game.Game
 import oyun.user.User
@@ -21,9 +24,10 @@ private[masa] object Member {
 }
 
 private[masa] case class Join(
-  uid: String, 
+  uid: Uid, 
   user: Option[User],
-  player: Option[Player])
+  player: Option[Player],
+  promise: Promise[Connected])
 private[masa] case object Reload
 private[masa] case class StartGame(game: Game)
 private[masa] case class Connected(enumerator: JsEnumerator, member: Member)
@@ -37,4 +41,4 @@ private[masa] case object StartedMasas
 
 private[masa] case object NotifyReload
 
-private[masa] case object GetWaitingPlayers
+private[masa] case class GetWaitingPlayers(promise: Promise[String])

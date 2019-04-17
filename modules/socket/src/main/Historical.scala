@@ -2,8 +2,8 @@ package oyun.socket
 
 import play.api.libs.json._
 
-trait Historical[M <: SocketMember] { self: SocketActor[M] =>
-  val history: History
+trait Historical[M <: SocketMember] { self: SocketTrouper[M] =>
+  protected val history: History
 
   protected type Message = History.Message
 

@@ -1,30 +1,30 @@
-package oyun.socket
+// package oyun.socket
 
-import akka.actor._
-import akka.pattern.{ ask, pipe }
+// import akka.actor._
+// import akka.pattern.{ ask, pipe }
 
-final class SocketHub extends Actor {
-  private val sockets = collection.mutable.Set[ActorRef]()
+// final class SocketHub extends Actor {
+//   private val sockets = collection.mutable.Set[ActorRef]()
 
-  override def preStart() {
-    context.system.oyunBus.subscribe(self, 'deploy, 'socket)
-  }
+//   override def preStart() {
+//     context.system.oyunBus.subscribe(self, 'deploy, 'socket)
+//   }
 
-  override def postStop() {
-    super.postStop()
-    context.system.oyunBus.unsubscribe(self)
-  }
+//   override def postStop() {
+//     super.postStop()
+//     context.system.oyunBus.unsubscribe(self)
+//   }
 
-  import SocketHub._
+//   import SocketHub._
 
-  def receive = {
-    case Open(socket) => sockets += socket
-    case Close(socket) => sockets -= socket
-    case msg => sockets foreach (_ ! msg)
-  }
-}
+//   def receive = {
+//     case Open(socket) => sockets += socket
+//     case Close(socket) => sockets -= socket
+//     case msg => sockets foreach (_ ! msg)
+//   }
+// }
 
-case object SocketHub {
-  case class Open(actor: ActorRef)
-  case class Close(actor: ActorRef)
-}
+// case object SocketHub {
+//   case class Open(actor: ActorRef)
+//   case class Close(actor: ActorRef)
+// }

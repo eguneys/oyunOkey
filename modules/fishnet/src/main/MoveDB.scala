@@ -8,7 +8,6 @@ import oyun.hub.{ actorApi => hubApi }
 import makeTimeout.short
 
 private final class MoveDB(
-  roundMap: ActorSelection,
   system: ActorSystem) {
 
   import Work.Move
@@ -46,18 +45,19 @@ private final class MoveDB(
       //   clearIfFull
       //   coll += (move.id -> move)
 
-      case Acquire(client) => sender ! coll.values.foldLeft(none[Move]) {
-        case (found, m) if m.nonAcquired => Some {
-          found.fold(m) { a =>
-            a
+      case Acquire(client) => 
+        sender ! coll.values.foldLeft(none[Move]) {
+          case (found, m) if m.nonAcquired => Some {
+            found.fold(m) { a =>
+              a
+            }
           }
+          case (found, _) => found
+        }.map { m =>
+          val move = m assignTo client
+          coll += (move.id -> move)
+          move
         }
-        case (found, _) => found
-      }.map { m =>
-        val move = m assignTo client
-        coll += (move.id -> move)
-        move
-      }
 
       case PostResult(moveId, client, data) =>
         coll get moveId match {
@@ -65,8 +65,11 @@ private final class MoveDB(
           case Some(move) if move isAcquiredBy client => data match {
             case Some(uci) =>
               coll -= move.id
-              // println("removed", uci, move.id)
-              roundMap ! hubApi.map.Tell(move.game.id, hubApi.round.FishnetPlay(uci))
+              println("removed", uci, move.id)
+              system.oyunBus.publish(
+                hubApi.map.Tell(move.game.id, hubApi.round.FishnetPlay(uci)),
+                'roundMapTell
+              )
             case _ =>
               println(s"move invalid ${moveId}")
           }

@@ -6,6 +6,7 @@ import scala.concurrent.Promise
 import okey.{ Side, Sides }
 import okey.format.Uci
 
+import oyun.socket.Socket.{ Uid }
 import oyun.socket.SocketMember
 import oyun.game.{ Event }
 import oyun.user.User
@@ -49,13 +50,15 @@ case class Watcher(
 }
 
 case class Join(
-  uid: String,
+  uid: Uid,
   user: Option[User],
   side: Side,
-  playerId: Option[String])
+  playerId: Option[String],
+  promise: Promise[Connected])
 case class Connected(enumerator: JsEnumerator, member: Member)
 
-case object GetSocketStatus
+case class VersionCheck(version: Int, member: Member)
+case class GetSocketStatus(promise: Promise[SocketStatus])
 case class SocketStatus(
   version: Int,
   sidesOnGame: Sides[Boolean],

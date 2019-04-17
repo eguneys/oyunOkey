@@ -1,6 +1,7 @@
 package oyun.round
 
 import oyun.game.Event
+import oyun.db.dsl._
 
 private[round] final class History(
   load: Fu[VersionedEvents]) {
@@ -44,6 +45,18 @@ private[round] final class History(
 private[round] object History {
 
   val size = 30
+
+  def apply(coll: Coll)(gameId: String): History = new History(
+    load = load(coll, gameId)
+  )
+
+  private def load(coll: Coll, gameId: String): Fu[VersionedEvents] =
+    coll.byId[Bdoc](gameId).map {
+      _.flatMap(_.getAs[VersionedEvents]("e")) ?? (_.reverse)
+    } addEffect {
+      case events if events.nonEmpty => coll.remove($id(gameId)).void
+      case _ =>
+    }
 
   def apply()(gameId: String): History = new History(load = load(gameId))
 

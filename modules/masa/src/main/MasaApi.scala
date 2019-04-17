@@ -25,7 +25,7 @@ private[masa] final class MasaApi(
   sequencers: ActorRef,
   autoPairing: AutoPairing,
   perfsUpdater: PerfsUpdater,
-  socketHub: ActorRef,
+  socketMap: SocketMap,
   renderer: ActorSelection,
   site: ActorSelection,
   lobby: ActorSelection) {
@@ -84,7 +84,7 @@ private[masa] final class MasaApi(
           //PairingRepo.insert(pairing) >> updateNbRounds(masa.id) >>
           PairingRepo.insert(pairing) >>
           autoPairing(masa, pairing) addEffect { game =>
-            sendTo(masa.id, StartGame(game))
+            socketMap.tell(masa.id, StartGame(game))
           }
         } >> funit >> featureOneOf(masa, pairing) >>- {
           socketReload(masa.id)
@@ -311,7 +311,7 @@ private[masa] final class MasaApi(
   }
 
   private def socketReload(masaId: String) {
-    sendTo(masaId, Reload)
+    socketMap.tell(masaId, Reload)
   }
 
   private object publish {
@@ -333,6 +333,6 @@ private[masa] final class MasaApi(
   }
 
   private def sendTo(masaId: String, msg: Any) {
-    socketHub ! Tell(masaId, msg)
+    socketMap.tell(masaId, msg)
   }
 }

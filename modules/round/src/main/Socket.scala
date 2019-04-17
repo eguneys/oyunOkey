@@ -8,21 +8,23 @@ import play.api.libs.iteratee._
 import play.api.libs.json._
 
 import actorApi._
+import oyun.common.LightUser
 import oyun.game.Event
 import oyun.hub.TimeBomb
+import oyun.hub.Trouper
 import oyun.socket.actorApi.{ Connected => _, _ }
 import oyun.socket._
 import okey.{ Sides, Side }
 
 
-private[round] final class Socket(
+private[round] final class RoundSocket(
   gameId: String,
-  history: History,
-  socketTimeout: Duration,
-  disconnectTimeout: Duration,
-  ragequitTimeout: Duration) extends SocketActor[Member] {
+  dependencies: RoundSocket.Dependencies,
+  history: History) extends SocketTrouper[Member](dependencies.system, dependencies.uidTtl) {
 
-  private val timeBomb = new TimeBomb(socketTimeout)
+  import dependencies._
+
+  // private val timeBomb = new TimeBomb(socketTimeout)
 
   private var delayedCrowdNotification = false
 
@@ -55,50 +57,48 @@ private[round] final class Socket(
 
   private val players = Sides(side => new Player(side))
 
-  override def preStart() {
-    super.preStart()
-    oyun.game.GameRepo game gameId map SetGame.apply pipeTo self
-  }
+  oyun.game.GameRepo game gameId map SetGame.apply foreach this.!
 
-  def receiveSpecific = {
+
+  def receiveSpecific: Trouper.Receive = {
 
     case SetGame(Some(game)) =>
       players sideMap { case (side, p) =>
         p.isAi = game.player(side).isAi
       }
 
-    case PingVersion(uid, v) =>
-      timeBomb.delay
-      ping(uid)
-      ownerOf(uid) foreach { o =>
-        playerDo(o.side, _.ping)
-      }
-      withMember(uid) { member =>
-        (history getEventsSince v).fold(resyncNow(member))(batch(member, _))
-      }
+    // case PingVersion(uid, v) =>
+    //   timeBomb.delay
+    //   ping(uid)
+    //   ownerOf(uid) foreach { o =>
+    //     playerDo(o.side, _.ping)
+    //   }
+    //   withMember(uid) { member =>
+    //     (history getEventsSince v).fold(resyncNow(member))(batch(member, _))
+    //   }
 
-    case Broom =>
-      broom
-      if (timeBomb.boom) self ! PoisonPill
-      else playersGet(_.isGone) sideMap { case (side, isGone) => isGone foreach { _ ?? notifyGone(side, true) } }
+    // case Broom =>
+    //   broom
+    //   if (timeBomb.boom) self ! PoisonPill
+    //   else playersGet(_.isGone) sideMap { case (side, isGone) => isGone foreach { _ ?? notifyGone(side, true) } }
       
-    case GetSocketStatus =>
-      playersGet(_.isGone).sequenceSides map { sidesIsGone =>
+    case GetSocketStatus(promise) =>
+      playersGet(_.isGone).sequenceSides foreach { sidesIsGone =>
 
         val sidesOnGame = players sideMap { case (side, p) => ownerOf(side).isDefined }
-        SocketStatus(
+        promise success SocketStatus(
           version = history.getVersion,
           sidesIsGone = sidesIsGone,
           sidesOnGame = sidesOnGame)
-      } pipeTo sender
+      }
 
-    case Join(uid, user, side, playerId) =>
+    case Join(uid, user, side, playerId, promise) =>
       val (enumerator, channel) = Concurrent.broadcast[JsValue]
       val member = Member(channel, user, side, playerId)
       addMember(uid, member)
       notifyCrowd
       playerDo(side, _.ping)
-      sender ! Connected(enumerator, member)
+      promise success Connected(enumerator, member)
 
     case eventList: EventList => notify(eventList.events)
 
@@ -107,11 +107,11 @@ private[round] final class Socket(
       case l: oyun.chat.PlayerLine => Event.PlayerMessage(l)
     }))
 
-    case Quit(uid) =>
-      members get uid foreach { member =>
-        quit(uid)
-        notifyCrowd
-      }
+    // case Quit(uid) =>
+    //   members get uid foreach { member =>
+    //     quit(uid)
+    //     notifyCrowd
+    //   }
 
     case NotifyCrowd =>
       delayedCrowdNotification = false
@@ -126,7 +126,7 @@ private[round] final class Socket(
   def notifyCrowd {
     if (!delayedCrowdNotification) {
       delayedCrowdNotification = true
-      context.system.scheduler.scheduleOnce(1 second, self, NotifyCrowd)
+      system.scheduler.scheduleOnce(1 second)(this ! NotifyCrowd)
     }
   }
 
@@ -166,3 +166,15 @@ private[round] final class Socket(
     effect(players(side))
   }
 }
+
+object RoundSocket {
+
+  private[round] case class Dependencies(
+    system: ActorSystem,
+    lightUser: LightUser.Getter,
+    uidTtl: FiniteDuration,
+    disconnectTimeout: FiniteDuration,
+    ragequitTimeout: FiniteDuration)
+}
+
+

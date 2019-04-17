@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 import oyun.common.PimpedConfig._
 import oyun.hub.actorApi.map.Ask
 import oyun.hub.{ ActorMap, Sequencer }
-import oyun.socket.actorApi.GetVersion
+import oyun.socket.Socket.{ GetVersion }
 import oyun.socket.History
 import makeTimeout.short
 
@@ -41,18 +41,18 @@ final class Env(
   lazy val cached = new Cached(
     createdTtl = CreatedCacheTtl)(system)
 
-  private def isAnonOnline(masaId: String, player: Player) =
-    player.isRecentlyCreated.fold(fuccess(true), {
-      socketHub ? Ask(masaId, actorApi.GetWaitingPlayers) mapTo manifest[Set[String]] map (_.exists(player.id==))
-    })
+  // private def isAnonOnline(masaId: String, player: Player) =
+  //   player.isRecentlyCreated.fold(fuccess(true), {
+  //     socketHub ? Ask(masaId, actorApi.GetWaitingPlayers) mapTo manifest[Set[String]] map (_.exists(player.id==))
+  //   })
 
-  private def isPlayerOnline(masaId: String)(player: Player) = player.userId.fold(isAnonOnline(masaId, player))(funit inject isOnline(_))
+  // private def isPlayerOnline(masaId: String)(player: Player) = player.userId.fold(isAnonOnline(masaId, player))(funit inject isOnline(_))
 
   lazy val api = new MasaApi(
     scheduleJsonView = scheduleJsonView,
     system = system,
     sequencers = sequencerMap,
-    socketHub = socketHub,
+    socketMap = socketMap,
     autoPairing = autoPairing,
     perfsUpdater = perfsUpdater,
     renderer = hub.actor.renderer,
@@ -65,7 +65,7 @@ final class Env(
 
   lazy val socketHandler = new SocketHandler(
     hub = hub,
-    socketHub = socketHub,
+    socketMap = socketMap,
     chat = hub.actor.chat)
 
   lazy val winners = new Winners(
@@ -76,12 +76,23 @@ final class Env(
 
   lazy val scheduleJsonView = new ScheduleJsonView(lightUser)
 
-  private val socketHub = system.actorOf(Props(new oyun.socket.SocketHubActor.Default[Socket] {
-    def mkActor(masaId: String) = new Socket(
+  // private val socketHub = system.actorOf(Props(new oyun.socket.SocketHubActor.Default[Socket] {
+  //   def mkActor(masaId: String) = new Socket(
+  //     masaId = masaId,
+  //     history = new History(ttl = HistoryMessageTtl),
+  //     socketTimeout = SocketTimeout)
+  // }), name = SocketName)
+
+  private val socketMap: SocketMap = oyun.socket.SocketMap[MasaSocket](
+    system = system,
+    mkTrouper = (masaId: String) => new MasaSocket(
+      system = system,
       masaId = masaId,
       history = new History(ttl = HistoryMessageTtl),
-      socketTimeout = SocketTimeout)
-  }), name = SocketName)
+      uidTtl = SocketTimeout),
+    accessTimeout = SocketTimeout,
+    monitoringName = "masa.socketMap"
+  )
 
   private val sequencerMap = system.actorOf(Props(ActorMap { id =>
     new Sequencer(
@@ -97,7 +108,7 @@ final class Env(
 
   system.actorOf(Props(new CreatedOrganizer(
     api = api,
-    isOnline = isPlayerOnline
+    isOnline = isOnline
   )))
 
   private val reminder = system.actorOf(Props(new Reminder(
@@ -107,12 +118,12 @@ final class Env(
   system.actorOf(Props(new StartedOrganizer(
     api = api,
     reminder = reminder,
-    isOnline = isPlayerOnline,
-    socketHub = socketHub
+    isOnline = isOnline,
+    socketMap = socketMap
   )))
 
-  def version(masaId: String): Fu[Int] =
-    socketHub ? Ask(masaId, GetVersion) mapTo manifest[Int]
+  def version(masaId: Masa.ID): Fu[Int] =
+    socketMap.askIfPresentOrZero[Int](masaId)(GetVersion)
 
   private lazy val autoPairing = new AutoPairing(
   )

@@ -69,6 +69,7 @@
   <string name="playerHasLeftTheGame">Oyuncu masadan ayrıldı</string>
   <string name="thereIsAGameInProgress">Şu anda bir oyun oynanıyor!</string>
   <string name="yourTurn">Sıra sizde</string>
+  <string name="nbSecondsToPlayTheFirstMove">İlk hamleyi yapmak için %s saniye</string>
   <string name="waitingForOpponent">Rakip bekleniyor</string>
   <string name="gameOver">Oyun bitti</string>
   <string name="gameEnded">Oyun bitti</string>

@@ -78,6 +78,8 @@ case class Masa(
 
 object Masa {
 
+  type ID = String
+
   def make(
     createdByUserId: String,
     clock: MasaClock,

@@ -14,26 +14,26 @@ import makeTimeout.short
 
 private[masa] final class SocketHandler(
   hub: oyun.hub.Env,
-  socketHub: ActorRef,
+  socketMap: SocketMap,
   chat: ActorSelection) {
 
   def join(
     masaId: String,
     uid: String,
     user: Option[User],
-    player: Option[Player]): Fu[Option[JsSocketHandler]] =
-    MasaRepo.exists(masaId) flatMap {
-      _ ?? {
-        for {
-          socket <- socketHub ? Get(masaId) mapTo manifest[ActorRef]
-          join = Join(uid = uid, user = user, player = player)
-          handler <- Handler(socket, uid, join) {
-            case Connected(enum, member) =>
-              (controller(socket, masaId, uid, member), enum, member)
-          }
-        } yield handler.some
-      }
-    }
+    player: Option[Player]): Fu[Option[JsSocketHandler]] = ???
+    // MasaRepo.exists(masaId) flatMap {
+    //   _ ?? {
+    //     for {
+    //       socket <- socketHub ? Get(masaId) mapTo manifest[ActorRef]
+    //       join = Join(uid = uid, user = user, player = player)
+    //       handler <- Handler(socket, uid, join) {
+    //         case Connected(enum, member) =>
+    //           (controller(socket, masaId, uid, member), enum, member)
+    //       }
+    //     } yield handler.some
+    //   }
+    // }
 
   private def controller(
     socket: ActorRef,

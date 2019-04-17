@@ -1,16 +1,16 @@
-package oyun.socket
+// package oyun.socket
 
-import oyun.hub.ActorMap
+// import oyun.hub.ActorMap
 
-trait SocketHubActor[A <: SocketActor[_]] extends Socket with ActorMap {
-  def socketHubReceive: Receive = actorMapReceive
-}
+// trait SocketHubActor[A <: SocketActor[_]] extends Socket with ActorMap {
+//   def socketHubReceive: Receive = actorMapReceive
+// }
 
 
-object SocketHubActor {
+// object SocketHubActor {
 
-  trait Default[A <: SocketActor[_]] extends SocketHubActor[A] {
-    def receive = socketHubReceive
-  }
+//   trait Default[A <: SocketActor[_]] extends SocketHubActor[A] {
+//     def receive = socketHubReceive
+//   }
 
-}
+// }

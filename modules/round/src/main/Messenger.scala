@@ -6,7 +6,6 @@ import actorApi._
 import oyun.chat.actorApi._
 
 final class Messenger(
-  socketHub: ActorRef,
   chat: ActorSelection) {
 
 

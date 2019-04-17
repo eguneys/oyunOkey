@@ -2,23 +2,22 @@ package oyun.socket
 
 import akka.actor._
 
+import oyun.hub.Trouper
 import actorApi.{ SocketEnter, SocketLeave, PopulationTell, NbMembers }
 
-private[socket] final class Population extends Actor {
+private[socket] final class Population(system: akka.actor.ActorSystem) extends Trouper {
 
   var nb = 0
-  val bus = context.system.oyunBus
+  val bus = system.oyunBus
 
-  override def preStart() {
-    bus.subscribe(self, 'socketDoor)
-  }
+  bus.subscribe(this, 'socketDoor)
 
-  override def postStop() {
-    super.postStop()
-    bus.unsubscribe(self)
-  }
+  // override def postStop() {
+  //   super.postStop()
+  //   bus.unsubscribe(self)
+  // }
 
-  def receive = {
+  val process: Trouper.Receive = {
 
     case _: SocketEnter[_] =>
       nb = nb + 1

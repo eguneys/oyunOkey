@@ -461,6 +461,31 @@ div.control.icons .button.move.enabled {
   opacity: 1;
 }
 
+.oyunkeyf_ground .suggestion {
+  padding: 8px 7px;
+  background: #d0d0d0;
+}
+
+.oyunkeyf_ground .suggestion p {
+  margin-bottom: 7px;
+}
+
+.oyunkeyf_ground .expiration.emerg {
+  background: #dc322f!important;
+  color: #fff!important;
+}
+
+.oyunkeyf_ground .expiration {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.oyunkeyf_ground .expiration strong {
+  font-size: 1.3em;
+  margin-right: .3em;
+}
+
 .oyunkeyf_ground .follow_up {
   margin: 0 7px ;
 }

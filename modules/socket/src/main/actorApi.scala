@@ -11,12 +11,12 @@ case class Ping(uid: String)
 case class PingVersion(uid: String, version: Int)
 case object Broom
 
-case class Quit(uid: String)
+case class Quit(uid: Socket.Uid)
 
-case class SocketEnter[M <: SocketMember](uid: String, member: M)
-case class SocketLeave[M <: SocketMember](uid: String, member: M)
+case class SocketEnter[M <: SocketMember](uid: Socket.Uid, member: M)
+case class SocketLeave[M <: SocketMember](uid: Socket.Uid, member: M)
 
-case class Resync(uid: String)
+case class Resync(uid: Socket.Uid)
 
 case object GetVersion
 

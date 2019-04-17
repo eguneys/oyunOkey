@@ -302,7 +302,7 @@ case class Game(
 
   def startSide = Side(0)
 
-  def timeForFirstMove: Centis = Centis ofSeconds 15
+  def timeForFirstMove: Centis = Centis ofSeconds 20
 
   def userIds = playerMaps(_.userId)
 

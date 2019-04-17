@@ -5,6 +5,8 @@ import akka.pattern.{ ask }
 import com.typesafe.config.Config
 import scala.concurrent.duration._
 
+import reactivemongo.bson._
+
 import oyun.game.{ Game }
 import actorApi.{ GetSocketStatus, SocketStatus }
 import oyun.common.PimpedConfig._
@@ -15,19 +17,25 @@ final class Env(
   config: Config,
   system: ActorSystem,
   hub: oyun.hub.Env,
+  db: oyun.db.Env,
+  lightUser: oyun.common.LightUser.Getter,
   fishnetPlayer: oyun.fishnet.Player,
   userJsonView: oyun.user.JsonView,
   chatApi: oyun.chat.ChatApi) {
 
   private val settings = new {
+    val UidTimeout = config duration "uid.timeout"
     val PlayerDisconnectTimeout = config duration "player.disconnect.timeout"
     val PlayerRagequitTimeout = config duration "player.ragequit.timeout"
     val SocketTimeout = config duration "socket.timeout"
     val SocketName = config getString "socket.name"
     val ActorMapName = config getString "actor.map.name"
     val ActiveTtl = config duration "active.ttl"
+    val CollectionHistory = config getString "collection.history"
   }
   import settings._
+
+  private val bus = system.oyunBus
 
   lazy val eventHistory = History() _
 
@@ -42,12 +50,17 @@ final class Env(
     }
   }
 
+  private lazy val roundDependencies = Round.Dependencies(
+    finisher = finisher,
+    player = player,
+    socketMap = socketMap
+  )
+
   val roundMap = new oyun.hub.DuctMap[Round](
     mkDuct = id => {
-      val duct = new Round(gameId = id,
-        finisher = finisher,
-        player = player,
-        socketHub,
+      val duct = new Round(
+        gameId = id,
+        dependencies = roundDependencies,
         activeTtl = ActiveTtl,
         bus = system.oyunBus)
       duct.getGame foreach { _ foreach scheduleExpiration }
@@ -56,29 +69,47 @@ final class Env(
     accessTimeout = ActiveTtl
   )
 
+  bus.subscribeFuns(
+    'roundMapTell -> {
+      case Tell(id, msg) => roundMap.tell(id, msg)
+    }
+  )
+
   private var nbRounds = 0
   def count() = nbRounds
 
-  private val socketHub = {
-    val actor = system.actorOf(
-      Props(new oyun.socket.SocketHubActor[Socket] {
-        def mkActor(id: String) = new Socket(
-          gameId = id,
-          history = eventHistory(id),
-          socketTimeout = SocketTimeout,
-          disconnectTimeout = PlayerDisconnectTimeout,
-          ragequitTimeout = PlayerRagequitTimeout)
-        def receive: Receive = socketHubReceive
-      }),
-      name = SocketName)
-    actor
-  }
+  // private val socketHub = {
+  //   val actor = system.actorOf(
+  //     Props(new oyun.socket.SocketHubActor[Socket] {
+  //       def mkActor(id: String) = new Socket(
+  //         gameId = id,
+  //         history = eventHistory(id),
+  //         socketTimeout = SocketTimeout,
+  //         disconnectTimeout = PlayerDisconnectTimeout,
+  //         ragequitTimeout = PlayerRagequitTimeout)
+  //       def receive: Receive = socketHubReceive
+  //     }),
+  //     name = SocketName)
+  //   actor
+  // }
+
+  val socketMap = SocketMap.make(
+    makeHistory = History(db(CollectionHistory)),
+    socketTimeout = SocketTimeout,
+    dependencies = RoundSocket.Dependencies(
+      system = system,
+      lightUser = lightUser,
+      uidTtl = UidTimeout,
+      disconnectTimeout = PlayerDisconnectTimeout,
+      ragequitTimeout = PlayerRagequitTimeout
+    )
+  )
 
   lazy val perfsUpdater = new PerfsUpdater()
 
   lazy val socketHandler = new SocketHandler(
     roundMap = roundMap,
-    socketHub = socketHub,
+    socketMap = socketMap,
     messenger = messenger
   )
 
@@ -88,16 +119,16 @@ final class Env(
 
   private lazy val player: Player = new Player(
     fishnetPlayer = fishnetPlayer,
-    finisher = finisher
+    finisher = finisher,
+    scheduleExpiration = scheduleExpiration
   )
 
   lazy val messenger = new Messenger(
-    socketHub = socketHub,
     chat = hub.actor.chat
   )
 
   private def getSocketStatus(gameId: String): Fu[SocketStatus] =
-    socketHub ? Ask(gameId, GetSocketStatus) mapTo manifest[SocketStatus]
+    socketMap.ask[SocketStatus](gameId)(GetSocketStatus)
 
   lazy val jsonView = new JsonView(
     chatApi = chatApi,
@@ -120,6 +151,8 @@ object Env {
     config = oyun.common.PlayApp loadConfig "round",
     system = oyun.common.PlayApp.system,
     hub = oyun.hub.Env.current,
+    db = oyun.db.Env.current,
+    lightUser = oyun.user.Env.current.lightUser,
     fishnetPlayer = oyun.fishnet.Env.current.player,
     userJsonView = oyun.user.Env.current.jsonView,
     chatApi = oyun.chat.Env.current.api)

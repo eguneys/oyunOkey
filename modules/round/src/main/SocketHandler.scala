@@ -14,32 +14,40 @@ import oyun.hub.actorApi.map._
 import oyun.hub.DuctMap
 import oyun.socket.actorApi.{ Connected => _, _ }
 import oyun.socket.Handler
+import oyun.socket.Socket
 import oyun.user.User
 import oyun.game.{ Game, Pov, GameRepo }
 import makeTimeout.short
 
 private[round] final class SocketHandler(
   roundMap: DuctMap[Round],
-  socketHub: ActorRef,
+  socketMap: SocketMap,
   messenger: Messenger
 ) {
 
   private def controller(
     gameId: String,
     socket: ActorRef,
-    uid: String,
+    uid: Socket.Uid,
     member: Member): Handler.Controller = {
 
     def send(msg: Any) { roundMap.tell(gameId, msg) }
 
+    def handlePing(o: JsObject) = {
+      // o int "v" foreach { v => socket ! PingVersion(uid, v) }
+      (o \ "v").asOpt[Int] foreach { v =>
+        socket ! VersionCheck(v, member)
+      }
+    }
+
     member.playerIdOption.fold[Handler.Controller]({
-      case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }
+      case ("p", o) => handlePing(o)
       case ("talk", o) => o str "d" foreach { text =>
         messenger.watcher(gameId, member, text, socket)
       }
     }) { playerId =>
       {
-        case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }
+        case ("p", o) => handlePing(o)
         case ("move", o) => parseMove(o) foreach {
           case move =>
             val promise = Promise[Unit]
@@ -80,19 +88,21 @@ private[round] final class SocketHandler(
     pov: Pov,
     playerId: Option[String],
     uid: String,
-    user: Option[User]): Fu[JsSocketHandler] = {
-    val join = Join(
-      uid = uid,
-      user = user,
-      side = pov.side,
-      playerId = playerId)
-    socketHub ? Get(pov.gameId) mapTo manifest[ActorRef] flatMap { socket =>
-      Handler(socket, uid, join) {
-        case Connected(enum, member) =>
-          (controller(pov.gameId, socket, uid, member), enum, member)
-      }
-    }
-  }
+    user: Option[User]): Fu[JsSocketHandler] = 
+    ???
+    // {
+    //   val join = Join(
+    //     uid = uid,
+    //     user = user,
+    //     side = pov.side,
+    //     playerId = playerId)
+    //   socketHub ? Get(pov.gameId) mapTo manifest[ActorRef] flatMap { socket =>
+    //     Handler(socket, uid, join) {
+    //       case Connected(enum, member) =>
+    //         (controller(pov.gameId, socket, uid, member), enum, member)
+    //     }
+    //   }
+    // }
 
   private def parseMove(o: JsObject) = for {
     d <- o obj "d"

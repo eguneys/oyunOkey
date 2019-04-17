@@ -50,6 +50,12 @@ final class JsonView(
                   "t" -> text)
               })
             },
+            "expiration" -> game.expirable.option {
+              Json.obj(
+                "idleMillis" -> (nowMillis - game.movedAt.getMillis),
+                "millisToMove" -> game.timeForFirstMove.millis
+              )
+            },
             "possibleMoves" -> possibleMoves(pov)
           ).noNull
       }
@@ -87,6 +93,12 @@ final class JsonView(
                   "s" -> side.name,
                   "t" -> text)
               })
+            },
+            "expiration" -> game.expirable.option {
+              Json.obj(
+                "idleMillis" -> (nowMillis - game.movedAt.getMillis),
+                "millisToMove" -> game.timeForFirstMove.millis
+              )
             }
           ).noNull
       }

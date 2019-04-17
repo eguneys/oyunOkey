@@ -37,13 +37,13 @@ final class Env(
 
   def countEnabled = cached.countEnabled
 
-  system.oyunBus.subscribe(system.actorOf(Props(new Actor {
-    def receive = {
+  system.oyunBus.subscribeFuns(
+    'userActive -> {
       case User.Active(user) =>
         if (!user.seenRecently) UserRepo setSeenAt user.id
         onlineUserIdMemo put user.id
     }
-  })), 'userActive)
+  )
 
   {
     import scala.concurrent.duration._

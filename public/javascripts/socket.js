@@ -230,8 +230,6 @@ oyunkeyf.StrongSocket = function(murl, mversion, msettings) {
     var urls = options.baseUrls;
     var url = oyunkeyf.storage.get(key);
 
-    console.log("base url" + url);
-
     if (!url) {
       url = urls[0];
       oyunkeyf.storage.set(key, url);

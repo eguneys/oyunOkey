@@ -15,6 +15,8 @@ const { wrapGroup, wrapPiece, wrapDrop, partial } = util;
 
 module.exports = function(opts) {
 
+  round.massage(opts.data);
+  
   this.data = opts.data;
 
   // this.data.steps = [
@@ -62,6 +64,14 @@ module.exports = function(opts) {
   this.socket = new socket(opts.socketSend, this);
 
   this.setTitle = partial(title.set, this);
+
+  this.showExpiration = () => {
+    if (!this.data.expiration) return;
+    m.redraw();
+    setTimeout(this.showExpiration, 250);
+  };
+  
+  setTimeout(this.showExpiration, 350);
 
   var onUserMove = (key, move) => {
     if (key === okeyground.move.leaveTaken) {
@@ -185,13 +195,18 @@ module.exports = function(opts) {
       this.pushNewTurn();
     }
 
-    console.log(d.game);
+    if (this.data.expiration) {
+      this.data.expiration.movedAt = Date.now();
+    }
+
     m.endComputation();
 
     this.vm.autoScroll && this.vm.autoScroll.now();
   };
 
   this.reload = (cfg) => {
+
+    round.massage(cfg);
     m.startComputation();
     //this.vm.ply = round.lastStep(cfg).ply;
     this.vm.ply = round.lastVmPly(cfg);

@@ -11,24 +11,24 @@ import oyun.lobby.actorApi.HooksFor
 import oyun.lobby.{ Hook, HookRepo }
 
 final class LobbyApi(
-  lobby: ActorRef,
   lobbyVersion: () => Int,
   lightUser: String => Option[LightUser]) {
 
   import makeTimeout.large
 
   def apply(implicit ctx: Context): Fu[JsObject] =
-    (lobby ? HooksFor(ctx.me)).mapTo[List[Hook]] zip
-      (ctx.me ?? GameRepo.urgentGames) map {
-        case (hooks, povs) => Json.obj(
-          "me" -> ctx.me.map { u =>
-            Json.obj("username"-> u.username)
-          },
-          "version" -> lobbyVersion(),
-          "hooks" -> JsArray(hooks map (_.render)),
-          "nowPlaying" -> JsArray(povs take 9 map nowPlaying),
-          "nbNowPlaying" -> povs.size)
-      }
+    ???
+    // (lobby ? HooksFor(ctx.me)).mapTo[List[Hook]] zip
+    //   (ctx.me ?? GameRepo.urgentGames) map {
+    //     case (hooks, povs) => Json.obj(
+    //       "me" -> ctx.me.map { u =>
+    //         Json.obj("username"-> u.username)
+    //       },
+    //       "version" -> lobbyVersion(),
+    //       "hooks" -> JsArray(hooks map (_.render)),
+    //       "nowPlaying" -> JsArray(povs take 9 map nowPlaying),
+    //       "nbNowPlaying" -> povs.size)
+    //   }
 
   def nowPlaying(pov: Pov) = Json.obj(
     "fullId" -> pov.fullId,

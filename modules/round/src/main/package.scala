@@ -4,6 +4,8 @@ import oyun.game.Event
 import oyun.socket.WithSocket
 
 package object round extends PackageObject with WithPlay with WithSocket {
+  private[round] type SocketMap = oyun.hub.TrouperMap[RoundSocket]
+
   private[round]type Events = List[Event]
 
   private[round]type VersionedEvents = List[VersionedEvent]

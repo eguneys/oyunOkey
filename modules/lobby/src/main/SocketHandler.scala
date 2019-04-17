@@ -10,8 +10,8 @@ import oyun.socket.Handler
 import oyun.user.User
 
 private[lobby] final class SocketHandler(
-  lobby: ActorRef,
-  socket: ActorRef) {
+  lobby: LobbyTrouper,
+  socket: LobbySocket) {
 
   private def controller(
     socket: ActorRef,
@@ -27,10 +27,26 @@ private[lobby] final class SocketHandler(
   }
 
   def apply(uid: String, user: Option[User]): Fu[JsSocketHandler] = {
-    val join = Join(uid = uid, user = user)
-    Handler(socket, uid, join) {
-      case Connected(enum, member) =>
-        (controller(socket, uid, member), enum, member)
-    }
+    // val join = Join(uid = uid, user = user)
+    // Handler(socket, uid, join) {
+    //   case Connected(enum, member) =>
+    //     (controller(socket, uid, member), enum, member)
+    // user flatMap {
+    //   socket.ask[Connected](Join(uid, user)) map {
+    //     case Connected(enum, member) => Handler.iteratee(
+    //       hub,
+    //       controller(socket, member),
+    //       member,
+    //       socket,
+    //       uid,
+    //       onPing = (_, _, _, _) => {
+    //         // socket setAlive uid
+    //         // member push pong
+    //       }
+    //     ) -> enum
+    //   }
+    // }
+    ???
   }
+
 }

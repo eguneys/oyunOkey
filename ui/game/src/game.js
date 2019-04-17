@@ -12,6 +12,16 @@ function isPlayerTurn(data) {
   return isPlayerPlaying(data) && data.game.player === data.player.side;
 }
 
+function getTurnSide(data) {
+  return sideByPly(data.game.turns);  
+}
+
+function getTurnPov(data) {
+  var turnSide = getTurnSide(data);
+  return ['player', 'opponentLeft', 'opponentRight', 'opponentUp']
+    .filter(k => data[k].side === turnSide)[0];
+}
+
 function getPlayer(data, side) {
   return ['player', 'opponentLeft', 'opponentRight', 'opponentUp']
     .map(k => data[k])
@@ -35,5 +45,6 @@ module.exports = {
   getPlayer: getPlayer,
   sideByPly: sideByPly,
   playable: playable,
-  setOnGame: setOnGame
+  setOnGame: setOnGame,
+  getTurnPov: getTurnPov
 };

@@ -11,6 +11,8 @@ sealed abstract class Deploy(val key: String)
 case object DeployPre extends Deploy("deployPre")
 case object DeployPost extends Deploy("deployPost")
 
+case object Shutdown
+
 package map {
   case class Get(id: String)
   case class Tell(id: String, msg: Any)

@@ -69,6 +69,7 @@
   <string name="playerHasLeftTheGame">Player has left the game</string>
   <string name="thereIsAGameInProgress">There is a game in progress!</string>
   <string name="yourTurn">Your turn</string>
+  <string name="nbSecondsToPlayTheFirstMove">%s seconds to play the first move</string>
   <string name="waitingForOpponent">Waiting for opponnent</string>
   <string name="gameOver">Hand over</string>
   <string name="gameEnded">Hand over</string>

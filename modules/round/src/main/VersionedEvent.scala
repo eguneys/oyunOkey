@@ -43,4 +43,30 @@ private[round] object VersionedEvent {
     only = e.only,
     owner = e.owner,
     watcher = e.watcher)
+
+  import oyun.db.BSON
+  import reactivemongo.bson._
+
+  implicit val versionedEventHandler = new BSON[VersionedEvent] {
+    def reads(r: BSON.Reader) = VersionedEvent(
+      version = r int "v",
+      typ = r str "t",
+      encoded = r.strO("d").map(Left.apply).getOrElse(Right(JsNull)),
+      only = Side(r str "o"),
+      owner = r boolD "ow",
+      watcher = r boolD "r")
+
+    def writes(w: BSON.Writer, o: VersionedEvent) = BSONDocument(
+      "v" -> o.version,
+      "t" -> o.typ,
+      "d" -> (o.encoded match {
+        case Left(s) => s.some
+        case Right(JsNull) => none
+        case Right(js) => Json.stringify(js).some
+      }),
+      "o" -> o.only.map(_.letter.toString),
+      "ow" -> w.boolO(o.owner),
+      "w" -> w.boolO(o.watcher))
+
+  }
 }
