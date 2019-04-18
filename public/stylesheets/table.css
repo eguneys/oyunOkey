@@ -40,6 +40,7 @@ div.player_wrap .clock .bar span {
 div.player_wrap {
   width: 100%;
   box-sizing: border-box;
+  position: relative;
 }
 
 div.player_wrap .player {
@@ -476,6 +477,7 @@ div.control.icons .button.move.enabled {
 }
 
 .oyunkeyf_ground .expiration {
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -484,6 +486,16 @@ div.control.icons .button.move.enabled {
 .oyunkeyf_ground .expiration strong {
   font-size: 1.3em;
   margin-right: .3em;
+}
+
+.oyunkeyf_ground .expiration.dplayer {
+  bottom: -50px;
+}
+
+.oyunkeyf_ground .expiration.dopponentUp,
+.oyunkeyf_ground .expiration.dopponentLeft,
+.oyunkeyf_ground .expiration.dopponentRight {
+  bottom: 35px;
 }
 
 .oyunkeyf_ground .follow_up {

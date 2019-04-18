@@ -271,7 +271,7 @@ case class Game(
   def outoftime: Boolean = outoftimeClock
 
   private def outoftimeClock: Boolean = clock ?? { c =>
-    started && playable && {
+    started && playable && allPlayersHaveMoved && {
       (!c.isRunning) || c.outoftime(player.side)
     }
   }
@@ -302,7 +302,7 @@ case class Game(
 
   def startSide = Side(0)
 
-  def timeForFirstMove: Centis = Centis ofSeconds 20
+  def timeForFirstMove: Centis = Centis ofSeconds 2000
 
   def userIds = playerMaps(_.userId)
 

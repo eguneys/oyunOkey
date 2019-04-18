@@ -6,7 +6,7 @@ import akka.actor._
 
 import actorApi._, round._
 import oyun.game.{ GameRepo, Game, Pov, PlayerRef, Event }
-import oyun.game.actorApi.{ WithdrawMasa }
+import oyun.game.actorApi.{ WithdrawMasa, AbortCurrentGame }
 
 import oyun.hub.actorApi.map._
 import oyun.hub.actorApi.round.FishnetPlay
@@ -22,7 +22,17 @@ private[round] final class Round(
 
   private[this] implicit val proxy = new GameProxy(gameId)
 
-  private val nbOutOfTimeQuit = 2
+  private val nbOutOfTimeQuit = 1
+
+  system.oyunBus.subscribeFun('abortCurrentGame) {
+    case AbortCurrentGame(gameId: String) =>
+      handle { game =>
+        if (game.id == gameId) {
+          println("finishging game", game.id)
+          finisher.other(game, _.Aborted)
+        } else fuccess(Nil)
+      }
+  }
 
   def getGame: Fu[Option[Game]] = proxy.game
 
@@ -59,7 +69,8 @@ private[round] final class Round(
         }
 
 
-        finisher.other(game, _.Aborted)
+        // finisher.other(game, _.Aborted)
+        fuccess(Nil)
       } else fuccess(Nil)
     }
 
@@ -120,6 +131,7 @@ private[round] final class Round(
 
 object Round {
   private[round] case class Dependencies(
+    system: ActorSystem,
     finisher: Finisher,
     player: Player,
     socketMap: SocketMap

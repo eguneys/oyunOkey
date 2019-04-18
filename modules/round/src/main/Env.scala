@@ -51,6 +51,7 @@ final class Env(
   }
 
   private lazy val roundDependencies = Round.Dependencies(
+    system = system,
     finisher = finisher,
     player = player,
     socketMap = socketMap

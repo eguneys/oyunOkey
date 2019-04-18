@@ -238,7 +238,7 @@ module.exports = function(opts) {
 
   this.isClockRunning = () => {
     return this.data.clock && game.playable(this.data) &&
-      ((this.data.game.turns > 0 ) || this.data.clock.running);
+      ((this.data.game.turns >= 4 ) || this.data.clock.running);
   };
 
   var clockTick = () => {

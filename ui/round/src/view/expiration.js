@@ -2,7 +2,7 @@ import m from 'mithril';
 
 import { game } from 'game';
 
-export default function(ctrl) {
+export default function(ctrl, klass) {
 
   const d = ctrl.data.expiration;
   if (!d) return null;
@@ -14,7 +14,7 @@ export default function(ctrl) {
         emerg = myTurn && timeLeft < 8000;
         
   return [
-    m('div.expiration.suggestion' + (emerg ? '.emerg':''), ctrl.trans('nbSecondsToPlayTheFirstMove', secondsLeft, m('strong', secondsLeft))),
+    m('div.expiration.suggestion.d' + klass + (emerg ? '.emerg':''), ctrl.trans('nbSecondsToPlayTheFirstMove', secondsLeft, m('strong', secondsLeft))),
     playerTurnPov
   ];
 

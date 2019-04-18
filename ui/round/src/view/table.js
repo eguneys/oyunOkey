@@ -58,7 +58,7 @@ function renderTableEnd(ctrl) {
   ];
 }
 
-function renderTablePlay(ctrl, expiration) {
+function renderTablePlay(ctrl) {
   var d = ctrl.data;
   var trans = ctrl.trans;
 
@@ -85,8 +85,7 @@ function renderTablePlay(ctrl, expiration) {
       m('div.control.icons', icons)
     ),
     m('div.seat_wrap', [
-      renderSeat(ctrl, d.player, 'bottom'),
-      expiration && expiration[1] === 'player' ? expiration[0] : null
+      renderSeat(ctrl, d.player, 'player', 'bottom'),
     ]),
     m('div.control.buttons', buttons)
   ];
@@ -107,11 +106,19 @@ function renderPlayer(ctrl, player) {
    );
 }
 
-function renderSeat(ctrl, player, position = 'top') {
+function renderSeat(ctrl, player, povString, clockPosition = 'top') {
+  var expiration = game.playable(ctrl.data) && renderExpiration(ctrl, povString);
+  
   var children = [renderPlayer(ctrl, player)];
+  
+  
+  var i = clockPosition === 'bottom' ? 1:0;
+  children.splice(i, 0, renderClock(ctrl, player.side, clockPosition));
 
-  var i = position === 'bottom' ? 1:0;
-  children.splice(i, 0, renderClock(ctrl, player.side, position));
+  var expirationDom = expiration && expiration[1] === povString ? expiration[0] : null;
+
+  children.splice(0, 0, expirationDom);
+  
 
   return  m('div.player_wrap', children);
 }
@@ -142,21 +149,17 @@ function renderGameStatus(ctrl) {
 module.exports = function(ctrl) {
   var d = ctrl.data;
 
-  var expiration = game.playable(ctrl.data) && renderExpiration(ctrl);
-
   return [
     m('div.table_wrap', [
       m('div.table_side.table_left', [
-        expiration && expiration[1] === 'opponentLeft' ? expiration[0] : null,
-        renderSeat(ctrl, d.opponentLeft),
+        renderSeat(ctrl, d.opponentLeft, 'opponentLeft'),
       ]),
       m('div.table_middle', [
         m('div.table_over', [
-          expiration && expiration[1] === 'opponentUp' ? expiration[0] : null,
-          renderSeat(ctrl, d.opponentUp)]),
+          renderSeat(ctrl, d.opponentUp, 'opponentUp')]),
         visualTable(ctrl),
         m('div.table_over',
-          game.playable(ctrl.data) ? renderTablePlay(ctrl, expiration) : renderTableEnd(ctrl))
+          game.playable(ctrl.data) ? renderTablePlay(ctrl) : renderTableEnd(ctrl))
       ]),
       m('div.table_side.table_right',[
         m('div', {
@@ -164,8 +167,7 @@ module.exports = function(ctrl) {
             if (!isUpdate) $(el).html($('.game_masa').show());
           }
         }),
-        expiration && expiration[1] === 'opponentRight' ? expiration[0] : null,
-        renderSeat(ctrl, d.opponentRight),
+        renderSeat(ctrl, d.opponentRight, 'opponentRight'),
         renderGameStatus(ctrl)
       ])
     ])

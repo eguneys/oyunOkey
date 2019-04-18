@@ -14,6 +14,7 @@ import oyun.hub.actorApi.lobby.ReloadMasas
 import oyun.hub.Sequencer
 import oyun.socket.actorApi.SendToFlag
 import oyun.game.{ Mode, Game }
+import oyun.game.actorApi.AbortCurrentGame
 import oyun.user.{ User, UserRepo }
 
 import okey.Side
@@ -173,11 +174,12 @@ private[masa] final class MasaApi(
         }
       case masa if masa.isStarted =>
         PlayerRepo.withdraw(masa.id, playerId) >> updateNbPlayers(masa.id) >>- {
+          publishAbortCurrentGame(masa.id) >>-
           (PairingRepo removePlaying masa.id) >>-
           // funit >>-
           socketReload(masa.id) >>-
-          publish()
-          promise success(())
+          publish() >>-
+          promise.success(())
         }
       case _ => funit
     }
@@ -334,6 +336,13 @@ private[masa] final class MasaApi(
   private def socketReload(masaId: String) {
     socketMap.tell(masaId, Reload)
   }
+
+  private def publishAbortCurrentGame(masaId: String) = {
+    PairingRepo findPlaying(masaId) map {
+      _ ?? { pairing => bus.publish(AbortCurrentGame(pairing.id), 'abortCurrentGame) }
+    }
+  }
+
 
   private object publish {
     private val debouncer = system.actorOf(Props(new Debouncer(10 seconds, {
