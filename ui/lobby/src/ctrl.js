@@ -5,6 +5,8 @@ import hookRepo from './hookRepo';
 
 module.exports = function(env) {
   this.data = env.data;
+  this.data.hooks = [];
+
 
   hookRepo.initAll(this);
 

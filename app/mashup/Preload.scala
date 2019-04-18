@@ -15,9 +15,8 @@ final class Preload(
 
   def apply(masas: Fu[List[Masa]])(implicit ctx: Context): Fu[Response] =
     lobbyApi(ctx) zip
-      masas zip
-      (ctx.me ?? GameRepo.urgentGames) map {
-      case ((data, masas), povs) =>
+      masas map {
+      case ((data, povs), masas) =>
         (data, masas, povs, countRounds())
     }
 }

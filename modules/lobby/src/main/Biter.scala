@@ -1,6 +1,6 @@
 package oyun.lobby
 
-import actorApi.{ JoinHook, LobbyUser }
+import actorApi.{ JoinHook }
 import oyun.game.{ GameRepo, Game, Player }
 import okey.{ Game => OkeyGame, Table, Player => OkeyPlayer, Side }
 
@@ -16,4 +16,7 @@ private[lobby] object Biter {
 
   // def canJoin(hook: Hook, user: Option[LobbyUser]): Boolean =
   //   true
+
+  def canJoin(seek: Seek, user: LobbyUser): Boolean =
+    seek.user.id != user.id
 }

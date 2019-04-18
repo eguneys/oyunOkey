@@ -8,6 +8,7 @@ import oyun.common.PimpedConfig._
 final class Env(
   config: Config,
   db: oyun.db.Env,
+  asyncCache: oyun.memo.AsyncCache.Builder,
   mongoCache: oyun.memo.MongoCache.Builder,
   system: ActorSystem) {
   private val settings = new {
@@ -21,6 +22,7 @@ final class Env(
 
   lazy val cached = new Cached(
     coll = gameColl,
+    asyncCache = asyncCache,
     mongoCache = mongoCache,
     defaultTtl = CachedNbTtl)
 }
@@ -30,5 +32,6 @@ object Env {
     config = oyun.common.PlayApp loadConfig "game",
     db = oyun.db.Env.current,
     mongoCache = oyun.memo.Env.current.mongoCache,
+    asyncCache = oyun.memo.Env.current.asyncCache,
     system = oyun.common.PlayApp.system)
 }

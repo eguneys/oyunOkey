@@ -7,16 +7,6 @@ import oyun.socket.SocketMember
 import oyun.socket.Socket.{ Uid }
 import oyun.user.User
 
-private[lobby] case class LobbyUser(
-  id: String, 
-  username: String)
-
-private[lobby] object LobbyUser {
-  def make(user: User) = LobbyUser(
-    id = user.id,
-    username = user.username)
-}
-
 private[lobby] case class Member(
   channel: JsChannel,
   user: Option[LobbyUser],
@@ -36,8 +26,8 @@ private[lobby] case class SaveHook(msg: AddHook)
 private[lobby] case class RemoveHook(hookId: String)
 private[lobby] case class UpdateHook(hook: Hook)
 private[lobby] case class RemoveHooks(hooks: Set[Hook])
-private[lobby] case class CancelHook(uid: String)
-private[lobby] case class BiteHook(hookId: String, uid: String, user: Option[LobbyUser])
+private[lobby] case class CancelHook(uid: Uid)
+private[lobby] case class BiteHook(hookId: String, uid: Uid, user: Option[LobbyUser])
 
 private[lobby] case class Join(uid: Uid, user: Option[User], promise: Promise[Connected])
 

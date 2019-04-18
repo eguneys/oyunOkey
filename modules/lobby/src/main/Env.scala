@@ -9,7 +9,9 @@ import oyun.socket.History
 final class Env(
   config: Config,
   system: ActorSystem,
+  db: oyun.db.Env,
   hub: oyun.hub.Env,
+  asyncCache: oyun.memo.AsyncCache.Builder,
   scheduler: oyun.common.Scheduler) {
   private val settings = new {
     val MessageTtl = config duration "message.ttl"
@@ -17,8 +19,18 @@ final class Env(
     val SocketName = config getString "socket.name"
     val ActorName = config getString "actor.name"
     val BroomPeriod = config duration "broom_period"
+    val CollectionSeek = config getString "collection.seek"
+    val SeekMaxPerPage = config getInt "seek.max_per_page"
+    val SeekMaxPerUser = config getInt "seek.max_per_user"
   }
   import settings._
+
+  lazy val seekApi = new SeekApi(
+    coll = db(CollectionSeek),
+    asyncCache = asyncCache,
+    maxPerPage = SeekMaxPerPage,
+    maxPerUser = SeekMaxPerUser
+  )
 
   private val socket = new LobbySocket(system, SocketUidTtl)
 
@@ -33,6 +45,7 @@ final class Env(
   }
 
   lazy val socketHandler = new SocketHandler(
+    hub = hub,
     lobby = lobbyTrouper,
     socket = socket)
 
@@ -54,7 +67,9 @@ object Env {
   lazy val current = new Env(
     config = oyun.common.PlayApp loadConfig "lobby",
     system = oyun.common.PlayApp.system,
+    db = oyun.db.Env.current,
     hub = oyun.hub.Env.current,
+    asyncCache = oyun.memo.Env.current.asyncCache,
     scheduler = oyun.common.PlayApp.scheduler
   )
 }

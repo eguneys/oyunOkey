@@ -18,11 +18,12 @@ object Prismic {
     case _ => logger info message
   }
 
-  private val fetchPrismicApi = AsyncCache.single[PrismicApi](
+  private val fetchPrismicApi = oyun.memo.Env.current.asyncCache.single[PrismicApi](
+    name = "prismic.fetchPrismicApi",
     f = PrismicApi.get(Env.api.PrismicApiUrl, logger = prismicLogger),
-    timeToLive = 1 minute)
+    expireAfter = _.ExpireAfterWrite(1 minute))
 
-  def prismicApi = fetchPrismicApi(true)
+  def prismicApi = fetchPrismicApi.get
 
   implicit def makeLinkResolver(prismicApi: PrismicApi, ref: Option[String] = None) =
     DocumentLinkResolver(prismicApi) {

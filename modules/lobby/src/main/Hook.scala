@@ -4,12 +4,12 @@ import play.api.libs.json._
 import org.joda.time.DateTime
 import ornicar.scalalib.Random
 
-import actorApi.LobbyUser
 import oyun.user.{ User }
+import oyun.socket.Socket.Uid
 
 case class Hook(
   id: String,
-  uid: String, // owner socket uid
+  uid: Uid, // owner socket uid
   sid: Option[String], // owner cookie (used to prevent multiple hooks)
   user: Option[LobbyUser],
   createdAt: DateTime) {
@@ -25,7 +25,7 @@ object Hook {
   val idSize = 8
 
   def make(
-    uid: String,
+    uid: Uid,
     sid: Option[String],
     user: Option[User]) = new Hook(
       id = Random nextString idSize,

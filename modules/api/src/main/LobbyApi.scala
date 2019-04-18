@@ -7,17 +7,34 @@ import play.api.libs.json.{ Json, JsObject, JsArray }
 import oyun.common.PimpedJson._
 import oyun.common.LightUser
 import oyun.game.{ GameRepo, Pov }
+import oyun.lobby.SeekApi
 import oyun.lobby.actorApi.HooksFor
 import oyun.lobby.{ Hook, HookRepo }
 
 final class LobbyApi(
   lobbyVersion: () => Int,
-  lightUser: String => Option[LightUser]) {
+  lightUser: String => Option[LightUser],
+  seekApi: SeekApi) {
 
   import makeTimeout.large
 
-  def apply(implicit ctx: Context): Fu[JsObject] =
-    ???
+  def apply(implicit ctx: Context): Fu[(JsObject, List[Pov])] =
+    ctx.me.fold(seekApi.forAnon)(seekApi.forUser) zip
+    ctx.me ?? GameRepo.urgentGames flatMap {
+      case (seeks, povs) =>
+        val displayedPovs = povs take 9
+
+        funit inject {
+          Json.obj(
+            "me" -> ctx.me.map { u =>
+              Json.obj("username" -> u.username)
+            },
+            "seeks" -> JsArray(seeks map (_.render)),
+            "nowPlaying" -> JsArray(displayedPovs map nowPlaying),
+            "nbNowPlaying" -> povs.size
+          ) -> displayedPovs
+        }
+    }
     // (lobby ? HooksFor(ctx.me)).mapTo[List[Hook]] zip
     //   (ctx.me ?? GameRepo.urgentGames) map {
     //     case (hooks, povs) => Json.obj(

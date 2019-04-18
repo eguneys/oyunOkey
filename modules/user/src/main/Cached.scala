@@ -15,6 +15,7 @@ final class Cached(
   nbTtl: FiniteDuration,
   onlineUserIdMemo: ExpireSetMemo,
   mongoCache: MongoCache.Builder,
+  asyncCache: oyun.memo.AsyncCache.Builder,
   rankingApi: RankingApi) {
 
   private val countCache = mongoCache.single[Int](
@@ -50,8 +51,9 @@ final class Cached(
     // timeToLive = 1 seconds,
     keyToString = _.toString)
 
-  val top50Online = oyun.memo.AsyncCache.single[List[User]](
+  val top50Online = asyncCache.single[List[User]](
+    name = "user.top50Online",
     f = UserRepo.byIdsSortRating(onlineUserIdMemo.keys, 50),
-    timeToLive = 10 seconds)
+    expireAfter = _.ExpireAfterWrite(10 seconds))
 
 }

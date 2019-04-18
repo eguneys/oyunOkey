@@ -7,7 +7,8 @@ import scala.concurrent.duration._
 import oyun.common.LightUser
 import oyun.game.{ Game, GameRepo }
 
-final class JsonView(getLightUser: String => Option[LightUser]) {
+final class JsonView(getLightUser: String => Option[LightUser],
+  asyncCache: oyun.memo.AsyncCache.Builder) {
 
   private case class CachableData(
     pairings: JsArray,
@@ -20,7 +21,7 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
   def apply(masa: Masa,
     me: Option[String],
     socketVersion: Option[Int]): Fu[JsObject] = for {
-    data <- cachableData(masa.id)
+    data <- cachableData get masa.id
     myInfo <- me ?? { PlayerRepo.playerInfo(masa.id, _) }
     stand <- standing(masa)
   } yield Json.obj(
@@ -78,7 +79,9 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
     "players" -> rankedPlayers.map(playerJson(sheets, masa))
   )
 
-  private val cachableData = oyun.memo.AsyncCache[String, CachableData](id =>
+  private val cachableData = asyncCache.clearable[String, CachableData](
+    name = "masa.json.cachable",
+    id =>
     for {
       pairings <- PairingRepo.recentByMasa(id, 40)
       masa <- MasaRepo byId id
@@ -94,7 +97,8 @@ final class JsonView(getLightUser: String => Option[LightUser]) {
       players = JsObject(players map (p => p.playerId -> playerInfoJson(p))),
       featured = featured map featuredJson,
       podium),
-    timeToLive = 1 second)
+    expireAfter = _.ExpireAfterWrite(1 second)
+  )
 
   private def featuredJson(featured: FeaturedGame) = {
     val game = featured.game

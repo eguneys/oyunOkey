@@ -59,7 +59,7 @@ object User extends OyunController {
       nbAllTime <- env.cached topNbGame nb
       nbDay <- fuccess(Nil)
       // masaWinners <- Env.masa.winners scheduled nb
-      online <- env.cached top50Online true
+      online <- env.cached.top50Online.get
       res <- negotiate(
         html = fuccess(Ok(html.user.list(
           //masaWinners = masaWinners,

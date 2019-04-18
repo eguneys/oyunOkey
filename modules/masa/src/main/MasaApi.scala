@@ -271,22 +271,22 @@ private[masa] final class MasaApi(
       }
     }
 
-  private val miniStandingCache = oyun.memo.AsyncCache[String, List[RankedPlayer]](
-    (id: String) => PlayerRepo.bestByMasaWithRank(id),
-    timeToLive = 3 second)
+  // private val miniStandingCache = oyun.memo.AsyncCache[String, List[RankedPlayer]](
+  //   (id: String) => PlayerRepo.bestByMasaWithRank(id),
+  //   timeToLive = 3 second)
 
-  def miniStanding(masaId: String, withStanding: Boolean): Fu[Option[MiniStanding]] =
-    MasaRepo byId masaId flatMap {
-      _ ?? { masa =>
-        if (withStanding) miniStandingCache(masa.id) map { rps =>
-          MiniStanding(masa, rps.some).some
-        }
-        else fuccess(MiniStanding(masa, none).some)
-      }
-    }
+  // def miniStanding(masaId: String, withStanding: Boolean): Fu[Option[MiniStanding]] =
+  //   MasaRepo byId masaId flatMap {
+  //     _ ?? { masa =>
+  //       if (withStanding) miniStandingCache(masa.id) map { rps =>
+  //         MiniStanding(masa, rps.some).some
+  //       }
+  //       else fuccess(MiniStanding(masa, none).some)
+  //     }
+  //   }
 
-  def miniStanding(masaId: String, playerId: Option[String], withStanding: Boolean): Fu[Option[MiniStanding]] =
-    miniStanding(masaId, withStanding)
+  // def miniStanding(masaId: String, playerId: Option[String], withStanding: Boolean): Fu[Option[MiniStanding]] =
+  //   miniStanding(masaId, withStanding)
 
   def fetchVisibleMasas: Fu[VisibleMasas] =
     MasaRepo.publicCreatedSorted zip

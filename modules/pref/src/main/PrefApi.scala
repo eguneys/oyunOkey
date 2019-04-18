@@ -1,7 +1,7 @@
 package oyun.pref
 
 import play.api.libs.json.Json
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.FiniteDuration
 
 import reactivemongo.bson._
 
@@ -12,11 +12,15 @@ import oyun.user.User
 
 final class PrefApi(
   coll: Coll,
-  cacheTtl: Duration,
+  cacheTtl: FiniteDuration,
+  asyncCache: oyun.memo.AsyncCache.Builder,
   bus: oyun.common.Bus) {
 
   private def fetchPref(id: String): Fu[Option[Pref]] = coll.find(BSONDocument("_id" -> id)).uno[Pref]
-  private val cache = AsyncCache(fetchPref, timeToLive = cacheTtl)
+  private val cache = asyncCache.multi(
+    name = "pref.fetchPref",
+    f = fetchPref,
+    expireAfter = _.ExpireAfterWrite(cacheTtl))
 
 
   private implicit val prefBSONHandler = new BSON[Pref] {
@@ -31,7 +35,7 @@ final class PrefApi(
 
   }
 
-  def getPrefById(id: String): Fu[Pref] = cache(id) map (_ getOrElse Pref.create(id))
+  def getPrefById(id: String): Fu[Pref] = cache get id map (_ getOrElse Pref.create(id))
   val getPref = getPrefById _
   def getPref(user: User): Fu[Pref] = getPref(user.id)
 

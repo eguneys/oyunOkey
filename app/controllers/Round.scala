@@ -95,9 +95,10 @@ object Round extends OyunController with TheftPrevention {
     }
 
   private def myMasa(masaId: Option[String], withStanding: Boolean)(implicit ctx: Context): Fu[Option[MiniStanding]] =
-    masaId ?? { mid =>
-      Env.masa.api.miniStanding(mid, ctx.userId, withStanding)
-    }
+    ???
+    // masaId ?? { mid =>
+    //   Env.masa.api.miniStanding(mid, ctx.userId, withStanding)
+    // }
 
   def sidesPlayer(gameId: String, side: String) = Open { implicit ctx =>
     OptionFuResult(GameRepo.pov(gameId, side)) { sides(_, true) }

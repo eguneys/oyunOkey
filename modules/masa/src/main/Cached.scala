@@ -5,6 +5,7 @@ import scala.concurrent.duration._
 import oyun.memo._
 
 private[masa] final class Cached(
+  asyncCache: oyun.memo.AsyncCache.Builder,
   createdTtl: FiniteDuration)(implicit system: akka.actor.ActorSystem) {
 
   private val nameCache = new Syncache[String, Option[String]](
@@ -17,8 +18,9 @@ private[masa] final class Cached(
 
   def name(id: String): Option[String] = nameCache sync id
 
-  val promotable = AsyncCache.single(
+  val promotable = asyncCache.single(
+    name = "masa.promotable",
     MasaRepo.promotable,
-    timeToLive = createdTtl)
+    expireAfter = _.ExpireAfterWrite(createdTtl))
 
 }

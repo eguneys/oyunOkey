@@ -23,12 +23,12 @@ object Lobby extends OyunController {
 
   def renderHome(status: Results.Status)(implicit ctx: Context): Fu[Result] = {
     Env.current.preloader(
-      masas = Env.masa.cached promotable true
+      masas = Env.masa.cached.promotable.get
     ) map (html.lobby.home.apply _).tupled map { status(_) }
   }
 
   def socket(apiVersion: Int) = SocketOption[JsValue] { implicit ctx =>
-    get("sri") ?? { uid =>
+    getSocketUid("sri") ?? { uid =>
       Env.lobby.socketHandler(uid = uid, user = ctx.me) map some
     }
   }

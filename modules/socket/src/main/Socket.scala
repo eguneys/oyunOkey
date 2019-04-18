@@ -8,6 +8,9 @@ object Socket extends Socket {
 
   case class Uid(value: String) extends AnyVal
 
+  val uidIso = oyun.common.Iso.string[Uid](Uid.apply, _.value)
+  implicit val uidFormat = oyun.common.PimpedJson.stringIsoFormat(uidIso)
+
   case class GetVersion(promise: Promise[Int])
 
   val initialPong = makeMessage("n")

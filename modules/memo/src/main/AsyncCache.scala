@@ -1,35 +1,126 @@
 package oyun.memo
 
+import akka.actor.ActorSystem
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
+import com.github.benmanes.caffeine.cache.{ Cache => CaffeineCache }
+import com.github.blemale.scaffeine.{ AsyncLoadingCache, Cache, Scaffeine }
 import scala.concurrent.duration._
 
-import spray.caching.{ LruCache, Cache }
+final class AsyncCache[K, V](cache: AsyncLoadingCache[K, V], f: K => Fu[V]) {
 
-final class AsyncCache[K, V] private (cache: Cache[V], f: K => Fu[V]) {
+  def get(k: K): Fu[V] = cache get k
 
-  def apply(k: K): Fu[V] = cache(k)(f(k))
+  def refresh(k: K): Unit = cache.put(k, f(k))
 
-  def get(k: K): Option[Fu[V]] = cache get k
+  def put(k: K, v: V): Unit = cache.put(k, fuccess(v))
+}
 
-  def remove(k: K): Funit = fuccess(cache remove k).void
+final class AsyncCacheClearable[K, V](
+    cache: Cache[K, Fu[V]],
+    f: K => Fu[V],
+    logger: oyun.log.Logger
+) {
 
-  def clear: Funit = fuccess(cache.clear)
+  def get(k: K): Fu[V] = cache.get(k, (k: K) => {
+    f(k).addFailureEffect { err =>
+      logger.warn(s"$k $err")
+      cache invalidate k
+    }
+  })
+
+  def update(k: K, f: V => V): Unit =
+    cache.getIfPresent(k) foreach { fu =>
+      cache.put(k, fu map f)
+    }
+
+  def invalidate(k: K): Unit = cache invalidate k
+
+  def invalidateAll: Unit = cache.invalidateAll
+}
+
+final class AsyncCacheSingle[V](cache: AsyncLoadingCache[Unit, V], f: Unit => Fu[V]) {
+
+  def get: Fu[V] = cache.get(())
+
+  def refresh: Unit = cache.put((), f(()))
 }
 
 object AsyncCache {
 
-  def apply[K, V](
-    f: K => Fu[V],
-    maxCapacity: Int = 500,
-    initialCapacity: Int = 16,
-    timeToLive: Duration = Duration.Inf,
-    timeToIdle: Duration = Duration.Inf) = new AsyncCache(
-    cache = LruCache(maxCapacity, initialCapacity, timeToLive, timeToIdle),
-    f = f)
+  final class Builder(implicit system: ActorSystem) {
 
+    def multi[K, V](
+      name: String,
+      f: K => Fu[V],
+      maxCapacity: Int = 32768,
+      expireAfter: AsyncCache.type => ExpireAfter,
+      resultTimeout: FiniteDuration = 5 seconds
+    ) = {
+      val safeF = (k: K) => f(k).withTimeout(
+        resultTimeout,
+        oyun.base.OyunException(s"AsyncCache.multi $name key=$k timed out after $resultTimeout")
+      )
+      val cache: AsyncLoadingCache[K, V] = makeExpire(
+        Scaffeine().maximumSize(maxCapacity),
+        expireAfter
+      ).recordStats.buildAsyncFuture(safeF)
+      monitor(name, cache.underlying.synchronous)
+      new AsyncCache[K, V](cache, safeF)
+    }
 
-  def single[V](
-    f: => Fu[V],
-    timeToLive: Duration = Duration.Inf) = new AsyncCache[Boolean, V](
-    cache = LruCache(timeToLive = timeToLive),
-    f = _ => f)
+    def clearable[K, V](
+      name: String,
+      f: K => Fu[V],
+      maxCapacity: Int = 32768,
+      expireAfter: AsyncCache.type => ExpireAfter,
+      resultTimeout: FiniteDuration = 5 seconds
+    ) = {
+      val fullName = s"AsyncCache.clearable $name"
+      val safeF = (k: K) => f(k).withTimeout(
+        resultTimeout,
+        oyun.base.OyunException(s"$fullName key=$k timed out after $resultTimeout")
+      )
+      val cache: Cache[K, Fu[V]] = makeExpire(
+        Scaffeine().maximumSize(maxCapacity),
+        expireAfter
+      ).recordStats.build[K, Fu[V]]
+      monitor(name, cache.underlying)
+      new AsyncCacheClearable[K, V](cache, safeF, logger = logger branch fullName)
+    }
+
+    def single[V](
+      name: String,
+      f: => Fu[V],
+      expireAfter: AsyncCache.type => ExpireAfter,
+      resultTimeout: FiniteDuration = 5 seconds
+    ) = {
+      val safeF = (_: Unit) => f.withTimeout(
+        resultTimeout,
+        oyun.base.OyunException(s"AsyncCache.single $name single timed out after $resultTimeout")
+      )
+      val cache: AsyncLoadingCache[Unit, V] = makeExpire(
+        Scaffeine().maximumSize(1),
+        expireAfter
+      ).recordStats.buildAsyncFuture(safeF)
+      monitor(name, cache.underlying.synchronous)
+      new AsyncCacheSingle[V](cache, safeF)
+    }
+  }
+
+  private[memo] def monitor(name: String, cache: CaffeineCache[_, _])(implicit system: ActorSystem): Unit =
+    system.scheduler.schedule(1 minute, 1 minute) {
+      // oyun.mon.caffeineStats(cache, name)
+    }
+
+  sealed trait ExpireAfter
+  case class ExpireAfterAccess(duration: FiniteDuration) extends ExpireAfter
+  case class ExpireAfterWrite(duration: FiniteDuration) extends ExpireAfter
+
+  private def makeExpire[K, V](
+    builder: Scaffeine[K, V],
+    expireAfter: AsyncCache.type => ExpireAfter
+  ): Scaffeine[K, V] = expireAfter(AsyncCache) match {
+    case ExpireAfterAccess(duration) => builder expireAfterAccess duration
+    case ExpireAfterWrite(duration) => builder expireAfterWrite duration
+  }
 }

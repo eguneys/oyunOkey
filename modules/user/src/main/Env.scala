@@ -10,6 +10,7 @@ final class Env(
   config: Config,
   db: oyun.db.Env,
   mongoCache: MongoCache.Builder,
+  asyncCache: oyun.memo.AsyncCache.Builder,
   scheduler: oyun.common.Scheduler,
   system: ActorSystem) {
 
@@ -59,6 +60,7 @@ final class Env(
     nbTtl = CachedNbTtl,
     onlineUserIdMemo = onlineUserIdMemo,
     mongoCache = mongoCache,
+    asyncCache = asyncCache,
     rankingApi = rankingApi)
 }
 
@@ -69,6 +71,7 @@ object Env {
     config = oyun.common.PlayApp loadConfig "user",
     db = oyun.db.Env.current,
     mongoCache = oyun.memo.Env.current.mongoCache,
+    asyncCache = oyun.memo.Env.current.asyncCache,
     scheduler = oyun.common.PlayApp.scheduler,
     system = oyun.common.PlayApp.system)
 }

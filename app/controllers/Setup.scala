@@ -3,6 +3,7 @@ package controllers
 import play.api.libs.json.Json
 
 import oyun.common.{ HTTPRequest }
+import oyun.socket.Socket.Uid
 
 import oyun.app._
 import views._
@@ -29,7 +30,7 @@ object Setup extends OyunController {
     env.forms.hook(ctx).bindFromRequest.fold(
       err => BadRequest("errorsAsJson(err)".toString).fuccess,
       config => {
-        env.processor.hook(config, uid, HTTPRequest sid req) map hookResponse
+        env.processor.hook(config, Uid(uid), HTTPRequest sid req) map hookResponse
       }
     )
   }

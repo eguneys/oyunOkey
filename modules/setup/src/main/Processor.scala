@@ -11,7 +11,7 @@ private[setup] final class Processor(
 
   def hook(
     config: HookConfig,
-    uid: String,
+    uid: oyun.socket.Socket.Uid,
     sid: Option[String])(implicit ctx: UserContext): Fu[String] = {
 
     val hook = config.hook(uid, ctx.me, sid)

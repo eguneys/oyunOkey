@@ -6,47 +6,44 @@ import oyun.common.PimpedJson._
 
 import actorApi._
 import oyun.socket.actorApi.{ Connected => _, _ }
+import oyun.socket.Socket
 import oyun.socket.Handler
 import oyun.user.User
 
 private[lobby] final class SocketHandler(
+  hub: oyun.hub.Env,
   lobby: LobbyTrouper,
   socket: LobbySocket) {
 
+  private var pong = Socket.initialPong
+
   private def controller(
-    socket: ActorRef,
-    uid: String,
+    socket: LobbySocket,
     member: Member): Handler.Controller = {
-    case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }
     case ("join", o) => {
       o str "d" foreach { id =>
-        lobby ! BiteHook(id, uid, member.user)
+        lobby ! BiteHook(id, member.uid, member.user)
       }
     }
-    case ("cancel", o) => lobby ! CancelHook(uid)
+    case ("cancel", o) => lobby ! CancelHook(member.uid)
   }
 
-  def apply(uid: String, user: Option[User]): Fu[JsSocketHandler] = {
-    // val join = Join(uid = uid, user = user)
-    // Handler(socket, uid, join) {
-    //   case Connected(enum, member) =>
-    //     (controller(socket, uid, member), enum, member)
-    // user flatMap {
-    //   socket.ask[Connected](Join(uid, user)) map {
-    //     case Connected(enum, member) => Handler.iteratee(
-    //       hub,
-    //       controller(socket, member),
-    //       member,
-    //       socket,
-    //       uid,
-    //       onPing = (_, _, _, _) => {
-    //         // socket setAlive uid
-    //         // member push pong
-    //       }
-    //     ) -> enum
-    //   }
-    // }
-    ???
+  def apply(uid: Socket.Uid, user: Option[User]): Fu[JsSocketHandler] = {
+    funit flatMap { _ =>
+      socket.ask[Connected](Join(uid, user, _)) map {
+        case Connected(enum, member) => Handler.iteratee(
+          hub,
+          controller(socket, member),
+          member,
+          socket,
+          uid,
+          onPing = (_, _, _) => {
+            socket setAlive uid
+            member push pong
+          }
+        ) -> enum
+      }
+    }
   }
 
 }

@@ -17,6 +17,7 @@ final class Env(
   system: ActorSystem,
   db: oyun.db.Env,
   mongoCache: oyun.memo.MongoCache.Builder,
+  asyncCache: oyun.memo.AsyncCache.Builder,
   hub: oyun.hub.Env,
   lightUser: String => Option[oyun.common.LightUser],
   rankingApi: oyun.user.RankingApi,
@@ -39,6 +40,7 @@ final class Env(
 
 
   lazy val cached = new Cached(
+    asyncCache = asyncCache,
     createdTtl = CreatedCacheTtl)(system)
 
   // private def isAnonOnline(masaId: String, player: Player) =
@@ -72,7 +74,7 @@ final class Env(
     mongoCache = mongoCache,
     ttl = LeaderboardCacheTtl)
 
-  lazy val jsonView = new JsonView(lightUser)
+  lazy val jsonView = new JsonView(lightUser, asyncCache)
 
   lazy val scheduleJsonView = new ScheduleJsonView(lightUser)
 
@@ -139,6 +141,7 @@ object Env {
     config = oyun.common.PlayApp loadConfig "masa",
     system = oyun.common.PlayApp.system,
     mongoCache = oyun.memo.Env.current.mongoCache,
+    asyncCache = oyun.memo.Env.current.asyncCache,
     db = oyun.db.Env.current,
     hub = oyun.hub.Env.current,
     lightUser = oyun.user.Env.current.lightUser,

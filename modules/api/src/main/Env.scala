@@ -37,7 +37,8 @@ final class Env(
 
   val lobbyApi = new LobbyApi(
     lobbyVersion = () => lobbyEnv.history.version,
-    lightUser = userEnv.lightUser)
+    lightUser = userEnv.lightUser,
+    seekApi = lobbyEnv.seekApi)
 
   private def makeUrl(path: String): String = s"${Net.BaseUrl}/$path"
 
