@@ -144,7 +144,9 @@ private[round] final class RoundSocket(
 
     case oyun.chat.actorApi.ChatLine(chatId, line) => notify(List(line match {
       case l: oyun.chat.UserLine => Event.UserMessage(l, chatId == chatIds.pub)
-      case l: oyun.chat.PlayerLine => Event.PlayerMessage(l)
+      case l: oyun.chat.PlayerLine => { println(l)
+        Event.PlayerMessage(l)
+      }
     }))
 
     // case Quit(uid) =>

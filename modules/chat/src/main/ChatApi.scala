@@ -55,7 +55,8 @@ final class ChatApi(
 
     def write(chatId: Chat.Id, side: Side, text: String): Fu[Option[Line]] =
       makeLine(chatId, side, text) ?? { line =>
-        pushLine(chatId, line) inject line.some
+        pushLine(chatId, line) >>- 
+        oyunBus.publish(actorApi.ChatLine(chatId, line), classify(chatId)) inject line.some
       }
 
     private def makeLine(chatId: Chat.Id, side: Side, t1: String): Option[Line] =
