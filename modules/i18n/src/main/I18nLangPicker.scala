@@ -13,7 +13,16 @@ object I18nLangPicker {
       .orElse(req.session get "lang")
       .flatMap(Lang.get)
       .flatMap(findCloser)
+      .orElse(bestFromRequestHeaders(req))
       .getOrElse(defaultLang)
+
+  def bestFromRequestHeaders(req: RequestHeader): Option[Lang] = {
+    println(req.acceptLanguages)
+    req.acceptLanguages.foldLeft(none[Lang]) {
+      case (None, lang) => findCloser(Lang(lang))
+      case (found, _) => found
+    }
+  }
 
   def byStr(str: String): Option[Lang] =
     Lang get str flatMap findCloser

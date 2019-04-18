@@ -3,4 +3,4 @@
 COMMAND=$*
 PASSWORD=$OYUN_CLI_PASSWORD
 
-curl -d "password=$PASSWORD&command=$COMMAND" http://oyunkeyf.net/cli
+curl -d "password=$PASSWORD&command=$COMMAND" https://oyunkeyf.net/cli
