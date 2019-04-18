@@ -33,6 +33,14 @@ module.exports = function(send, ctrl) {
       ctrl.saveBoard();
       ctrl.setLoading(true);
       xhr.reload(ctrl).then(ctrl.reload);
+    },
+    gone: function(o) {
+      ['east', 'west', 'north', 'south'].forEach(function(side) {
+        if (o[side]) {
+          game.setIsGone(ctrl.data, side, o[side]);
+          m.redraw();
+        }
+      });
     }
   };
 

@@ -21,10 +21,12 @@ private object SocketMap {
       mkTrouper = (id: Game.ID) => new RoundSocket(
         dependencies = dependencies,
         gameId = id,
-        history = makeHistory(id)
+        history = makeHistory(id),
+        keepMeAlive = () => socketMap touch id
       ),
       accessTimeout = socketTimeout,
-      monitoringName = "round.socketMap"
+      monitoringName = "round.socketMap",
+      broomFrequency = 4001.millis
     )
     socketMap
   }

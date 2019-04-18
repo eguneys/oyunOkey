@@ -38,24 +38,21 @@ private[round] final class SocketHandler(
     def send(msg: Any) { roundMap.tell(gameId, msg) }
 
     def handlePing(o: JsObject) = {
-      // o int "v" foreach { v => socket ! PingVersion(uid, v) }
+      onPing()
       (o \ "v").asOpt[Int] foreach { v =>
         socket ! VersionCheck(v, member)
       }
     }
 
     member.playerIdOption.fold[Handler.Controller]({
-      case ("p", o) => // handlePing(o)
-        onPing()
-        (o \ "v").asOpt[Int] foreach { v =>
-          socket ! VersionCheck(v, member)
-        }
+      case ("p", o) => handlePing(o)
       case ("talk", o) => o str "d" foreach { text =>
         messenger.watcher(gameId, member, text)
       }
     }) { playerId =>
       {
-        case ("p", o) => handlePing(o)
+        case ("p", o) => 
+          handlePing(o)
         case ("move", o) => parseMove(o) foreach {
           case move =>
             val promise = Promise[Unit]

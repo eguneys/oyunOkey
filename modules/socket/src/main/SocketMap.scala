@@ -11,12 +11,17 @@ object SocketMap {
     system: akka.actor.ActorSystem,
     mkTrouper: String => T,
     accessTimeout: FiniteDuration,
-    monitoringName: String): TrouperMap[T] = {
+    monitoringName: String,
+    broomFrequency: FiniteDuration): TrouperMap[T] = {
 
     val trouperMap = new TrouperMap[T](
       mkTrouper = mkTrouper,
       accessTimeout = accessTimeout)
 
-    trouperMap    
+    system.scheduler.schedule(approximatly(0.1f)(12.seconds.toMillis).millis, broomFrequency) {
+      trouperMap tellAll actorApi.Broom
+    }
+
+    trouperMap
   }
 }

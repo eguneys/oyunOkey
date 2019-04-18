@@ -52,7 +52,8 @@ abstract class SocketTrouper[M <: SocketMember](
   def receiveGeneric: PartialFunction[Any, Unit] = {
     // case Ping(uid) => ping(uid)
 
-    case Broom => broom
+    case Broom =>
+      broom
 
     case Quit(uid) => quit(uid)
 
@@ -98,7 +99,9 @@ abstract class SocketTrouper[M <: SocketMember](
   protected def broom: Unit =
     members.keys foreach { uid =>
       // broom
-      if (!aliveUids.get(uid)) ejectUidString(uid)
+      if (!aliveUids.get(uid)) {
+        ejectUidString(uid)
+      }
     }
 
   protected def ejectUidString(uid: String): Unit = eject(Socket.Uid(uid))
@@ -114,8 +117,11 @@ abstract class SocketTrouper[M <: SocketMember](
     members get uid.value foreach { member =>
       members -= uid.value
       oyunBus.publish(SocketLeave(uid, member), 'socketLeave)
+      afterQuit(uid, member)
     }
   }
+
+  protected def afterQuit(uid: Socket.Uid, member: M): Unit = {}
 
   def onDeploy(d: Deploy) {
     notifyAll(makeMessage(d.key))

@@ -22,7 +22,8 @@ import okey.{ Sides, Side }
 private[round] final class RoundSocket(
   gameId: String,
   dependencies: RoundSocket.Dependencies,
-  history: History) extends SocketTrouper[Member](dependencies.system, dependencies.uidTtl) {
+  history: History,
+  keepMeAlive: () => Unit) extends SocketTrouper[Member](dependencies.system, dependencies.uidTtl) {
 
   import dependencies._
 
@@ -47,6 +48,7 @@ private[round] final class RoundSocket(
     var isAi = false
 
     def ping {
+      println("ping ", bye)
       isGone foreach { _ ?? notifyGone(side, false) }
       if (bye > 0) bye = bye - 1
       time = nowMillis
@@ -57,9 +59,14 @@ private[round] final class RoundSocket(
     }
     private def isBye = bye > 0
 
-    def isGone = if (time < (nowMillis - isBye.fold(ragequitTimeout, disconnectTimeout).toMillis))
-      fuccess(!isAi)
-    else fuccess(false)
+    def isGone = {
+      println(time - nowMillis, disconnectTimeout.toMillis)
+      if (time < (nowMillis - isBye.fold(ragequitTimeout, disconnectTimeout).toMillis)) {
+        println("isgone true", isAi)
+        fuccess(!isAi)
+      }
+      else fuccess(false)
+    }
   }
 
   private val players = Sides(side => new Player(side))
@@ -158,6 +165,17 @@ private[round] final class RoundSocket(
       )
       notifyAll(event.typ, event.data)
   }
+
+  override def broom = {
+    super.broom
+    if (members.nonEmpty) keepMeAlive()
+    playersGet(_.isGone) sideMap { case (side, isGone) =>
+      isGone foreach { _ ?? notifyGone(side, true)
+      }
+    }
+  }
+
+  override protected def afterQuit(uid: Socket.Uid, member: Member) = notifyCrowd
 
   def notifyCrowd {
     if (!delayedCrowdNotification) {

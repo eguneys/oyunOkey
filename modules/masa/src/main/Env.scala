@@ -94,7 +94,8 @@ final class Env(
       history = new History(ttl = HistoryMessageTtl),
       uidTtl = SocketTimeout),
     accessTimeout = SocketTimeout,
-    monitoringName = "masa.socketMap"
+    monitoringName = "masa.socketMap",
+    broomFrequency = 3701 millis
   )
 
   private val sequencerMap = system.actorOf(Props(ActorMap { id =>

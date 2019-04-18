@@ -39,6 +39,12 @@ function setOnGame(data, side, onGame) {
   player.onGame = onGame;
 }
 
+function setIsGone(data, side, isGone) {
+  var player = getPlayer(data, side);
+  isGone = isGone && !player.ai;
+  player.isGone = isGone;
+}
+
 module.exports = {
   isPlayerPlaying: isPlayerPlaying,
   isPlayerTurn: isPlayerTurn,
@@ -46,5 +52,6 @@ module.exports = {
   sideByPly: sideByPly,
   playable: playable,
   setOnGame: setOnGame,
+  setIsGone: setIsGone,
   getTurnPov: getTurnPov
 };
