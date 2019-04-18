@@ -119,6 +119,10 @@ object BSON extends Handlers {
       if (list.isEmpty) None
       else Some(BSONArray(list map writer.write))
     def double(i: Double): BSONDouble = BSONDouble(i)
+
+    import scalaz.Functor
+    def map[M[_]: Functor, A, B <: BSONValue](a: M[A])(implicit writer: BSONWriter[A, B]): M[B] =
+      a map writer.write
   }
 
   val writer = new Writer

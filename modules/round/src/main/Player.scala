@@ -23,7 +23,6 @@ private[round] final class Player(
               (proxy save progress) >>
               progress.game.finished.fold(
                 moveFinish(progress.game, side) map { progress.events ::: _ }, {
-                  println("game not finished requesting fihsnet", progress.game.playableByAi)
                   if (progress.game.playableByAi) requestFishnet(progress.game)
                   scheduleExpiration(progress.game)
                   fuccess(progress.events)
@@ -43,7 +42,9 @@ private[round] final class Player(
       proxy.save(progress)
   }
 
-  def requestFishnet(game: Game) = game.playableByAi ?? fishnetPlayer(game)
+  // def requestFishnet(game: Game) = game.playableByAi ?? fishnetPlayer(game)
+  def requestFishnet(game: Game) = fishnetPlayer(game)
+
 
   def fishnet(game: Game, uci: Uci)(implicit proxy: GameProxy): Fu[Events] =
     if (game.playable && (game.player.isAi || game.outoftime)) {
@@ -55,8 +56,8 @@ private[round] final class Player(
             moveFinish(progress.game, game.player.side) map { progress.events ::: _ },
             funit addEffect {
               case _ =>
-                println("ai play", progress.game.playableByAi)
                 if (progress.game.playableByAi) requestFishnet(progress.game)
+                scheduleExpiration(progress.game)
             } inject progress.events
           )
       }

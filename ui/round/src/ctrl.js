@@ -196,7 +196,8 @@ module.exports = function(opts) {
     }
 
     if (this.data.expiration) {
-      this.data.expiration.movedAt = Date.now();
+      if (this.data.steps.length > 4) this.data.expiration = undefined;
+      else this.data.expiration.movedAt = Date.now();
     }
 
     m.endComputation();

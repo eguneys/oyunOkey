@@ -24,7 +24,7 @@ case class Game(
   mode: Mode = Mode.default,
   status: Status,
   turns: Int,
-  outOfTimes: Sides[Int] = Sides(0, 0, 0, 0),
+  outOfTimes: Sides[Set[Int]] = Sides(Set.empty, Set.empty, Set.empty, Set.empty),
   variant: Variant = Variant.default,
   createdAt: DateTime = DateTime.now,
   movedAt: DateTime = DateTime.now,
@@ -54,7 +54,7 @@ case class Game(
 
   def playedTurns = turns
 
-  def nbOutOfTime = outOfTimes(turnSide)
+  def nbOutOfTime = outOfTimes(turnSide).size
 
   def fullIdOf(side: Side): String = s"$id${player(side).id}"
 
@@ -189,7 +189,7 @@ case class Game(
   def updateOutOfTime(): Progress = {
     val side = turnSide
 
-    val times = outOfTimes.withSide(side, outOfTimes(side) + 1)
+    val times = outOfTimes.withSide(side, outOfTimes(side) +turns)
 
     val updated = copy(
       outOfTimes = times

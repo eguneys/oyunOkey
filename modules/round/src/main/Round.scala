@@ -22,6 +22,8 @@ private[round] final class Round(
 
   private[this] implicit val proxy = new GameProxy(gameId)
 
+  private val nbOutOfTimeQuit = 2
+
   def getGame: Fu[Option[Game]] = proxy.game
 
   val process: Duct.ReceiveAsync = {
@@ -49,10 +51,9 @@ private[round] final class Round(
         player.requestFishnet(game)
         player.incNbOutOfTime(game)
       }
-      if (game.nbOutOfTime > 1) {
+      if (game.nbOutOfTime > nbOutOfTimeQuit) {
         game.masaId ?? { masaId =>
           game.player.playerId ?? { playerId =>
-            println("outoftime", masaId, playerId)
             bus.publish(WithdrawMasa(masaId, playerId), 'withdrawMasa)
           }
         }
@@ -75,6 +76,7 @@ private[round] final class Round(
     }
 
     case NoStart => handle { game =>
+      println("no start", game.timeBeforeExpiration)
       game.timeBeforeExpiration.exists(_.centis == 0) ?? {
         finisher.noStart(game)
       }

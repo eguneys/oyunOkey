@@ -187,7 +187,7 @@ object BSONHandlers {
         mode = Mode(r boolD F.rated),
         status = r.get[Status](F.status),
         turns = nbTurns,
-        outOfTimes = r.get[Sides[Int]](F.outOfTimes),
+        outOfTimes = r.get[Sides[Set[Int]]](F.outOfTimes),
         variant = realVariant,
         createdAt = createdAt,
         movedAt = r dateD (F.movedAt, createdAt),

@@ -48,7 +48,6 @@ private[round] final class RoundSocket(
     var isAi = false
 
     def ping {
-      println("ping ", bye)
       isGone foreach { _ ?? notifyGone(side, false) }
       if (bye > 0) bye = bye - 1
       time = nowMillis
@@ -60,9 +59,7 @@ private[round] final class RoundSocket(
     private def isBye = bye > 0
 
     def isGone = {
-      println(time - nowMillis, disconnectTimeout.toMillis)
       if (time < (nowMillis - isBye.fold(ragequitTimeout, disconnectTimeout).toMillis)) {
-        println("isgone true", isAi)
         fuccess(!isAi)
       }
       else fuccess(false)

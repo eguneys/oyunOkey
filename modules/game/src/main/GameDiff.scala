@@ -51,7 +51,9 @@ private[game] object GameDiff {
         opens.binaryOpenStates(side) map ByteArray.ByteArrayBSONHandler.write
       })
 
-      d(s"$outOfTimes.${side.letter}", _.outOfTimes(side), w.int)
+      d(s"$outOfTimes.${side.letter}", _.outOfTimes(side).toList, (list:List[Int]) =>
+        BSONArray(list map w.int)
+      )
     }
 
     dOpt(s"$binaryOpens.$binarySeries", _.binaryOpens, (o: Option[BinaryOpens]) => o map { opens =>
