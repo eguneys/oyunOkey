@@ -5,9 +5,9 @@ import akka.actor.ActorRef
 
 import okey.Side
 
-case class UserTalk(chatId: String, userId: String, text: String, replyTo: ActorRef, public: Boolean = true)
-case class PlayerTalk(chatId: String, side: Side, text: String, replyTo: ActorRef)
-case class SystemTalk(chatId: String, text: String, replyTo: ActorRef)
-case class ChatLine(chatId: String, line: Line)
+case class UserTalk(chatId: Chat.Id, userId: String, text: String, public: Boolean = true)
+case class PlayerTalk(chatId: Chat.Id, side: Side, text: String)
+case class SystemTalk(chatId: Chat.Id, text: String)
+case class ChatLine(chatId: Chat.Id, line: Line)
 
 

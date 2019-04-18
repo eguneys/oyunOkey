@@ -17,7 +17,7 @@ private[lobby] final class LobbySocket(
   system: ActorSystem,
   uidTtl: FiniteDuration) extends SocketTrouper[Member](system, uidTtl) {
 
-  system.oyunBus.subscribe(this, 'nbMembers, 'nbRounds)
+  system.oyunBus.subscribe(this, 'lobbySocket)
 
   def receiveSpecific = {
 
@@ -50,9 +50,6 @@ private[lobby] final class LobbySocket(
     case JoinHook(uid, challengeId, side) =>
       withMember(uid)(notifyPlayerJoin(challengeId, side))
 
-    case NbMembers(nb) => pong = pong + ("d" -> JsNumber(nb))
-    case oyun.hub.actorApi.round.NbRounds(nb) =>
-      pong = pong + ("r" -> JsNumber(nb))
   }
 
   private def notifyPlayerJoin(challengeId: String, side: okey.Side) = { member: Member =>

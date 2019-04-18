@@ -10,18 +10,18 @@ private[chat] final class FrontActor(api: ChatApi) extends Actor {
 
   def receive = {
 
-    case UserTalk(chatId, userId, text, replyTo, public) =>
-      api.userChat.write(chatId, userId, text, public) foreach publish(chatId, replyTo)
-    case PlayerTalk(chatId, side, text, replyTo) =>
-      api.playerChat.write(chatId, side, text) foreach publish(chatId, replyTo)
-    case SystemTalk(chatId, text, replyTo) =>
-      api.userChat.system(chatId, text) foreach publish(chatId, replyTo)
+    case UserTalk(chatId, userId, text, public) =>
+      api.userChat.write(chatId, userId, text, public)
+    case PlayerTalk(chatId, side, text) =>
+      api.playerChat.write(chatId, side, text)
+    case SystemTalk(chatId, text) =>
+      api.userChat.system(chatId, text)
   }
 
-  def publish(chatId: String, replyTo: ActorRef)(lineOption: Option[Line]) {
-    lineOption foreach { line =>
-      replyTo ! ChatLine(chatId, line)
-    }
-  }
+  // def publish(chatId: String, replyTo: ActorRef)(lineOption: Option[Line]) {
+  //   lineOption foreach { line =>
+  //     replyTo ! ChatLine(chatId, line)
+  //   }
+  // }
 
 }

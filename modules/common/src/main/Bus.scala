@@ -97,7 +97,7 @@ final class Bus(system: ActorSystem) extends Extension with EventBus {
     def classify(event: Event): Symbol = event.channel
 
     def publish(event: Event, subscriber: Tellable) =
-      subscriber != event.payload
+      subscriber ! event.payload
 
     def publish(event: Event, subscriber: ActorRef) = {
       subscriber ! event.payload

@@ -12,7 +12,10 @@ case class VersionedEvent(
   encoded: Either[String, JsValue],
   only: Option[Side],
   owner: Boolean,
-  watcher: Boolean) {
+  watcher: Boolean,
+  date: VersionedEvent.EpochSeconds) {
+
+  def hasSeconds(seconds: Int) = nowSeconds - date >= seconds
 
   lazy val decoded: JsValue = encoded match {
     case Left(s) => Json parse s
@@ -36,13 +39,16 @@ case class VersionedEvent(
 
 private[round] object VersionedEvent {
 
-  def apply(e: Event, v: Int): VersionedEvent = VersionedEvent(
+  type EpochSeconds = Int
+
+  def apply(e: Event, v: Int, date: EpochSeconds): VersionedEvent = VersionedEvent(
     version = v,
     typ = e.typ,
     encoded = Right(e.data),
     only = e.only,
     owner = e.owner,
-    watcher = e.watcher)
+    watcher = e.watcher,
+    date = date)
 
   import oyun.db.BSON
   import reactivemongo.bson._
@@ -54,7 +60,8 @@ private[round] object VersionedEvent {
       encoded = r.strO("d").map(Left.apply).getOrElse(Right(JsNull)),
       only = Side(r str "o"),
       owner = r boolD "ow",
-      watcher = r boolD "r")
+      watcher = r boolD "r",
+      date = nowSeconds)
 
     def writes(w: BSON.Writer, o: VersionedEvent) = BSONDocument(
       "v" -> o.version,

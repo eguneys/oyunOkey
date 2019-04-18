@@ -6,7 +6,7 @@ import play.api.libs.json._
 import oyun.api.Context
 import oyun.app._
 import oyun.game.{ Pov, GameRepo, Game => GameModel, PlayerRef }
-import oyun.masa.{ MiniStanding }
+import oyun.masa.{ MasaMiniView }
 import views._
 
 object Round extends OyunController with TheftPrevention {
@@ -14,7 +14,7 @@ object Round extends OyunController with TheftPrevention {
   private def env = Env.round
 
   def websocketWatcher(gameId: String, side: String) = SocketOption[JsValue] { implicit ctx =>
-    get("sri") ?? { uid =>
+    getSocketUid("sri") ?? { uid =>
       env.socketHandler.watcher(
         gameId = gameId,
         sideName = side,
@@ -26,7 +26,7 @@ object Round extends OyunController with TheftPrevention {
   def websocketPlayer(fullId: String) = SocketEither[JsValue] { implicit ctx =>
     proxyPov(fullId) flatMap {
       case Some(pov) =>
-        get("sri") match {
+        getSocketUid("sri") match {
           case Some(uid) => requestAiMove(pov) >> env.socketHandler.player(
             pov, uid, ctx.me
           ) map Right.apply
@@ -94,8 +94,10 @@ object Round extends OyunController with TheftPrevention {
       )
     }
 
-  private def myMasa(masaId: Option[String], withStanding: Boolean)(implicit ctx: Context): Fu[Option[MiniStanding]] =
-    ???
+  private def myMasa(masaId: Option[String], withTop: Boolean): Fu[Option[MasaMiniView]] =
+    masaId ?? { Env.masa.api.miniView(_, withTop) }
+
+  // private def myMasa(masaId: Option[String], withStanding: Boolean)(implicit ctx: Context): Fu[Option[MiniStanding]] =
     // masaId ?? { mid =>
     //   Env.masa.api.miniStanding(mid, ctx.userId, withStanding)
     // }

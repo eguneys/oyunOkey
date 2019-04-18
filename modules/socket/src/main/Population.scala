@@ -10,7 +10,7 @@ private[socket] final class Population(system: akka.actor.ActorSystem) extends T
   var nb = 0
   val bus = system.oyunBus
 
-  bus.subscribe(this, 'socketDoor)
+  bus.subscribe(this, 'socketEnter, 'socketLeave)
 
   // override def postStop() {
   //   super.postStop()

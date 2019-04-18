@@ -8,6 +8,7 @@ import scala.concurrent.duration._
 
 import actorApi._
 import oyun.hub.TimeBomb
+import oyun.chat.Chat
 import oyun.socket.actorApi.{ Connected => _, _ }
 import oyun.socket.{ SocketTrouper, History, Historical }
 
@@ -21,6 +22,10 @@ private[oyun] final class MasaSocket(
 
   private var delayedReloadNotification = false
 
+  private def chatClassifier = Chat classify Chat.Id(masaId)
+
+  oyunBus.subscribe(this, chatClassifier)
+
   def receiveSpecific = {
     case StartGame(game) =>
       //notifyAll("redirect", game.id)
@@ -32,7 +37,8 @@ private[oyun] final class MasaSocket(
         }
       }
 
-    case Reload => notifyReload
+    case Reload => 
+      notifyReload
 
     case GetWaitingPlayers(promise) =>
       // val waitingPlayers = playerIds.toSet
@@ -76,7 +82,7 @@ private[oyun] final class MasaSocket(
       delayedReloadNotification = true
       // keep the delay low for immediate response to join/withdraw
       // but still debounce to avoid masa start message rush
-      system.scheduler.scheduleOnce(1 second)(this, NotifyReload)
+      system.scheduler.scheduleOnce(1 second)(this ! NotifyReload)
     }
   }
 

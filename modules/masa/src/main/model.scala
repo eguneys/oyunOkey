@@ -6,6 +6,10 @@ case class MiniStanding(
   masa: Masa,
   standing: Option[RankedPlayers])
 
+case class MasaTop(value: List[Player]) extends AnyVal
+
+case class MasaMiniView(masa: Masa, top: Option[MasaTop])
+
 case class PlayerInfo(seatId: String, side: Side, active: Boolean)
 
 case class VisibleMasas(

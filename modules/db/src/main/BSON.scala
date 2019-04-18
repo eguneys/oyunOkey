@@ -19,7 +19,7 @@ abstract class BSON[T]
   def write(obj: T): BSONDocument = writes(writer, obj)
 }
 
-object BSON {
+object BSON extends Handlers {
 
   object MapDocument {
     implicit def MapReader[V](implicit vr: BSONDocumentReader[V]): BSONDocumentReader[Map[String, V]] = new BSONDocumentReader[Map[String, V]] {
@@ -74,11 +74,6 @@ object BSON {
       def read(bson: BSONDocument): Map[String, V] = reader read bson
       def write(map: Map[String, V]): BSONDocument = writer write map
     }
-  }
-
-  implicit object BSONJodaDateTimeHandler extends BSONHandler[BSONDateTime, DateTime] {
-    def read(x: BSONDateTime) = new DateTime(x.value)
-    def write(x: DateTime) = BSONDateTime(x.getMillis)
   }
 
   final class Reader(val doc: BSONDocument) {

@@ -121,7 +121,7 @@ abstract class SocketTrouper[M <: SocketMember](
     notifyAll(makeMessage(d.key))
   }
 
-  private val resyncMessage = makeMessage("resync")
+  protected val resyncMessage = makeMessage("resync")
 
   protected def resync(member: M) {
     import scala.concurrent.duration._

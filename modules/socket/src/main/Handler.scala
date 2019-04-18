@@ -8,7 +8,6 @@ import play.api.libs.iteratee.{ Iteratee, Enumerator }
 
 import actorApi._
 import oyun.hub.Trouper
-import oyun.common.PimpedJson._
 import makeTimeout.large
 
 object Handler {

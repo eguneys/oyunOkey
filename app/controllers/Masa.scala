@@ -156,7 +156,7 @@ object Masa extends OyunController with TheftPrevention {
     }
 
   def websocket(id: String, apiVersion: Int) = SocketOption[JsValue] { implicit ctx =>
-    get("sri") ?? { uid =>
+    getSocketUid("sri") ?? { uid =>
       playerForReq(id) flatMap {
         env.socketHandler.join(id, uid, ctx.me, _)
       }

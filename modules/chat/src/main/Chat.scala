@@ -38,6 +38,8 @@ case class MixedChat(
 
 object Chat {
 
+  case class Id(value: String) extends AnyVal with StringValue
+
   import oyun.db.BSON
 
   def makeUser(id: ChatId) = UserChat(id, Nil)
@@ -47,6 +49,8 @@ object Chat {
     val id = "_id"
     val lines = "l"
   }
+
+  def classify(id: Chat.Id): Symbol = Symbol(s"chat:$id")
 
   import BSONFields._
   import reactivemongo.bson.BSONDocument
@@ -61,6 +65,9 @@ object Chat {
       lines -> o.lines
     )
   }
+
+  implicit val chatIdIso = oyun.common.Iso.string[Id](Id.apply, _.value)
+  implicit val chatIdBSONHandler = oyun.db.BSON.stringIsoHandler(chatIdIso)
 
   implicit val userChatBSONHandler = new BSON[UserChat] {
     def reads(r: BSON.Reader): UserChat = UserChat(

@@ -49,6 +49,9 @@ final class Env(
     lobby = lobbyTrouper,
     socket = socket)
 
+  system.oyunBus.subscribe(socketHandler, 'nbMembers, 'nbRounds)
+
+
   lazy val history = new History(ttl = MessageTtl)
 
   // {

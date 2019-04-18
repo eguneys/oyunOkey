@@ -28,7 +28,10 @@ private[masa] final class MasaApi(
   socketMap: SocketMap,
   renderer: ActorSelection,
   site: ActorSelection,
-  lobby: ActorSelection) {
+  lobby: ActorSelection,
+  asyncCache: oyun.memo.AsyncCache.Builder) {
+
+  private val bus = system.oyunBus
 
   def addMasa(setup: MasaSetup, player: PlayerRef): Fu[Masa] = {
     findCompatible(setup, player) flatMap {
@@ -288,6 +291,24 @@ private[masa] final class MasaApi(
   // def miniStanding(masaId: String, playerId: Option[String], withStanding: Boolean): Fu[Option[MiniStanding]] =
   //   miniStanding(masaId, withStanding)
 
+  private val masaTopCache = asyncCache.multi[Masa.ID, MasaTop](
+    name = "masa.top",
+    id => PlayerRepo.bestByMasa(id) map MasaTop.apply,
+    expireAfter = _.ExpireAfterWrite(3 second)
+  )
+
+
+  def masaTop(masaId: Masa.ID): Fu[MasaTop] =
+    masaTopCache get masaId
+
+  def miniView(masaId: Masa.ID, withTop: Boolean): Fu[Option[MasaMiniView]] =
+    MasaRepo byId masaId flatMap {
+      _ ?? { masa =>
+        withTop ?? { masaTop(masa.id) map some } map { MasaMiniView(masa, _).some }
+      }
+    }
+
+
   def fetchVisibleMasas: Fu[VisibleMasas] =
     MasaRepo.publicCreatedSorted zip
       MasaRepo.publicStarted zip
@@ -318,15 +339,16 @@ private[masa] final class MasaApi(
     private val debouncer = system.actorOf(Props(new Debouncer(10 seconds, {
       (_: Debouncer.Nothing) =>
       fetchVisibleMasas foreach { vis =>
-        site ! SendToFlag("masa", Json.obj(
+        bus.publish(SendToFlag("masa", Json.obj(
           "t" -> "reload",
           "d" -> scheduleJsonView(vis)
-        ))
+        )), 'sendToFlag)
       }
       MasaRepo.promotable foreach { masas =>
         renderer ? MasaTable(masas) map {
-          case view: play.twirl.api.Html => ReloadMasas(view.body)
-        } pipeToSelection lobby
+          case view: play.twirl.api.Html =>
+            bus.publish(ReloadMasas(view.body), 'lobbySocket)
+        }
       }
     })))
     def apply() { debouncer ! Debouncer.Nothing }

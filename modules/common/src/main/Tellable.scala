@@ -19,6 +19,11 @@ object Tellable {
     def !(msg: Any) = f.applyOrElse(msg, doNothing)
   }
 
+  trait PartialReceive extends Tellable {
+    protected val receive: Receive
+    def !(msg: Any): Unit = receive.applyOrElse(msg, doNothing)
+  }
+
   case class Actor(ref: akka.actor.ActorRef) extends AnyVal with Tellable {
     def !(msg: Any) = ref ! msg
     def uniqueId = ref.path.name

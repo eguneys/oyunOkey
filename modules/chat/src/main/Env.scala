@@ -23,6 +23,7 @@ final class Env(
     coll = chatColl,
     flood = flood,
     maxLinesPerChat = MaxLinesPerChat,
+    oyunBus = system.oyunBus,
     netDomain = NetDomain)
 
   system.actorOf(Props(new FrontActor(api)), name = ActorName)

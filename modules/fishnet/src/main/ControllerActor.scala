@@ -24,7 +24,6 @@ private[fishnet] class ControllerActor(
     case Acquire(client) => {
       api acquireMove client map { _ ?? { workMove =>
         val move = findMove(workMove.game.game)
-        println("fishnet acquired move", move)
         api.postMove(workMove.id, client, move)
       }
       }

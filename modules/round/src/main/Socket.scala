@@ -10,8 +10,10 @@ import play.api.libs.json._
 import actorApi._
 import oyun.common.LightUser
 import oyun.game.Event
+import oyun.game.Game
 import oyun.hub.TimeBomb
 import oyun.hub.Trouper
+import oyun.chat.Chat
 import oyun.socket.actorApi.{ Connected => _, _ }
 import oyun.socket._
 import okey.{ Sides, Side }
@@ -24,6 +26,11 @@ private[round] final class RoundSocket(
 
   import dependencies._
 
+
+  private var chatIds = RoundSocket.ChatIds(
+    priv = Chat.Id(gameId),
+    pub = Chat.Id(s"$gameId/w")
+  )
   // private val timeBomb = new TimeBomb(socketTimeout)
 
   private var delayedCrowdNotification = false
@@ -57,14 +64,43 @@ private[round] final class RoundSocket(
 
   private val players = Sides(side => new Player(side))
 
+  buscriptions.subAll
   oyun.game.GameRepo game gameId map SetGame.apply foreach this.!
 
+
+  private object buscriptions {
+
+    private var classifiers = collection.mutable.Set.empty[Symbol]
+
+    private def sub(classifier: Symbol) {
+      oyunBus.subscribe(RoundSocket.this, classifier)
+      classifiers += classifier
+    }
+
+    def subAll = {
+      chat
+    }
+
+    def chat = chatIds.all foreach { chatId =>
+      sub(oyun.chat.Chat classify chatId)
+    }
+
+  }
 
   def receiveSpecific: Trouper.Receive = {
 
     case SetGame(Some(game)) =>
       players sideMap { case (side, p) =>
         p.isAi = game.player(side).isAi
+      }
+
+    case VersionCheck(version, member) =>
+      history versionCheck version match {
+        case None =>
+          member push resyncMessage
+        case Some(Nil) => 
+        case Some(evs) =>
+          batchMsgs(member, evs) foreach member.push
       }
 
     // case PingVersion(uid, v) =>
@@ -103,7 +139,7 @@ private[round] final class RoundSocket(
     case eventList: EventList => notify(eventList.events)
 
     case oyun.chat.actorApi.ChatLine(chatId, line) => notify(List(line match {
-      case l: oyun.chat.UserLine => Event.UserMessage(l, chatId endsWith "/w")
+      case l: oyun.chat.UserLine => Event.UserMessage(l, chatId == chatIds.pub)
       case l: oyun.chat.PlayerLine => Event.PlayerMessage(l)
     }))
 
@@ -143,6 +179,12 @@ private[round] final class RoundSocket(
     }
   }
 
+  def batchMsgs(member: Member, vevents: List[VersionedEvent]) = vevents match {
+    case Nil => None
+    case List(one) => one.jsFor(member).some
+    case many => makeMessage("b", many map (_ jsFor member)).some
+  }
+  
   def notifyOwner[A: Writes](side: Side, t: String, data: A) {
     ownerOf(side) foreach { m =>
       m push makeMessage(t, data)
@@ -168,6 +210,13 @@ private[round] final class RoundSocket(
 }
 
 object RoundSocket {
+
+  case class ChatIds(priv: Chat.Id, pub: Chat.Id) {
+    def all = Seq(priv, pub)
+    def update(g: Game) =
+      g.masaId.map { id => copy(priv = Chat.Id(id)) } getOrElse
+    this
+  }
 
   private[round] case class Dependencies(
     system: ActorSystem,

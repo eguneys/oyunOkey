@@ -28,8 +28,9 @@ private[round] final class History(
 
   def addEvents(xs: List[Event]): VersionedEvents = {
     waitForLoadedEvents
+    val date = nowSeconds
     val vevs = xs.foldLeft(List.empty[VersionedEvent] -> getVersion) {
-      case ((vevs, v), e) => (VersionedEvent(e, v + 1) :: vevs, v + 1)
+      case ((vevs, v), e) => (VersionedEvent(e, v + 1, date) :: vevs, v + 1)
     }._1
     events = (vevs ::: events) take History.size
     vevs.reverse
@@ -40,6 +41,24 @@ private[round] final class History(
       events = load awaitSeconds 3
     }
   }
+
+
+  /* if v+1 refers to an old event,
+   * then the client probably has skipped events somehow.
+   * Log and send new events.
+   * None => client is too late, or has greater version than server. Resync.
+   * Some(List.empty) => all is good, do nothing
+   * Some(List.nonEmpty) => late client, send new events
+   * 
+   * We check the event age because if the client sends a
+   * versionCheck ping while the server sends an event,
+   * we can get a false positive
+   * 
+   */
+  def versionCheck(v: Int): Option[List[VersionedEvent]] =
+    getEventsSince(v) map { evs =>
+      if (evs.headOption.exists(_ hasSeconds 7)) evs else Nil
+    }
 }
 
 private[round] object History {
@@ -61,4 +80,5 @@ private[round] object History {
   def apply()(gameId: String): History = new History(load = load(gameId))
 
   private def load(gameId: String): Fu[VersionedEvents] = fuccess(Nil)
+
 }

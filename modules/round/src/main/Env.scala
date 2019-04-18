@@ -110,6 +110,7 @@ final class Env(
   lazy val socketHandler = new SocketHandler(
     roundMap = roundMap,
     socketMap = socketMap,
+    hub = hub,
     messenger = messenger
   )
 

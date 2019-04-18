@@ -3,6 +3,8 @@ package oyun.round
 import akka.actor._
 
 import actorApi._
+import oyun.game.Game
+import oyun.chat.Chat
 import oyun.chat.actorApi._
 
 final class Messenger(
@@ -10,14 +12,16 @@ final class Messenger(
 
 
 
-  def watcher(gameId: String, member: Member, text: String, socket: ActorRef) =
+  def watcher(gameId: String, member: Member, text: String) =
     member.userId foreach { userId =>
-      chat ! UserTalk(gameId + "/w", userId, text, socket)
+      chat ! UserTalk(Chat.Id(watcherId(gameId)), userId, text)
     }
 
-  def owner(gameId: String, member: Member, text: String, socket: ActorRef) =
-    chat ! (member.userId match {
-      case Some(userId) => UserTalk(gameId, userId, text, socket, public = false)
-      case None => PlayerTalk(gameId, member.side, text, socket)
-    })
+  def owner(gameId: String, member: Member, text: String) =
+    (member.userId match {
+      case Some(userId) => UserTalk(Chat.Id(gameId), userId, text, public = false).some
+      case None => PlayerTalk(Chat.Id(gameId), member.side, text).some
+    }) foreach chat.!
+
+  private def watcherId(gameId: Game.ID) = s"$gameId/w"
 }

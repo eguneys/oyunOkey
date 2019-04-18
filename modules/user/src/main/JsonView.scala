@@ -1,6 +1,5 @@
 package oyun.user
 
-import oyun.common.PimpedJson._
 import play.api.libs.json._
 import oyun.rating.{ Perf, PerfType }
 import User.{ LightPerf }

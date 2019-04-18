@@ -22,14 +22,18 @@ import makeTimeout.short
 private[round] final class SocketHandler(
   roundMap: DuctMap[Round],
   socketMap: SocketMap,
+  hub: oyun.hub.Env,
   messenger: Messenger
 ) {
 
   private def controller(
     gameId: String,
-    socket: ActorRef,
+    socket: RoundSocket,
     uid: Socket.Uid,
-    member: Member): Handler.Controller = {
+    // ref: PovRef,
+    member: Member,
+    me: Option[User],
+    onPing: () => Unit): Handler.Controller = {
 
     def send(msg: Any) { roundMap.tell(gameId, msg) }
 
@@ -41,9 +45,13 @@ private[round] final class SocketHandler(
     }
 
     member.playerIdOption.fold[Handler.Controller]({
-      case ("p", o) => handlePing(o)
+      case ("p", o) => // handlePing(o)
+        onPing()
+        (o \ "v").asOpt[Int] foreach { v =>
+          socket ! VersionCheck(v, member)
+        }
       case ("talk", o) => o str "d" foreach { text =>
-        messenger.watcher(gameId, member, text, socket)
+        messenger.watcher(gameId, member, text)
       }
     }) { playerId =>
       {
@@ -62,7 +70,7 @@ private[round] final class SocketHandler(
         case ("outoftime", _) => send(OutOfTime)
         // case ("bye", _) => socket ! Bye(
         case ("talk", o) => o str "d" foreach { text =>
-          messenger.owner(gameId, member, text, socket)
+          messenger.owner(gameId, member, text)
         }
       }
     }
@@ -71,7 +79,7 @@ private[round] final class SocketHandler(
   def watcher(
     gameId: String,
     sideName: String,
-    uid: String,
+    uid: Socket.Uid,
     user: Option[User]): Fu[Option[JsSocketHandler]] =
     GameRepo.pov(gameId, sideName) flatMap {
       _ ?? { join(_, none, uid, user) map some }
@@ -79,7 +87,7 @@ private[round] final class SocketHandler(
 
   def player(
     pov: Pov,
-    uid: String,
+    uid: Socket.Uid,
     user: Option[User]): Fu[JsSocketHandler] =
     join(pov, Some(pov.playerId), uid, user)
 
@@ -87,9 +95,31 @@ private[round] final class SocketHandler(
   private def join(
     pov: Pov,
     playerId: Option[String],
-    uid: String,
-    user: Option[User]): Fu[JsSocketHandler] = 
-    ???
+    uid: Socket.Uid,
+    user: Option[User]): Fu[JsSocketHandler] = {
+    val socket = socketMap getOrMake pov.gameId
+    socket.ask[Connected](promise => Join(uid = uid,
+      user = user,
+      side = pov.side,
+      playerId = playerId,
+      promise = promise)) map {
+      case Connected(enum, member) =>
+        val onPing: Handler.OnPing =
+          if (member.owner) (_, _, _) => {
+            Handler.defaultOnPing(socket, member, uid)
+            // if (member.owner) socket.playerDo(member.side, _.ping)
+          } else Handler.defaultOnPing
+
+        Handler.iteratee(
+          hub,
+          controller(pov.gameId, socket, uid, member, user, () => onPing(socket, member, uid)),
+          member,
+          socket,
+          uid,
+          onPing = onPing
+        ) -> enum
+    }
+  }
     // {
     //   val join = Join(
     //     uid = uid,

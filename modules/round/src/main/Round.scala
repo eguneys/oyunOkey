@@ -31,7 +31,6 @@ private[round] final class Round(
       }
 
     case FishnetPlay(uci) => handle { game =>
-      println("here", game)
       player.fishnet(game, uci)
     }
 

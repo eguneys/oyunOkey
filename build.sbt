@@ -96,7 +96,7 @@ lazy val round = module("round", Seq(common, user, chat, game, socket, hub, fish
   libraryDependencies ++= provided(play.api, play.test, reactivemongo.driver, reactivemongo.iteratees)
 )
 
-lazy val lobby = module("lobby", Seq(common, user, game, socket, hub)).settings(
+lazy val lobby = module("lobby", Seq(common, user, round, game, socket, hub)).settings(
   libraryDependencies ++= provided(play.api, reactivemongo.driver)
 )
 
@@ -116,7 +116,7 @@ lazy val memo = module("memo", Seq(common, db)).settings(
   libraryDependencies ++= Seq(spray.caching, scaffeine) ++ provided(play.api, play.test, reactivemongo.driver)
 )
 
-lazy val chat = module("chat", Seq(common, db, user, security, i18n)).settings(
+lazy val chat = module("chat", Seq(common, db, socket, user, security, i18n)).settings(
   libraryDependencies ++= Seq(spray.caching) ++ provided(play.api, reactivemongo.driver)
 )
 

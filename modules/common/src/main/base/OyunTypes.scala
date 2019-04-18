@@ -4,6 +4,11 @@ import ornicar.scalalib.{ Zero, ValidTypes }
 import play.api.libs.json.{ JsObject, JsError }
 
 trait OyunTypes extends ValidTypes {
+  trait StringValue extends Any {
+    def value: String
+    override def toString = value
+  }
+
   trait IntValue extends Any {
     def value: Int
     override def toString = value.toString

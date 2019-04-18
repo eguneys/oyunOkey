@@ -2,20 +2,27 @@ package oyun.lobby
 
 import akka.actor._
 
+import play.api.libs.json._
+
 import oyun.common.PimpedJson._
 
 import actorApi._
+import oyun.common.Tellable
 import oyun.socket.actorApi.{ Connected => _, _ }
-import oyun.socket.Socket
-import oyun.socket.Handler
+import oyun.socket.{ Socket, Handler }
 import oyun.user.User
 
 private[lobby] final class SocketHandler(
   hub: oyun.hub.Env,
   lobby: LobbyTrouper,
-  socket: LobbySocket) {
+  socket: LobbySocket) extends Tellable.PartialReceive with Tellable.HashCode {
 
   private var pong = Socket.initialPong
+
+  protected val receive: Tellable.Receive = {
+    case oyun.socket.actorApi.NbMembers(nb) => pong = pong + ("d" -> JsNumber(nb))
+    case oyun.hub.actorApi.round.NbRounds(nb) => pong = pong + ("r" -> JsNumber(nb))
+  }
 
   private def controller(
     socket: LobbySocket,

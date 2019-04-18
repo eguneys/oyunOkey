@@ -5,6 +5,8 @@ import ornicar.scalalib.Zero
 
 import oyun.base._
 
+import play.api.libs.json.{ JsValue, JsObject }
+
 trait Steroids
     extends OyunTypes
     with scalalib.Validation
@@ -34,6 +36,7 @@ trait Steroids
 
       // @inline implicit def toPimpedActorSystem(a: akka.actor.ActorSystem) = new PimpedActorSystem(a)
 
+      @inline implicit def toPimpedJsObject(jo: JsObject) = new PimpedJsObject(jo)
       @inline implicit def toPimpedString(s: String) = new PimpedString(s)
 
     }

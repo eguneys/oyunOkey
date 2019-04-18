@@ -9,9 +9,10 @@ final class ChatApi(
   coll: Coll,
   flood: oyun.security.Flood,
   maxLinesPerChat: Int,
+  oyunBus: oyun.common.Bus,
   netDomain: String) {
 
-  import Chat.userChatBSONHandler
+  import Chat.{ userChatBSONHandler, chatIdBSONHandler, classify }
   import Chat.BSONFields._
 
   object userChat {
@@ -22,14 +23,15 @@ final class ChatApi(
       findOption(chatId) map (_ | Chat.makeUser(chatId))
 
 
-    def write(chatId: ChatId, userId: String, text: String, public: Boolean): Fu[Option[UserLine]] =
+    def write(chatId: Chat.Id, userId: String, text: String, public: Boolean): Funit =
       makeLine(userId, text) flatMap {
         _ ?? { line =>
-          pushLine(chatId, line) inject line.some
+          pushLine(chatId, line) >>-
+          oyunBus.publish(actorApi.ChatLine(chatId, line), classify(chatId))
         }
       }
 
-    def system(chatId: ChatId, text: String) = {
+    def system(chatId: Chat.Id, text: String) = {
       val line = UserLine(systemUserId, Writer delocalize text, false)
       pushLine(chatId, line) inject line.some
     }
@@ -51,26 +53,26 @@ final class ChatApi(
     def find(chatId: ChatId): Fu[MixedChat] =
       findOption(chatId) map (_ | Chat.makeMixed(chatId))
 
-    def write(chatId: ChatId, side: Side, text: String): Fu[Option[Line]] =
+    def write(chatId: Chat.Id, side: Side, text: String): Fu[Option[Line]] =
       makeLine(chatId, side, text) ?? { line =>
         pushLine(chatId, line) inject line.some
       }
 
-    private def makeLine(chatId: ChatId, side: Side, t1: String): Option[Line] =
+    private def makeLine(chatId: Chat.Id, side: Side, t1: String): Option[Line] =
       Writer cut t1 flatMap { t2 =>
         flood.allowMessage(s"$chatId/${side.letter}", t2) option
           PlayerLine(side, Writer preprocessUserInput t2)
       }
   }
 
-  private def pushLine(chatId: ChatId, line: Line) = coll.update(
+  private def pushLine(chatId: Chat.Id, line: Line): Funit = coll.update(
     $doc("_id" -> chatId),
     $doc("$push" -> $doc(
       lines -> $doc(
         "$each" -> List(line),
         "$slice" -> -maxLinesPerChat)
     )),
-    upsert = true)
+    upsert = true).void
 
   private object Writer {
     import java.util.regex.Matcher.quoteReplacement

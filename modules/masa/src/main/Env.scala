@@ -59,7 +59,8 @@ final class Env(
     perfsUpdater = perfsUpdater,
     renderer = hub.actor.renderer,
     site = hub.socket.site,
-    lobby = hub.socket.lobby)
+    lobby = hub.socket.lobby,
+    asyncCache = asyncCache)
 
   val masa = api masa _
 

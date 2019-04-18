@@ -65,7 +65,6 @@ private final class MoveDB(
           case Some(move) if move isAcquiredBy client => data match {
             case Some(uci) =>
               coll -= move.id
-              println("removed", uci, move.id)
               system.oyunBus.publish(
                 hubApi.map.Tell(move.game.id, hubApi.round.FishnetPlay(uci)),
                 'roundMapTell
