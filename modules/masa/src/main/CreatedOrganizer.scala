@@ -33,6 +33,8 @@ private[masa] final class CreatedOrganizer(
           PlayerRepo countActive masa.id foreach {
             case 0 if !masa.isRecentlyCreated => api wipe masa
             case 4 => api start masa
+            case nb if masa.hasWaitedEnough =>
+              api wipe masa
             // case _ if !masa.isRecentlyCreated => ejectLeavers(masa)
             case _ => funit
           }

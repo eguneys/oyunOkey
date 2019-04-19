@@ -17,7 +17,6 @@ object I18nLangPicker {
       .getOrElse(defaultLang)
 
   def bestFromRequestHeaders(req: RequestHeader): Option[Lang] = {
-    println(req.acceptLanguages)
     req.acceptLanguages.foldLeft(none[Lang]) {
       case (None, lang) => findCloser(Lang(lang))
       case (found, _) => found

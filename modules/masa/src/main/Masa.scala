@@ -32,6 +32,10 @@ case class Masa(
 
   def membersOnly = !allowAnon || rated
 
+  def startsAt = createdAt plusMinutes 20
+
+  def hasWaitedEnough = startsAt isBefore DateTime.now
+
   lazy val toSetup = MasaSetup.make(
     rounds = (rounds orElse scores) | 0,
     variant = variant.id,
