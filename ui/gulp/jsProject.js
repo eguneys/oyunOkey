@@ -24,7 +24,7 @@ module.exports = (gulp, standalone, fileBaseName, dir) => {
     debug: debug
   });
 
-  gulp.task('dev', function() {
+  gulp.task('prod', function() {
     return browserify(browserifyOpts(true))
       .transform('babelify',
                  { presets: ["@babel/preset-env"],

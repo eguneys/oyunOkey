@@ -18,7 +18,7 @@ var onError = function(error) {
 
 var standalone = 'OyunkeyfGame';
 
-gulp.task('dev', function() {
+gulp.task('prod', function() {
   return browserify('./src/main.js', {
     standalone: standalone
   }).transform('babelify',
