@@ -115,6 +115,8 @@ final class Env(
     isOnline = isOnline
   )))
 
+  system.actorOf(Props(new InterruptedOrganizer(api = api)))
+
   private val reminder = system.actorOf(Props(new Reminder(
     renderer = hub.actor.renderer
   )))

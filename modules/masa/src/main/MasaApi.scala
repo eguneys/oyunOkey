@@ -159,6 +159,9 @@ private[masa] final class MasaApi(
   private def updateNbPlayers(masaId: String) =
     PlayerRepo countActive masaId flatMap { MasaRepo.setNbPlayers(masaId, _) }
 
+  private def updateStatus(masaId: String, status: Status) =
+    MasaRepo setStatus(masaId, status)
+
   private def updateNbRounds(masaId: String) =
     PairingRepo countFinished masaId flatMap { MasaRepo.setNbRounds(masaId, _) }
 
@@ -173,7 +176,9 @@ private[masa] final class MasaApi(
           promise success(())
         }
       case masa if masa.isStarted =>
-        PlayerRepo.withdraw(masa.id, playerId) >> updateNbPlayers(masa.id) >>- {
+        PlayerRepo.withdraw(masa.id, playerId) >>
+        updateNbPlayers(masa.id) >>-
+        updateStatus(masa.id, Status.Interrupted) >>- {
           publishAbortCurrentGame(masa.id) >>-
           (PairingRepo removePlaying masa.id) >>-
           // funit >>-
@@ -194,6 +199,14 @@ private[masa] final class MasaApi(
 
   def start(oldMasa: Masa) {
     Sequencing(oldMasa.id)(MasaRepo.createdById) { masa =>
+      MasaRepo.setStatus(masa.id, Status.Started) >>-
+      sendTo(masa.id, Reload) >>-
+      publish()
+    }
+  }
+
+  def resume(oldMasa: Masa) {
+    Sequencing(oldMasa.id)(MasaRepo.interruptedById) { masa =>
       MasaRepo.setStatus(masa.id, Status.Started) >>-
       sendTo(masa.id, Reload) >>-
       publish()

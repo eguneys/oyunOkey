@@ -14,6 +14,7 @@ object MasaRepo {
   private val enterableSelect = $doc(
     "status" $in (Status.Created.id))
 
+  private val interruptedSelect = $doc("status" -> Status.Interrupted.id)
   private val createdSelect = $doc("status" -> Status.Created.id)
   private val startedSelect = $doc("status" -> Status.Started.id)
   private[masa] val finishedSelect = $doc("status" -> Status.Finished.id)
@@ -22,6 +23,9 @@ object MasaRepo {
 
   def createdById(id: String): Fu[Option[Masa]] =
     coll.find($id(id) ++ createdSelect).uno[Masa]
+
+  def interruptedById(id: String): Fu[Option[Masa]] =
+    coll.find($id(id) ++ interruptedSelect).uno[Masa]
 
   def enterableById(id: String): Fu[Option[Masa]] =
     coll.find($id(id)).uno[Masa]
@@ -93,6 +97,8 @@ object MasaRepo {
 
   private def allCreatedSelect = createdSelect
 
+  private def allInterruptedSelect = interruptedSelect
+
   def publicCreatedSorted: Fu[List[Masa]] =
     coll.find(allCreatedSelect)
       .sort($doc("createdAt" -> -1))
@@ -100,6 +106,9 @@ object MasaRepo {
 
   def allCreated: Fu[List[Masa]] =
     coll.find(allCreatedSelect).cursor[Masa]().gather[List]()
+
+  def allInterrupted: Fu[List[Masa]] =
+    coll.find(allInterruptedSelect).cursor[Masa]().gather[List]()
 
   def promotable: Fu[List[Masa]] =
     publicCreatedSorted map {

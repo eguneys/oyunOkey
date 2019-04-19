@@ -8,6 +8,7 @@ object mon {
       val create = inc("masa.pairing.create")
     }
     val created = rec("masa.created")
+    val interrupted = rec("masa.interrupted")
     val started = rec("masa.started")
     val player = rec("masa.player")
   }
