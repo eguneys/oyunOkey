@@ -60,6 +60,8 @@
   <string name="masaDoesNotExist">Böyle bir masa yok.</string>
   <string name="masaMayHaveBeenCancelled">Eğer tüm oyuncular masa başlamadan ayrıldıysa, iptal edilmiş olabilir.</string>
   <string name="masaTryRefreshingPage">Tekrar denemek için sayfayı yenileyin.</string>
+  <string name="createANewMasa">Yeni masa oluştur</string>
+  <string name="refresh">Yenile</string>
   <string name="returnToLobby">Lobiye dön</string>
   <string name="returnToMasasHomepage">Turnuva anasayfasına dön</string>
   <string name="youArePlaying">Şu an oynuyorsunuz!</string>
@@ -110,6 +112,8 @@
   <string name="north">Kuzey</string>
   <string name="south">Güney</string>
   <string name="aiBot">Bot AI%s</string>
+  <string name="inviteBot">Bot ekle</string>
+  <string name="resign">Terk et</string>
   <string name="emptySeat">Boş Koltuk</string>
   <string name="settings">Ayarlar</string>
   <string name="playOnline">Çevrimiçi oyna</string>
@@ -186,4 +190,6 @@
   <string name="siteUpdateComplete">Site güncellemesi tamamlandı</string>
   <string name="okeyPlayersAndLeaderboards">Okey oyuncuları ve lider tablosu</string>
   <string name="bestOkeyPlayersInYuzbir">101'de en iyi oyuncular</string>
+  <string name="todo">Yakında</string>
+  <string name="underConstruction">Yapım aşamasında</string>
 </resources>
