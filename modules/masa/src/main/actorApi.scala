@@ -18,7 +18,7 @@ private[masa] object Member {
   def apply(channel: JsChannel, user: Option[User], player: Option[Player]): Member = Member(
     channel = channel,
     userId = user map (_.id),
-    playerId = player map (_.id),
+    playerId = player map (_.playerId),
     troll = false
   )
 }

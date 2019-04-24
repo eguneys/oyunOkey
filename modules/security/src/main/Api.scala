@@ -3,6 +3,7 @@ package oyun.security
 import ornicar.scalalib.Random
 
 import play.api.data._
+import play.api.data.validation.{ Constraint, Valid => FormValid, Invalid, ValidationError }
 import play.api.data.Forms._
 import play.api.mvc.RequestHeader
 
@@ -16,7 +17,11 @@ final class Api(emailAddress: EmailAddress) {
     "username" -> nonEmptyText,
     "password" -> nonEmptyText
   )(authenticateUser)(_.map(u => (u.username, "")))
-    .verifying("Invalid username or password", _.isDefined)
+    // .verifying("Invalid username or password", _.isDefined)
+    .verifying(Constraint { (t: Option[User]) => t match {
+      case None => Invalid(Seq(ValidationError("invalidUsernameOrPassword")))
+      case Some(user) => FormValid
+    }})
   )
 
   def saveAuthentication(userId: String)(implicit req: RequestHeader): Fu[String] =

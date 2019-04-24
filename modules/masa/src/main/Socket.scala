@@ -31,6 +31,7 @@ private[oyun] final class MasaSocket(
       //notifyAll("redirect", game.id)
       game.players foreach { player =>
         player.playerId foreach { playerId =>
+          // playerId doesn't update when a new user joins
           membersByPlayerId(playerId) foreach { member =>
             notifyMember("redirect", game.id)(member)
           }

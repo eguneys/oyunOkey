@@ -32,7 +32,7 @@ case class Masa(
 
   def membersOnly = !allowAnon || rated
 
-  def startsAt = createdAt plusMinutes 1
+  def startsAt = createdAt plusMinutes 30
 
   def hasWaitedEnough = startsAt isBefore DateTime.now
 

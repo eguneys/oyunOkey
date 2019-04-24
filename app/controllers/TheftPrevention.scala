@@ -10,7 +10,8 @@ private[controllers] trait TheftPrevention { self: OyunController =>
 
   protected def playerForReq(masaId: String)(implicit ctx: Context) =
     ctx.userId match {
-      case Some(userId) => PlayerRepo.findByUserId(masaId, userId)
+      case Some(userId) => 
+        PlayerRepo.findByUserId(masaId, userId)
       case None =>
         ctx.req.cookies.get(AnonCookie.name).map(_.value) match {
           case Some(playerId) =>

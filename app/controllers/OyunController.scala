@@ -1,7 +1,7 @@
 package controllers
 
 import play.api.libs.iteratee.{ Iteratee, Enumerator }
-import play.api.libs.json.{ Json, JsValue, JsObject, JsArray, Writes }
+import play.api.libs.json.{ Json, JsValue, JsObject, JsString, JsArray, Writes }
 import play.api.mvc._
 import play.api.http._
 import play.api.mvc.WebSocket.FrameFormatter
@@ -133,6 +133,24 @@ private[controllers] trait OyunController
   protected def Reasonable(page: Int, max: Int = 40, errorPage: => Fu[Result] = BadRequest("resource too old").fuccess)(result: => Fu[Result]): Fu[Result] =
     if (page < max) result else errorPage
 
-  protected def errorsAsJson(form: play.api.data.Form[_])(implicit lang: play.api.i18n.Messages) =
-    oyun.common.Form errorsAsJson form
+  protected def errorsAsJson(form: play.api.data.Form[_])(implicit lang: play.api.i18n.Messages) = {
+    // oyun.common.Form errorsAsJson form
+    val json = JsObject(
+      form.errors.groupBy(_.key).mapValues { errors =>
+        JsArray {
+          errors.map { e =>
+            JsString(e.message)
+          }
+        }
+      }
+    )
+    json validate jsonGlobalErrorRenamer getOrElse json
+  }
+
+  private val jsonGlobalErrorRenamer = {
+    import play.api.libs.json._
+    __.json update (
+      (__ \ "global").json copyFrom (__ \ "").json.pick
+    ) andThen (__ \ "").json.prune
+  }
 }
