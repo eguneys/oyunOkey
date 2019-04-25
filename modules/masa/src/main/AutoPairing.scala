@@ -18,9 +18,8 @@ final class AutoPairing {
         players = GamePlayer.allSides,
         mode = masa.mode,
         variant = masa.variant)
-      shiftedPlayers = shiftList(players.toList, masa.nbRounds)
       game2 = game1
-      .updatePlayers(shiftedPlayers.map { p => (gp: GamePlayer) =>
+      .updatePlayers(players.map { p => (gp: GamePlayer) =>
         val gp2 = gp.withPlayer(p.playerId).withSeat(p.id).withAi(p.aiLevel)
 
         users.flatten.find(u => p.userId.exists(u.id==)).fold(gp2) { user =>
@@ -43,8 +42,4 @@ final class AutoPairing {
     UserRepo named username flatMap {
       _.fold(fufail[User]("No user named " + username))(fuccess)
     }
-
-  private def shiftList[A](list: List[A], by: Int) = {
-    list.drop(list.size - (by % list.size)) ::: list.take(list.size - (by % list.size))
-  }
 }

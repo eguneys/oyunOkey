@@ -35,8 +35,15 @@ private[masa] object Pairing {
     endCounts = false)
 
   case class Prep(masaId: String, round: Int, seat1: String, seat2: String, seat3: String, seat4: String) {
-    def toPairing =
-      Pairing(masaId, Sides(seat1, seat2, seat3, seat4), round)
+
+    def toPairing = {
+      val sides = shiftList(List(seat1, seat2, seat3, seat4), round)
+      Pairing(masaId, sides, round)
+    }
+
+    private def shiftList[A](list: List[A], by: Int) = {
+      list.drop(list.size - (by % list.size)) ::: list.take(list.size - (by % list.size))
+    }
   }
 
   def prep(masa: Masa, s1: String, s2: String, s3: String, s4: String) = Pairing.Prep(masa.id, masa.nbRounds, s1, s2, s3, s4)
