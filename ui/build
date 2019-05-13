@@ -9,7 +9,8 @@ echo "yarn: $(yarn --version)"
 
 mkdir -p public/compiled
 
-apps="game lobby masa masaSchedule round"
+apps1="game"
+apps="lobby masa masaSchedule round"
 
 if [ $mode == "upgrade" ]; then
     yarn upgrade --non-interactive
@@ -17,21 +18,35 @@ else
     yarn install --non-interactive
 fi
 
-build() {
-    echo "build" "$@"
+build_js() {
+    echo "build_js" "$@"
     set -ev
     cd ui/$1
-    gulp $target
+    yarn run compile
 }
 
+build() {
+  echo "build" "$@"
+  set -ev
+  cd ui/$1
+  gulp $target
+}
+
+if [ $mode != "upgrade" ] && [ $mode != "js" ]; then
+  echo "build css"
+  (cd ui && gulp "css-$target")
+fi
+
 if type -p parallel; then # parallel execution
-    if [ -z "$P_OPTS" -a ! -e ~/.parallel/config]; then
+    if [ -z "$P_OPTS" -a ! -e ~/.parallel/config ]; then
         P_OPTS="-j+4 --halt 2"
         ["$TRAVIS" = "true"] || P_OPTS+=" --bar"
     fi
     set -x
+    parallel --gnu $P_OPTS build_js ::: $apps1
     parallel --gnu $P_OPTS build ::: $apps
 else
     echo "For faster builds, install GNU parallel."
+    for app in $apps1; do (build_js $app); done
     for app in $apps; do (build $app); done
 fi

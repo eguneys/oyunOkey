@@ -1,22 +1,14 @@
-var source = require('vinyl-source-stream');
-// var gulp = require('gulp');
-var tap = require('gulp-tap');
-var gutil = require('gulp-util');
-var jshint = require('gulp-jshint');
-var watchify = require('watchify');
-var browserify = require('browserify');
-var uglify = require('gulp-uglify');
-var streamify = require('gulp-streamify');
+const buffer = require('vinyl-buffer');
+const source = require('vinyl-source-stream');
+const colors = require('ansi-colors');
+const logger = require('fancy-log');
+const watchify = require('watchify');
+const browserify = require('browserify');
+const uglify = require('gulp-uglify');
+const size = require('gulp-size');
 
-var log = console.log;
 
 module.exports = (gulp, standalone, fileBaseName, dir) => {
-  var sources = ['./src/main.js'];
-  var destination = '../../public/compiled/';
-
-  var onError = function(error) {
-    log(error.message);
-  };
 
   browserifyOpts = (debug) => ({
     entries: [`${dir}/src/main.js`],
@@ -24,37 +16,45 @@ module.exports = (gulp, standalone, fileBaseName, dir) => {
     debug: debug
   });
 
-  gulp.task('prod', function() {
-    return browserify(browserifyOpts(true))
-      .transform('babelify',
-                 { presets: ["@babel/preset-env"],
-                   plugins: ['add-module-exports'] })
-      .bundle()
-      .on('error', onError)
-      .pipe(source(`${fileBaseName}.js`))
-      .pipe(streamify(uglify()))
-      .pipe(gulp.dest(destination));
-  });
+  const destination = () => gulp.dest('../../public/compiled/');
 
-  gulp.task('watch', function() {
-    var bundleStream = watchify(
-      browserify(Object.assign({}, watchify.args, browserifyOpts(true)))
-    )
+  const prod = () => browserify(browserifyOpts(false))
         .transform('babelify',
                    { presets: ["@babel/preset-env"],
-                     plugins: [] })
-        .on('update', rebundle)
-        .on('log', gutil.log);
+                     plugins: ['add-module-exports'] })
+        .bundle()
+        .pipe(source(`${fileBaseName}.min.js`))
+        .pipe(buffer())
+        .pipe(uglify())
+        .pipe(size())
+        .pipe(destination());
 
-    function rebundle() {
-      return bundleStream.bundle()
-        .on('error', onError)
+  const dev = () => browserify(browserifyOpts(true))
+        .transform('babelify',
+                   { presets: ["@babel/preset-env"] })
+        .bundle()
         .pipe(source(`${fileBaseName}.js`))
-        .pipe(gulp.dest(destination));
-    }
+        .pipe(destination());
 
-    return rebundle();
-  });
+  const watch = () => {
+    const bundle = () => bundler
+          .transform('babelify',
+                     { presets: ["@babel/preset-env"],
+                       plugins: [] })
+          .bundle()
+          .on('error', error => logger.error(colors.red(error.message)))
+          .pipe(source(`${fileBaseName}.js`))
+          .pipe(destination());
 
-  gulp.task('default', ['watch']);
+    const bundler = watchify(
+      browserify(Object.assign({}, watchify.args, browserifyOpts(true)))
+    )
+          .on('update', bundle)
+          .on('log', logger.info);
+    return bundle();
+  };
+
+  gulp.task('prod', prod);
+  gulp.task('dev', dev);
+  gulp.task('default', watch);
 }

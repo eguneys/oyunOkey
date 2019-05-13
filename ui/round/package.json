@@ -4,8 +4,9 @@
   "description": "oyunkeyf.org round",
   "main": "src/main.js",
   "dependencies": {
+    "game": "../game",
     "mithril": "^0.2.0",
-    "okeyground": "1.0.12"
+    "okeyground": "^1.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
@@ -22,6 +23,7 @@
     "gulp-uglify": "^1.5.1",
     "gulp-util": "^3.0.7",
     "jshint": "^2.9.1",
+    "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.6.1"
   },

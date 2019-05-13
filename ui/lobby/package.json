@@ -4,8 +4,10 @@
   "description": "oyunkeyf.org lobby",
   "main": "src/main.js",
   "dependencies": {
+    "game": "../game",
     "mithril": "^0.2.0",
-    "okeyground": "^1.0.4"
+    "okeyground": "^1.0.4",
+    "vinyl-buffer": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
