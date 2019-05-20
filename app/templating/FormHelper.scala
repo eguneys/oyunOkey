@@ -118,6 +118,15 @@ trait FormHelper { self: I18nHelper =>
         `type` := "hidden"
       )
 
+    def password(field: Field, content: Frag)(implicit ctx: Context): Frag =
+      group(field, content)(input(_, typ = "password")(required))
+
+    def globalError(form: Form[_])(implicit ctx: Context): Option[Frag] =
+      form.globalError map { err =>
+        div(cls := "form-group is-invalid")(error(err))
+      }
+
+
   }
 
 }

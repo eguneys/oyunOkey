@@ -23,16 +23,11 @@ trait I18nHelper {
   def i18nJsObject(keys: Seq[I18nKey])(implicit lang: Lang): JsObject =
     JsDump.keysToObject(keys, I18nDb.Site, lang)
 
+  def timeagoLocaleScript(implicit ctx: oyun.api.Context): String = {
+    ""
+  }
+
   def langName = LangList.name _
 
   def langNameByStr = LangList.nameByStr _
-
-  // private lazy val langAnnotationsBase: String =
-  //   pool.names.keySet map { code =>
-  //     s"""<link rel="alternate" hreflang="$code" href="http://$code.oyunkeyf.net%"/>"""
-  //   } mkString ""
-
-  // def langAnnotations(implicit ctx: UserContext) = Html {
-  //   langAnnotationsBase.replace("%", ctx.req.uri)
-  // }
 }

@@ -10,10 +10,10 @@ private[app] final class Renderer extends Actor {
 
   def receive = {
     case oyun.masa.actorApi.RemindMasa(masa, _) =>
-      sender ! spaceless(V.masa.reminder(masa))
+      // sender ! spaceless(V.masa.reminder(masa))
 
     case oyun.masa.actorApi.MasaTable(masas) =>
-      sender ! spaceless(V.masa.enterable(masas))
+      // sender ! spaceless(V.masa.enterable(masas))
   }
 
 

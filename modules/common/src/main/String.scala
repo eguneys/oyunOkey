@@ -2,12 +2,13 @@ package oyun.common
 
 import java.text.Normalizer
 import java.util.regex.Matcher.quoteReplacement
+import play.api.libs.json._
 
 import play.twirl.api.Html
-import scalatags.Text.RawFrag
+import scalatags.Text.all._
 
 import oyun.base.RawHtml
-import oyun.common.base.StringUtils.{ escapeHtml => escapeHtmlRaw }
+import oyun.common.base.StringUtils.{ safeJsonString, escapeHtmlRaw }
 
 object String {
 
@@ -43,6 +44,21 @@ object String {
 
     def escapeHtml(s: String) = Html {
       escapeHtmlRaw(s)
+    }
+
+    def safeJsonValue(jsValue: JsValue): String = {
+      jsValue match {
+        case JsNull => "null"
+        case JsString(s) => safeJsonString(s)
+        case JsNumber(n) => n.toString
+        case JsBoolean(b) => if (b) "true" else "false"
+        case JsArray(items) => items.map(safeJsonValue).mkString("[", ",", "]")
+        case JsObject(fields) => {
+          fields.map {
+            case (k, v) => s"${safeJsonString(k)}:${safeJsonValue(v)}"
+          }.mkString("{", ",", "}")
+        }
+      }
     }
 
   }

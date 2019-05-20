@@ -1,3 +1,0 @@
-@(chat: oyun.chat.AnyChat, title: String)(implicit ctx: Context)
-@chatDom(title)
-@embedJs(s"""var oyunkeyf_chat=${chat.toJsonString};""")

@@ -5,7 +5,7 @@ import controllers.routes
 
 import oyun.api.Context
 import oyun.masa.Env.{ current => masaEnv }
-import oyun.masa.{ Masa }
+import oyun.masa.{ Masa, System }
 import oyun.user.{ UserContext }
 import oyun.i18n.I18nKeys
 
@@ -30,5 +30,9 @@ trait MasaHelper { self: I18nHelper with DateHelper with UserHelper =>
     title = s"${masa.fullName}: ${masa.variant.name} ${masa.roundString} #${masa.id}",
     url = s"$netBaseUrl${routes.Masa.show(masa.id).url}",
     description = longMasaDescription(masa))
+
+  def systemName(sys: System)(implicit ctx: UserContext) = sys match {
+    case System.Arena => System.Arena.toString
+  }
 
 }

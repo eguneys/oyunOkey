@@ -109,6 +109,6 @@ object Round extends OyunController with TheftPrevention {
   private def sides(pov: Pov, isPlayer: Boolean)(implicit ctx: Context) =
     myMasa(pov.game.masaId, isPlayer) map {
       case (masa) =>
-        Ok(html.game.sides(pov, masa))
+        Ok("")
     }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="isItRated">Masa puanlı mı?</string>
+  <string name="willBeNotified">Masa başladığında uyarılacaksınız, beklerken başka bir sekmede oynayabilirsiniz.</string>
+  <string name="someRated">Bazı masalar puanlıdır ve reytingi etkiler.</string>
+  <string name="howAreScoresCalculated">Puanlar nasıl hesaplanır?</string>
+  <string name="howAreScoresCalculatedAnswer">Masaya katılımda her oyuncu ortaya el sayısı kadar puanını koyar. Masa sonunda ortadaki puanlar şöyle dağıtılır: 1. 50% puan, 2. 25% puan, 3. 15% puan, 4. 10% puan.</string>
+  <string name="earlyPlayerCantScore">Masa bitmeden ayrılan oyuncu puan alamaz.</string>
+  <string name="howIsTheWinnerDecided">Kazanan nasıl belirlenid?</string>
+  <string name="howIsTheWinnerDecidedAnswer">Masada bütün eller oynandıktan sonra en az ceza puanı olan oyuncu kazanır.</string>
+  <string name="howDoesThePairingWork">Masada eşleştirme nasıl yapılır?</string>
+  <string name="howDoesThePairingWorkAnswer">Masaya 4 oyuncu katıldığında el başlar. Bir el bittikten sonra yeni bir el başlar. Yeni ele katılmak için oyuncular masaya geri dönmelidir.</string>
+  <string name="howDoesItEnd">Masa ne zaman biter?</string>
+  <string name="howDoesItEndAnswer">Masada el sayısı kadar el oynandığında masa biter.</string>
+  <string name="otherRules">Diğer önemli kurallar</string>
+  <string name="otherRulesAnswer">Sıranız geldiğinde, oynama sürenizi aşarsanız sistem sizin yerinize oynar.</string>
+</resources>

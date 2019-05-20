@@ -5,7 +5,7 @@
   <string name="viewMasa">Masayı Gör</string>
   <string name="backToMasa">Masaya dön</string>
   <string name="theBestFreeOkeyServer">En iyi bedava, Okey oyunu</string>
-  <string name="freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents">Bedava online okey oyunu. Şimdi temiz bir arayüzde Okey oyna. kayıta gerek yok, reklam yok, eklenti yok. Kendinle, arkadaşlarınla veya rastgele rakiplerle okey oyna.</string>
+  <string name="siteDescription">Bedava online okey oyunu. Şimdi temiz bir arayüzde Okey oyna. kayıta gerek yok, reklam yok, eklenti yok. Kendinle, arkadaşlarınla veya rastgele rakiplerle okey oyna.</string>
   <string name="masaFAQ">Masa SSS</string>
   <string name="newMasa">Yeni masa</string>
   <string name="masaHomeTitle">Çeşitli türlerde Okey oyun masaları</string>
@@ -54,6 +54,8 @@
   <string name="mode">Mod</string>
   <string name="rated">Puanlı</string>
   <string name="casual">Puansız</string>
+  <string name="ratedTable">Puanlı masa</string>
+  <string name="casualTable">Puansız masa</string>
   <string name="leaderboard">Lider Tablosu</string>
   <string name="oyunkeyfMasas">Oyunkeyf Masaları</string>
   <string name="masaNotFound">Masa bulunamadı.</string>
@@ -61,6 +63,8 @@
   <string name="masaMayHaveBeenCancelled">Eğer tüm oyuncular masa başlamadan ayrıldıysa, iptal edilmiş olabilir.</string>
   <string name="masaTryRefreshingPage">Tekrar denemek için sayfayı yenileyin.</string>
   <string name="createANewMasa">Yeni masa oluştur</string>
+  <string name="playWithTheMachine">Botlarla oyna</string>
+
   <string name="refresh">Yenile</string>
   <string name="returnToLobby">Lobiye dön</string>
   <string name="returnToMasasHomepage">Turnuva anasayfasına dön</string>
@@ -163,6 +167,7 @@
   <string name="password">Şifre</string>
   <string name="username">Kullanıcı adı</string>
   <string name="usernameOrEmail">Kullanıcı adı ve eposta</string>
+  <string name="usernameAlreadyUsed">Kullanıcı adı kullanımda</string>
   <string name="textIsTooShort">Çok kısa</string>
   <string name="textIsTooLong">Çok uzun</string>
   <string name="invalidCaptcha">Geçersiz captcha</string>
@@ -190,6 +195,8 @@
   <string name="siteUpdateComplete">Site güncellemesi tamamlandı</string>
   <string name="okeyPlayersAndLeaderboards">Okey oyuncuları ve lider tablosu</string>
   <string name="bestOkeyPlayersInYuzbir">101'de en iyi oyuncular</string>
+  <string name="aboutX">Hakkında %s</string>
+  <string name="mobileApp">Mobil uygulama</string>
   <string name="todo">Yakında</string>
   <string name="underConstruction">Yapım aşamasında</string>
 </resources>

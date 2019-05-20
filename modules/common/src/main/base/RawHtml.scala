@@ -4,7 +4,7 @@ import scala.annotation.{ tailrec, switch }
 import java.lang.{ StringBuilder => jStringBuilder, Math }
 import java.lang.Character.isLetterOrDigit
 
-import oyun.common.base.StringUtils.escapeHtml
+import oyun.common.base.StringUtils.escapeHtmlRaw
 
 final object RawHtml {
   // @inline implicit def toPimpedChars(i: Iterable[CharSequence]) = new PimpedChars(i)
@@ -173,6 +173,6 @@ final object RawHtml {
   private[this] val markdownLinkRegex = """\[([^]]++)\]\((https?://[^)]++)\)""".r
 
   def markdownLinks(text: String): String = nl2br {
-    markdownLinkRegex.replaceAllIn(escapeHtml(text), """<a href="$2">$1</a>""")
+    markdownLinkRegex.replaceAllIn(escapeHtmlRaw(text), """<a href="$2">$1</a>""")
   }
 }

@@ -1,8 +1,0 @@
-@(title: String, side: Html, chat: Option[Html] = None, moreJs: Html = Html(""), openGraph: Option[oyun.app.ui.OpenGraph] = None)(body: Html)(implicit ctx: Context)
-
-@base.layout(
-title = title,
-side = side.some,
-underside = true,
-chat = chat,
-moreJs = moreJs)(body)

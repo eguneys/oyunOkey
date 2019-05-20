@@ -1,12 +1,12 @@
 package views.html.lobby
 
-import play.api.libs.json.{ JsObject }
+import play.api.libs.json.{ Json, JsObject }
 
 import oyun.api.Context
 import oyun.app.templating.Environment._
 import oyun.app.ui.ScalatagsTemplate._
+import oyun.common.String.html.safeJsonValue
 import oyun.game.Pov
-import oyun.masa.Masa
 
 import controllers.routes
 
@@ -14,55 +14,56 @@ object home {
 
   def apply(
     data: JsObject,
-    masas: List[Masa],
+    masas: List[oyun.masa.Masa],
     playing: List[Pov],
     nbRounds: Int)(implicit ctx: Context) = views.html.base.layout(
     title = "",
-      fullTitle = Some("oyunkeyf.net • " + trans.freeOnlineOkey.txt()),
-      baseline = Some(frag(
-        a(id := "nb_connected_players", href :=(routes.User.list.toString))(trans.nbPlayers.frag(strong("?"))),
-        a(id := "nb_games_in_play", href := "#")(trans.nbGamesInPlay.frag(strong(nbRounds)))
-        )),
+      fullTitle = Some(s"oyunkeyf.${if (isProd) "net" else "dev"} • " + trans.freeOnlineOkey.txt()),
       moreJs = frag(
-        jsAt(s"compiled/oyunkeyf.lobby.js"),
-        embedJs {
-          s"""oyunkeyf = oyunkeyf || {}; oyunkeyf.lobby = { data: ${J.stringify(data) } }; """
-        }
+        jsAt(s"compiled/oyunkeyf.lobby${isProd ?? (".min")}.js", defer = true),
+        embedJsUnsafe(
+          s"""oyunkeyf=oyunkeyf||{};oyunkeyf.lobby=${
+safeJsonValue(Json.obj(
+"data" -> data,
+"i18n" -> i18nJsObject(translations)
+))}"""
+        )
       ),
-      moreCss = cssTag("home.css"),
+      moreCss = cssTag("lobby"),
+      okeyground = false,
       openGraph = oyun.app.ui.OpenGraph(
         title = trans.theBestFreeOkeyServer.txt(),
         url = netBaseUrl,
-        description = trans.freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents.txt()
-      ).some) {
-
-    frag(
-      div(cls := List(
-        "lobby_and_ground" -> true
-      ))(
-        div(id := "hooks_wrap"),
-        frag(
-          div(cls := "undertable")(
-            div(cls := "undertable_top")(
-              a(cls := "more hint--bottom", dataHint := trans.seeAllMasas.txt(), href := routes.Masa.home())(trans.more.frag(), " »"),
-              span(cls := "title text", dataIcon := "g")(trans.openMasas())
-            ),
-            div(id := "enterable_masas", cls := "enterable_list undertable_inner scroll-shadow-hard")(views.html.masa.enterable(masas))
-          ),
-          div(id := "start_buttons", cls := "oyun_ground")(
-            a(cls := "fat button config_masa", href := routes.Masa.form, onclick := "return false")(trans.createAGame())
-          )
+        description = trans.siteDescription.txt()
+      ).some,
+      deferJs = true) {
+    main(cls := List(
+      "lobby" -> true))(
+      div(cls := "lobby__table")(
+        div(cls := "lobby__start")(
+          a(href := routes.Setup.hookForm, cls := List(
+            "button button-metal config_hook" -> true
+          ), trans.createAGame()),
+          a(href := routes.Setup.aiForm, cls := List(
+            "button button-metal config-ai" -> true
+          ), trans.playWithTheMachine())
+        ),
+        div(cls := "lobby__counters")(
+          a(id := "nb_connected_players", href := '#')(trans.nbPlayers(nbPlayersPlaceholder)),
+          a(id := "nb_games_in_play", href := '#')(trans.nbGamesInPlay(strong(nbRounds)))
         )
       ),
-      if(playing.headOption.isDefined) {
-        div(cls := "undertable")(
-          div(cls := "undertable_top")(
-            span(cls := "title text", dataIcon := "g")(trans.nbGamesInPlay(playing.size))
-          ),
-          div(cls := "nowplaying_list undertable_inner")(views.html.game.enterable(playing))
+        div(cls := "lobby_about")(
+          a(href := "/about")(trans.aboutX("Oyunkeyf")),
+          a(href := "/contact")(trans.contact()),
+          a(href := "/mobile")(trans.mobileApp())
         )
-      }
     )
   }
+
+  private val translations = List(
+  )
+
+  private val nbPlayersPlaceholder = strong("--")
 
 }

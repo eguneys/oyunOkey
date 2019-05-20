@@ -3,9 +3,8 @@ package templating
 
 import ornicar.scalalib
 
-import play.twirl.api.Html
-
 import oyun.api.Env.{ current => apiEnv }
+import oyun.app.ui.ScalatagsTemplate._
 
 object Environment 
     extends scalaz.syntax.std.ToOptionIdOps
@@ -14,6 +13,7 @@ object Environment
     with scalalib.Zeros
     with oyun.BooleanSteroids
     with oyun.OptionSteroids
+    with oyun.Steroids
     with HtmlHelper
     with AssetHelper
     with RequestHelper
@@ -35,12 +35,15 @@ object Environment
 
   type FormWithCaptcha = (play.api.data.Form[_], oyun.common.Captcha)
 
-  implicit val OyunHtmlMonoid = scalaz.Monoid.instance[Html](
-    (a, b) => Html(a.body + b.body),
-    Html(""))
+  // implicit val OyunHtmlMonoid = scalaz.Monoid.instance[Html](n
+  //   (a, b) => Html(a.body + b.body),
+  //   Html(""))
 
   def netDomain = apiEnv.Net.Domain
   def netBaseUrl = apiEnv.Net.BaseUrl
+  val isGloballyCrawlable = apiEnv.Net.Crawlable
 
   def isProd = apiEnv.isProd
+
+  val spinner: Frag = raw("""<div class="spinner"><svg viewBox="0 0 40 40"><circle cx=20 cy=20 r=18 fill="none"></circle></svg></div>""")
 }

@@ -48,6 +48,7 @@ trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
 
   def lightUser(userId: String): Option[LightUser] = Env.user lightUser userId
 
+  def usernameOrId(userId: String) = lightUser(userId).fold(userId)(_.titleName)
   def usernameOrAnon(userId: Option[String]) = (userId flatMap(lightUser(_))).fold(User.anonymous)(_.name)
 
   def isOnline(userId: String) = Env.user isOnline userId
@@ -132,7 +133,7 @@ trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
     }
 
   private def userHref(username: String, params: String = "") =
-    s"""href="${routes.User.show(username)}$params""""
+    s"""href="{routes.User.show(username)}$params""""
 
   protected def userClass(
     userId: String,

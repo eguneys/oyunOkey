@@ -30,6 +30,11 @@ trait StringHelper { self: NumberHelper =>
     }
   }
 
+  implicit def oyunRichString(str: String) = new {
+    def active(other: String, one: String = "active") = if (str == other) one else ""
+    def activeO(other: String, one: String = "active") = if (str == other) Some(one) else None
+  }
+
   private val NumberFirstRegex = """^(\d+)\s(.+)$""".r
   private val NumberLastRegex = """^(.+)\s(\d+)$""".r
   def splitNumber(s: String)(implicit ctx: UserContext): Html = Html {

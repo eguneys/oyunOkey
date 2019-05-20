@@ -5,7 +5,7 @@ import play.api.libs.json.{ Json, JsValue, JsObject, JsString, JsArray, Writes }
 import play.api.mvc._
 import play.api.http._
 import play.api.mvc.WebSocket.FrameFormatter
-import play.twirl.api.Html
+import scalatags.Text.Frag
 
 import oyun.app._
 import oyun.common.{ OyunCookie, HTTPRequest }
@@ -19,7 +19,7 @@ private[controllers] trait OyunController
     with RequestGetter 
     with ResponseWriter {
 
-  protected implicit def OyunHtmlToResult(content: Html): Result = Ok(content)
+  protected implicit def OyunFragToResult(content: Frag): Result = Ok(content)
 
   protected implicit final class OyunPimpedResult(result: Result) {
     def fuccess = scala.concurrent.Future successful result

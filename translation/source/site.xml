@@ -5,7 +5,7 @@
   <string name="viewMasa">View Table</string>
   <string name="backToMasa">Back to table</string>
   <string name="theBestFreeOkeyServer">The best free, Okey server</string>
-  <string name="freeOnlineOkeyGamePlayOkeyNowInACleanInterfaceNoRegistrationNoAdsNoPluginRequiredPlayOkeyWithComputerFriendsOrRandomOpponents">Free online Okey server. Play Okey now in a clean interface. No registration, no ads, no plugin required. Play Okey with the computer, friends or random opponents.</string>
+  <string name="siteDescription">Free online Okey server. Play Okey now in a clean interface. No registration, no ads, no plugin required. Play Okey with the computer, friends or random opponents.</string>
   <string name="masaFAQ">Masa FAQ</string>
   <string name="newMasa">New Table</string>
   <string name="masaHomeTitle">Okey game table featuring various variants</string>
@@ -54,6 +54,8 @@
   <string name="mode">Mode</string>
   <string name="rated">Rated</string>
   <string name="casual">Casual</string>
+  <string name="ratedTable">Rated Table</string>
+  <string name="casualTable">Casual Table</string>
   <string name="leaderboard">Leaderboard</string>
   <string name="oyunkeyfMasas">Oyunkeyf Tables</string>
   <string name="masaNotFound">Table not found.</string>
@@ -61,6 +63,7 @@
   <string name="masaMayHaveBeenCancelled">Table may have been cancelled, if all players have left.</string>
   <string name="masaTryRefreshingPage">You may try again by refreshing the page.</string>
   <string name="createANewMasa">Create a new table</string>
+  <string name="playWithTheMachine">Play with the Machine</string>
   <string name="refresh">Refresh</string>
   <string name="returnToLobby">Return to lobby</string>
   <string name="returnToMasasHomepage">Return to tables homepage</string>
@@ -163,6 +166,7 @@
   <string name="password">Password</string>
   <string name="username">User name</string>
   <string name="usernameOrEmail">User name or email</string>
+  <string name="usernameAlreadyUsed">Username already used</string>
   <string name="textIsTooShort">Text is too short</string>
   <string name="textIsTooLong">Text is too long</string>
   <string name="invalidCaptcha">Invalid captcha</string>
@@ -190,6 +194,8 @@
   <string name="siteUpdateComplete">Site update complete</string>
   <string name="okeyPlayersAndLeaderboards">Okey players and leaderboards</string>
   <string name="bestOkeyPlayersInYuzbir">Best okey players in 101</string>
+  <string name="aboutX">About %s</string>
+  <string name="mobileApp">Mobile app</string>
   <string name="todo">Todo</string>
   <string name="underConstruction">Under construction</string>
 </resources>

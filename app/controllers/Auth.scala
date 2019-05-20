@@ -93,8 +93,7 @@ object Auth extends OyunController {
               .flatten(s"No user could be created for ${data.username}")
               .map(_ -> email).flatMap {
               case (user, email) => env.emailConfirm.send(user, email) >> {
-                if (env.emailConfirm.effective) Redirect(routes.Auth.checkYourEmail(user.username)).fuccess
-                else saveAuthAndRedirect(user)
+                saveAuthAndRedirect(user)
               }
             }
         }),
@@ -109,16 +108,10 @@ object Auth extends OyunController {
     )
   }
 
-  def checkYourEmail(name: String) = Open { implicit ctx =>
-    OptionOk(UserRepo named name) { user =>
-      html.auth.checkYourEmail(user)
-    }
-  }
-
   private def saveAuthAndRedirect(user: UserModel)(implicit ctx: Context) = {
     implicit val req = ctx.req
       api.saveAuthentication(user.id) map { sessionId =>
-      Redirect(routes.User.show(user.username)) withCookies OyunCookie.session("sessionId", sessionId)
+      Redirect(routes.Lobby.home()) withCookies OyunCookie.session("sessionId", sessionId)
     } recoverWith authRecovery
   }
 

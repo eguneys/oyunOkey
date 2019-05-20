@@ -14,7 +14,7 @@ object Masa extends OyunController with TheftPrevention {
   private def env = Env.masa
   private def repo = MasaRepo
 
-  private def masaNotFound(implicit ctx: Context) = NotFound(html.masa.notFound())
+  private def masaNotFound(implicit ctx: Context) = NotFound(html.masa.bits.notFound())
 
   def home(page: Int) = Open { implicit ctx =>
     negotiate(
@@ -38,7 +38,7 @@ object Masa extends OyunController with TheftPrevention {
       case "arena" => System.Arena.some
       case _ => none
     }
-    Ok(html.masa.faqPage(system)).fuccess
+    Ok(html.masa.faq.page(system)).fuccess
   }
 
   def show(id: String) = Open { implicit ctx =>
@@ -49,8 +49,8 @@ object Masa extends OyunController with TheftPrevention {
           _.fold(masaNotFound.fuccess) { masa =>
             env.version(masa.id).zip(chatOf(masa)).flatMap {
               case (version, chat) =>
-                env.jsonView(masa, playerId, version.some) map {
-                  html.masa.show(masa, _, chat)
+                env.jsonView(masa, playerId, version.some) map { data =>
+                  Ok(html.masa.show(masa, data, chat))
                 }
             }
           }
@@ -126,7 +126,7 @@ object Masa extends OyunController with TheftPrevention {
   }
 
   def form = Open { implicit ctx =>
-    Env.setup.forms masaFilled() map(html.masa.form(_))
+    Ok(html.masa.form(env.forms())).fuccess
   }
 
   def create = OpenBody { implicit ctx =>
