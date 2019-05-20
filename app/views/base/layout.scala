@@ -27,7 +27,7 @@ object layout {
   private val manifests = raw("""<link rel="manifest" href="/manifest.json" /><meta name="twitter:site" content="@oyunkeyf" />""")
 
   private val favicons = raw {
-    List(256, 128, 64) map { px =>
+    List(16, 32) map { px =>
       s"""<link rel="icon" type="image/png" href="${staticUrl(s"favicon.$px.png")}" sizes="${px}x${px}"/>"""
     } mkString
   }
@@ -74,7 +74,7 @@ object layout {
         moreCss,
         pieceSprite,
         meta(content := openGraph.fold(trans.siteDescription.txt())(o => o.description), name := "description"),
-        link(id := "favicon", rel:= "shortcut icon", href := staticUrl("images/favicon-32-white.png"), `type` := "image/x-icon"),
+        //link(id := "favicon", rel:= "shortcut icon", href := staticUrl("images/favicon-32-white.png"), `type` := "image/x-icon"),
         favicons,
         !robots option raw("""<meta content="noindex, nofollow" name="robots">"""),
         noTranslate,
@@ -87,7 +87,7 @@ object layout {
         dataUser := ctx.userId,
         dataSocketDomain := socketDomain,
         dataAssetUrl := assetBaseUrl,
-        dataAssetVersion := assetVersion
+        dataAssetVersion := assetVersion.value
       )(
         siteHeader(),
         div(id := "main-wrap", cls := List(

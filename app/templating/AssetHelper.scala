@@ -6,6 +6,7 @@ import play.twirl.api.Html
 
 import oyun.api.Context
 import oyun.app.ui.ScalatagsTemplate._
+import oyun.common.{ AssetVersion }
 
 trait AssetHelper { self: I18nHelper =>
 
@@ -16,7 +17,7 @@ trait AssetHelper { self: I18nHelper =>
   val socketDomain = oyun.api.Env.current.Net.SocketDomain
 
   val assetBaseUrl = s"//$assetDomain"
-  def assetVersion = oyun.api.Env.current.assetVersion.get
+  def assetVersion = AssetVersion.current
 
 
   def assetUrl(path: String): String = s"$assetBaseUrl/assets/_$assetVersion/$path"

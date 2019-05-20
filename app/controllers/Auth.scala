@@ -27,12 +27,10 @@ object Auth extends OyunController {
     }
 
   private def authenticateUser(u: UserModel)(implicit ctx: Context) = {
-    implicit val req = ctx.req
-
     api.saveAuthentication(u.id) flatMap { sessionId =>
       negotiate(
         html = Redirect {
-          get("referrer").filter(_.nonEmpty) orElse req.session.get(api.AccessUri) getOrElse routes.Lobby.home.url
+          get("referrer").filter(_.nonEmpty) orElse ctxReq.session.get(api.AccessUri) getOrElse routes.Lobby.home.url
         }.fuccess,
         api = _ => mobileUserOk(u)
       ) map {
@@ -64,8 +62,7 @@ object Auth extends OyunController {
   }
 
   def logout = Open { implicit ctx =>
-    implicit val req = ctx.req
-    req.session get "sessionId" foreach oyun.security.Store.delete
+    ctxReq.session get "sessionId" foreach oyun.security.Store.delete
     negotiate(
       html = fuccess(Redirect(routes.Main.mobile)),
       api = apiVersion => Ok(Json.obj("ok" -> true)).fuccess
@@ -109,8 +106,7 @@ object Auth extends OyunController {
   }
 
   private def saveAuthAndRedirect(user: UserModel)(implicit ctx: Context) = {
-    implicit val req = ctx.req
-      api.saveAuthentication(user.id) map { sessionId =>
+    api.saveAuthentication(user.id) map { sessionId =>
       Redirect(routes.Lobby.home()) withCookies OyunCookie.session("sessionId", sessionId)
     } recoverWith authRecovery
   }

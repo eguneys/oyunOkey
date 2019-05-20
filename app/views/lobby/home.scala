@@ -22,7 +22,7 @@ object home {
       moreJs = frag(
         jsAt(s"compiled/oyunkeyf.lobby${isProd ?? (".min")}.js", defer = true),
         embedJsUnsafe(
-          s"""oyunkeyf=oyunkeyf||{};oyunkeyf.lobby=${
+          s"""oyunkeyf=window.oyunkeyf||{};oyunkeyf_lobby=${
 safeJsonValue(Json.obj(
 "data" -> data,
 "i18n" -> i18nJsObject(translations)

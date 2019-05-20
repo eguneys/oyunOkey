@@ -19,14 +19,9 @@ final class Env(
     val BaseUrl = config getString "net.base_url"
     val AssetDomain = config getString "net.asset.domain"
     val SocketDomain = config getString "net.socket.domain"
-    val AssetVersion = config getString "net.asset.version"
     val Crawlable = config getBoolean "net.crawlable"
   }
   val PrismicApiUrl = config getString "prismic.api_url"
-
-  object assetVersion {
-    def get = Net.AssetVersion
-  }
 
   val userApi = new UserApi(
     jsonView = userEnv.jsonView,

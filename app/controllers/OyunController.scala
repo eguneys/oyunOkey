@@ -2,13 +2,14 @@ package controllers
 
 import play.api.libs.iteratee.{ Iteratee, Enumerator }
 import play.api.libs.json.{ Json, JsValue, JsObject, JsString, JsArray, Writes }
+import play.api.data.Form
 import play.api.mvc._
 import play.api.http._
 import play.api.mvc.WebSocket.FrameFormatter
 import scalatags.Text.Frag
 
 import oyun.app._
-import oyun.common.{ OyunCookie, HTTPRequest }
+import oyun.common.{ OyunCookie, HTTPRequest, Lang }
 import oyun.api.{ PageData, Context, HeaderContext, BodyContext }
 import oyun.security.{ FingerprintedUser }
 import oyun.user.{ UserContext, User => UserModel }
@@ -24,6 +25,9 @@ private[controllers] trait OyunController
   protected implicit final class OyunPimpedResult(result: Result) {
     def fuccess = scala.concurrent.Future successful result
   }
+
+  implicit def ctxLang(implicit ctx: Context) = ctx.lang
+  implicit def ctxReq(implicit ctx: Context) = ctx.req
 
   protected def NoCache(res: Result): Result = res.withHeaders(
     CACHE_CONTROL -> "no-cache, no-store, must-revalidate", EXPIRES -> "0"
@@ -133,8 +137,7 @@ private[controllers] trait OyunController
   protected def Reasonable(page: Int, max: Int = 40, errorPage: => Fu[Result] = BadRequest("resource too old").fuccess)(result: => Fu[Result]): Fu[Result] =
     if (page < max) result else errorPage
 
-  protected def errorsAsJson(form: play.api.data.Form[_])(implicit lang: play.api.i18n.Messages) = {
-    // oyun.common.Form errorsAsJson form
+  protected def errorsAsJson(form: play.api.data.Form[_])(implicit lang: Lang) = {
     val json = JsObject(
       form.errors.groupBy(_.key).mapValues { errors =>
         JsArray {
@@ -146,6 +149,9 @@ private[controllers] trait OyunController
     )
     json validate jsonGlobalErrorRenamer getOrElse json
   }
+
+  protected def jsonFormError(err: Form[_])(implicit lang: Lang) =
+    fuccess(BadRequest(errorsAsJson(err)))
 
   private val jsonGlobalErrorRenamer = {
     import play.api.libs.json._

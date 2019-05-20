@@ -145,7 +145,6 @@ object Masa extends OyunController with TheftPrevention {
 
   private def withMasaAnonCookie(cond: Boolean, id: String)(res: Result)(implicit ctx: Context): Fu[Result] =
     cond ?? {
-      implicit val req = ctx.req
       fuccess(OyunCookie.cookie(
         AnonCookie.name,
         id,

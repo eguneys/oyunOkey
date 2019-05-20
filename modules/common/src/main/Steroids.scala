@@ -34,6 +34,8 @@ trait Steroids
 
     with JodaTimeSteroids {
 
+      type StringValue = oyun.base.OyunTypes.StringValue
+
       // @inline implicit def toPimpedActorSystem(a: akka.actor.ActorSystem) = new PimpedActorSystem(a)
 
       @inline implicit def toPimpedJsObject(jo: JsObject) = new PimpedJsObject(jo)

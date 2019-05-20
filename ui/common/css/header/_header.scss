@@ -1,0 +1,14 @@
+#top {
+  height: $site-header-height;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: z('site-header');
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.site-title-nav {
+  display: flex;
+  justify-content: flex-start;
+}

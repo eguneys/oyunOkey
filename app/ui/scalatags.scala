@@ -83,6 +83,11 @@ final class FragToHtml(private val self: Frag) extends AnyVal {
 
 trait ScalatagsExtensions {
 
+  implicit val stringValueAttr = new AttrValue[StringValue] {
+    def apply(t: scalatags.text.Builder, a: Attr, v: StringValue): Unit =
+      t.setAttr(a.name, scalatags.text.Builder.GenericAttrValueSource(v.value))
+  }
+
   implicit val charAttr = genericAttr[Char]
 
   implicit val optionStringAttr = new AttrValue[Option[String]] {

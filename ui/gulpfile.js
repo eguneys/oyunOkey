@@ -9,6 +9,7 @@ const gulpif = require('gulp-if');
 const filter = require('gulp-filter');
 const fs = require('fs');
 const glob = require('glob');
+const touch = require('gulp-touch-cmd');
 
 const themes = ['light'];
 
@@ -34,11 +35,12 @@ const build = () => gulp.src(sourcesGlob)
       .pipe(sass(sassOptions).on('error', sass.logError))
       .pipe(sourcemaps.write())
       .pipe(renameAs('dev'))
-      .pipe(destination());
+      .pipe(destination())
+      .pipe(touch());
 
 const setWatching = async () => { global.isWatching = true; };
 
-const startWatching = () => gulp.watch(sourcesGlob, true);
+const startWatching = () => gulp.watch(sourcesGlob, build);
 
 gulp.task('css', gulp.series([
   createThemedBuilds,

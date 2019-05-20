@@ -1,0 +1,9 @@
+$z-indexes: (
+  'topnav': 110,
+  'site-header': 106,
+  'default': 0
+);
+
+@function z($layer) {
+  @return map-get($z-indexes, $layer)
+}

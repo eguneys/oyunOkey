@@ -38,6 +38,8 @@ final class Env(
   }
   import settings._
 
+  lazy val forms = new DataForm
+
 
   lazy val cached = new Cached(
     asyncCache = asyncCache,

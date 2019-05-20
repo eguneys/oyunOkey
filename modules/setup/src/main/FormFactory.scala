@@ -13,6 +13,20 @@ private[setup] final class FormFactory() {
   import Mappings._
   import FormFactory._
 
+  def aiFilled()(implicit ctx: UserContext): Fu[Form[AiConfig]] =
+    aiConfig map { config =>
+      ai(ctx) fill config
+    }
+
+  def ai(ctx: UserContext) = Form(
+    mapping(
+    "rounds" -> numberIn(roundChoices),
+    "variant" -> number.verifying(validVariantIds contains _)
+    )(AiConfig.<<)(_.>>)
+  )
+
+  def aiConfig(implicit ctx: UserContext): Fu[AiConfig] = fuccess(AiConfig.<<(5, 1))
+
   def masaFilled()(implicit ctx: UserContext): Fu[Form[MasaConfig]] =
     masaConfig map masa(ctx).fill
 
