@@ -7,6 +7,11 @@ body {
   }
 
   --main-margin: 0;
+
+  @include breakpoint($mq-main-margin) {
+    --main-margin: 1vw;
+    margin-bottom: $block-gap;
+  }
   
 }
 

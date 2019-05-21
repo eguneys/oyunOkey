@@ -22,7 +22,8 @@ object layout {
   import bits._
 
   private val noTranslate = raw("""<meta name="google" content="notranslate" />""")
-  private def fontPreload(implicit ctx: Context) = raw { ""
+  private def fontPreload(implicit ctx: Context) = raw { s"""<link href="https://fonts.googleapis.com/css?family=Noto+Sans|Roboto&display=swap" rel="stylesheet">
+"""
   }
   private val manifests = raw("""<link rel="manifest" href="/manifest.json" /><meta name="twitter:site" content="@oyunkeyf" />""")
 

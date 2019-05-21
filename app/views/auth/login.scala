@@ -20,7 +20,7 @@ object login {
       h1(trans.signIn()),
       st.form(
         cls := "form3",
-        action := s"${routes.Auth.authenticate}${referrer.?? { ref => s"?referrer=${java.net.URLEncoder.encode(ref, "US_ASCII")}" }}",
+        action := s"${routes.Auth.authenticate}${referrer.?? { ref => s"?referrer=${java.net.URLEncoder.encode(ref, "US-ASCII")}" }}",
         method := "post"
       )(
         div(cls := "one-factor")(

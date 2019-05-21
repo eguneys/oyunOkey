@@ -1,3 +1,8 @@
+@import 'topnav-hidden';
+@import 'topnav-visible';
+@import 'title';
+@import 'buttons';
+
 #top {
   height: $site-header-height;
   display: flex;
