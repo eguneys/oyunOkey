@@ -80,8 +80,8 @@ object layout {
         !robots option raw("""<meta content="noindex, nofollow" name="robots">"""),
         noTranslate,
         openGraph.map(_.frags),
-        fontPreload,
-        manifests
+        fontPreload
+        // manifests
       ),
       st.body(
         dataDev := (!isProd).option("true"),

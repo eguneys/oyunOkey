@@ -296,7 +296,7 @@ oyunkeyf.StrongSocket.defaults = {
     autoReconnectDelay: 3500,
     protocol: location.protocol === 'https:' ? 'wss:' : 'ws:',
     baseUrls: (function(d) {
-      return [d].concat((d === 'socket.oyunkeyf.org' ? [5, 6] : []).map(function(port) {
+      return [d].concat((d === 'socket.oyunkeyf.net' ? [5, 6] : [2]).map(function(port) {
         return d + ':' + (9020 + port);
       }));
     })(document.body.getAttribute('data-socket-domain')),

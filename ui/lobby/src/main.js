@@ -1,20 +1,32 @@
-import m from 'mithril';
-import ctrl from './ctrl';
+import { init } from 'snabbdom';
+import klass from 'snabbdom/modules/class';
+import attributes from 'snabbdom/modules/attributes';
+
+export const patch = init([klass, attributes]);
+
+import makeCtrl from './ctrl';
 import view from './view/main';
+const boot = require('./boot');
 
-module.exports = function(element, opts) {
-  opts.element = element;
+export function start(opts) {
+  let vnode, ctrl;
 
-  var controller = new ctrl(opts);
+  function redraw() {
+    vnode = patch(vnode, view(ctrl));
+  }
 
-  m.module(element, {
-    controller: function() {
-      return controller;
-    },
-    view: view
-  });
+  ctrl = new makeCtrl(opts, redraw);
+
+  const blueprint = view(ctrl);
+  opts.element.innerHTML = '';
+  vnode = patch(opts.element, blueprint);
 
   return {
-    socketReceive: controller.socket.receive
+    socketReceive: ctrl.socket.receive,
+    redraw: ctrl.redraw
   };
+}
+
+window.onload = function() {
+  boot(window['oyunkeyf_lobby'], document.querySelector('.lobby__app'));
 };

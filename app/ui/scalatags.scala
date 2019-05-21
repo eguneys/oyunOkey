@@ -22,6 +22,12 @@ trait ScalatagsAttrs {
   lazy val deferAttr = attr("defer").empty
 }
 
+trait ScalatagsSnippets extends Cap {
+  import scalatags.Text.all._
+
+  val nbsp = raw("&nbsp;")
+}
+
 trait ScalatagsBundle extends Cap
     with Attrs
     with scalatags.text.Tags
@@ -45,6 +51,7 @@ trait ScalatagsTemplate extends Styles
     with ScalatagsBundle
     with ScalatagsAttrs
     with ScalatagsExtensions
+    with ScalatagsSnippets
     with ScalatagsPrefix {
 
   val trans = oyun.i18n.I18nKeys

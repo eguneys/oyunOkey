@@ -1,11 +1,8 @@
-import m from 'mithril';
-import list from './list';
+import * as list from './list';
 
-module.exports = function(ctrl) {
-  let res = ctrl.vm.stepHooks;
-  let hooks = res;
-
-  let body = list.render(ctrl, hooks);
+export default function(ctrl) {
+  var res = ctrl.stepHooks;
+  var body = list.render(ctrl, res);
 
   return [
     body

@@ -54,3 +54,12 @@ oyunkeyf.reload = function() {
   if (location.hash) location.reload();
   else location.href = location.href;
 };
+
+oyunkeyf.numberFormat = (function() {
+  var formatter = false;
+  return function(n) {
+    if (formatter === false) formatter = (window.Intl && Intl.NumberFormat) ? new Intl.NumberFormat() : null;
+    if (formatter === null) return n;
+    return formatter.format(n);
+  };
+})();

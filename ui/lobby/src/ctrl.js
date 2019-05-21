@@ -1,50 +1,22 @@
-import m from 'mithril';
-import { util } from 'okeyground';
-import socket from './socket';
-import hookRepo from './hookRepo';
+import * as hookRepo from './hookRepo';
+import { make as makeStores } from './store';
+import * as xhr from './xhr';
+import LobbySocket from './socket';
 
-module.exports = function(env) {
-  this.data = env.data;
+export default function LobbyController(opts, redraw) {
+  this.stepHooks = [];
+
+  this.opts = opts;
+  this.data = opts.data;
   this.data.hooks = [];
-
+  this.pools = opts.pools;
+  this.redraw = redraw;
 
   hookRepo.initAll(this);
+  this.socket = new LobbySocket(opts.socketSend, this);
 
-  this.socket = new socket(env.socketSend, this);
+  this.stores = makeStores(this.data.me ? this.data.me.username.toLowerCase() : null);
 
-  this.vm = {
-    tab: 'realtime',
-    stepHooks: this.data.hooks.slice(0)
-  };
-
-  var flushHooksTimeout;
-
-  const doFlushHooks = () => {
-    this.vm.stepHooks = this.data.hooks.slice(0);
-    m.redraw();
-  };
-
-  this.flushHooks = (now) => {
-    clearTimeout(flushHooksTimeout);
-    if (now) {
-      doFlushHooks();
-    } else {
-      this.vm.stepping = true;
-      m.redraw();
-      setTimeout(() => {
-        this.vm.stepping = false;
-        doFlushHooks();
-      }, 500);
-    }
-    flushHooksTimeout = flushHooksSchedule();
-  };
-
-  var flushHooksSchedule = util.partial(setTimeout, this.flushHooks, 8000);
-  flushHooksSchedule();
-
-  this.clickHook = id => {
-    var hook = hookRepo.find(this, id);
-    if (!hook || hook.disabled || this.vm.stepping) return;
-    this.socket.send(hook.action, hook.id);
-  };
+  this.tab = this.stores.tab.get();
+  this.trans = opts.trans;
 };

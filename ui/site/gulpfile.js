@@ -29,7 +29,7 @@ const prodSource = () => browserify(browserifyOpts('src/index.js', false))
       .pipe(uglify())
       .pipe(gulp.dest('./dist'));
 
-const devSource = () => browserify(browserifyOpts('src/index.js', false))
+const devSource = () => browserify(browserifyOpts('src/index.js', true))
       .transform('babelify',
                  { presets: ["@babel/preset-env"] })
       .bundle()
