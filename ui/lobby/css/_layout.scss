@@ -1,0 +1,62 @@
+$mq-col2: $mq-xx-small;
+$mq-col3: $mq-small;
+$mq-col4: $mq-x-large;
+
+$mq-not-col3: $mq-not-small;
+
+@mixin lobby-app-size {
+  min-height: 300px;
+  @include breakpoint($mq-col2) {
+    min-height: 400px;
+  }
+  @include breakpoint($mq-col3) {
+    height: 600px;
+  }
+}
+
+.lobby {
+  grid-area: main;
+  display: grid;
+
+  grid-template-areas:
+    'app'
+    'table'
+    'about'
+    '.';
+  grid-gap: $block-gap;
+
+  &__counters {
+    margin-top: $block-gap;
+  }
+
+  @include breakpoint($mq-col2) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto repeat(3, fit-content(0));
+    grid-template-areas:
+      'table table'
+      'app app'
+      'about .';
+  }
+
+  @include breakpoint($mq-col3) {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 12em repeat(2, fit-content(0));
+    
+    grid-template-areas:
+      'table app app'
+      'about app app';
+
+    &__start {
+      flex-flow: column;
+      align-items: stretch;
+      justify-content: center;
+    }
+    &__counters {
+      margin: #{$block-gap / 3} 0 #{$block-gap / - 3} 0;
+    }
+  }
+
+  &__app { grid-area: app }
+  &__table { grid-area: table }
+  &__about { grid-area: about }
+}

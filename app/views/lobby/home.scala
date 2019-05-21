@@ -53,7 +53,7 @@ safeJsonValue(Json.obj(
           a(id := "nb_games_in_play", href := '#')(trans.nbGamesInPlay(strong(nbRounds)))
         )
       ),
-        div(cls := "lobby_about")(
+        div(cls := "lobby__about")(
           a(href := "/about")(trans.aboutX("Oyunkeyf")),
           a(href := "/contact")(trans.contact()),
           a(href := "/mobile")(trans.mobileApp())
