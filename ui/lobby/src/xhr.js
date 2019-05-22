@@ -14,3 +14,10 @@ export function anonPoolSeek(pool) {
   $('body').append($form);
   $form.submit();
 }
+
+export function joinHook(id) {
+  var url = `/masa/${id}/join`;
+  var $form = $(`<form style="display: none;" method="post" action="${url}"></form>`);
+  $('body').append($form);
+  $form.submit(); 
+}

@@ -16,6 +16,7 @@
   <string name="inProgress">in progress!</string>
   <string name="play">Play</string>
   <string name="playingRightNow">Playing right now</string>
+  <string name="quickPairing">Quick Pairing</string>
   <string name="playing">Playing</string>
   <string name="finished">Finished</string>
   <string name="players">Players</string>
@@ -54,6 +55,7 @@
   <string name="mode">Mode</string>
   <string name="rated">Rated</string>
   <string name="casual">Casual</string>
+  <string name="custom">Custom</string>
   <string name="ratedTable">Rated Table</string>
   <string name="casualTable">Casual Table</string>
   <string name="leaderboard">Leaderboard</string>
@@ -65,6 +67,7 @@
   <string name="createANewMasa">Create a new table</string>
   <string name="playWithTheMachine">Play with the Machine</string>
   <string name="refresh">Refresh</string>
+  <string name="lobby">Lobby</string>
   <string name="returnToLobby">Return to lobby</string>
   <string name="returnToMasasHomepage">Return to tables homepage</string>
   <string name="youArePlaying">You are playing!</string>

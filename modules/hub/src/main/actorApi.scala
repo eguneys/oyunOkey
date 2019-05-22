@@ -41,6 +41,7 @@ package lobby {
     name: String,
     rounds: Option[String],
     players: Int,
+    variant: String,
     ra: Boolean)
 
   case class ReloadMasas(html: String)

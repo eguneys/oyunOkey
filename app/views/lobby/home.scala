@@ -64,6 +64,14 @@ safeJsonValue(Json.obj(
   }
 
   private val translations = List(
+    trans.quickPairing,
+    trans.lobby,
+    trans.players,
+    trans.rounds,
+    trans.mode,
+    trans.rated,
+    trans.casual,
+    trans.custom
   )
 
   private val nbPlayersPlaceholder = strong("--")

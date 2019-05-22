@@ -5,13 +5,17 @@ import * as hookRepo from '../../hookRepo';
 function renderHook(ctrl, hook) {
   const noarg = ctrl.trans.noarg;
   return h('tr.hook.' + hook.action, {
+    key: hook.id,
+    attrs: {
+      'data-id': hook.id
+    }
   }, tds([
     hook.name,
     hook.players,
     hook.rounds,
     h('span', {
       attrs: { 'data-icon': perfIcons[hook.perf] }
-    }, noarg(hook.ra ? 'rated' : 'casual'))
+    }, hook.variant + ' ' + noarg(hook.ra ? 'rated' : 'casual'))
   ]));
 }
 
@@ -39,8 +43,8 @@ export function render(ctrl, allHooks) {
     h('thead',
       h('tr', [
         h('th'),
-        h('th', ctrl.trans('nbPlayers')),
-        h('th', ctrl.trans('nbRounds')),
+        h('th', ctrl.trans('players')),
+        h('th', ctrl.trans('rounds')),
         h('th', ctrl.trans('mode'))
       ])
      ),

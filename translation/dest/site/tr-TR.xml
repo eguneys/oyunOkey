@@ -16,6 +16,7 @@
   <string name="inProgress">oynanıyor!</string>
   <string name="play">Oyna</string>
   <string name="playingRightNow">Şu an oynanıyor</string>
+  <string name="quickPairing">Hızlı eşleşme</string>
   <string name="playing">Oynanıyor</string>
   <string name="finished">Bitti</string>
   <string name="players">Oyuncular</string>
@@ -53,6 +54,7 @@
   <string name="more">Daha fazla</string>
   <string name="mode">Mod</string>
   <string name="rated">Puanlı</string>
+  <string name="custom">Özel</string>
   <string name="casual">Puansız</string>
   <string name="ratedTable">Puanlı masa</string>
   <string name="casualTable">Puansız masa</string>
@@ -66,6 +68,7 @@
   <string name="playWithTheMachine">Botlarla oyna</string>
 
   <string name="refresh">Yenile</string>
+  <string name="lobby">Lobi</string>
   <string name="returnToLobby">Lobiye dön</string>
   <string name="returnToMasasHomepage">Turnuva anasayfasına dön</string>
   <string name="youArePlaying">Şu an oynuyorsunuz!</string>

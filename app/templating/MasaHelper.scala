@@ -22,6 +22,7 @@ trait MasaHelper { self: I18nHelper with DateHelper with UserHelper =>
     "name" -> masa.fullName,
     "rounds" -> masa.roundString,
     "players" -> masa.nbPlayers,
+    "variant" -> masa.variant.name,
     "ra" -> masa.rated
   )
 

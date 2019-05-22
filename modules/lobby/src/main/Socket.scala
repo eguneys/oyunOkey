@@ -58,6 +58,7 @@ private[lobby] final class LobbySocket(
     "name" -> hook.name,
     "rounds" -> hook.rounds,
     "players" -> hook.players,
+    "variant" -> hook.variant,
     "ra" -> hook.ra
   )
 

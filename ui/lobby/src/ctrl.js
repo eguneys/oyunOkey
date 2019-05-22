@@ -26,7 +26,7 @@ export default function LobbyController(opts, redraw) {
         this.socket.realTimeIn();
       else if (this.tab === 'real_time') {
         this.socket.realTimeOut();
-        this.data.hooks = [];
+        // this.data.hooks = [];
       }
       this.tab = this.stores.tab.set(tab);
     }
@@ -36,5 +36,9 @@ export default function LobbyController(opts, redraw) {
     xhr.anonPoolSeek(this.pools.find(function(p) {
       return p.id === id;
     }));
+  };
+
+  this.clickHook = (id) => {
+    xhr.joinHook(id);
   };
 };

@@ -379,6 +379,7 @@ final class MasaApi(
             name = masa.fullName,
             rounds = masa.roundString,
             players = masa.nbPlayers,
+            variant = masa.variant.name,
             ra = masa.rated)
         }
         bus.publish(HookMasas(hooks), 'lobbySocket)
