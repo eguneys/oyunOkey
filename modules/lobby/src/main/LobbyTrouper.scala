@@ -78,6 +78,8 @@ private object LobbyTrouper {
 
     val trouper = makeTrouper()
 
+    system.oyunBus.subscribe(trouper, 'lobbyTrouper)
+
     trouper
   }
 

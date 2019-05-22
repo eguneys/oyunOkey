@@ -6,11 +6,8 @@ function renderHook(ctrl, hook) {
   const noarg = ctrl.trans.noarg;
   return h('tr.hook.' + hook.action, {
   }, tds([
-    h('span.is.is2'),
-    (hook.rating ? h('span.ulink.ulpt', {
-      attrs: { 'data-href': '/@/' + hook.u }
-    }, hook.u) : 'Misafir'),
-    (hook.rating ? hook.rating : ''),
+    hook.name,
+    hook.players,
     hook.rounds,
     h('span', {
       attrs: { 'data-icon': perfIcons[hook.perf] }
@@ -42,9 +39,8 @@ export function render(ctrl, allHooks) {
     h('thead',
       h('tr', [
         h('th'),
-        h('th', ctrl.trans('player')),
-        h('th', ctrl.trans('rating')),
-        h('th', ctrl.trans('rounds')),
+        h('th', ctrl.trans('nbPlayers')),
+        h('th', ctrl.trans('nbRounds')),
         h('th', ctrl.trans('mode'))
       ])
      ),

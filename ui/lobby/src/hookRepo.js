@@ -1,5 +1,5 @@
 function init(hook) {
-  hook.action = hook.uid === oyunkeyf.socket.settings.params.sri ? 'cancel' : 'join';
+  hook.action = hook.uid === oyunkeyf.StrongSocket.sri ? 'cancel' : 'join';
 }
 
 function initAll(ctrl) {
@@ -19,6 +19,13 @@ module.exports = {
     });
     ctrl.vm.stepHooks.forEach((h) => {
       if (h.id === id) h.disabled = true;
+    });
+  },
+  setAll: function(ctrl, hooks) {
+    ctrl.data.hooks = [];
+    hooks.forEach(hook => {
+      init(hook);
+      ctrl.data.hooks.push(hook);
     });
   },
   find: function(ctrl, id) {

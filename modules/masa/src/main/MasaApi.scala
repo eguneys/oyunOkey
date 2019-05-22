@@ -10,7 +10,7 @@ import akka.pattern.{ ask, pipe }
 import actorApi._
 import oyun.common.Debouncer
 import oyun.hub.actorApi.map.{ Tell }
-import oyun.hub.actorApi.lobby.ReloadMasas
+import oyun.hub.actorApi.lobby.{ ReloadMasas, HookMasa, HookMasas }
 import oyun.hub.Sequencer
 import oyun.socket.actorApi.SendToFlag
 import oyun.game.{ Mode, Game }
@@ -371,6 +371,17 @@ final class MasaApi(
           case view: play.twirl.api.Html =>
             bus.publish(ReloadMasas(view.body), 'lobbySocket)
         }
+      }
+
+      MasaRepo.hookable foreach { masas =>
+        val hooks = masas.map { masa =>
+          HookMasa(masaId = masa.id,
+            name = masa.fullName,
+            rounds = masa.roundString,
+            players = masa.nbPlayers,
+            ra = masa.rated)
+        }
+        bus.publish(HookMasas(hooks), 'lobbySocket)
       }
     })))
     def apply() { debouncer ! Debouncer.Nothing }

@@ -5,7 +5,6 @@ import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import play.api.libs.json._
 import play.api.libs.iteratee._
-import play.twirl.api.Html
 
 import actorApi._
 import oyun.common.PimpedJson._
@@ -36,7 +35,9 @@ private[lobby] final class LobbySocket(
       addMember(uid, member)
       promise success Connected(enumerator, member)
 
-    case ReloadMasas(html) => notifyAllAsync(makeMessage("masas", html))
+    // case ReloadMasas(html) => notifyAllAsync(makeMessage("masas", html))
+
+    case HookMasas(hooks) => notifyAllAsync(makeMessage("hooks", hooks map renderHook))
 
     case AddHook(hook) =>
       // notifyVersion("had", hook.render)
@@ -51,6 +52,14 @@ private[lobby] final class LobbySocket(
       withMember(uid)(notifyPlayerJoin(challengeId, side))
 
   }
+
+  private def renderHook(hook: HookMasa): JsObject = Json.obj(
+    "id" -> hook.masaId,
+    "name" -> hook.name,
+    "rounds" -> hook.rounds,
+    "players" -> hook.players,
+    "ra" -> hook.ra
+  )
 
   private def notifyPlayerJoin(challengeId: String, side: okey.Side) = { member: Member =>
     notifyMember("redirect", Json.obj(

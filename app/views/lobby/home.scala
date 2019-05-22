@@ -25,6 +25,7 @@ object home {
           s"""oyunkeyf=window.oyunkeyf||{};oyunkeyf_lobby=${
 safeJsonValue(Json.obj(
 "data" -> data,
+"hooks" -> (masas map renderMasaHook),
 "i18n" -> i18nJsObject(translations)
 ))}"""
         )

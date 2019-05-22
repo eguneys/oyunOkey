@@ -3,15 +3,27 @@ package templating
 
 import controllers.routes
 
+import play.api.libs.json._
+
 import oyun.api.Context
 import oyun.masa.Env.{ current => masaEnv }
 import oyun.masa.{ Masa, System }
 import oyun.user.{ UserContext }
 import oyun.i18n.I18nKeys
 
+
+
 trait MasaHelper { self: I18nHelper with DateHelper with UserHelper => 
 
   def netBaseUrl: String
+
+  def renderMasaHook(masa: Masa)(implicit ctx: UserContext) = Json.obj(
+    "id" -> masa.id,
+    "name" -> masa.fullName,
+    "rounds" -> masa.roundString,
+    "players" -> masa.nbPlayers,
+    "ra" -> masa.rated
+  )
 
   def masaIconChar(masa: Masa): Char = 'g'
 

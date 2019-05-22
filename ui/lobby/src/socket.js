@@ -21,7 +21,6 @@ export default function LobbySocket(send, ctrl) {
     },
     hooks(hooks) {
       hookRepo.setAll(ctrl, hooks);
-      ctrl.flushHooks(true);
       ctrl.redraw();
     }
   };

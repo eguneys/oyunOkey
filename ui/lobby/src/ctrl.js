@@ -5,10 +5,10 @@ import LobbySocket from './socket';
 
 export default function LobbyController(opts, redraw) {
   this.stepHooks = [];
-
+  
   this.opts = opts;
   this.data = opts.data;
-  this.data.hooks = [];
+  this.data.hooks = opts.hooks;
   this.pools = opts.pools;
   this.redraw = redraw;
 

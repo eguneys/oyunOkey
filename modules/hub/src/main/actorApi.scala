@@ -37,5 +37,12 @@ package captcha {
 }
 
 package lobby {
+  case class HookMasa(masaId: String,
+    name: String,
+    rounds: Option[String],
+    players: Int,
+    ra: Boolean)
+
   case class ReloadMasas(html: String)
+  case class HookMasas(hooks: List[HookMasa])
 }

@@ -104,6 +104,14 @@ object MasaRepo {
       .sort($doc("createdAt" -> -1))
       .list[Masa](none)
 
+  def publicCreatedInterruptedSorted: Fu[List[Masa]] =
+    coll.find($doc("$or" -> List(
+      allInterruptedSelect,
+      allCreatedSelect
+    )))
+      .sort($doc("createdAt" -> -1))
+      .list[Masa](none)
+
   def allCreated: Fu[List[Masa]] =
     coll.find(allCreatedSelect).cursor[Masa]().gather[List]()
 
@@ -114,6 +122,9 @@ object MasaRepo {
     publicCreatedSorted map {
       case created => created
     }
+
+  def hookable: Fu[List[Masa]] =
+    publicCreatedInterruptedSorted
 
 
   def findCompatible(setup: MasaSetup): Fu[List[Masa]] =
