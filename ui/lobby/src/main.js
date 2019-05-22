@@ -23,6 +23,12 @@ export function start(opts) {
 
   return {
     socketReceive: ctrl.socket.receive,
+    setTab(tab) {
+      ctrl.setTab(tab);
+      ctrl.redraw();
+    },
+    enterPool: ctrl.enterPool,
+    leavePool: ctrl.leavePool,
     redraw: ctrl.redraw
   };
 }

@@ -17,7 +17,7 @@ object Page extends OyunController {
 
   def variantHome = Open { implicit ctx =>
     OptionOk(fuccess(3.some)) {
-      case _ => views.html.site.variantHome()
+      case _ => views.html.site.variant.home()
     }
   }
 
@@ -25,7 +25,7 @@ object Page extends OyunController {
     (for {
       variant <- okey.variant.Variant.byKey get key
     } yield OptionOk(Prismic getVariant variant) {
-      case (doc, resolver) => views.html.site.variant(doc, resolver, variant)
+      case (doc, resolver) => views.html.site.variant.show(doc, resolver, variant)
     }) | notFound
   }
 }

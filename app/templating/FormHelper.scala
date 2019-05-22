@@ -2,7 +2,6 @@ package oyun.app
 package templating
 
 import play.api.data._
-import play.twirl.api.Html
 import oyun.api.Context
 
 import oyun.i18n.{ I18nDb, I18nKeys }
@@ -14,20 +13,7 @@ trait FormHelper { self: I18nHelper =>
     "error.maxLength" -> I18nKeys.textIsTooLong,
     "captcha.fail" -> I18nKeys.invalidCaptcha)
 
-  def errMsg(form: Field)(implicit ctx: Context): Html = errMsg(form.errors)
-  def errMsg(form: Form[_])(implicit ctx: Context): Html = errMsg(form.errors)
-
-  def errMsg(errors: Seq[FormError])(implicit ctx: Context): Html = Html {
-    errors map { e =>
-      val msg = transKey(e.message, I18nDb.Site, e.args) match {
-        case m if m == e.message => errNames.get(e.message).fold(e.message)(_.txt())
-        case m => m
-      }
-      s"""<p class="error">$msg</p>"""
-    } mkString
-  }
-
-  object form3 extends ui.ScalatagsPlay {
+  object form3 {
 
     import ui.ScalatagsTemplate._
 
@@ -57,7 +43,7 @@ trait FormHelper { self: I18nHelper =>
       klass: String = "",
       half: Boolean = false,
       help: Option[Frag] = None
-    )(content: Field => Frag)(implicit ctx: Context): Html =
+    )(content: Field => Frag)(implicit ctx: Context): Frag =
       div(cls := List(
         "form-group" -> true,
         "is-invalid" -> field.hasErrors,
@@ -80,7 +66,7 @@ trait FormHelper { self: I18nHelper =>
 
     def textarea(
       field: Field,
-      klass: String = "")(modifiers: Modifier*): Html =
+      klass: String = "")(modifiers: Modifier*): Frag =
       st.textarea(
         st.id := id(field),
         name := field.name,
@@ -88,7 +74,6 @@ trait FormHelper { self: I18nHelper =>
       )(validationModifiers(field))(modifiers)(~field.value)
 
     val actions = div(cls := "form-actions")
-    def actionsHtml(html: Frag): Html = actions(html)
 
     def submit(
       content: Frag,
@@ -96,8 +81,8 @@ trait FormHelper { self: I18nHelper =>
       nameValue: Option[(String, String)] = None,
       klass: String = "",
       confirm: Option[String] = None
-    ): Html = button(
-      `type` := "submit",
+    ): Frag = button(
+      tpe := "submit",
       dataIcon := icon,
       name := nameValue.map(_._1),
       value := nameValue.map(_._2),
@@ -110,12 +95,12 @@ trait FormHelper { self: I18nHelper =>
       title := confirm
     )(content)
 
-    def hidden(field: Field, value: Option[String] = None): Html =
+    def hidden(field: Field, value: Option[String] = None): Frag =
       st.input(
         st.id := id(field),
         name := field.name,
         st.value := value.orElse(field.value),
-        `type` := "hidden"
+        tpe := "hidden"
       )
 
     def password(field: Field, content: Frag)(implicit ctx: Context): Frag =

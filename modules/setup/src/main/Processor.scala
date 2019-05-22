@@ -8,19 +8,26 @@ import oyun.user.{ UserContext }
 import oyun.masa.{ Masa, PlayerRef }
 
 private[setup] final class Processor(
-  lobby: ActorSelection) {
+  bus: oyun.common.Bus,
+  masaApi: oyun.masa.MasaApi
+) {
 
-  def ai(config: AiConfig, playerRef: PlayerRef)(implicit ctx: UserContext): Fu[Masa] = ???
+  def ai(config: AiConfig, playerRef: PlayerRef)(implicit ctx: UserContext): Fu[Masa] = {
+    val masaSetup = config.masa()
+    masaApi.addMasa(masaSetup, playerRef) addEffect { masa =>
+      // bus.publish(AddHook(masa), 'lobbyTrouper)
+    }
+  }
 
-  def hook(
-    config: HookConfig,
+  def masa(
+    config: MasaConfig,
+    playerRef: PlayerRef,
     uid: oyun.socket.Socket.Uid,
-    sid: Option[String])(implicit ctx: UserContext): Fu[String] = {
+    sid: Option[String])(implicit ctx: UserContext): Fu[Masa] = {
 
-    val hook = config.hook(uid, ctx.me, sid)
-    fuccess {
-      lobby ! AddHook(hook)
-      hook.id
+    val masaSetup = config.masa()
+    masaApi.addMasa(masaSetup, playerRef) addEffect { masa =>
+      // bus.publish(AddHook(masa), 'lobbyTrouper)
     }
   }
 }

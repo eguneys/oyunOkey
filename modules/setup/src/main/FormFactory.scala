@@ -57,7 +57,7 @@ private[setup] final class FormFactory() {
 object FormFactory {
   import okey.variant._
 
-  val rounds = (5 to 30 by 5) :+ 1
+  val rounds = (5 to 30 by 5) ++ List(1, 3)
   val roundChoices = options(rounds, "%d round")
 
   val validVariants = oyun.common.PlayApp.isProd.fold(

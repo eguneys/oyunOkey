@@ -17,6 +17,8 @@ sealed trait Context extends oyun.user.UserContextWrapper {
   val pageData: PageData
 
   def lang = userContext.lang
+
+  lazy val currentBg = "light"
 }
 
 sealed abstract class BaseContext(

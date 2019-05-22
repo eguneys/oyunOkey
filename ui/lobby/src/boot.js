@@ -1,12 +1,12 @@
 module.exports = function(cfg, element) {
-  var pools = [{ id: "1", lim: 1, perf: "Yüzbir" },
-               { id: "3", lim: 3, perf: "Yüzbir" },
-               { id: "5", lim: 5, perf: "Yüzbir" },
-               { id: "20", lim: 20, perf: "Yüzbir" },
-               { id: "d1", lim: 1, perf: "Düz" },
-               { id: "d3", lim: 3, perf: "Düz" },
-               { id: "d5", lim: 5, perf: "Düz" },
-               { id: "d20", lim: 20, perf: "Düz" }];
+  var pools = [{ id: "1", var: 1, lim: 1, perf: "Yüzbir" },
+               { id: "3", var: 1, lim: 3, perf: "Yüzbir" },
+               { id: "5", var: 1, lim: 5, perf: "Yüzbir" },
+               { id: "20", var: 1, lim: 20, perf: "Yüzbir" },
+               { id: "d1", var: 2, lim: 1, perf: "Düz" },
+               { id: "d3", var: 2, lim: 3, perf: "Düz" },
+               { id: "d5", var: 2, lim: 5, perf: "Düz" },
+               { id: "d20", var: 2, lim: 20, perf: "Düz" }];
   
   var lobby;
 
@@ -54,6 +54,117 @@ module.exports = function(cfg, element) {
   cfg.element = element;
   cfg.pools = pools;
   lobby = OyunkeyfLobby.start(cfg);
+
+  var $startButtons = $('.lobby__start');
+
+  var sliderRounds = [
+    1, 2, 3, 5, 10, 15, 20, 25, 30
+  ];
+
+ function sliderRound(v) {
+    return v < sliderRounds.length ? sliderRounds[v] : 30;
+  }
+
+  function sliderInitVal(v, f, max) {
+    for (var i = 0; i < max; i++) {
+      if (f(i) == v) return i;
+    }
+    return 0;
+  }
+
+  function prepareForm($modal) {
+    var $form = $modal.find('form');
+    var $modeChoicesWrap = $form.find('.mode_choice');
+    var $modeChoices = $modeChoicesWrap.find('input');
+    var $casual = $modeChoices.eq(0),
+        $rated = $modeChoices.eq(1);
+    var $variantSelect = $form.find('#sf_variant');
+    var $roundsInput = $form.find('.round_choice [name=rounds]');
+    var typ = $form.data('type');
+    var $submits = $form.find('.color-submits__button');
+
+    $submits.text('KUR');
+
+    if (typ === 'hook') {
+
+      // var ajaxSubmit = function() {
+      //   $.modal.close();
+      //   var call = {
+      //     url: $form.attr('action').replace(/uid-placeholder/, oyunkeyf.StrongSocket.sri),
+      //     data: $form.serialize(),
+      //     type: 'post'
+      //   };
+      //   lobby.setTab('real_time');
+      //   $.ajax(call);
+      //   return false;
+      // };
+      // $submits.click(function() {
+      //   return ajaxSubmit();
+      // }).attr('disabled', false);
+      // $form.submit(function() {
+      //   return ajaxSubmit();
+      // });
+    } else {
+      $form.one('submit', function() {
+        $submits.hide().end().append(oyunkeyf.spinnerHtml);
+      });
+    }
+    oyunkeyf.slider().done(function() {
+      $roundsInput.each(function() {
+        var $input = $(this),
+            $value = $input.siblings('span');
+        $input.after($('<div>').slider({
+          value: sliderInitVal($input.val(), sliderRound, 10),
+          min: 0,
+          max: 10,
+          range: 'min',
+          step: 1,
+          slide: function(event, ui) {
+            var round = sliderRound(ui.value);
+            $value.text(round);
+            $input.attr('value', round);
+          }
+        }));
+      });
+    });
+  }
+
+  var clickEvent = 'mousedown';
+
+  $startButtons
+    .find('a:not(.disabled)')
+    .on(clickEvent, function() {
+
+      $(this).addClass('active')
+        .siblings().removeClass('active');
+      
+      oyunkeyf.loadCssPath('lobby.setup');
+      // lobby.leavePool();
+      $.ajax({
+        url: $(this).attr('href'),
+        success: function(html) {
+          prepareForm($.modal(html, 'game-setup', () => {
+            $startButtons.find('.active').removeClass('active');
+          }));
+        },
+        error: function(res) {
+          if (res.status == 400)
+            alert(res.responseText);
+          oyunkeyf.reload();
+        }
+      });
+      return false;
+    }).on('click', function() {
+      return false;
+    });
+
+  if (['#ai', '#hook'].includes(location.hash)) {
+    $startButtons
+      .find('.config_' + location.hash.replace('#', ''))
+      .each(function() {
+        $(this).attr('href', $(this).attr('href') + location.search);
+      }).trigger(clickEvent);
+  }
 
 };
 

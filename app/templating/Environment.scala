@@ -14,7 +14,6 @@ object Environment
     with oyun.BooleanSteroids
     with oyun.OptionSteroids
     with oyun.Steroids
-    with HtmlHelper
     with AssetHelper
     with RequestHelper
     with I18nHelper
@@ -30,8 +29,7 @@ object Environment
     with ForumHelper
     with PaginatorHelper
     with MasaHelper
-    with GameHelper
-    with ui.ScalatagsTwirl {
+    with GameHelper {
 
   type FormWithCaptcha = (play.api.data.Form[_], oyun.common.Captcha)
 

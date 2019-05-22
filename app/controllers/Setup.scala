@@ -33,26 +33,14 @@ object Setup extends OyunController {
 
   def hookForm = Open { implicit ctx =>
     if (HTTPRequest isXhr ctx.req) {
-      env.forms.hookFilled() map { html.setup.forms.hook(_) }
+      env.forms.masaFilled() map { html.setup.forms.masa(_) }
     } else fuccess {
       Redirect(routes.Lobby.home + "#hook")
     }
   }
 
-  private def hookResponse(hookId: String) =
-    Ok(Json.obj(
-      "ok" -> true,
-      "hook" -> Json.obj("id" -> hookId))) as JSON
-
-  def hook(uid: String) = OpenBody { implicit ctx =>
-    implicit val req = ctx.body
-
-    env.forms.hook(ctx).bindFromRequest.fold(
-      err => BadRequest("errorsAsJson(err)".toString).fuccess,
-      config => {
-        env.processor.hook(config, Uid(uid), HTTPRequest sid req) map hookResponse
-      }
-    )
+  def hook(uid: String) = process(env.forms.masa) { (config, playerRef) => implicit ctx =>
+    env.processor.masa(config, playerRef, Uid(uid), HTTPRequest sid ctx.body)
   }
 
   private def process[A](form: Context => Form[A])(op: (A, PlayerRef) => BodyContext[_] => Fu[GameMasa]) =
@@ -66,7 +54,7 @@ object Setup extends OyunController {
         ),
         config => op(config, playerRef)(ctx) flatMap { masa =>
           fuccess(redirectMasa(masa, playerRef))
-        }
+         }
       )
     }
 

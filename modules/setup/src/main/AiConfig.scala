@@ -1,5 +1,6 @@
 package oyun.setup
 
+import oyun.masa.MasaSetup
 import oyun.user.User
 
 case class AiConfig(
@@ -7,6 +8,13 @@ case class AiConfig(
   variant: okey.variant.Variant) extends Config {
 
   def >> = (rounds, variant.id).some
+
+  def masa(): MasaSetup = MasaSetup.make(
+    rounds = rounds,
+    variant = variant.id,
+    mode = none,
+    allowAnon = true
+  )
 
 }
 

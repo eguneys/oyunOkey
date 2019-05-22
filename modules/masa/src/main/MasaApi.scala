@@ -20,7 +20,7 @@ import oyun.user.{ User, UserRepo }
 import okey.Side
 import makeTimeout.short
 
-private[masa] final class MasaApi(
+final class MasaApi(
   scheduleJsonView: ScheduleJsonView,
   system: ActorSystem,
   sequencers: ActorRef,

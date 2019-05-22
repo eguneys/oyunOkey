@@ -1,13 +1,13 @@
 package oyun.app
 package templating
 
-import play.twirl.api.Html
-
 import okey.{ Status => S }
 
 import oyun.game.{ Game, Player, Pov, Namer }
 import oyun.user.{ User, UserContext }
 import oyun.i18n.{ I18nKeys }
+
+import oyun.app.ui.ScalatagsTemplate._
 
 trait GameHelper { self: I18nHelper with UserHelper =>
 
@@ -27,7 +27,7 @@ trait GameHelper { self: I18nHelper with UserHelper =>
 
   def playerLink(
     player: Player,
-    withOnline: Boolean = true)(implicit ctx: UserContext) = Html {
+    withOnline: Boolean = true)(implicit ctx: UserContext) = raw {
 
     player.userId match {
       case _ =>
@@ -38,14 +38,14 @@ trait GameHelper { self: I18nHelper with UserHelper =>
 
   }
 
-  def gameEndStatus(game: Game)(implicit ctx: UserContext): Html = game.status match {
+  def gameEndStatus(game: Game)(implicit ctx: UserContext): Frag = game.status match {
     case S.Aborted => I18nKeys.gameAborted()
     case S.NormalEnd => I18nKeys.gameFinished()
     case S.MiddleEnd => I18nKeys.gameMiddleFinished()
     case _ => I18nKeys.gameFinished()
   }
 
-  def gameEndWinner(game: Game)(implicit ctx: UserContext): Html = {
+  def gameEndWinner(game: Game)(implicit ctx: UserContext): Frag = {
     val winner = usernameOrAnon(game.winner flatMap (_.userId))
 
     I18nKeys.gameEndBy(winner)

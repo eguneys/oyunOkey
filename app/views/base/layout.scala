@@ -88,7 +88,8 @@ object layout {
         dataUser := ctx.userId,
         dataSocketDomain := socketDomain,
         dataAssetUrl := assetBaseUrl,
-        dataAssetVersion := assetVersion.value
+        dataAssetVersion := assetVersion.value,
+        dataTheme := ctx.currentBg
       )(
         siteHeader(),
         div(id := "main-wrap", cls := List(

@@ -1,7 +1,6 @@
 import com.typesafe.sbt.packager.Keys.scriptClasspath
 import com.typesafe.sbt.web.SbtWeb.autoImport._
 import play.sbt.PlayImport._
-import play.twirl.sbt.Import._
 import PlayKeys._
 import sbt._, Keys._
 
@@ -33,15 +32,7 @@ libraryDependencies ++= Seq(
   prismic,
   netty,
   kamon.core, scalatags, java8compat, scaffeine)
-TwirlKeys.templateImports ++= Seq(
-  "oyun.game.{ Game, Player, Pov }",
-  "oyun.masa.Masa",
-  "oyun.user.{ User, UserContext }",
-  "oyun.api.Context",
-  "oyun.i18n.{ I18nKeys => trans }",
-  "oyun.app.templating.Environment._",
-  "oyun.common.paginator.Paginator"
-)
+
 // watchSources <<= sourceDirectory in Compile map { sources =>
 //   (sources ** "*").get
 // },
@@ -81,7 +72,7 @@ lazy val db = module("db", Seq(common)).settings(
 )
 
 lazy val setup = module("setup", Seq(common, user, lobby, masa, hub)).settings(
-  libraryDependencies ++= provided(play.api, play.test)
+  libraryDependencies ++= provided(play.api, reactivemongo.driver)
 )
 
 lazy val masa = module("masa", Seq(common, user, game, db, socket, hub, memo)).settings(

@@ -7,6 +7,8 @@ import oyun.i18n.{ I18nKeys => trans }
 
 trait SetupHelper { self: I18nHelper =>
 
+  type SelectChoice = (String, String, Option[String])
+
   def translatedModeChoices(implicit ctx: Context) = List(
     (Mode.Casual.id.toString, trans.casual.txt(), none),
     (Mode.Rated.id.toString, trans.rated.txt(), none)

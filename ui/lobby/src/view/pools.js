@@ -20,5 +20,9 @@ export function render(ctrl) {
       h('div.clock', pool.lim),
       h('div.perf', pool.perf)
     ]);
-  });
+  }).concat(
+    h('div.custom', {
+      attrs: { 'data-id': 'custom' }
+    }, ctrl.trans.noarg('custom'))
+  );
 }

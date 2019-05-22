@@ -1,16 +1,22 @@
 package oyun.setup
 
+import akka.actor._
+
 final class Env(
-  hub: oyun.hub.Env) {
+  masaApi: oyun.masa.MasaApi,
+  system: ActorSystem) {
 
   lazy val forms = new FormFactory()
 
   lazy val processor = new Processor(
-    lobby = hub.actor.lobby)
+    bus = system.oyunBus,
+    masaApi = masaApi
+  )
 }
 
 object Env {
   lazy val current = new Env(
-    hub = oyun.hub.Env.current
+    system = oyun.common.PlayApp.system,
+    masaApi = oyun.masa.Env.current.api
   )
 }

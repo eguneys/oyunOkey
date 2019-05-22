@@ -3,8 +3,6 @@ package ui
 
 import ornicar.scalalib.Zero
 
-import play.twirl.api.Html
-
 import scalatags.text.Builder
 import scalatags.Text.{ Aggregate, Cap }
 import scalatags.Text.all._
@@ -14,6 +12,7 @@ trait ScalatagsAttrs {
   lazy val dataAssetUrl = attr("data-asset-url")
   lazy val dataAssetVersion = attr("data-asset-version")
   lazy val dataDev = attr("data-dev")
+  lazy val dataTheme = attr("data-theme")
 
   lazy val dataIcon = attr("data-icon")
   lazy val dataHint = attr("data-hint")
@@ -61,32 +60,6 @@ trait ScalatagsTemplate extends Styles
 }
 
 object ScalatagsTemplate extends ScalatagsTemplate
-
-trait ScalatagsTwirl extends ScalatagsPlay
-
-// what to import in twirl templates containing scalatags forms
-// Allows `*.rows := 5`
-trait ScalatagsTwirlForm extends ScalatagsPlay with Cap with Aggregate {
-  object * extends Cap with Attrs with ScalatagsAttrs
-}
-
-object ScalatagsTwirlForm extends ScalatagsTwirlForm
-
-trait ScalatagsPlay {
-
-  implicit def fragToPlayHtml(frag: Frag): Html = Html(frag.render)
-
-  implicit def playHtmlToFrag(html: Html): Frag = RawFrag(html.body)
-
-  @inline implicit def fragToHtml(frag: Frag) = new FragToHtml(frag)
-  
-}
-
-final class FragToHtml(private val self: Frag) extends AnyVal {
-
-  def toHtml: Html = Html(self.render)
-  
-}
 
 trait ScalatagsExtensions {
 

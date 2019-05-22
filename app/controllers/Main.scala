@@ -28,7 +28,7 @@ object Main extends OyunController {
 
   def mobile = Open { implicit ctx =>
     OptionOk(Prismic getBookmark "mobile-apk") {
-      case (doc, resolver) => html.mobile.home(doc, resolver)
+      case (doc, resolver) => html.mobile(doc, resolver)
     }
   }
 

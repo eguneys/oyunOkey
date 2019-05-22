@@ -1,24 +1,42 @@
 import m from 'mithril';
 import hookRepo from './hookRepo';
 
-module.exports = function(send, ctrl) {
+export default function LobbySocket(send, ctrl) {
   this.send = send;
 
-  const handlers = {
-    had: function(hook) {
+  this.handlers = {
+    had(hook) {
       hookRepo.add(ctrl, hook);
       if (hook.action === 'cancel') ctrl.flushHooks(true);
-      m.redraw();
+      ctrl.redraw();
     },
-    hrm: function(id) {
-      hookRepo.remove(ctrl, id);
-      m.redraw();
+    hrm(ids) {
+      ids = ids.match(/.{8}/g);
+      if (ids) {
+        ids.forEach((id) => {
+          hookRepo.remove(ctrl, id);          
+        });
+      }
+      ctrl.redraw();
+    },
+    hooks(hooks) {
+      hookRepo.setAll(ctrl, hooks);
+      ctrl.flushHooks(true);
+      ctrl.redraw();
     }
   };
 
+  this.realTimeIn = () => {
+    this.send('hookIn');
+  };
+
+  this.realTimeOut = () => {
+    this.send('hookOut');
+  };
+
   this.receive = (type, data) => {
-    if (handlers[type]) {
-      handlers[type](data);
+    if (this.handlers[type]) {
+      this.handlers[type](data);
       return true;
     }
     return false;

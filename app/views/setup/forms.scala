@@ -15,6 +15,23 @@ object forms {
 
   import bits._
 
+    def masa(form: Form[_])(implicit ctx: Context) = layout(
+    form,
+    "hook",
+    trans.createAGame(),
+    routes.Setup.hook("uid-placeholder")
+  ) {
+      frag(
+        renderVariant(form, isProd.fold(translatedVariantChoicesWithVariants, translatedVariantChoicesWithTestVariants)),
+        renderRoundMode(form),
+        ctx.isAuth option frag(
+          div(cls := "mode_choice buttons")(
+            renderRadios(form("mode"), translatedModeChoices)
+          )
+        )
+      )
+  }
+
   def hook(form: Form[_])(implicit ctx: Context) = layout(
     form,
     "hook",
@@ -25,6 +42,10 @@ object forms {
 
 
   def ai(form: Form[_])(implicit ctx: Context) = layout(form, "ai", trans.playWithTheMachine(), routes.Setup.ai) {
+    frag(
+      renderVariant(form, isProd.fold(translatedVariantChoicesWithVariants, translatedVariantChoicesWithTestVariants)),
+      renderRoundMode(form)
+    )
   }
 
   private def layout(form: Form[_],

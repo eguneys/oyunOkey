@@ -10,6 +10,7 @@ export default function(ctrl) {
   case 'pools':
     body = renderPools.render(ctrl);
     data = { hook: renderPools.hooks(ctrl) };
+    break;
   case 'real_time':
     body = renderRealtime(ctrl);
   }
