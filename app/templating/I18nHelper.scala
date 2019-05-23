@@ -5,7 +5,7 @@ import play.api.libs.json.JsObject
 
 import oyun.common.Lang
 import oyun.app.ui.ScalatagsTemplate._
-import oyun.i18n.{ LangList, I18nKey, Translator, I18nDb, JsDump }
+import oyun.i18n.{ LangList, I18nKey, Translator, I18nDb, JsDump, TimeagoLocales }
 import oyun.user.UserContext
 
 trait I18nHelper {
@@ -24,7 +24,9 @@ trait I18nHelper {
     JsDump.keysToObject(keys, I18nDb.Site, lang)
 
   def timeagoLocaleScript(implicit ctx: oyun.api.Context): String = {
-    ""
+    TimeagoLocales.js.get(ctx.lang.code) orElse
+    TimeagoLocales.js.get(ctx.lang.language) getOrElse
+    ~TimeagoLocales.js.get("en")
   }
 
   def langName = LangList.name _

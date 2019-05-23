@@ -3,6 +3,17 @@
 
     if (oyunkeyf.masa) startMasa(oyunkeyf.masa);
 
+    function renderTimeago() {
+      oyunkeyf.raf(function() {
+        oyunkeyf.timeago.render([].slice.call(document.getElementsByClassName('timeago'), 0, 99));
+      });
+    }
+
+    function setTimeago(interval) {
+      renderTimeago();
+      setTimeout(function() { setTimeago(interval * 1.1); }, interval);
+    }
+    setTimeago(1200);
   });
 
   function startMasa(cfg) {
