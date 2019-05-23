@@ -1,0 +1,14 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "main": "common.js",
+  "scripts": {
+    "compile": "babel src --out-dir ./"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5"
+  }
+}

@@ -6,6 +6,7 @@ import scala.concurrent.duration._
 
 import oyun.common.LightUser
 import oyun.game.{ Game, GameRepo }
+import oyun.user.User
 
 final class JsonView(getLightUser: String => Option[LightUser],
   asyncCache: oyun.memo.AsyncCache.Builder) {
@@ -19,10 +20,10 @@ final class JsonView(getLightUser: String => Option[LightUser],
     podium: Option[JsArray])
 
   def apply(masa: Masa,
-    me: Option[String],
+    me: Option[Player.ID],
     socketVersion: Option[Int]): Fu[JsObject] = for {
     data <- cachableData get masa.id
-    myInfo <- me ?? { PlayerRepo.playerInfo(masa.id, _) }
+    myInfo <- me ?? { myInfo(masa, _) }
     stand <- standing(masa)
   } yield Json.obj(
     "id" -> masa.id,
@@ -54,6 +55,9 @@ final class JsonView(getLightUser: String => Option[LightUser],
   def standing(masa: Masa): Fu[JsObject] =
     computeStanding(masa)
 
+  private def fetchCurrentGameId(masa: Masa, seatId: Player.SeatID): Fu[Option[Game.ID]] =
+    PairingRepo.playingByMasaAndSeatId(masa.id, seatId)
+
   private def fetchFeaturedGame(masa: Masa): Fu[Option[FeaturedGame]] =
     masa.featuredId.ifTrue(masa.isStarted) ?? PairingRepo.byId flatMap {
       _ ?? { pairing =>
@@ -64,6 +68,15 @@ final class JsonView(getLightUser: String => Option[LightUser],
               case _ => fuccess(None)
             }
           }
+      }
+    }
+
+  def myInfo(masa: Masa, mePlayerId: String): Fu[Option[MyInfo]] =
+    PlayerRepo.find(masa.id, mePlayerId) flatMap {
+      _ ?? { player =>
+        fetchCurrentGameId(masa, player.id) map { gameId =>
+          MyInfo(player.id, player.side, player.active, gameId).some
+        }
       }
     }
 
@@ -108,9 +121,10 @@ final class JsonView(getLightUser: String => Option[LightUser],
     )
   }
 
-  private def myInfoJson(i: PlayerInfo) = Json.obj(
+  private def myInfoJson(i: MyInfo) = Json.obj(
     "side" -> i.side.letter.toString,
-    "active" -> i.active
+    "active" -> i.active,
+    "gameId" -> i.gameId
   )
 
   private def sheetJson(sheet: ScoreSheet) = sheet match {

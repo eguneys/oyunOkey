@@ -12,6 +12,9 @@ case class MasaMiniView(masa: Masa, top: Option[MasaTop])
 
 case class PlayerInfo(seatId: String, side: Side, active: Boolean)
 
+case class MyInfo(seatId: String, side: Side, active: Boolean, gameId: Option[oyun.game.Game.ID])
+
+
 case class VisibleMasas(
   created: List[Masa],
   started: List[Masa],

@@ -11,7 +11,7 @@ oyunkeyf.storage = (function() {
     make: function(k) {
       return {
         get: function() { return api.get(k); },
-        set: function(v) { return api.get(k, v); },
+        set: function(v) { return api.set(k, v); },
         remove: function() { return api.remove(k); },
         listen: function(f) {
           window.addEventListener('storage', function(e) {

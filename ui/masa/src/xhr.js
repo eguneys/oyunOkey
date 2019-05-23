@@ -1,44 +1,41 @@
-import m from 'mithril';
-import { util } from 'okeyground';
-import { throttle } from './util';
+import throttle from 'common/throttle';
 
-const { partial } = util;
-
-var xhrConfig = function(xhr) {
-  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-  xhr.setRequestHeader('Accept', 'application/vnd.oyunkeyf.v1+json');
+const headers = {
+  'Accept': 'application/vnd.oyunkeyf.v1+json'
 };
 
-function uncache(url) {
-  return url + '?_=' + new Date().getTime();
+function onFail(_1, _2, errorMessage) {
+  oyunkeyf.reload();
 }
 
-function reloadPage() {
-  location.reload();
+function masaAction(action) {
+  return function(ctrl, side) {
+    var url = ['/masa', ctrl.data.id, action].join('/');
+    if (side) { url += `?side=${side}`; }
+
+    return $.ajax({
+      method: 'POST',
+      url: url,
+      headers
+    }).fail(onFail);
+  };
 }
 
-function masaAction(action, ctrl, side) {
-  var url = ['/masa', ctrl.data.id, action].join('/');
-  if (side) { url += `?side=${side}`; }
-
-  return m.request({
-    method: 'POST',
-    url: url,
-    config: xhrConfig
-  }).then(null, reloadPage);
+function reload(ctrl) {
+  return $.ajax({
+    url: '/masa/' + ctrl.data.id,
+    data: {},
+    headers
+  }).then(data => {
+    ctrl.reload(data);
+    ctrl.redraw();
+  }, onFail);
 }
 
-function reloadMasa(ctrl) {
-  return m.request({
-    method: 'GET',
-    url: uncache('/masa/' + ctrl.data.id),
-    config: xhrConfig
-  }).then(ctrl.reload, reloadPage);
-}
-
-module.exports = {
-  invite: throttle(1000, false, partial(masaAction, 'invite')),
-  join: throttle(1000, false, partial(masaAction, 'join')),
-  withdraw: throttle(1000, false, partial(masaAction, 'withdraw')),
-  reloadMasa: throttle(2000, false, reloadMasa)
+export default {
+  invite: throttle(1000, masaAction('invite')),
+  join: throttle(1000, masaAction('join')),
+  withdraw: throttle(1000, masaAction('withdraw')),
+  reloadSoon: throttle(2000, reload),
+  reloadNow: reload
 };

@@ -7,6 +7,7 @@ import BSONHandlers._
 import oyun.db.dsl._
 
 import okey.Side
+import oyun.game.Game
 
 object PairingRepo {
 
@@ -20,7 +21,7 @@ object PairingRepo {
     $doc("sids.n" -> seatId),
     $doc("sids.s" -> seatId)))
 
-  private def selectMasaSeat(masaId: String, seatId: String) = selectMasa(masaId) ++ selectSeat(seatId)
+  private def selectMasaSeat(masaId: String, seatId: Player.SeatID) = selectMasa(masaId) ++ selectSeat(seatId)
 
   private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.Aborted.id))
   //private val selectPlaying = $doc("s" -> $doc("$lt" -> okey.Status.MiddleEnd.id))
@@ -64,6 +65,13 @@ object PairingRepo {
       "ss" -> g.endScores.map(_.map(_.total)),
       "w" -> g.winnerSide.flatMap(g.player(_).playerId),
       "t" -> g.turns))).void
+
+  def playingByMasaAndSeatId(masaId: Masa.ID, seatId: Player.SeatID): Fu[Option[Game.ID]] = coll.find(
+    selectMasaSeat(masaId, seatId) ++ selectPlaying,
+    $doc("_id" -> true)
+  ).sort(recentSort).uno[Bdoc].map {
+    _.flatMap(_.getAs[Game.ID]("_id"))
+  }
 
   // def playingPlayerIds(masa: Masa): Fu[Set[String]] =
   //   coll.find(selectMasa(masa.id) ++ selectPlaying).one[Pairing] map {

@@ -22,6 +22,9 @@ function playerTr(ctrl, player) {
       (player.name || 'Misafir');
   playerName = active ? playerName : ctrl.trans('emptySeat');
 
+  var inviteButton = active ? playerName :
+      [playerName, button.invite(ctrl)];
+
   var playerId = player.id;
   var userId = playerName.toLowerCase();
 
@@ -45,7 +48,7 @@ function playerTr(ctrl, player) {
           }
         })
      ),
-    h('td.player', player.active && player.name ? renderPlayer(player): playerName),
+    h('td.player', player.active && player.name ? renderPlayer(player): inviteButton),
     h('td.sheet', player.sheet.scores.map(scoreTag)),
     h('td.total', h('strong', scoreTotal))
   ]);

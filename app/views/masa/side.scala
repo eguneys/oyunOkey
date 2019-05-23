@@ -16,12 +16,17 @@ object side {
     div(cls := "masa__meta")(
       st.section(dataIcon := m.perfType.map(_.iconChar.toString))(
         div(
+          views.html.game.bits.variantLink(
+            m.variant,
+            m.variant.name),
           p(m.roundString),
           m.mode.fold(trans.casualTable, trans.ratedTable)(),
           separator,
           systemName(m.system).capitalize
         )
-      )
+      ),
+      frag(trans.by(usernameOrAnon(m.createdBy.some)), br),
+      absClientDateTime(m.createdAt)
     ),
       views.html.chat.frag
   )

@@ -8,10 +8,10 @@ import oyun.user.{ User, Perfs }
 import okey.Side
 
 case class Player(
-  _id: String,
-  masaId: String,
-  playerId: String,
-  userId: Option[String] = None,
+  _id: Player.SeatID,
+  masaId: Masa.ID,
+  playerId: Player.ID,
+  userId: Option[User.ID] = None,
   rating: Option[Int],
   active: Boolean = false,
   side: Side = Side.EastSide,
@@ -55,10 +55,13 @@ case class Player(
 
 object Player {
 
+  type ID = String
+  type SeatID = String
+
   case class Active(player: Player)
 
   private[masa] def make(
-    masaId: String,
+    masaId: Masa.ID,
     score: Int,
     aiLevel: Option[Int] = None) = new Player(
     _id = oyun.game.IdGenerator.game,

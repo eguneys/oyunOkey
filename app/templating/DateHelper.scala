@@ -7,9 +7,9 @@ import scala.collection.mutable
 import org.joda.time.format._
 import org.joda.time.format.ISODateTimeFormat
 import org.joda.time.{ DateTime }
-import play.twirl.api.Html
 
 import oyun.api.Context
+import oyun.app.ui.ScalatagsTemplate._
 
 trait DateHelper { self: I18nHelper =>
 
@@ -45,15 +45,18 @@ trait DateHelper { self: I18nHelper =>
   def showDate(date: DateTime)(implicit ctx: Context): String =
     dateFormatter(ctx) print date
 
-  def momentFormat(date: DateTime, format: String): Html = Html {
-    s"""<time class="moment" datetime="${isoDate(date)}" data-format="$format"></time>"""
-  }
+  // def momentFormat(date: DateTime, format: String): Html = Html {
+  //   s"""<time class="moment" datetime="${isoDate(date)}" data-format="$format"></time>"""
+  // }
 
-  def momentFormat(date: DateTime): Html = momentFormat(date, "calendar")
+  // def momentFormat(date: DateTime): Html = momentFormat(date, "calendar")
 
-  def momentFromNow(date: DateTime)(implicit ctx: Context) = Html {
-    s"""<time class="moment-from-now" title="${showDate(date)}" datetime="${isoDate(date)}"></time>"""
-  }
+  // def momentFromNow(date: DateTime)(implicit ctx: Context) = Html {
+  //   s"""<time class="moment-from-now" title="${showDate(date)}" datetime="${isoDate(date)}"></time>"""
+  // }
+
+  def absClientDateTime(date: DateTime): Frag =
+    timeTag(cls := "timeago abs", datetimeAttr := isoDate(date))("-")
 
   def isoDate(date: DateTime): String = isoFormatter print date
 }

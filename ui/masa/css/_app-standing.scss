@@ -1,7 +1,11 @@
 .masa__standing {
   .player {
+    display: flex;
     padding-left: 0px;
     padding-right: 0px;
+    button {
+      margin-left: 5px;
+    }
     .name {
       @extend %nowrap-ellipsis;
       display: inline-block;

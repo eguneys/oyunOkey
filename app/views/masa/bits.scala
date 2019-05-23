@@ -50,6 +50,7 @@ import oyun.app.ui.ScalatagsTemplate._
     trans.emptySeat,
     trans.roundX,
     trans.points,
-    trans.theTable
+    trans.theTable,
+    trans.invite
   )
 }

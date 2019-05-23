@@ -18,6 +18,7 @@ trait ScalatagsAttrs {
   lazy val dataHint = attr("data-hint")
   lazy val dataHref = attr("data-href")
   lazy val novalidate = attr("novalidate").empty
+  val datetimeAttr = attr("datetime")
   lazy val deferAttr = attr("defer").empty
 }
 
@@ -25,6 +26,7 @@ trait ScalatagsSnippets extends Cap {
   import scalatags.Text.all._
 
   val nbsp = raw("&nbsp;")
+  val timeTag = tag("time")
 }
 
 trait ScalatagsBundle extends Cap
