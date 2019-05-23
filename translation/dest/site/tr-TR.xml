@@ -16,6 +16,7 @@
   <string name="inProgress">oynanıyor!</string>
   <string name="play">Oyna</string>
   <string name="playingRightNow">Şu an oynanıyor</string>
+  <string name="standByX">Bekle, oyuncular eşleştiriliyor, hazır ol!</string>
   <string name="quickPairing">Hızlı eşleşme</string>
   <string name="playing">Oynanıyor</string>
   <string name="finished">Bitti</string>

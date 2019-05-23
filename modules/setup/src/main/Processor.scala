@@ -16,6 +16,9 @@ private[setup] final class Processor(
     val masaSetup = config.masa()
     masaApi.addMasa(masaSetup, playerRef) addEffect { masa =>
       // bus.publish(AddHook(masa), 'lobbyTrouper)
+      masaApi.invite(masa.id) >>
+      masaApi.invite(masa.id) >>
+      masaApi.invite(masa.id)
     }
   }
 

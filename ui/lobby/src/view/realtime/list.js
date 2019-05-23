@@ -11,7 +11,9 @@ function renderHook(ctrl, hook) {
     }
   }, tds([
     hook.name,
-    hook.players,
+    h('span', {
+      attrs: { 'data-icon': 'r' }
+    }, hook.players),
     hook.rounds,
     h('span', {
       attrs: { 'data-icon': perfIcons[hook.perf] }

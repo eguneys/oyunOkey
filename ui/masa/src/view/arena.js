@@ -15,6 +15,11 @@ function scoreTag(s, i) {
 function playerTr(ctrl, player) {
   var isLong = player.sheet.scores.length > 35;
 
+  if (!ctrl.data.players[player.id]) {
+    console.warn(ctrl.data.players, player.id);
+    return null;
+  }
+
   var ai = ctrl.data.players[player.id].ai;
   var active = ctrl.data.players[player.id].active;
 

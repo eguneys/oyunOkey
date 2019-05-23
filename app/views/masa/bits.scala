@@ -53,6 +53,7 @@ import oyun.app.ui.ScalatagsTemplate._
     trans.theTable,
     trans.invite,
     trans.casual,
-    trans.rated
+    trans.rated,
+    trans.standByX
   )
 }

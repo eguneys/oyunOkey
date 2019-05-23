@@ -16,6 +16,7 @@
   <string name="inProgress">in progress!</string>
   <string name="play">Play</string>
   <string name="playingRightNow">Playing right now</string>
+  <string name="standByX">Stand by, pairing players, get ready!</string>
   <string name="quickPairing">Quick Pairing</string>
   <string name="playing">Playing</string>
   <string name="finished">Finished</string>
