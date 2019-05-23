@@ -51,6 +51,8 @@ import oyun.app.ui.ScalatagsTemplate._
     trans.roundX,
     trans.points,
     trans.theTable,
-    trans.invite
+    trans.invite,
+    trans.casual,
+    trans.rated
   )
 }

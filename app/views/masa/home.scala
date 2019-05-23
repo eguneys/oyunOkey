@@ -49,9 +49,19 @@ var d=oyunkeyf.StrongSocket.defaults;d.params.flag="masa";d.events.reload=app.up
           ),
           h2(trans.oyunkeyfMasas()),
           div(cls := "scheduled")(
+            scheduled.map { m =>
+              a(href := routes.Masa.show(m.id), dataIcon := masaIconChar(m))(
+                strong(m.name),
+                momentFromNow(m.createdAt)
+              )
+            }
           )
         ),
         st.section(cls := "masa-home__schedule box")(
+          div(cls := "box__top")(
+            h1(trans.masas())
+          ),
+          div(cls := "masa-chart")
         ),
         div(cls := "masa-home__list box")(
         )

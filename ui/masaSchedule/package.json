@@ -4,7 +4,9 @@
   "description": "oyunkeyf.org round",
   "main": "src/main.js",
   "dependencies": {
-    "mithril": "^0.2.0"
+    "dragscroll": "^0.0.8",
+    "mithril": "^0.2.0",
+    "snabbdom": "^0.7.3"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",

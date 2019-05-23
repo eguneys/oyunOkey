@@ -1,4 +1,4 @@
-import m from 'mithril';
+import { h } from 'snabbdom';
 
 var scale = 8;
 var now;
@@ -64,34 +64,53 @@ function splitOverlapping(lanes) {
   return ret;
 }
 
+function masaClass(masa) {
+  var finished = masa.status === 30 || masa.status === 20;
+  var classes = {
+    'tsht-rated': masa.rated,
+    'tsht-casual': !masa.rated,
+    'tsht-finished': finished,
+    'tsht-joinable': !finished,
+  };
+  return classes;
+}
+
 function renderMasa(ctrl, masa) {
   masa.duration = 20;
-  var width = masa.duration * scale;
+  var width = masa.duration * scale * 2.5;
   var left = leftPos(masa.createdAt);
   var paddingLeft = 0;
 
-  return m('a.masa', {
-    key: masa.id,
-    href: '/masa/' + masa.id,
-    style: {
-      width: width + 'px',
-      left: left + 'px',
-      paddingLeft: paddingLeft + 'px'
-    },
-    class: (masa.rated ? ' rated' : ' casual') +
-      (masa.status === 30 || masa.status === 20 ? ' finished' : ' joinable')
+  return h('a.tsht', {
+    class: masaClass(masa),
+    attrs: {
+      href: '/masa/' + masa.id,
+      style: 'width: ' + width + 'px; ' +
+        'left: ' + left + 'px; ' +
+        'paddingLeft: ' + paddingLeft + 'px;'
+    }
   }, [
-    m('span.icon', masa.perf ? {
-      'data-icon': masa.perf.icon,
-      title: masa.perf.name
-    } : null),
-    m('span.name', masa.fullName),
-    // m('span.rounds', displayRounds(masa.rounds)),
-    m('span.variant', masa.variant.name),
-    m('span', masa.rated ? ctrl.trans('rated') : ctrl.trans('casual')),
-    masa.nbPlayers ? m('span.nb-players.text', {
-      'data-icon': 'r'
-    }, masa.nbPlayers) : null
+    h('span.icon', masa.perf ? {
+      attrs: {
+        'data-icon': masa.perf.icon,
+        title: masa.perf.name
+      }
+    } : {}),
+    h('span.body', [
+      h('span.name', masa.fullName),
+      h('span.infos', [
+        // m('span.rounds', displayRounds(masa.rounds)),
+        h('span.text', [
+          masa.variant.name + ' ',
+          masa.rated ? ctrl.trans('rated') : ctrl.trans('casual')
+        ]),
+        masa.nbPlayers ? h('span.nb-players', {
+          attrs: {
+          'data-icon': 'r'
+          }
+        }, masa.nbPlayers) : null
+      ])
+    ])
   ]);
 }
 
@@ -105,24 +124,24 @@ function renderTimeline() {
   var count = (stopTime - startTime) / (minutesBetween * 60 * 1000);
   for (var i = 0; i < count; i++) {
     var str = timeString(time);
-    timeHeaders.push(m('div', {
-      key: str,
-      class: 'timeheader' + (time.getMinutes() === 0 ? ' hour' : ''),
-      style: {
-        left: leftPos(time.getTime()) + 'px'
+    timeHeaders.push(h('div.timeheader', {
+      class: {
+        hour: !time.getMinutes()
+      },
+      attrs: {
+        style: 'left: ' + leftPos(time.getTime()) + 'px'
       }
     }, str));
     time.setUTCMinutes(time.getUTCMinutes() + minutesBetween);
   }
 
-  return m('div.timeline',
-           timeHeaders,
-           m('div.timeheader.now', {
-             style: {
-               left: leftPos(now) + 'px'
-             }
-           })
-          );
+  timeHeaders.push(h('div.timeheader.now', {
+    attrs: { style: 'left: ' +  leftPos(now) + 'px' }
+  }));
+
+
+  return h('div.timeline',
+           timeHeaders);
 }
 
 // converts Date to "%H:%M" with leading zeros
@@ -135,32 +154,39 @@ function leftPos(time) {
 }
 
 
-module.exports = function(ctrl) {
-  now = (new Date()).getTime();
+export default function(ctrl) {
+  now = Date.now();
   startTime = now - 3 * 60 * 60 * 1000;
   stopTime = startTime + 10 * 60 * 60 * 1000;
 
-  var masas = ctrl.data.finished.concat(ctrl.data.started).concat(ctrl.data.created);
-  ctrl.data.userMasas = masas;
+  const data = ctrl.data();
+
+  var masas = data.finished.concat(data.started).concat(data.created);
+  data.userMasas = masas;
 
   // group system masas into dedicated lanes for PerfType
   var masaLanes = splitOverlapping(
-    group(ctrl.data.userMasas, laneGrouper));
-  return m('div.schedule.dragscroll', {
-    config: function(el, isUpdate) {
-      if (isUpdate) return;
-      var bitLater = now + (15 * 60 * 1000);
-      el.scrollLeft = leftPos(bitLater - el.clientWidth / 2 / scale * 60 * 1000);
-    }
-  }, [
-    renderTimeline(),
-    masaLanes.filter(function(lane) {
-      return lane.length > 0;
-    }).map(function(lane) {
-      return m('div.masaline',
-               lane.map(function(masa) {
-                 return renderMasa(ctrl, masa);
-               }));
-    })
+    group(data.userMasas, laneGrouper));
+  return h('div.masa-chart', [
+    h('div.masa-chart__inner.dragscroll.', {
+      hook: {
+        insert: vnode => {
+          const el = vnode.elm;
+          var bitLater = now + (15 * 60 * 1000);
+          el.scrollLeft = leftPos(bitLater - el.clientWidth / 2 / scale * 60 * 1000);
+          
+        }
+      }
+    }, [
+      renderTimeline(),
+      ...masaLanes.filter(function(lane) {
+        return lane.length > 0;
+      }).map(function(lane) {
+        return h('div.masaline',
+                 lane.map(function(masa) {
+                   return renderMasa(ctrl, masa);
+                 }));
+      })
+    ])
   ]);
 };

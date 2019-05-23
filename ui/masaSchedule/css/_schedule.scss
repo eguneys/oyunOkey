@@ -1,0 +1,106 @@
+$c-masa: #303e43;
+$c-masa-user: #888;
+$c-masa-hourly: #3d9333;
+
+.masa-chart {
+  min-height: 400px;
+  position: relative;
+  user-select: none;
+  .spinner {
+    width: 120px;
+    height: 120px;
+    padding-top: 120px;
+    opacity: 0.7;
+  }
+  &__inner {
+    position: relative;
+    overflow-x: scroll;
+    padding-top: 2.3em;
+    border-top: $border;
+    cursor: move;
+  }
+  .timeline {
+    position: absolute;
+    top: 0;
+    height: 100%;
+  }
+  .masaline {
+    position: relative;
+    height: 2.5em;
+    &.large {
+      height: 4em;
+    }
+  }
+  .timeheader {
+    position: absolute;
+    display: inline;
+    height: 100%;
+    border-left: 1px dashed $c-border;
+    padding: 3px 6px;
+    &.hour {
+      font-weight: bold;
+      border-left-style: solid;
+    }
+    &.now {
+      top: 1.6em;
+      height: calc(100% - 1.6em);
+      margin-left: 1px;
+      border-left: 3px dashed $c-accent;
+    }
+  }
+}
+
+.tsht {
+  @extend %box-neat, %flex-center;
+  position: absolute;
+  padding: 4px 0;
+  background-color: $c-masa;
+  white-space: nowrap;
+  color: #fff;
+  &:hover, &:focus {
+    color: #fff;
+  }
+  &-joinable:hover {
+    filter: brightness(1.08);
+  }
+  &-finished {
+    opacity: 0.7;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3) inset;
+  }
+  &-user-created {
+    background-color: $c-masa-user;
+  }
+  span {
+    margin-right: 4px;
+  }
+  .icon {
+    font-size: 1.3em;
+    line-height: 1;
+    margin: -4px 2px -1px 4px;
+    &::before {
+      vertical-align: middle;
+    }
+  }
+  .name, .body {
+    @extend %nowrap-ellipsis;
+  }
+  .name {
+    display: inline-block;
+    vertical-align: top;
+    max-width: 66%;
+  }
+  .body {
+    flex: 1 0;
+    margin-right: 0;
+  }
+  .infos {
+    display: inline-flex;
+  }
+  .infos .text {
+    @extend %ellipsis;
+    flex: 1 1;
+  }
+  .infos .nb-players {
+    flex: 0 0 auto;
+  }
+}

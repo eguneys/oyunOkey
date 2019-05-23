@@ -1,19 +1,31 @@
-import ctrl from './ctrl';
 import view from './view';
-import m from 'mithril';
+import { init } from 'snabbdom';
+import klass from 'snabbdom/modules/class';
+import attributes from 'snabbdom/modules/attributes';
+import dragscroll from 'dragscroll';
 
-module.exports = function(element, opts) {
+const patch = init([klass, attributes]);
 
-  var controller = new ctrl(opts);
+dragscroll;
 
-  m.module(element, {
-    controller: function() {
-      return controller;
-    },
-    view: view
-  });
+export function app(element, env) {
+  let vnode, ctrl = {
+    data: () => env.data,
+    trans: oyunkeyf.trans(env.i18n)
+  };
+
+  function redraw() {
+    vnode = patch(vnode || element, view(ctrl));
+  }
+
+  redraw();
+
+  setInterval(redraw, 3700);
 
   return {
-    update: controller.update
+    update: d => {
+      env.data = d;
+      redraw();
+    }
   };
 };

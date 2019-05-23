@@ -51,9 +51,9 @@ trait DateHelper { self: I18nHelper =>
 
   // def momentFormat(date: DateTime): Html = momentFormat(date, "calendar")
 
-  // def momentFromNow(date: DateTime)(implicit ctx: Context) = Html {
-  //   s"""<time class="moment-from-now" title="${showDate(date)}" datetime="${isoDate(date)}"></time>"""
-  // }
+  def momentFromNow(date: DateTime): Frag = {
+    timeTag(cls := s"timeago", datetimeAttr := isoDate(date))
+  }
 
   def absClientDateTime(date: DateTime): Frag =
     timeTag(cls := "timeago abs", datetimeAttr := isoDate(date))("-")
