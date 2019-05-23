@@ -1,18 +1,28 @@
-import m from 'mithril';
-import ctrl from './ctrl';
+import { init } from 'snabbdom';
+import klass from 'snabbdom/modules/class';
+import attributes from 'snabbdom/modules/attributes';
+
+const patch = init([klass, attributes]);
+
+import makeCtrl from './ctrl';
 import view from './view/main';
 
-module.exports = function(element, opts) {
-  var controller = new ctrl(opts);
+export function start(opts) {
+  opts.classes = opts.element.getAttribute('class');
+  
+  let vnode, ctrl;
 
-  m.module(element, {
-    controller: function() {
-      return controller;
-    },
-    view: view
-  });
+  function redraw() {
+    vnode = patch(vnode, view(ctrl));
+  }
+
+  ctrl = new makeCtrl(opts, redraw);
+  
+  const blueprint = view(ctrl);
+  opts.element.innerHTML = '';
+  vnode = patch(opts.element, blueprint);
 
   return {
-    socketReceive: controller.socket.receive
+    socketReceive: ctrl.socket.receive
   };
-};
+}

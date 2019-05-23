@@ -22,7 +22,8 @@ object side {
           systemName(m.system).capitalize
         )
       )
-    )
+    ),
+      views.html.chat.frag
   )
 
 }

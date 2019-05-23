@@ -1,50 +1,39 @@
-import m from 'mithril';
-import { util } from 'okeyground';
+import { h } from 'snabbdom';
+import { spinner, bind, dataIcon } from './util';
 
 function orJoinSpinner(ctrl, f) {
-  return ctrl.vm.joinSpinner ? m.trust(oyunkeyf.spinnerHtml) : f();
+  return ctrl.joinSpinner ? spinner() : f();
 }
 
-function withdraw(ctrl) {
+export function withdraw(ctrl) {
   return orJoinSpinner(ctrl, function() {
-    return m('button.button.right.text', {
-      'data-icon': 'b',
-      onclick: ctrl.withdraw
-    }, ctrl.trans('withdraw'));
+    return h('button.fbt.text', {
+      attrs: dataIcon('b'),
+      hook: bind('click', ctrl.withdraw, ctrl.redraw)
+    }, ctrl.trans.noarg('withdraw'));
   });
 }
 
-function join(ctrl, side) {
+export function join(ctrl, side) {
   return orJoinSpinner(ctrl, function() {
-    return m('button.button.right.text.glowed', {
-      'data-icon': 'G',
-      onclick: util.partial(ctrl.join, side)
+    return h('button.fbt.text.highlight', {
+      attrs: { 'data-icon': 'G' },
+      hook: bind('click', _ => {
+        ctrl.join();
+      }, ctrl.redraw)
     }, ctrl.trans('join'));
   });
 }
 
-function seatInvite(ctrl, side) {
-  return m('button.button.right.text.invite', {
-    // 'data-icon': 'G',
-    onclick: util.partial(ctrl.invite, side)
+export function invite(ctrl) {
+  return h('button.fbt.text.invite', {
+    hook: bind('click', _ => {
+      ctrl.invite();
+    })
   }, ctrl.trans('invite'));
 }
 
-function seatJoin(ctrl, side) {
-  return m('button.button.right.text', {
-//    'data-icon': 'G',
-    onclick: util.partial(ctrl.join, side)
-  }, ctrl.trans('join'));
+export function joinWithdraw(ctrl) {
+  return (ctrl.data.isFinished) ? null : (
+    ctrl.data.me && ctrl.data.me.active ? withdraw(ctrl) : join(ctrl));
 }
-
-module.exports = {
-  withdraw: withdraw,
-  join: join,
-  seatJoin: seatJoin,
-  seatInvite: seatInvite,
-  orJoinSpinner: orJoinSpinner,
-  joinWithdraw: function(ctrl) {
-    return (ctrl.data.isFinished) ? null : (
-      ctrl.data.me && ctrl.data.me.active ? withdraw(ctrl) : join(ctrl));
-  }
-};

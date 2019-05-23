@@ -1,55 +1,54 @@
-import m from 'mithril';
+import { h } from 'snabbdom';
+import { dataIcon } from './util';
 
 function clock(ctrl) {
-  var d = ctrl.data;
-
-  if (d.isFinished) return;
+  const d = ctrl.data;
+  if (d.isFinished) return null;
 
   var playersToStart = 4 - d.nbPlayers;
 
   var children = [];
   if (playersToStart > 0) {
     children.push(
-      m('div.players',
-        [m('span.shy', ctrl.trans('waitingPlayers')),
-         m('span.time.text', playersToStart)]));
+      h('div.players',
+        [h('span.shy', ctrl.trans('waitingPlayers')),
+         h('span.time.text', playersToStart)]));
   } else if (d.rounds && (d.nbRounds || d.nbRounds === 0)) {
-    children.push(m('div.round', [d.nbRounds, '/', d.rounds]));
+    children.push(h('div.round', [d.nbRounds, '/', d.rounds]));
   } else if (d.scores) {
-    children.push(m('div.round', [d.scores, ' ', ctrl.trans('points')]));
+    children.push(h('div.round', [d.scores, ' ', ctrl.trans('points')]));
   }
 
-  return m('div.clock', children);
+  return h('div.clock', children);
 }
 
 function image(d) {
-  if (d.isFinished) return;
-  return m('i.img', {
-    'data-icon': '|'
+  if (d.isFinished) return null;
+  return h('i.img', {
+    attrs: dataIcon('g') // '|'
   });
 }
 
 function title(ctrl) {
   var d = ctrl.data;
-
-  return m('h1', [
+  return h('h1', (
     d.greatPlayer ? [
-      m('a', {
-        href: d.greatPlayer.url,
-        target: '_blank'
+      h('a', {
+        attrs: {
+          href: d.greatPlayer.url,
+          target: '_blank'
+        }
       }, d.greatPlayer.name),
       ' ',
       ctrl.trans('theTable')
     ] : d.fullName
-  ]);
+  ));
 }
 
-module.exports = function(ctrl) {
-  return [
-    m('div.header', [
-      image(ctrl.data),
-      title(ctrl),
-      clock(ctrl)
-    ])
-  ];
-};
+export default function(ctrl) {
+  return h('div.masa__main__header', [
+    image(ctrl.data),
+    title(ctrl),
+    clock(ctrl)
+  ]);
+}

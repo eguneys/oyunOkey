@@ -1,19 +1,18 @@
 import xhr from './xhr';
 
-module.exports = function(send, ctrl) {
-  this.send = send;
+export default function(send, ctrl) {
 
-  var handlers = {
-    reload: function() {
-      xhr.reloadMasa(ctrl);
-    }
+  const handlers = {
+    reload: ctrl.askReload
   };
 
-  this.receive = (type, data) => {
-    if (handlers[type]) {
-      handlers[type](data);
-      return true;
+  return {
+    send,
+    receive(type, data) {
+      if (handlers[type]) {
+        return handlers[type](data);
+      }
+      return false;
     }
-    return false;
   };
 };

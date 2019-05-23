@@ -5,7 +5,8 @@
   "main": "src/main.js",
   "dependencies": {
     "mithril": "^0.2.3",
-    "okeyground": "^1.0.4"
+    "okeyground": "^1.0.4",
+    "snabbdom": "^0.7.3"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",

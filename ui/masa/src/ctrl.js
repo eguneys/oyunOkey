@@ -1,24 +1,23 @@
-import m from 'mithril';
-import socket from './socket';
+import makeSocket from './socket';
 import xhr from './xhr';
 import { myCurrentGameId } from './masa';
 
-module.exports = function(env) {
-  this.data = env.data;
-  this.userId = env.userId;
+export default function MasaController(opts, redraw) {
+  this.pages = {};
 
-  this.playerId = env.data.playerId;
-  this.seatId = env.data.seatId;
+  this.opts = opts;
+  this.data = opts.data;
+  this.redraw = redraw;
 
-  this.socket = new socket(env.socketSend, this);
+  this.userId = opts.userId;
+  this.playerId = opts.data.playerId;
+  this.seatId = opts.data.seatId;
 
-  this.vm ={
-    pages: {},
-    joinSpinner: false
-  };
+  this.trans = oyunkeyf.trans(opts.i18n);
+
+  this.socket = makeSocket(opts.socketSend, this);
 
   this.reload = (data) => {
-    //if (this.data.isStarted !== data.isStarted) m.redraw.strategy('all');
     this.data = data;
     this.playerId = data.playerId;
     this.seatId = data.seatId;
@@ -34,8 +33,25 @@ module.exports = function(env) {
   };
 
   this.loadPage = (data) => {
-    this.vm.pages[data.page] = data.players;
+    this.pages[data.page] = data.players;
   };
+
+  this.invite = (side) => {
+    xhr.invite(this, side);
+    this.vm.joinSpinner = true;
+  };
+
+  this.join = (side) => {
+    xhr.join(this, side);
+    this.vm.joinSpinner = true;
+  };
+
+  this.withdraw = () => {
+    xhr.withdraw(this);
+    this.vm.joinSpinner = true;
+  };
+
+
   this.loadPage(this.data.standing);
   // this.loadPage({ page: 1, players: [{
   //   rank: 1,
@@ -61,22 +77,6 @@ module.exports = function(env) {
   //   }
   // }] });
 
-  this.invite = (side) => {
-    xhr.invite(this, side);
-    this.vm.joinSpinner = true;
-  };
-
-  this.join = (side) => {
-    xhr.join(this, side);
-    this.vm.joinSpinner = true;
-  };
-
-  this.withdraw = () => {
-    xhr.withdraw(this);
-    this.vm.joinSpinner = true;
-  };
-
   redirectToMyGame();
 
-  this.trans = oyunkeyf.trans(env.i18n);
 };

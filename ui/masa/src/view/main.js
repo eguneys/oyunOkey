@@ -1,26 +1,32 @@
-import m from 'mithril';
-import { util } from 'okeyground';
+import { h } from 'snabbdom';
 
-import created from './created';
-import started from './started';
-import finished from './finished';
+import * as created from './created';
+import * as started from './started';
+import * as finished from './finished';
+
+import { onInsert } from './util';
 
 module.exports = function(ctrl) {
   var handler;
+
   if (ctrl.data.isStarted) handler = started;
   else if (ctrl.data.isFinished) handler = finished;
   else handler = created;
 
-  var side = handler.side(ctrl);
-
-  return [
-    side ? m('div#masa_side', side) : null,
-    m('div', {
-      class: util.classSet({
-        'content_box no_padding masa_box masa_show': true,
-        'finished': ctrl.data.isFinished
+  return h('main.' + ctrl.opts.classes, [
+    h('aside', {
+      hook: onInsert(el => {
+        $(el).replaceWith(ctrl.opts.$side);
+        ctrl.opts.chat && oyunkeyf.makeChat(ctrl.opts.chat);
       })
-    },
-      handler.main(ctrl))
-  ];
+    }),
+    handler.table(ctrl),
+    h('div.masa__main',
+      h('div.box.' + handler.name, {
+        class: { 
+          'masa__main-finished': ctrl.data.isFinished
+        }
+      }, handler.main(ctrl))
+     )
+  ]);
 };

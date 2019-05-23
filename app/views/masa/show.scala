@@ -41,7 +41,7 @@ safeJsonValue(Json.obj(
 )(frag(
   main(cls := s"masa")(
     st.aside(cls := "masa__side")(masa.side(m)),
-    div(cls := "masa_main")(div(cls := "box")),
+    div(cls := "masa__main")(div(cls := "box")),
     m.isCreated option div(cls := "masa__faq")(
       faq(m.system.some)
     )

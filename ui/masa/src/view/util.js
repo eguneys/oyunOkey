@@ -1,47 +1,79 @@
-import m from 'mithril';
+import { h } from 'snabbdom';
 
-var boardContent = m('div.og-table-wrap', m('div.og-table'));
-
-function miniBoard(game) {
-  var gameSide = game.side ? '/' + game.side : '';
-  return m('a', {
-    key: game.id,
-    href: '/' + game.id + gameSide,
-    class: 'mini_board live_' + game.id + ' parse_fen is2d',
-    'data-side': game.side,
-    'data-fen': game.fen,
-    config: function(el, isUpdate) {
-      if (!isUpdate) oyunkeyf.parseFen($(el));
+export function bind(eventName, f, redraw) {
+  return {
+    insert(vnode) {
+      vnode.elm.addEventListener(eventName, e => {
+        const res = f(e);
+        if (redraw) redraw();
+        return res;
+      });
     }
-  }, boardContent);
+  };
 }
 
-module.exports = {
-  usernameOrAnon: function(ctrl, pid) {
-    var data = ctrl.data;
-    var p = data.players[pid];
-    if (!p) return 'Anonymous';
+export function onInsert(f) {
+  return {
+    insert: vnode => {
+      f(vnode.elm);
+    }
+  };
+}
 
-    return  p.ai ? ctrl.trans('aiBot', p.ai) : (p.name || 'Anonymous');
-  },
-  player: function(p, tag) {
-    var ratingDiff;
-    tag = tag || 'a';
-    if (p.ratingDiff > 0) ratingDiff = m('span.positive[data-icon=N]', p.ratingDiff);
-    else if (p.ratingDiff < 0) ratingDiff = m('span.negative[data-icon=M]', -p.ratingDiff);
-    var rating = (p.rating && p.rating > 0) ? (p.rating + p.ratingDiff): null;
-    var fullName = (p.name || 'Anonymous');
-    var attrs = {
-      class: 'ulpt user_link' + (fullName.length > 15 ? ' long' : '')
-    };
-    return {
-      tag: tag,
-      attrs: attrs,
-      children: [
-        fullName,
-        m('span.progress', [rating, ratingDiff])
-      ]
-    };
-  },
-  miniBoard: miniBoard
-};
+export function miniBoard(game) {
+  var gameSide = game.side ? '/' + game.side : '';
+  return h('a.mini_board.parse-fen.is2d.mini-board-' + game.id, {
+    key: game.id,
+    attrs: {
+      href: '/' + game.id + gameSide,
+      'data-side': game.side,
+      'data-fen': game.fen,
+    },
+    hook: {
+      insert(vnode) {
+        oyunkeyf.parseFen($(vnode.elm));
+      }
+    }
+  }, [
+    h('div.cg-wrap')
+  ]);
+}
+
+export function usernameOrAnon(ctrl, pid) {
+  var data = ctrl.data;
+  var p = data.players[pid];
+  if (!p) return 'Anonymous';
+
+  return  p.ai ? ctrl.trans('aiBot', p.ai) : (p.name || 'Anonymous');
+}
+
+export function dataIcon(icon) {
+  return { 'data-icon': icon };
+}
+
+
+export function playerName(p) {
+  return p.name;
+}
+
+export function player(p, tag) {
+  const fullName = playerName(p);
+
+  return h('a.ulpt.user-link' + (fullName.length > 15 ? '.long':''), {
+    attrs: { href: '/@/' + p.name }
+  }, [
+    h('span.name', fullName),
+    h('span.rating', ' ' + p.rating)
+  ]);
+
+}
+
+export function spinner() {
+  return h('div.spinner', [
+    h('svg', { attrs: { viewBox: '0 0 40 40' } }, [
+      h('circle', {
+        attrs: { cx: 20, cy: 20, r: 18, fill: 'none' }
+      })
+    ])
+  ]);
+}
