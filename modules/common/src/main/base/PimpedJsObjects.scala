@@ -20,4 +20,7 @@ final class PimpedJsObject(js: JsObject) {
       case (key, value) if value != JsNull => key -> value
     }
   }
+
+  def get[A: Reads](key: String): Option[A] =
+    (js \ key).asOpt[A]
 }

@@ -1,0 +1,9 @@
+.main-board {
+  @extend %square34;
+  &__preload {
+    position: absolute;
+  }
+  .cg-wrap {
+    @extend %abs-100;
+  }
+}

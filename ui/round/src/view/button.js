@@ -1,50 +1,56 @@
-import m from 'mithril';
-import okeyground from 'okeyground';
+import { h } from 'snabbdom';
+import * as util from '../util';
 
-const { util, util: { partial, classSet } } = okeyground;
+export function standard(ctrl, condition, icon, hint, socketMsg, onclick) {
+  // disabled if condition callback is provided and is falsy
+  var enabled = () => !condition || condition(ctrl.data);
+  return h('button.fbt', {
+    attrs: {
+      disabled: !enabled(),
+      title: ctrl.trans.noarg(hint)
+    },
+    hook: util.bind('click', _ => {
+      if (enabled())
+        onclick ? onclick() : ctrl.socket.sendLoading(socketMsg);
+    })
+  }, [
+    h('span', util.justIcon(icon))
+  ]);
+}
 
-module.exports = {
-  standard: function(ctrl, condition, icon, hint, socketMsg, onclick) {
-    // disabled if condition callback is provided and is falsy
-    var enabled = !condition || condition(ctrl.data);
-    return m('button', {
-      class: 'button hint--bottom ' + socketMsg + classSet({
-        ' disabled': !enabled
-      }),
-      'data-hint': hint,
-      onclick: enabled ? onclick || partial(ctrl.socket.sendLoading, socketMsg, null) : null
-    }, m('span', {
+export function sortPairs(ctrl, icon, hint, onclick) {
+  return h('button.fbt', {
+    hook: util.bind('click', onclick)
+  }, h('span', {
+    attrs: {
       'data-icon': icon
-    }));
-  },
-  sortPairs: function(ctrl, icon, hint, onclick) {
-    return m('button', {
-      class: 'button hint--bottom',
-      'data-hint': hint,
-      onclick: onclick
-    }, m('span', {
-      'data-icon': icon
-    }));
-  },
-  move: function(ctrl, condition, icon, hint, onclick) {
-    return m('button', {
-      class: 'button hint--bottom move ' + util.classSet({
-        enabled: (condition && condition())
-      }),
-      'data-hint': hint,
-      onclick: onclick
-    }, m('span', {
-      'data-icon': icon
-    }));
-  },
-  followUp: function(ctrl) {
-    var d = ctrl.data;
+    }
+  }));
+}
 
-    return m('div.follow_up', [
-      d.masa ? m('a.text.button.strong.glowed', {
+export function move(ctrl, condition, icon, hint, onclick) {
+  return h('button.fbt', {
+    attrs: {
+      enabled: (condition && condition())
+    },
+    hook: util.bind('click', onclick)
+  }, h('span', {
+    attrs: {
+      'data-icon': icon
+    }
+  }));
+}
+
+export function followUp(ctrl) {
+  var d = ctrl.data;
+
+  return h('div.follow-up', [
+    d.game.masaId ? h('a.text.fbt.strong.glowing', {
+      attrs: {
         'data-icon': 'G',
-        href: '/masa/' + d.masa.id
-      }, ctrl.trans('viewMasa')) : null
-    ]);
-  }
-};
+        href: '/masa/' + d.game.masaId
+      },
+      hook: util.bind('click', ctrl.setRedirecting)
+    }, ctrl.trans('viewMasa')) : null
+  ]);
+}

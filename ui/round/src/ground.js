@@ -1,13 +1,16 @@
-import okeyground from 'okeyground';
-import { game } from 'game';
-import util from './util';
+import { h } from 'snabbdom';
+import Okeyground from 'okeyground';
+import * as util from './util';
 
 function makeFen(fen) {
   return util.fenStore.get(fen);
 };
 
-function makeConfig(data) {
+function makeConfig(ctrl) {
+  const data = ctrl.data, hooks = ctrl.makeOgHooks();
   var fen = makeFen(data.game.fen);
+
+  var isPlaying = ctrl.isPlaying();
 
   return {
     fen: fen,
@@ -17,13 +20,19 @@ function makeConfig(data) {
     withTore: !!data.game.variant.key.match(/duzokey/),
     movable: {
       free: false,
-      board: game.isPlayerPlaying(data),
-      dests: game.isPlayerPlaying(data) ? data.possibleMoves : []
+      board: isPlaying,
+      dests: isPlaying ? data.possibleMoves : [],
+      events: {
+        after: hooks.onUserMove
+      }
+    },
+    events: {
+      move: hooks.onMove
     }
   };
 }
 
-function make(data, userMove, onMove) {
+export function make(data, userMove, onMove) {
   var config = makeConfig(data);
   config.movable.events = {
     after: userMove
@@ -34,16 +43,16 @@ function make(data, userMove, onMove) {
   return new okeyground.controller(config);
 }
 
-function reload(ground, data) {
+export function reload(ground, data) {
   ground.set(makeConfig(data));
 }
 
-function end(ground) {
+export function end(ground) {
   ground.stop();
 }
 
-module.exports = {
-  make: make,
-  reload: reload,
-  end: end
-};
+export function render(ctrl) {
+  return h('div.cg-wrap', {
+    hook: util.onInsert(el => ctrl.setOkeyground(Okeyground(el, makeConfig(ctrl))))
+  });
+}

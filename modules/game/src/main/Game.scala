@@ -65,6 +65,8 @@ case class Game(
 
   // def updatedAtOrCreatedAt = updatedAt | createdAt
 
+  def table = toOkey.situation.table
+
   lazy val toOkey: OkeyGame = {
     val pieces = binaryPieces map BinaryFormat.piece.read
 

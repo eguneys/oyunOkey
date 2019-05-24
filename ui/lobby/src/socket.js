@@ -1,4 +1,3 @@
-import m from 'mithril';
 import hookRepo from './hookRepo';
 
 export default function LobbySocket(send, ctrl) {

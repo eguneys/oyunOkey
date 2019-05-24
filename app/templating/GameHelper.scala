@@ -7,6 +7,8 @@ import oyun.game.{ Game, Player, Pov, Namer }
 import oyun.user.{ User, UserContext }
 import oyun.i18n.{ I18nKeys }
 
+import controllers.routes
+
 import oyun.app.ui.ScalatagsTemplate._
 
 trait GameHelper { self: I18nHelper with UserHelper =>
@@ -22,18 +24,38 @@ trait GameHelper { self: I18nHelper with UserHelper =>
   //   // val p1 = playerText(player,
   // }
 
+  def playerUsername(player: Player): Frag =
+    player.aiLevel.fold[Frag](
+      player.userId.flatMap(lightUser).fold[Frag](oyun.user.User.anonymous) { user =>
+        frag(user.name)
+      }
+    ) { level => raw(s"Bot $level") }
+
   def gameVsText(game: Game): String =
     Namer.gameVsText(game)(lightUser)
 
   def playerLink(
     player: Player,
-    withOnline: Boolean = true)(implicit ctx: UserContext) = raw {
+    cssClass: Option[String] = None,
+    withOnline: Boolean = true)(implicit ctx: UserContext): Frag = {
 
-    player.userId match {
-      case _ =>
+    player.userId.flatMap(lightUser) match {
+      case None =>
         val klass = ""
-        val content = User.anonymous
-        s"""<span class="user_link$klass">$content</span>"""
+        span(cls := s"user_link$klass")(
+          (player.aiLevel) match {
+            case Some(level) => s"Bot $level"
+            case _ => User.anonymous
+          }
+        )
+      case Some(user) => frag(
+        a(cls := userClass(user.id, cssClass, withOnline)
+          //href := s"${routes.User show user.name}"
+        )(
+          withOnline option frag(lineIcon(user), " "),
+            playerUsername(player)
+        )
+      )
     }
 
   }

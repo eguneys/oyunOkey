@@ -1,0 +1,261 @@
+@import 'board-2d';
+
+/*
+ * rows 2
+ * cols 16
+ *
+ * top
+ *   rows 7
+ *   cols 16
+ *
+ * opens
+ *   rows 8
+ *   cols 20
+ *
+ **/
+
+
+.og-table-wrap {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  line-height: 0;
+  user-select: none;
+}
+
+.og-table {
+  height: 100%;
+  width: 100%;
+  position: relative
+}
+
+.og-top {
+  position: relative;
+  width: 100%;
+  height: 75%;
+}
+
+.og-top .oc {
+  position: absolute;
+}
+
+.og-top .oc,
+.og-top>piece,
+.og-top>.piece-holder {
+  height: 14.2%;
+  width: 6.25%;
+}
+
+.og-top .piece-holder {
+  position: absolute;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.6);
+}
+
+.og-top .mgosterge {
+  bottom: -1%;
+  /* column 14 */
+  left: 81.25%;
+}
+
+.og-top piece.mmiddleCount {
+  cursor: pointer;
+  bottom: -1%;
+  /* column 13 */
+  left: 74%;
+}
+
+.og-top piece.mmiddleCount {
+  box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.6);
+/*  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6); */
+}
+
+.og-top piece.mmiddleCount:not(.dragging)::before {
+  position: absolute;
+  top: calc(50%);
+  left: calc(50% - 5px);
+  color: black;
+  font-size: 10px;
+  font-weight: bold;
+  opacity: 0.9;
+  content: attr(data-middle-count);
+}
+
+
+.og-top piece.dup,
+.og-top .piece-holder.dup {
+  top: 14.2%;
+  left: 1%
+}
+
+.og-top piece.dleft,
+.og-top .piece-holder.dleft {
+  cursor: pointer;
+  bottom: 0%;
+  left: 1%;
+}
+
+.og-top piece.ddown,
+.og-top .piece-holder.ddown {
+  right: 1%;
+  bottom: 0%;
+}
+
+.og-top piece.dright,
+.og-top .piece-holder.dright {
+  top: 14.2%;
+  right: 1%;
+}
+
+.og-opens {
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  border-radius: 2px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  margin: auto;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.og-opens piece.mini,
+.og-opens .oc {
+  height: 12.5%;
+  width: 5%;
+}
+
+.og-opens .oc {
+  position: absolute;
+}
+
+.og-board {
+  cursor: pointer;
+  -webkit-user-select: none;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 22%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
+.og-board .drag-over {
+  position: absolute;
+}
+
+/* http://stackoverflow.com/a/12609315/3995789 */
+piece {
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+}
+
+/* .21.9 .50 */
+.og-board .drag-over,
+.og-board piece {
+  height: 50%;
+  width: 6.25%;
+}
+
+.og-board .wood {
+  position: absolute;
+  height: 100%;
+  width: 3.12%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
+.og-board .wood.right {
+  right: 0;
+}
+
+piece.selected:not(.dragging) {
+  z-index: 2;
+  box-shadow: 0 0 0 2px rgba(0, 85, 80, 0.5);
+}
+
+.last-move {
+  box-shadow: 0 0 10px rgba(155,199,0,0.8) !important;
+}
+
+/* top only box-shadow http://stackoverflow.com/questions/6671375/css-box-shadow-top-and-bottom-only */
+piece.dragging {
+  z-index: 9;
+  cursor: move;
+  box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.6);
+}
+
+piece.dragging.group {
+
+}
+
+.move-dest {
+  box-shadow: inset 0 0 10px rgba(216, 85, 0, 0.9) !important;
+}
+
+.og-top piece.move-dest {
+  box-shadow: inset 0 0 10px rgba(216, 85, 0, 0.9) !important;
+}
+
+.og-board .drag-over,
+.move-dest.drag-over,
+.og-top piece.move-dest.drag-over {
+  box-shadow: inset 0 0 10px 2px rgba(216, 85, 0, 0.9) !important;
+}
+
+/* flipping animations */
+.animating {
+  z-index: 9;
+}
+
+.og-board .flipper {
+  height: 50%;
+  width: 6.25%;
+}
+
+.og-top>.flipper {
+  height: 14.2%;
+  width: 6.25%; 
+}
+
+.flipper .front,
+.flipper .back,
+.flipper piece {
+  height: 100%;
+  width: 100%;
+}
+
+.flipper.mmiddleCount {
+  bottom: 0%;
+  left: 75%;
+}
+
+.flipper {
+  -webkit-transition: transform 0.6s;
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: absolute;
+}
+
+.flipper.hover {
+  -webkit-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+}
+
+.flipper .front,
+.flipper .back {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.flipper .front {
+  z-index: 2;
+}
+
+.flipper .back {
+  -webkit-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+}

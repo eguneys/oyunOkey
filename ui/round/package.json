@@ -4,9 +4,11 @@
   "description": "oyunkeyf.org round",
   "main": "src/main.js",
   "dependencies": {
+    "common": "../common",
     "game": "../game",
     "mithril": "^0.2.0",
-    "okeyground": "^1.0.5"
+    "okeyground": "^1.0.14",
+    "snabbdom": "^0.7.3"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",

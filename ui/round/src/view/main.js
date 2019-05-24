@@ -1,22 +1,16 @@
-import m from 'mithril';
+import { h } from 'snabbdom';
 import okeyground from 'okeyground';
-import renderTable from './table';
+import { renderTable } from './table';
 import renderCrosstable from './crosstable';
+import { render as renderGround } from '../ground';
 
-module.exports = function(ctrl) {
+export function main(ctrl) {
   var d = ctrl.data;
-  return [
-    m('div.top', [
-      m('div', {
-        class: 'oyunkeyf_game'
-      }, [
-        m('div.oyunkeyf_ground', [
-          renderTable(ctrl)
-        ])
+  return h('div.round__app.variant-' + d.game.variant.key, { }, [
+    h('div.round__app__board.main-board', {},
+      [
+        renderGround(ctrl)
       ]),
-      m('div.underboard', [
-        m('div.center', renderCrosstable(ctrl))
-      ])
-    ])
-  ];
+    ...renderTable(ctrl)
+  ]);
 };

@@ -2,10 +2,10 @@ import { game, status } from 'game';
 
 const initialTitle = document.title;
 
-var init = function(ctrl) {
+export function init(ctrl) {
 };
 
-var set = function(ctrl, text) {
+export function set(ctrl, text) {
   if (ctrl.data.player.spectator) return;
   if (!text) {
     if (status.finished(ctrl.data)) {
@@ -17,9 +17,4 @@ var set = function(ctrl, text) {
     }
   }
   document.title = text + " - " + initialTitle;
-};
-
-module.exports = {
-  set: set,
-  init: init
 };

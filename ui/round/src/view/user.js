@@ -1,30 +1,53 @@
-import m from 'mithril';
-import { game } from 'game';
+import { h } from 'snabbdom';
 
-module.exports = function(ctrl, player) {
-  var d = ctrl.data;
+export function aiName(ctrl, level) {
+  return ctrl.trans('aiName', level);
+}
 
-  var rating = player.rating ? player.rating : null;
+export function userHtml(ctrl, player, position) {
+  const d = ctrl.data,
+        user = player.user,
+        rating = player.rating ? player.rating : null,
+        rd = player.ratingDiff,
+        ratingDiff = rd === 0 ? h('span', '±0') : (
+          rd && rd > 0 ? h('good', '+' + rd) : (
+            rd && rd < 0 ? h('bad', '-' + -rd) : undefined
+          )
+        );
 
-  var playerOnGameIcon = m('span.status.hint--top', {
-    'data-hint': ctrl.trans(player.onGame ? 'playerHasJoinedTheGame' : 'playerHasLeftTheGame')
-  }, (player.onGame || !ctrl.vm.firstSeconds) ? m('span', {
-    'data-icon': (player.onGame ? '3' : '0')
-  }) : null);
-
-  return player.user ? [
-    m('a', {
-      class: 'text ulpt user_link ' + (player.user.online ? 'online is-green' : 'offline'),
-      href: '/@/' + player.user.username,
-      target: game.isPlayerPlaying(d) ? '_blank' : '_self',
-      'data-icon': 'r'
+  if (user) {
+    return h(`div.ruser-${position}.ruser.user-link`, {
+      class: {
+        online: player.onGame,
+        offline: !player.onGame
+      }
     }, [
-      player.user.username,
-      rating ? ` (${rating})` : '',
-    ]),
-    playerOnGameIcon
-  ] : m('span.user_link', [
-    player.name || 'Anonymous',
-    playerOnGameIcon
+      h('i.line', {
+        title: ctrl.trans(player.onGame ? 'playerHasJoinedTheGame' : 'playerHasLeftTheGame')
+      }),
+      h('a.text.ulpt', {
+        attrs: {
+          href: '/@/' + user.username,
+          target: ctrl.isPlaying() ? '_blank' : '_self',
+          'data-icon': 'r'
+        }
+      }, [user.username]),
+      rating ? h('rating', rating) : null,
+      ratingDiff
+    ]);
+  }
+
+  return h('div.ruser-${position}.ruser.user-link', {
+    class: {
+      online: player.onGame,
+      offline: !player.onGame
+    }
+  }, [
+    h('i.line', {
+      attrs: {
+        title: ctrl.trans(player.onGame ? 'playerHasJoinedTheGame' : 'playerHasLeftTheGame')
+      }
+    }),
+    h('name', player.name || 'Misafir')
   ]);
 };

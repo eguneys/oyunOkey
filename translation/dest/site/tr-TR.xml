@@ -32,6 +32,7 @@
   <string name="chat">Sohbet</string>
   <string name="chatRoom">Sohbet Odası</string>
   <string name="spectatorRoom">Seyirci Odası</string>
+  <string name="spectators">Seyirciler</string>
   <string name="toggleTheChat">Sohbet aç/kapa</string>
   <string name="talkInChat">Sohbeti Başlat</string>
   <string name="createdBy">Açan</string>

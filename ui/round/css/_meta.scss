@@ -1,0 +1,34 @@
+.game__meta {
+  @extend %box-neat-force;
+  background: $c-bg-box;
+  padding: #{$block-gap * 0.7} $block-gap;
+  section:not(:last-child) {
+    border-bottom: $border;
+    margin-bottom: #{$block-gap * 2 / 3};
+    padding-bottom: #{$block-gap * 2 / 3};
+  }
+  &__infos {
+    @extend %flex-center-nowrap;
+    position: relative;
+    &::before {
+      font-size: 3rem;
+      margin-right: 4%;
+    }
+    p {
+      margin: 0;
+    }
+    time {
+      opacity: 1;
+    }
+  }
+  .status {
+    text-align: center;
+  }
+  &__players {
+    margin-top: .3rem;
+    font-size: 90%;
+  }
+  .game__masa {
+  }
+  
+}

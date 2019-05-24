@@ -32,6 +32,7 @@
   <string name="chat">Chat</string>
   <string name="chatRoom">Chat Room</string>
   <string name="spectatorRoom">Spectator Room</string>
+  <string name="spectators">Spectators</string>
   <string name="toggleTheChat">Chat on/off</string>
   <string name="talkInChat">Start Chat</string>
   <string name="createdBy">Created by</string>

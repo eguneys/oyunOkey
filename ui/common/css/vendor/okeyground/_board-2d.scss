@@ -1,0 +1,62 @@
+$board-image-path: '../images/board';
+
+$numbers: (
+  '1': 'one',
+  '2': 'two',
+  '3': 'three',
+  '4': 'four',
+  '5': 'five',
+  '6': 'six',
+  '7': 'seven',
+  '8': 'eight',
+  '9': 'nine',
+  '10': 'ten',
+  '11': 'eleven',
+  '12': 'twelve',
+  '13': 'thirteen'
+);
+
+.og-table-wrap {
+  /* background-image: url('images/board/istaka740.png'); */
+}
+
+.og-board {
+  width: 100%;
+  background-image: url('../images/board/istakain.png');
+  background-size: 100% 100%;
+}
+
+.og-board .wood {
+  background-image: url('../images/board/istakaside.png');
+  background-size: 100% 100%;
+}
+
+.og-board {
+ /* background-color: brown; */
+}
+
+piece.empty {
+  background-image: url('../images/pieces/e.png');
+}
+piece.fake {
+  background-image: url('../images/pieces/f.png');
+}
+
+/* black */
+
+@each $number, $numberText in $numbers {
+
+  piece.black.#{$numberText} {
+    background-image: url(../images/pieces/l#{$number}.png);
+  }
+  piece.red.#{$numberText} {
+    background-image: url(../images/pieces/l#{$number}.png);
+  }
+  piece.blue.#{$numberText} {
+    background-image: url(../images/pieces/l#{$number}.png);
+  }
+  piece.green.#{$numberText} {
+    background-image: url(../images/pieces/l#{$number}.png);
+  }
+
+}

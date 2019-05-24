@@ -45,17 +45,8 @@ trait AssetHelper { self: I18nHelper =>
     s"""<script src="${staticUrl("javascripts/vendor/jquery.min.js")}"></script>"""
   }
 
-  // val momentjsTag = cdnOrLocal(
-  //   cdn = "//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js",
-  //   test = "window.moment",
-  //   local = staticUrl("vendor/moment/min/moment.min.js"))
+  def roundTag = jsAt(s"compiled/oyunkeyf.round${isProd ?? (".min")}.js", defer = true)
 
-  // def momentLangTag(implicit ctx: oyun.api.Context) = (ctxLang(ctx).language match {
-  //   case "en" => none
-  //   case l => l.some
-  // }).fold(Html("")) { l =>
-  //   jsAt(s"vendor/moment/locale/$l.js", static = true)
-  // }
 
   def embedJsUnsafe(js: String)(implicit ctx: Context): Frag = raw {
     s"""<script>$js</script>"""

@@ -1,15 +1,13 @@
-import m from 'mithril';
-import okeyground from 'okeyground';
-import renderUser from './user';
+import { h } from 'snabbdom';
+import * as renderUser from './user';
 import renderReplay from './replay';
 import { game, status } from 'game';
-import clockView from '../clock/view';
-import button from './button';
+import { renderClock } from '../clock/view';
+import * as button from './button';
 import renderTabs from './tabs';
 import renderExpiration from './expiration';
 import { renderTableScores, renderTableScoreInfo } from './scores';
 
-const { classSet, partial } = okeyground.util;
 
 function compact(x) {
   if (Object.prototype.toString.call(x) === '[object Array]') {
@@ -21,114 +19,76 @@ function compact(x) {
   return x;
 }
 
-function renderClock(ctrl, side, position) {
-  var time = ctrl.clock.data.sides[side];
-  var running = true && ctrl.data.game.player === side;
-  return running ? [
-    m('div', {
-      class: 'clock clock_' + side + ' clock_' + position + ' ' +
-        classSet({
-          'outoftime': !time,
-          'running': running,
-          'emerg': time < ctrl.clock.data.emerg
-        })
-    }, [
-      clockView.showBar(ctrl.clock, time)
-    ])
-  ]: null;
+function isLoading(ctrl) {
+  return ctrl.loading || ctrl.redirecting;
 }
 
-function isSpinning(ctrl) {
-  return ctrl.vm.loading || ctrl.vm.redirecting;
-}
+function loader() { return h('i.ddloader'); }
 
-function spinning(ctrl) {
-  if (isSpinning(ctrl)) return m.trust(oyunkeyf.spinnerHtml);
+function renderTableWith(ctrl, buttons) {
+  return [
+    // replay.render(ctrl),
+    buttons.find(x => !!x) ? h('div.rcontrols', buttons) : null
+  ];
 }
 
 function renderTableEnd(ctrl) {
-  var d = ctrl.data;
-  var buttons = compact(spinning(ctrl) || [
-    button.followUp(ctrl)
+  return renderTableWith(ctrl, [
+    isLoading(ctrl) ? loader() : button.followUp(ctrl)
   ]);
-  return [
-    m('div.control.icons', []),
-    renderSeat(ctrl, d.player, 'bottom'),
-    buttons ? m('div.control.buttons', buttons) : null,
-  ];
 }
 
 function renderTablePlay(ctrl) {
   var d = ctrl.data;
   var trans = ctrl.trans;
+  var loading = isLoading(ctrl);
+  
 
-  var buttons = compact(spinning(ctrl) || [
+  var buttons = loading ? [loader()] : [
     button.sortPairs(ctrl, 'N', trans('sortSeries'), ctrl.sortSeries),
     button.sortPairs(ctrl, 'K', trans('sortPairs'), ctrl.sortPairs)
-  ]);
-
-  // debug
-  // m('button', {
-  //   onclick: function() { ctrl.saveBoard(); }
-  // }, 'save'),
-
+  ];
 
   var icons = [
-    button.move(ctrl, ctrl.okeyground.canCollectOpen, 'C', trans('collectOpen'), ctrl.collectOpen),
-    button.move(ctrl, ctrl.okeyground.canLeaveTaken, 'L', trans('leaveTaken'), ctrl.leaveTaken),
-    button.move(ctrl, ctrl.okeyground.canOpenSeries, 'S', trans('openSeries'), ctrl.openSeries),
-    button.move(ctrl, ctrl.okeyground.canOpenPairs, 'P', trans('openPairs'), ctrl.openPairs)
+    button.move(ctrl, ctrl.canCollectOpen, 'C', trans('collectOpen'), ctrl.collectOpen),
+    button.move(ctrl, ctrl.canLeaveTaken, 'L', trans('leaveTaken'), ctrl.leaveTaken),
+    button.move(ctrl, ctrl.canOpenSeries, 'S', trans('openSeries'), ctrl.openSeries),
+    button.move(ctrl, ctrl.canOpenPairs, 'P', trans('openPairs'), ctrl.openPairs)
   ];
 
   return [
-    (
-      m('div.control.icons', icons)
-    ),
-    m('div.seat_wrap', [
-      renderSeat(ctrl, d.player, 'player', 'bottom'),
-    ]),
-    m('div.control.buttons', buttons)
+    // replay.render(ctrl),
+    h('div.rcontrols', [
+      h('div.ricons', icons),
+      ...buttons
+    ])
   ];
 }
 
-function renderPlayer(ctrl, player) {
-  return player.ai ? m('div.player.on-game', [
-    'Bot AI' + player.ai,
-    m('span.status.hint--top', {
-      'data-hint': ctrl.trans('aiReady')
-    }, m('span', {
-      'data-icon': '3'
-    }))
-  ]) : m('div', {
-    class: 'player ' + player.side + (player.onGame ? ' on-game' : '')
-  },
-           renderUser(ctrl, player)
-   );
+function renderPlayer(ctrl, position) {
+  const player = ctrl.data[position];
+  return player.ai ? h('div.user-link.online.ruser.ruser-' + player.side, [
+    h('i.line'),
+    h('name', renderUser.aiName(ctrl, player.ai))
+  ]) : renderUser.userHtml(ctrl, player, position);
 }
 
-function renderSeat(ctrl, player, povString, clockPosition = 'top') {
-  var expiration = game.playable(ctrl.data) && renderExpiration(ctrl, povString);
+function renderSeat(ctrl, position, clockPosition = 'bottom') {
+  const player = ctrl.data[position];
+  var expiration = game.playable(ctrl.data) && renderExpiration(ctrl, position);
   
-  var children = [renderPlayer(ctrl, player)];
+  var children = [renderPlayer(ctrl, position)];
   
   
   var i = clockPosition === 'bottom' ? 1:0;
   children.splice(i, 0, renderClock(ctrl, player.side, clockPosition));
 
-  var expirationDom = expiration && expiration[1] === povString ? expiration[0] : null;
+  var expirationDom = expiration && expiration[1] === position ? expiration[0] : null;
 
   children.splice(0, 0, expirationDom);
   
 
-  return  m('div.player_wrap', children);
-}
-
-function visualTable(ctrl) {
-  return m('div.oyunkeyf_table_wrap', [
-    m('div', {
-      class: 'oyunkeyf_table'
-    }, okeyground.view(ctrl.okeyground))
-  ]);
+  return  h('div.rseat.seat-' + position, children);
 }
 
 function renderGameStatusWithPanels(ctrl) {
@@ -146,30 +106,15 @@ function renderGameStatus(ctrl) {
            renderReplay(ctrl));
 }
 
-module.exports = function(ctrl) {
+export function renderTable(ctrl) {
   var d = ctrl.data;
 
   return [
-    m('div.table_wrap', [
-      m('div.table_side.table_left', [
-        renderSeat(ctrl, d.opponentLeft, 'opponentLeft'),
-      ]),
-      m('div.table_middle', [
-        m('div.table_over', [
-          renderSeat(ctrl, d.opponentUp, 'opponentUp')]),
-        visualTable(ctrl),
-        m('div.table_over',
-          game.playable(ctrl.data) ? renderTablePlay(ctrl) : renderTableEnd(ctrl))
-      ]),
-      m('div.table_side.table_right',[
-        m('div', {
-          config: function(el, isUpdate) {
-            if (!isUpdate) $(el).html($('.game_masa').show());
-          }
-        }),
-        renderSeat(ctrl, d.opponentRight, 'opponentRight'),
-        renderGameStatus(ctrl)
-      ])
-    ])
+    h('div.round__app__table'),
+    renderSeat(ctrl, 'opponentLeft'),
+    renderSeat(ctrl, 'opponentUp'),
+    renderSeat(ctrl, 'opponentRight'),
+    renderSeat(ctrl, 'player'),
+    ...(game.playable(ctrl.data) ? renderTablePlay(ctrl) : renderTableEnd(ctrl))
   ];
 };

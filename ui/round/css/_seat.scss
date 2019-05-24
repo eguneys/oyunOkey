@@ -1,0 +1,24 @@
+.rseat {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  width: 150px;
+  overflow: hidden;
+  margin: 0 auto;
+
+  &.seat-opponentLeft,
+  &.seat-opponentRight {
+    margin-top: -170%;
+    align-self: center;
+  }
+
+  &.seat-opponentLeft {
+    //margin-left: -200%;
+    transform: translateX(-40%) rotate(-90deg);
+  }
+  &.seat-opponentRight {
+    //margin-left: -200%;
+    transform: translateX(-40%) rotate(90deg);
+  }
+
+}

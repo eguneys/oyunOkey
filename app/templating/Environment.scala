@@ -28,6 +28,7 @@ object Environment
     with UserHelper
     with ForumHelper
     with PaginatorHelper
+    with OkeygroundHelper
     with MasaHelper
     with GameHelper {
 

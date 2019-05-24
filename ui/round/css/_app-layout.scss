@@ -1,0 +1,37 @@
+$seat-width: 30px;
+
+.rcontrols { grid-area: controls }
+.seat-opponentLeft { grid-area: user-left }
+.seat-opponentRight { grid-area: user-right }
+.seat-opponentTop { grid-area: user-top }
+.seat-player { grid-area: user-bottom }
+
+.round__app {
+  display: grid;
+
+  @include breakpoint($mq-col1) {
+
+    grid-template-columns: $seat-width 1fr $seat-width;
+
+    grid-template-areas:
+      '. user-top .'
+      'user-left board user-right'
+      '. user-bottom .'
+      '. controls .';
+
+    .cg-board { box-shadow: none; }
+  }
+
+  @include breakpoint($mq-col2) {
+    grid-template-columns: $seat-width $col2-uniboard-width $seat-width 1fr;
+
+    grid-template-areas:
+      '. user-top . .'
+      'user-left board user-right controls'
+      '. user-bottom . controls';
+
+    grid-column-gap: $block-gap;
+  }
+
+  &__board { grid-area: board; }
+}

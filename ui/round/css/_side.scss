@@ -1,0 +1,12 @@
+.round__side {
+  @extend %flex-column;
+
+  .game__meta {
+    flex: 0 0 auto;
+  }
+}
+
+.mchat {
+  flex: 1 1 0;
+  margin-top: $block-gap;
+}

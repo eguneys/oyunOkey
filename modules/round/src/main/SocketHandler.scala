@@ -4,7 +4,7 @@ import scala.concurrent.Promise
 
 import akka.actor._
 import akka.pattern.{ ask }
-import play.api.libs.json.{ JsObject, Json }
+import play.api.libs.json.{ JsObject, JsNumber, Json, Reads }
 import oyun.common.PimpedJson._
 
 import okey.format.Uci
@@ -25,6 +25,8 @@ private[round] final class SocketHandler(
   hub: oyun.hub.Env,
   messenger: Messenger
 ) {
+
+  import SocketHandler._
 
   private def controller(
     gameId: String,
@@ -54,7 +56,7 @@ private[round] final class SocketHandler(
         case ("p", o) => 
           handlePing(o)
         case ("move", o) => parseMove(o) foreach {
-          case move =>
+          case (move, ackId) =>
             val promise = Promise[Unit]
             promise.future onFailure {
               case _: Exception => socket ! Resync(uid)
@@ -62,7 +64,7 @@ private[round] final class SocketHandler(
             send(HumanPlay(
               playerId, move, promise.some
             ))
-            member push ackEvent
+            member.push(ackMessage(ackId))
         }
         case ("outoftime", _) => send(OutOfTime)
         // case ("bye", _) => socket ! Bye(
@@ -138,7 +140,16 @@ private[round] final class SocketHandler(
     group = d str "group"
     pos = d str "pos"
     move <- Uci.Move.fromStrings(key, piece, group, pos)
-  } yield move
+    ackId = d.get[AckId]("a")
+  } yield (move, ackId)
 
-  private val ackEvent = Json.obj("t" -> "ack")
+  private val ackEmpty = Json.obj("t" -> "ack")
+  private def ackMessage(id: Option[AckId]) = id.fold(ackEmpty) { ackId =>
+    ackEmpty + ("d" -> JsNumber(ackId.value))
+  }
+}
+
+private object SocketHandler {
+  case class AckId(value: Int)
+  implicit val ackIdReads: Reads[AckId] = Reads.of[Int] map AckId.apply
 }

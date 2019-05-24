@@ -2,7 +2,7 @@
   "name": "game",
   "version": "1.0.0",
   "description": "oyunkeyf.org game",
-  "main": "game.js",
+  "main": "main.js",
   "dependencies": {
     "mithril": "^0.2.0"
   },

@@ -6,6 +6,8 @@ import mashup._
 import play.twirl.api.Html
 
 import oyun.api.Context
+import oyun.app.ui.ScalatagsTemplate._
+
 import oyun.common.LightUser
 import oyun.i18n.I18nKeys
 import oyun.rating.{ PerfType, Perf }
@@ -13,38 +15,38 @@ import oyun.user.{ User, UserContext, Perfs }
 
 trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
 
-  def showProgress(progress: Int, withTitle: Boolean = true) = Html {
-    val span = progress match {
-      case 0 => ""
-      case p if p > 0 => s"""<span class="positive" data-icon="N">$p</span>"""
-      case p if p < 0 => s"""<span class="negative" data-icon="M">${math.abs(p)}</span>"""
-    }
-    val title = if (withTitle) """data-hint="${}"""" else ""
-    val klass = if (withTitle) "progress hint--bottom" else "progress"
-    s"""<span $title class="$klass">$span</span>"""
-  }
+  // def showProgress(progress: Int, withTitle: Boolean = true) = Html {
+  //   val span = progress match {
+  //     case 0 => ""
+  //     case p if p > 0 => s"""<span class="positive" data-icon="N">$p</span>"""
+  //     case p if p < 0 => s"""<span class="negative" data-icon="M">${math.abs(p)}</span>"""
+  //   }
+  //   val title = if (withTitle) """data-hint="${}"""" else ""
+  //   val klass = if (withTitle) "progress hint--bottom" else "progress"
+  //   s"""<span $title class="$klass">$span</span>"""
+  // }
 
-  def showPerfRating(rating: Int, name: String, nb: Int, icon: Char, klass: String)(implicit ctx: Context) = Html {
-    val title = s"${nb.localize} oyun içinden $name"
-    val attr = if (klass == "title") "title" else "data-hint"
-    val number = if (nb > 0) rating else "&nbsp;&nbsp;&nbsp;-"
-    s"""<span $attr="$title" class="$klass"><span data-icon="$icon">$number</span></span>"""
-  }
+  // def showPerfRating(rating: Int, name: String, nb: Int, icon: Char, klass: String)(implicit ctx: Context) = Html {
+  //   val title = s"${nb.localize} oyun içinden $name"
+  //   val attr = if (klass == "title") "title" else "data-hint"
+  //   val number = if (nb > 0) rating else "&nbsp;&nbsp;&nbsp;-"
+  //   s"""<span $attr="$title" class="$klass"><span data-icon="$icon">$number</span></span>"""
+  // }
 
-  def showPerfRating(perfType: PerfType, perf: Perf, klass: String)(implicit ctx: Context): Html =
-    showPerfRating(perf.intRating, perfType.name, perf.nb, perfType.iconChar, klass)
-
-
-  def showPerfRating(u: User, perfType: PerfType, klass: String = "hint--bottom")(implicit ctx: Context): Html =
-    showPerfRating(perfType, u perfs perfType, klass)
+  // def showPerfRating(perfType: PerfType, perf: Perf, klass: String)(implicit ctx: Context): Html =
+  //   showPerfRating(perf.intRating, perfType.name, perf.nb, perfType.iconChar, klass)
 
 
-  def showPerfRating(u: User, perfKey: String)(implicit ctx: Context): Option[Html] =
-    PerfType(perfKey) map { showPerfRating(u, _) }
+  // def showPerfRating(u: User, perfType: PerfType, klass: String = "hint--bottom")(implicit ctx: Context): Html =
+  //   showPerfRating(perfType, u perfs perfType, klass)
 
-  def showBestPerf(u: User)(implicit ctx: Context): Option[Html] = u.perfs.bestPerf map {
-    case (pt, perf) => showPerfRating(pt, perf, klass = "hint--bottom")
-  }
+
+  // def showPerfRating(u: User, perfKey: String)(implicit ctx: Context): Option[Html] =
+  //   PerfType(perfKey) map { showPerfRating(u, _) }
+
+  // def showBestPerf(u: User)(implicit ctx: Context): Option[Html] = u.perfs.bestPerf map {
+  //   case (pt, perf) => showPerfRating(pt, perf, klass = "hint--bottom")
+  // }
 
   def lightUser(userId: String): Option[LightUser] = Env.user lightUser userId
 
@@ -178,6 +180,7 @@ trait UserHelper { self: I18nHelper with NumberHelper with StringHelper =>
     s"$name played $nbGames games since $createdAt.$currentRating"
   }
 
-  val lineIcon: String = """<i class="line"></i>"""
-  private def lineIcon(user: Option[LightUser]): String = lineIcon
+  val lineIcon: Frag = i(cls := "line")
+  private def lineIcon(user: Option[LightUser]): Frag = lineIcon
+  def lineIcon(user: LightUser): Frag = lineIcon
 }

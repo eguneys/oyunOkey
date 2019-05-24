@@ -1,5 +1,20 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.playable = playable;
+exports.isPlayerPlaying = isPlayerPlaying;
+exports.isPlayerTurn = isPlayerTurn;
+exports.playedTurns = playedTurns;
+exports.getTurnSide = getTurnSide;
+exports.getTurnPov = getTurnPov;
+exports.getPlayer = getPlayer;
+exports.sideByPly = sideByPly;
+exports.setOnGame = setOnGame;
+exports.setIsGone = setIsGone;
+exports.sides = void 0;
+
 var _status = _interopRequireDefault(require("./status"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -14,6 +29,10 @@ function isPlayerPlaying(data) {
 
 function isPlayerTurn(data) {
   return isPlayerPlaying(data) && data.game.player === data.player.side;
+}
+
+function playedTurns(data) {
+  return data.game.turns;
 }
 
 function getTurnSide(data) {
@@ -36,6 +55,7 @@ function getPlayer(data, side) {
 }
 
 var sides = ["east", "north", "west", "south"];
+exports.sides = sides;
 
 function sideByPly(ply) {
   return sides[ply % 4];
@@ -51,14 +71,3 @@ function setIsGone(data, side, isGone) {
   isGone = isGone && !player.ai;
   player.isGone = isGone;
 }
-
-module.exports = {
-  isPlayerPlaying: isPlayerPlaying,
-  isPlayerTurn: isPlayerTurn,
-  getPlayer: getPlayer,
-  sideByPly: sideByPly,
-  playable: playable,
-  setOnGame: setOnGame,
-  setIsGone: setIsGone,
-  getTurnPov: getTurnPov
-};
