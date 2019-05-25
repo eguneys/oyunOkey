@@ -35,7 +35,7 @@ export function renderClock(ctrl, side, position) {
       } 
     }, [
       showBar(clock, clock.elements[side], millis)
-    ]) : null;
+    ]) : h('div.rclock.rclock-'+position);
 }
 
 export function updateElements(clock, els, millis) {

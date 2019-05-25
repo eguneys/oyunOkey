@@ -1,0 +1,5 @@
+.rmoves {
+  @extend %flex-column;
+  
+  @import 'moves-col2';
+}

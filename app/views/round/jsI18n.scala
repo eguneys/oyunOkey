@@ -11,7 +11,16 @@ object jsI18n {
   }
 
   private val baseTranslations = Vector(
-    
+    trans.aiName,
+    trans.viewMasa,
+    trans.openSeries,
+    trans.openPairs,
+    trans.sortSeries,
+    trans.sortPairs,
+    trans.collectOpen,
+    trans.leaveTaken,
+    trans.gameEnded,
+    trans.nbSecondsToPlayTheFirstMove
   )
 
 }

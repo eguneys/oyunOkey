@@ -120,6 +120,7 @@
   <string name="north">North</string>
   <string name="south">South</string>
   <string name="aiBot">Bot AI%s</string>
+  <string name="aiName">AI%s</string>
   <string name="inviteBot">Invite bot</string>
   <string name="resign">Resign</string>
   <string name="emptySeat">Empty Seat</string>

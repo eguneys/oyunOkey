@@ -4,6 +4,17 @@ import xhr from './xhr';
 import ground from './ground';
 
 export function make(send, ctrl) {
+
+  function reload(o) {
+    xhr.reload(ctrl).then(data => {
+      if (oyunkeyf.socket.getVersion() > data.player.version) {
+        oyunkeyf.reload();
+      } else {
+        ctrl.reload(data);
+      }
+    });
+  }
+
   const handlers = {
     move(o) {
       o.isMove = true;
@@ -17,11 +28,10 @@ export function make(send, ctrl) {
       ctrl.redraw();
     },
     end(scores) {
-      ctrl.data.game.scores = scores.result;
-      ground.end(ctrl.okeyground);
-      ctrl.saveBoard();
-      ctrl.setLoading(true);
-      xhr.reload(ctrl).then(ctrl.reload);
+      // ctrl.endWithData(scores);
+    },
+    endData(o) {
+      ctrl.endWithData(o);
     },
     gone(o) {
       ['east', 'west', 'north', 'south'].forEach(function(side) {
@@ -30,7 +40,8 @@ export function make(send, ctrl) {
           ctrl.redraw();
         }
       });
-    }
+    },
+    reload
   };
 
   return {

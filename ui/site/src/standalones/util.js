@@ -26,6 +26,33 @@ oyunkeyf.storage = (function() {
   return api;
 })();
 
+oyunkeyf.pubsub = (function() {
+  var subs = [];
+  return {
+    on: function(name, cb) {
+      subs[name] = subs[name] || [];
+      subs[name].push(cb);
+    },
+    off: function(name, cb) {
+      if (!subs[name]) return;
+      for (var i in subs[name]) {
+        if (subs[name][i] === cb) {
+          subs[name].splice(i);
+          break;
+        }
+      }
+    },
+    emit: function(name) {
+      return function() {
+        if (!subs[name]) return;
+        var args = Array.prototype.slice.call(arguments, 0);
+        for (var i in subs[name])
+          subs[name][i].apply(null, args);
+      };
+    }
+  };
+})();
+
 oyunkeyf.hasToReload = false;
 oyunkeyf.redirectInProgress = false;
 oyunkeyf.redirect = function(obj) {
@@ -53,6 +80,17 @@ oyunkeyf.reload = function() {
   oyunkeyf.hasToReload = true;
   if (location.hash) location.reload();
   else location.href = location.href;
+};
+
+oyunkeyf.escapeHtml = function(str) {
+  return /[&<>\"\']/.test(str) ?
+    str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#39;')
+    .replace(/"/g, '&quot;') :
+    str;
 };
 
 oyunkeyf.spinnerHtml = '<div class="spinner"><svg viewBox="0 0 40 40"><circle cx=20 cy=20 r=18 fill="none"></circle></svg></div>';
@@ -87,6 +125,12 @@ oyunkeyf.slider = function() {
   );
 };
 
+oyunkeyf.makeChat = function(data, callback) {
+  oyunkeyf.raf(function() {
+    data.loadCss = oyunkeyf.loadCssPath;
+    (callback || $.noop)(OyunkeyfChat.default(document.querySelector('.mchat'), data));
+  });
+};
 
 oyunkeyf.numberFormat = (function() {
   var formatter = false;

@@ -171,6 +171,15 @@ object Event {
     def data = Json.obj("result" ->  result.map(sidesWriter(_)))
   }
 
+  case class EndData(game: Game) extends Event {
+    def typ = "endData"
+
+    def data = Json.obj(
+      "winner" -> game.winner.flatMap(_.name),
+      "status" -> game.status
+    )
+  }
+
   case class Clock(times: Sides[Float]) extends Event {
     def typ = "clock"
     def data = sidesWriter(times.map(d => JsNumber(truncateAt(d, 2))))

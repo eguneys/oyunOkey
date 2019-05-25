@@ -118,7 +118,7 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
       }, 1000);
     }
   };
-  // oyunkeyf.pubsub.on('socket.send', send);
+  oyunkeyf.pubsub.on('socket.send', send);
 
   var scheduleConnect = function(delay) {
     if (options.idle) delay = 10 * 1000 + Math.random() * 10 * 1000;
@@ -178,7 +178,10 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
         return;
       }
       // it's impossible but according to previous login, it happens nonetheless
-      if (m.v > version + 1) return oyunkeyf.reload();
+      if (m.v > version + 1) {
+        oyunkeyf.reload();
+        return;
+      }
       version = m.v;
     }
     switch (m.t || false) {
@@ -191,9 +194,9 @@ oyunkeyf.StrongSocket = function(url, version, settings) {
         ackable.gotAck(m.d);
         break;
       default:
-      // oyunkeyf.pubsub.emit('socket.in.' + m.t)(m.d);
-        var processed = settings.receive && settings.receive(m.t, m.d);
-        if (!processed && settings.events[m.t]) settings.events[m.t](m.d || null, m);
+      oyunkeyf.pubsub.emit('socket.in.' + m.t)(m.d);
+      var processed = settings.receive && settings.receive(m.t, m.d);
+      if (!processed && settings.events[m.t]) settings.events[m.t](m.d || null, m);
     }
   };
 

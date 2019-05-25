@@ -20,7 +20,10 @@ export function standard(ctrl, condition, icon, hint, socketMsg, onclick) {
 
 export function sortPairs(ctrl, icon, hint, onclick) {
   return h('button.fbt', {
-    hook: util.bind('click', onclick)
+    hook: util.bind('click', onclick),
+    attrs: {
+      title: ctrl.trans.noarg(hint)
+    }
   }, h('span', {
     attrs: {
       'data-icon': icon
@@ -29,9 +32,12 @@ export function sortPairs(ctrl, icon, hint, onclick) {
 }
 
 export function move(ctrl, condition, icon, hint, onclick) {
+  var enabled = (condition && condition());
   return h('button.fbt', {
     attrs: {
-      enabled: (condition && condition())
+      enabled: enabled,
+      disabled: !enabled,
+      title: ctrl.trans.noarg(hint)
     },
     hook: util.bind('click', onclick)
   }, h('span', {

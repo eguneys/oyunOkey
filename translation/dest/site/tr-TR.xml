@@ -121,6 +121,7 @@
   <string name="north">Kuzey</string>
   <string name="south">Güney</string>
   <string name="aiBot">Bot AI%s</string>
+  <string name="aiName">Bot%s</string>
   <string name="inviteBot">Bot ekle</string>
   <string name="resign">Terk et</string>
   <string name="emptySeat">Boş Koltuk</string>

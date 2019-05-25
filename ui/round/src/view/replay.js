@@ -1,11 +1,7 @@
-import m from 'mithril';
+import { h } from 'snabbdom';
 import util from '../util';
 import { game, status, uci as gameUci } from 'game';
 import round from '../round';
-import okeyground from 'okeyground';
-
-const partial = okeyground.util.partial;
-const raf = okeyground.util.requestAnimationFrame;
 
 function renderMove(ctrl, step, ply, curPly) {
   var san = ctrl.trans.apply(null, gameUci.transKey(step.san));
@@ -34,24 +30,28 @@ function renderMoves(ctrl, turn) {
   return rows;
 }
 
+function gameEndStatus(ctrl) {
+  return ctrl.trans.noarg('gameEnded');
+}
+
 function renderResult(ctrl) {
-  var result;
+  let result;
   if (status.finished(ctrl.data)) switch(ctrl.data.game.winner) {
     default:
-    result = ctrl.trans('gameEnded');
+    result = gameEndStatus(ctrl);
     break;
   }
 
   if (result || status.aborted(ctrl.data)) {
     var winner = game.getPlayer(ctrl.data, ctrl.data.game.winner);
-    return [
-      m('p.result', result),
-      m('p.status', [
-        //renderStatus(ctrl),
-        winner ? ', ' + ctrl.trans('isVictorous'): null
+    return h('div.result-wrap', [
+      h('p.result', result),
+      h('p.status', [
+        winner ? ', ' + ctrl.trans.noarg('isVictorous'): null
       ])
-    ];
+    ]);
   }
+  return null;
 }
 
 function renderTurns(ctrl) {
@@ -119,17 +119,18 @@ function autoScroll(el, ctrl) {
   });
 }
 
-module.exports = function(ctrl) {
-  return m('div.replay', [
-    m('div.turns', {
-      config: function(el, isUpdate) {
-        if (isUpdate) return;
-        var scrollNow = partial(autoScroll, el, ctrl);
-        ctrl.vm.autoScroll = {
-          now: scrollNow,
-          throttle: util.throttle(300, false, scrollNow)
-        };
-      }
-    }, renderTurns(ctrl))
+function initMessage(ctrl) {
+  const d = ctrl.data;
+  return (game.playable(d) && d.game.turns === 0) ?
+    h('div.message', util.justIcon(''), [
+      h('div', [
+      ])
+    ]): null;
+}
+
+export function render(ctrl) {
+  return h('div.rmoves', [
+    // initMessage(ctrl),
+    renderResult(ctrl)
   ]);
 };

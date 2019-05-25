@@ -18,6 +18,8 @@ object player {
     data: play.api.libs.json.JsObject,
     m: Option[oyun.masa.MasaMiniView])(implicit ctx: Context) = {
 
+    val chatJson = chat.json(name = trans.chatRoom.txt())
+
     bits.layout(
       variant = pov.game.variant,
       title = s"${trans.play.txt()}",
@@ -28,7 +30,8 @@ OyunkeyfRound.boot(${
 safeJsonValue(Json.obj(
 "data" -> data,
 "i18n" -> jsI18n(pov.game),
-"userId" -> ctx.userId
+"userId" -> ctx.userId,
+"chat" -> chatJson
 ))
 })}
 """)
@@ -39,7 +42,8 @@ safeJsonValue(Json.obj(
     )(
       main(cls := "round")(
         st.aside(cls := "round__side")(
-          bits.side(pov, data, m)
+          bits.side(pov, data, m),
+          chat.frag
         ),
         bits.roundAppPreload(pov, true),
         div(cls := "round__underboard")(

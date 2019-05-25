@@ -1,6 +1,6 @@
 import { h } from 'snabbdom';
 import * as renderUser from './user';
-import renderReplay from './replay';
+import * as replay from './replay';
 import { game, status } from 'game';
 import { renderClock } from '../clock/view';
 import * as button from './button';
@@ -27,7 +27,7 @@ function loader() { return h('i.ddloader'); }
 
 function renderTableWith(ctrl, buttons) {
   return [
-    // replay.render(ctrl),
+    replay.render(ctrl),
     buttons.find(x => !!x) ? h('div.rcontrols', buttons) : null
   ];
 }
@@ -57,7 +57,7 @@ function renderTablePlay(ctrl) {
   ];
 
   return [
-    // replay.render(ctrl),
+    replay.render(ctrl),
     h('div.rcontrols', [
       h('div.ricons', icons),
       ...buttons
@@ -75,17 +75,20 @@ function renderPlayer(ctrl, position) {
 
 function renderSeat(ctrl, position, clockPosition = 'bottom') {
   const player = ctrl.data[position];
-  var expiration = game.playable(ctrl.data) && renderExpiration(ctrl, position);
-  
+  const playerTurnPov = game.getTurnPov(ctrl.data);
+
+  var expiration = game.playable(ctrl.data) && renderExpiration(ctrl, position);  
   var children = [renderPlayer(ctrl, position)];
+
+
   
   
   var i = clockPosition === 'bottom' ? 1:0;
   children.splice(i, 0, renderClock(ctrl, player.side, clockPosition));
 
-  var expirationDom = expiration && expiration[1] === position ? expiration[0] : null;
-
-  children.splice(0, 0, expirationDom);
+  if (expiration && playerTurnPov === position) {
+    children.splice(0, 0, expiration);
+  }
   
 
   return  h('div.rseat.seat-' + position, children);

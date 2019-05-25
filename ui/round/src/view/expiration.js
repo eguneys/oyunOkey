@@ -19,6 +19,6 @@ export default function(ctrl, klass) {
         emerg,
         'bar-glider': myTurn
       }
-  }, ctrl.trans('nbSecondsToPlayTheFirstMove', secondsLeft, h('strong', secondsLeft)));
+  }, ctrl.trans.vdom('nbSecondsToPlayTheFirstMove', secondsLeft, h('strong', secondsLeft)));
 
 }

@@ -30,7 +30,7 @@ export function ClockController(d, opts) {
   this.timeRatio = (millis) => Math.max(0, Math.min(1, millis * this.timeRatioDivisor));
 
   this.setClock = (d, east, west, north, south) => {
-    const isClockRunning = game.playable(d) && (game.playedTurns(d) > 4);
+    const isClockRunning = game.playable(d) && (game.playedTurns(d) >= 4);
 
     this.times = {
       east: east * 1000,

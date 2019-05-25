@@ -20,4 +20,8 @@ export default function(opts) {
   opts.element = element;
   opts.socketSend = oy.socket.send;
   round = (window['OyunkeyfRound']).app(opts);
+  if (opts.chat) {
+    oy.makeChat(opts.chat, function(c) {
+    });
+  }
 }

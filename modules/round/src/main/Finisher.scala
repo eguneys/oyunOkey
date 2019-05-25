@@ -48,7 +48,7 @@ private[round] final class Finisher(
                 GameRepo game g.id foreach { newGame =>
                   bus.publish(finish.copy(game = newGame | g), 'finishGame)
                 }
-                prog.events
+                prog.events :+ oyun.game.Event.EndData(g)
               }
             }
           }

@@ -42,18 +42,24 @@ object side {
               playerLink(p, withOnline = false)
             )
           }.toList
-        ),
-        game.finishedOrAborted option {
-          st.section(cls := "status")(
-            gameEndStatus(game),
-            game.winner.map { winner =>
-              frag(
-                separator
-              )
-            }
-          )
-        }
-      )
+        )
+      ),
+      game.finishedOrAborted option {
+        st.section(cls := "status")(
+          gameEndStatus(game),
+          game.winner.map { winner =>
+            frag(
+              separator
+            )
+          }
+        )
+      },
+      m.map { m =>
+        st.section(cls := "game__masa")(
+          a(cls := "text", dataIcon := "g", href := routes.Masa.show(m.id))(m.fullName),
+          div(cls := "rounds")(m.roundString)
+        )
+      }
     )
   }
 }

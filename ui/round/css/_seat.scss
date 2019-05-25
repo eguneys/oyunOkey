@@ -6,6 +6,27 @@
   overflow: hidden;
   margin: 0 auto;
 
+  .expiration {
+    @extend %flex-center;
+    font-size: .9rem;
+    justify-content: center;
+    line-height: 2;
+    background: $c-good;
+    color: #fff;
+    &.emerg {
+      background: $c-bad;
+    }
+    strong {
+      font-size: 1rem;
+      margin-right: .3em;
+    }
+  }
+
+  &.seat-opponentUp,
+  &.seat-player {
+    margin: auto;
+  }
+
   &.seat-opponentLeft,
   &.seat-opponentRight {
     margin-top: -170%;

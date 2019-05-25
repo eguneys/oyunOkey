@@ -4,6 +4,7 @@ import attributes from 'snabbdom/modules/attributes';
 
 import RoundController from './ctrl';
 import { main as view } from './view/main';
+import * as chat from 'chat';
 import boot from './boot';
 
 export function app(opts) {
@@ -29,3 +30,5 @@ export function app(opts) {
 }
 
 export { boot };
+
+window.OyunkeyfChat = chat;

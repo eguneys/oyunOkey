@@ -5,7 +5,7 @@ import ground from './ground';
 import * as title from './title';
 import init from './init';
 import { ClockController } from './clock/ctrl';
-import mutil from './util';
+import * as mutil from './util';
 import { game, status } from 'game';
 import store from './store';
 
@@ -61,11 +61,6 @@ module.exports = function(opts, redraw) {
     var lastTurn = this.data.steps.splice(-1, 1)[0];
     lastTurn.moves.push(move);
     this.data.steps.push(lastTurn);
-  };
-
-  this.setTab = (tab) => {
-    this.vm.tab = store.tab.set(tab);
-    this.autoScroll();
   };
 
   this.showExpiration = () => {
@@ -222,7 +217,6 @@ module.exports = function(opts, redraw) {
   this.reload = (cfg) => {
 
     round.massage(cfg);
-    //this.vm.ply = round.lastStep(cfg).ply;
     this.ply = round.lastVmPly(cfg);
     var merged = round.merge(this.data, cfg);
     this.data = merged.data;
@@ -234,6 +228,17 @@ module.exports = function(opts, redraw) {
     this.setTitle();
     // move on
     this.autoScroll();
+    this.setLoading(false);
+  };
+
+  this.endWithData = (o) => {
+    const d = this.data;
+    // d.game.scores = o.scores.result;
+    d.game.status = o.status;
+    
+    this.okeyground.stop();
+    this.saveBoard();
+    this.setTitle();
     this.setLoading(false);
   };
 
@@ -284,15 +289,15 @@ module.exports = function(opts, redraw) {
   };
 
   this.setLoading = (v) => {
-    clearTimeout(this.vm.loadingTimeout);
+    clearTimeout(this.loadingTimeout);
     if (v) {
-      this.vm.loading = true;
-      this.vm.loadingTimeout = setTimeout(() => {
-        this.vm.loading = false;
+      this.loading = true;
+      this.loadingTimeout = setTimeout(() => {
+        this.loading = false;
         this.redraw();
       }, 1500);
     } else {
-      this.vm.loading = false;
+      this.loading = false;
     }
     this.redraw();
   };
@@ -308,11 +313,11 @@ module.exports = function(opts, redraw) {
     
     title.init();
     this.setTitle();
-    window.addEventListener('beforeunload', function(e) {
+    window.addEventListener('beforeunload', (e) => {
       if (!oyunkeyf.hasToReload && game.playable(d) && d.clock) {
         this.saveBoard();
         this.socket.send('bye');
-        var msg = ctrl.trans('thereIsAGameInProgress');
+        var msg = this.trans('thereIsAGameInProgress');
         (e || window.event).returnValue = msg;
         // return msg;
       }

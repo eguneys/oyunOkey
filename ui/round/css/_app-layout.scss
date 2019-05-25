@@ -5,6 +5,7 @@ $seat-width: 30px;
 .seat-opponentRight { grid-area: user-right }
 .seat-opponentTop { grid-area: user-top }
 .seat-player { grid-area: user-bottom }
+.rmoves { grid-area: moves }
 
 .round__app {
   display: grid;
@@ -17,6 +18,7 @@ $seat-width: 30px;
       '. user-top .'
       'user-left board user-right'
       '. user-bottom .'
+      '. moves .'
       '. controls .';
 
     .cg-board { box-shadow: none; }
@@ -27,10 +29,15 @@ $seat-width: 30px;
 
     grid-template-areas:
       '. user-top . .'
-      'user-left board user-right controls'
+      'user-left board user-right moves'
       '. user-bottom . controls';
 
     grid-column-gap: $block-gap;
+  }
+
+  @include breakpoint($mq-col2-uniboard-squeeze) {
+    grid-template-columns: $seat-width $col2-uniboard-squeeze-width  $seat-width 1fr;
+    grid-column-gap: #{$block-gap * 3/2};
   }
 
   &__board { grid-area: board; }

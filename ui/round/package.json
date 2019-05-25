@@ -4,6 +4,7 @@
   "description": "oyunkeyf.org round",
   "main": "src/main.js",
   "dependencies": {
+    "chat": "../chat",
     "common": "../common",
     "game": "../game",
     "mithril": "^0.2.0",
