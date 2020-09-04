@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "dependencies": {
     "game": "../game",
-    "mithril": "^0.2.0",
+    "mithril": "^1.1.7",
     "okeyground": "^1.0.4",
     "snabbdom": "^0.7.3",
     "vinyl-buffer": "^1.0.1"
