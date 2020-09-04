@@ -7,7 +7,7 @@
     "chat": "../chat",
     "common": "../common",
     "game": "../game",
-    "mithril": "^0.2.0",
+    "mithril": "^1.1.7",
     "okeyground": "^1.0.14",
     "snabbdom": "^0.7.3"
   },
